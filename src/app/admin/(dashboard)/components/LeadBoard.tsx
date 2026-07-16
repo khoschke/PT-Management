@@ -54,18 +54,20 @@ export default function LeadBoard({
   }, [leads, filters]);
 
   const selectedLead = selectedLeadId ? leads.find((l) => l.id === selectedLeadId) ?? null : null;
+  const selectClass =
+    "appearance-none rounded-full bg-fill px-4 py-2 pr-8 text-sm font-medium text-foreground outline-none ring-1 ring-transparent transition focus:ring-2 focus:ring-foreground bg-[url('data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%236e6e73%22%3E%3Cpath%20d%3D%22M5.5%207.5l4.5%204.5%204.5-4.5%22%20stroke%3D%22%236e6e73%22%20stroke-width%3D%221.5%22%20fill%3D%22none%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[right_0.6rem_center] bg-[length:14px]";
 
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-bold text-neutral-900">
+        <h1 className="text-[28px] font-semibold tracking-tight text-foreground">
           {isManager ? "Lead board" : "Your leads"}
         </h1>
         <div className="flex gap-2">
           <button
             type="button"
             onClick={() => downloadCsv(`fitaz-pt-leads-${new Date().toISOString().split("T")[0]}.csv`, leadsToCsv(filteredLeads))}
-            className="rounded-md border border-neutral-300 px-3.5 py-2 text-sm font-semibold text-neutral-700 hover:border-neutral-900 hover:text-neutral-900"
+            className="press rounded-full bg-fill px-4 py-2 text-sm font-semibold text-foreground"
           >
             Export CSV
           </button>
@@ -73,7 +75,7 @@ export default function LeadBoard({
             <button
               type="button"
               onClick={() => setShowAddSweepLead(true)}
-              className="rounded-md bg-neutral-900 px-3.5 py-2 text-sm font-semibold text-white hover:bg-neutral-700"
+              className="press rounded-full bg-foreground px-4 py-2 text-sm font-semibold text-white"
             >
               Add sweep lead
             </button>
@@ -81,11 +83,11 @@ export default function LeadBoard({
         </div>
       </div>
 
-      <div className="mt-5 flex flex-wrap gap-3">
+      <div className="mt-5 flex flex-wrap items-center gap-2">
         <select
           value={filters.status}
           onChange={(e) => setFilters((f) => ({ ...f, status: e.target.value }))}
-          className="rounded-md border border-neutral-300 px-3 py-2 text-sm"
+          className={selectClass}
         >
           <option value="">All statuses</option>
           {LEAD_STATUSES.map((s) => (
@@ -98,7 +100,7 @@ export default function LeadBoard({
         <select
           value={filters.source}
           onChange={(e) => setFilters((f) => ({ ...f, source: e.target.value }))}
-          className="rounded-md border border-neutral-300 px-3 py-2 text-sm"
+          className={selectClass}
         >
           <option value="">All sources</option>
           <option value="form">Form (warm)</option>
@@ -109,7 +111,7 @@ export default function LeadBoard({
           <select
             value={filters.allocatedTrainerId}
             onChange={(e) => setFilters((f) => ({ ...f, allocatedTrainerId: e.target.value }))}
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm"
+            className={selectClass}
           >
             <option value="">All trainers</option>
             {activeTrainers.map((t) => (
@@ -120,12 +122,12 @@ export default function LeadBoard({
           </select>
         )}
 
-        <label className="flex items-center gap-1.5 rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-700">
+        <label className="press flex cursor-pointer items-center gap-1.5 rounded-full bg-fill px-4 py-2 text-sm font-medium text-foreground has-[:checked]:bg-foreground has-[:checked]:text-white">
           <input
             type="checkbox"
             checked={filters.overdueOnly}
             onChange={(e) => setFilters((f) => ({ ...f, overdueOnly: e.target.checked }))}
-            className="accent-neutral-900"
+            className="sr-only"
           />
           Overdue only
         </label>
@@ -134,14 +136,14 @@ export default function LeadBoard({
           <button
             type="button"
             onClick={() => setFilters(DEFAULT_FILTERS)}
-            className="text-sm text-neutral-500 underline hover:text-neutral-900"
+            className="px-2 text-sm font-medium text-secondary-label underline hover:text-foreground"
           >
             Clear filters
           </button>
         )}
       </div>
 
-      <p className="mt-3 text-sm text-neutral-500">
+      <p className="mt-4 text-sm text-secondary-label">
         {filteredLeads.length} lead{filteredLeads.length === 1 ? "" : "s"}
       </p>
 
@@ -150,7 +152,7 @@ export default function LeadBoard({
           <LeadCard key={lead.id} lead={lead} onClick={() => setSelectedLeadId(lead.id)} />
         ))}
         {filteredLeads.length === 0 && (
-          <p className="col-span-full rounded-lg border border-dashed border-neutral-300 py-12 text-center text-sm text-neutral-500">
+          <p className="col-span-full rounded-2xl border border-dashed border-black/10 py-12 text-center text-sm text-secondary-label">
             No leads match these filters.
           </p>
         )}

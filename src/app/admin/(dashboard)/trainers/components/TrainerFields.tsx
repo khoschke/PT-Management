@@ -1,6 +1,9 @@
 import { GOAL_OPTIONS } from "@/lib/goals";
 import type { Trainer } from "@/lib/types";
 
+const inputClass =
+  "mt-1.5 w-full rounded-xl border-none bg-fill px-3.5 py-2.5 text-sm text-foreground outline-none ring-1 ring-transparent transition focus:ring-2 focus:ring-foreground";
+
 export default function TrainerFields({
   defaults,
   fieldErrors,
@@ -14,47 +17,28 @@ export default function TrainerFields({
     <>
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="text-sm font-semibold text-neutral-900">Name</label>
-          <input
-            name="name"
-            type="text"
-            required
-            defaultValue={defaults?.name}
-            className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
-          />
-          {errors.name && <p className="mt-1 text-xs text-red-700">{errors.name}</p>}
+          <label className="text-sm font-semibold text-foreground">Name</label>
+          <input name="name" type="text" required defaultValue={defaults?.name} className={inputClass} />
+          {errors.name && <p className="mt-1 text-xs text-red-600">{errors.name}</p>}
         </div>
         <div>
-          <label className="text-sm font-semibold text-neutral-900">Email</label>
-          <input
-            name="email"
-            type="email"
-            defaultValue={defaults?.email ?? ""}
-            className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
-          />
-          {errors.email && <p className="mt-1 text-xs text-red-700">{errors.email}</p>}
+          <label className="text-sm font-semibold text-foreground">Email</label>
+          <input name="email" type="email" defaultValue={defaults?.email ?? ""} className={inputClass} />
+          {errors.email && <p className="mt-1 text-xs text-red-600">{errors.email}</p>}
         </div>
       </div>
 
       <div className="mt-3 grid grid-cols-2 gap-3">
         <div>
-          <label className="text-sm font-semibold text-neutral-900">Gender</label>
-          <select
-            name="gender"
-            defaultValue={defaults?.gender ?? "male"}
-            className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
-          >
+          <label className="text-sm font-semibold text-foreground">Gender</label>
+          <select name="gender" defaultValue={defaults?.gender ?? "male"} className={inputClass}>
             <option value="male">Male</option>
             <option value="female">Female</option>
           </select>
         </div>
         <div>
-          <label className="text-sm font-semibold text-neutral-900">Availability</label>
-          <select
-            name="availability"
-            defaultValue={defaults?.availability ?? "both"}
-            className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
-          >
+          <label className="text-sm font-semibold text-foreground">Availability</label>
+          <select name="availability" defaultValue={defaults?.availability ?? "both"} className={inputClass}>
             <option value="AM">Morning</option>
             <option value="PM">Evening</option>
             <option value="both">Both</option>
@@ -63,16 +47,19 @@ export default function TrainerFields({
       </div>
 
       <div className="mt-3">
-        <label className="text-sm font-semibold text-neutral-900">Specialties</label>
-        <div className="mt-1.5 grid grid-cols-2 gap-1.5">
+        <label className="text-sm font-semibold text-foreground">Specialties</label>
+        <div className="mt-1.5 flex flex-wrap gap-1.5">
           {GOAL_OPTIONS.filter((g) => g.code !== "other").map((goal) => (
-            <label key={goal.code} className="flex items-center gap-1.5 text-xs text-neutral-700">
+            <label
+              key={goal.code}
+              className="press cursor-pointer rounded-full bg-fill px-3 py-1.5 text-xs font-medium text-foreground transition has-[:checked]:bg-foreground has-[:checked]:text-white"
+            >
               <input
                 type="checkbox"
                 name="specialties"
                 value={goal.code}
                 defaultChecked={defaults?.specialties?.includes(goal.code)}
-                className="accent-neutral-900"
+                className="sr-only"
               />
               {goal.label}
             </label>

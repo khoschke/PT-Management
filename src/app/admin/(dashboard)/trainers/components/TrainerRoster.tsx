@@ -12,7 +12,7 @@ function SaveButton({ label }: { label: string }) {
     <button
       type="submit"
       disabled={pending}
-      className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-semibold text-white hover:bg-neutral-700 disabled:opacity-50"
+      className="press rounded-full bg-foreground px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
     >
       {pending ? "Saving..." : label}
     </button>
@@ -35,18 +35,18 @@ function TrainerRow({ trainer }: { trainer: Trainer }) {
   }
 
   return (
-    <li className="rounded-lg border border-neutral-200 bg-white p-4">
+    <li className="rounded-2xl border border-black/5 bg-surface p-4 shadow-[0_1px_2px_rgba(0,0,0,0.03),0_2px_8px_rgba(0,0,0,0.04)]">
       <div className="flex items-start justify-between gap-3">
         <div>
           <div className="flex items-center gap-2">
-            <span className="font-semibold text-neutral-900">{trainer.name}</span>
+            <span className="font-semibold tracking-tight text-foreground">{trainer.name}</span>
             {!trainer.active && (
-              <span className="rounded-full bg-neutral-100 px-2 py-0.5 text-xs font-semibold text-neutral-500">
+              <span className="rounded-full bg-fill px-2 py-0.5 text-xs font-semibold text-secondary-label">
                 Inactive
               </span>
             )}
           </div>
-          <p className="mt-0.5 text-sm text-neutral-500">
+          <p className="mt-0.5 text-sm text-secondary-label">
             {trainer.email ?? "No email on file"} &middot; {trainer.gender} &middot; {trainer.availability}
           </p>
         </div>
@@ -54,7 +54,7 @@ function TrainerRow({ trainer }: { trainer: Trainer }) {
           <button
             type="button"
             onClick={() => setEditing((v) => !v)}
-            className="rounded-md border border-neutral-300 px-3 py-1.5 text-xs font-semibold text-neutral-700 hover:border-neutral-900"
+            className="press rounded-full bg-fill px-3 py-1.5 text-xs font-semibold text-foreground"
           >
             {editing ? "Cancel" : "Edit"}
           </button>
@@ -66,7 +66,7 @@ function TrainerRow({ trainer }: { trainer: Trainer }) {
                 await setTrainerActive(trainer.id, !trainer.active);
               })
             }
-            className="rounded-md border border-neutral-300 px-3 py-1.5 text-xs font-semibold text-neutral-700 hover:border-neutral-900 disabled:opacity-50"
+            className="press rounded-full bg-fill px-3 py-1.5 text-xs font-semibold text-foreground disabled:opacity-50"
           >
             {trainer.active ? "Deactivate" : "Reactivate"}
           </button>
@@ -74,11 +74,9 @@ function TrainerRow({ trainer }: { trainer: Trainer }) {
       </div>
 
       {editing && (
-        <form action={formAction} className="mt-4 border-t border-neutral-200 pt-4">
+        <form action={formAction} className="mt-4 border-t border-black/5 pt-4">
           {state.status === "error" && state.message && (
-            <div className="mb-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
-              {state.message}
-            </div>
+            <div className="mb-3 rounded-xl bg-red-50 px-3.5 py-2.5 text-sm text-red-700">{state.message}</div>
           )}
           <TrainerFields defaults={trainer} fieldErrors={state.fieldErrors} />
           <div className="mt-3">
@@ -105,7 +103,7 @@ function AddTrainerForm() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-semibold text-white hover:bg-neutral-700"
+        className="press self-start rounded-full bg-foreground px-4 py-2 text-sm font-semibold text-white"
       >
         Add trainer
       </button>
@@ -113,12 +111,13 @@ function AddTrainerForm() {
   }
 
   return (
-    <form action={formAction} className="rounded-lg border border-neutral-200 bg-white p-4">
-      <h2 className="text-sm font-bold text-neutral-900">New trainer</h2>
+    <form
+      action={formAction}
+      className="rounded-2xl border border-black/5 bg-surface p-4 shadow-[0_1px_2px_rgba(0,0,0,0.03),0_2px_8px_rgba(0,0,0,0.04)]"
+    >
+      <h2 className="text-sm font-semibold text-foreground">New trainer</h2>
       {state.status === "error" && state.message && (
-        <div className="mt-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
-          {state.message}
-        </div>
+        <div className="mt-3 rounded-xl bg-red-50 px-3.5 py-2.5 text-sm text-red-700">{state.message}</div>
       )}
       <div className="mt-3">
         <TrainerFields fieldErrors={state.fieldErrors} />
@@ -128,7 +127,7 @@ function AddTrainerForm() {
         <button
           type="button"
           onClick={() => setOpen(false)}
-          className="rounded-md border border-neutral-300 px-4 py-2 text-sm font-semibold text-neutral-700 hover:border-neutral-900"
+          className="press rounded-full bg-fill px-4 py-2 text-sm font-semibold text-foreground"
         >
           Cancel
         </button>

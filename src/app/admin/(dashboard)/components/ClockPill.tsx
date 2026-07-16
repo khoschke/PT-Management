@@ -1,10 +1,10 @@
 import { getContactClock } from "@/lib/countdown";
 
 const BAND_CLASSES: Record<string, string> = {
-  green: "bg-green-50 text-green-800 border-green-200",
-  amber: "bg-amber-50 text-amber-800 border-amber-200",
-  red: "bg-red-50 text-red-800 border-red-200",
-  done: "bg-neutral-100 text-neutral-500 border-neutral-200",
+  green: "bg-green-100 text-green-800",
+  amber: "bg-amber-100 text-amber-800",
+  red: "bg-red-100 text-red-700",
+  done: "bg-fill text-secondary-label",
 };
 
 export default function ClockPill({
@@ -18,7 +18,7 @@ export default function ClockPill({
 
   return (
     <span
-      className={`inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-semibold ${BAND_CLASSES[clock.band]}`}
+      className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${BAND_CLASSES[clock.band]}`}
     >
       {clock.label}
     </span>
