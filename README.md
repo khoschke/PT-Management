@@ -41,7 +41,8 @@ database size, point in time recovery) at that point, not before.
 
 1. Create a new project at [supabase.com](https://supabase.com).
 2. In the SQL editor, run `supabase/migrations/0001_init.sql`, then
-   `supabase/seed.sql` to add five placeholder trainers.
+   `supabase/migrations/0002_onboarding.sql`, then `supabase/seed.sql` to add
+   five placeholder trainers.
 3. Under Project Settings > API, copy the project URL, the `anon` public
    key and the `service_role` key.
 
@@ -87,7 +88,8 @@ npm install
 npm run dev
 ```
 
-The form is at `/pt-session`, the dashboard is at `/admin`.
+The form is at `/pt-session`, the dashboard is at `/admin`, and the PT
+onboarding workbook is at `/onboarding` (behind the same login).
 
 ### 5. Deploy to Vercel
 
@@ -142,6 +144,34 @@ suggestion, but every lead they've already worked stays on record.
 **If a member asks you to delete their details**, open their lead and use
 Hard delete. This is permanent and can't be undone, unlike the ordinary
 status changes, which are all soft and reversible.
+
+## PT onboarding dashboard
+
+`/onboarding` is the 10-part PT Onboarding Workbook as an interactive
+dashboard, behind the same Supabase login as `/admin`. It's deliberately
+styled apart from the plain black-and-white lead board: system font stack,
+soft depth, and light/dark mode, closer to Apple's own product language,
+since this is a personal companion a trainer lives in for 12 weeks rather
+than a staff operations tool.
+
+- **Trainers** work through each part's activities; answers autosave to
+  `onboarding_responses` and are visible only to that trainer and to
+  managers, enforced by row level security exactly like `leads`.
+- **Managers** see the same 10 parts and can flip to **Manager view** (the
+  toggle in the header) to reveal coaching notes alongside the trainer's
+  material, so the two can never say different things, only show or hide
+  the manager's lens. A trainer can flip to Manager view too, nothing in it
+  is sensitive.
+- Content lives in code, not the database: `src/lib/onboarding/parts/*.ts`,
+  one file per part. Editing the workbook means editing those files, not a
+  CMS.
+- **Known gap:** Part 10 ("Growing as a Coach") and the PT Manager Cheat
+  Sheet (the coaching-notes companion document referenced in the Directors
+  Overview memo) aren't in this build yet — the Part 10 text was truncated
+  during PDF extraction from Google Drive, and the Cheat Sheet doesn't exist
+  as a written document yet, only as a description of an intended one. Both
+  are placeholders in `src/lib/onboarding/parts/part10.ts` and the
+  `managerNote` fields until the real source material is available.
 
 ## Privacy
 
@@ -219,10 +249,15 @@ src/
     admin/
       login/            sign in
       (dashboard)/       lead board, trainer roster (all behind auth)
+    onboarding/         PT onboarding workbook dashboard (behind auth)
+      [part]/            one of the 10 parts
+      components/        activity fields, manager-view toggle, parts nav
     api/cron/daily-digest/  7am AEST digest, called by Vercel Cron
   lib/                  shared logic: validation, allocation engine, email,
                          the 48 hour clock, Supabase clients
+    onboarding/         workbook content (parts/*.ts) and progress helpers
 supabase/
-  migrations/0001_init.sql   schema, RLS policies, triggers
+  migrations/0001_init.sql       schema, RLS policies, triggers
+  migrations/0002_onboarding.sql onboarding responses and part progress
   seed.sql                    five placeholder trainers
 ```

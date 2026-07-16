@@ -50,6 +50,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
                   Trainers
                 </Link>
               )}
+              <Link href="/onboarding" className="hover:text-neutral-900">
+                PT onboarding
+              </Link>
             </nav>
           </div>
           <div className="flex items-center gap-4 text-sm text-secondary-label">
