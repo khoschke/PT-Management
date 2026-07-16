@@ -97,8 +97,10 @@ The form is at `/pt-session`, the dashboard is at `/admin`.
 3. Deploy. `vercel.json` already defines the 7am AEST daily digest cron job
    (`0 21 * * *` UTC, Brisbane doesn't observe daylight saving so this
    offset is fixed year round).
-4. Swap `public/logo-placeholder.svg` for the real Fitaz Gym logo, same
-   filename, same rough dimensions.
+4. The Fitaz Gym wordmark lives at `public/logo-fitaz.svg`. It's a vector
+   rebuild of the brand mark, so it stays crisp at any size. To use the
+   official asset instead, drop it in and update the `Image` src on the
+   public form and login pages.
 
 ## Running this day to day, for the PT Manager
 
