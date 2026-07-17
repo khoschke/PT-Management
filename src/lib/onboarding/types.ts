@@ -23,12 +23,17 @@ export interface OnboardingSection {
   /** Reference links relevant to this section (external Drive docs, or internal app routes). */
   links?: OnboardingLink[];
   /**
-   * Coaching note for whoever is guiding the trainer: worked examples, what
-   * good looks like, what to watch for. Shown only in Manager view.
-   * Left undefined where the source PT Manager Cheat Sheet content hasn't
-   * been supplied yet, rather than invented.
+   * Coaching note for whoever is guiding the trainer: how to use the section
+   * in a 1:1, what to watch for. From the PT Manager Cheat Sheet's yellow
+   * "Manager note" boxes. Shown only in Manager view.
    */
   managerNote?: string;
+  /**
+   * A model answer to this section's activity, in the voice of the example
+   * trainer "Taylor". From the Cheat Sheet's blue "Worked example" boxes.
+   * Shown only in Manager view, as something to hold up to a PT who's stuck.
+   */
+  workedExample?: string;
 }
 
 export interface OnboardingLink {

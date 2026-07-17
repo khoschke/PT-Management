@@ -9,6 +9,7 @@ import { ManagerNote } from "../components/ManagerNote";
 import { ManagerNotesPendingBanner } from "../components/ManagerNotesPendingBanner";
 import { PartStatusControl } from "../components/PartStatusControl";
 import { Prose } from "../components/Prose";
+import { WorkedExample } from "../components/WorkedExample";
 
 export function generateStaticParams() {
   return onboardingParts.map((p) => ({ part: String(p.number) }));
@@ -32,7 +33,7 @@ export default async function OnboardingPartPage({
 
   const prev = part.number > 1 ? getPartByNumber(part.number - 1) : undefined;
   const next = part.number < TOTAL_PARTS ? getPartByNumber(part.number + 1) : undefined;
-  const hasAnyManagerNotes = part.sections.some((s) => s.managerNote);
+  const hasAnyManagerNotes = part.sections.some((s) => s.managerNote || s.workedExample);
 
   return (
     <article className="flex flex-col gap-6">
@@ -108,6 +109,7 @@ export default async function OnboardingPartPage({
               </div>
             )}
 
+            <WorkedExample example={section.workedExample} />
             <ManagerNote note={section.managerNote} />
           </section>
         ))}
