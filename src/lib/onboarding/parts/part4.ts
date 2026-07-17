@@ -22,6 +22,8 @@ export const part4: OnboardingPart = {
           multiline: true,
         },
       ],
+      managerNote:
+        "This section sets up the whole part. The PTs who struggle aren't the ones with weak programming — they're the ones who treat communication as soft skills you can skip. Frame everything that follows as business-critical, not nice-to-have.",
     },
     {
       heading: "First impressions and walking the floor",
@@ -38,6 +40,10 @@ export const part4: OnboardingPart = {
           multiline: true,
         },
       ],
+      workedExample:
+        "Taylor coaches a lot of shift workers, so she's often on the floor at 5:30am before the early crowd clock on. She's learned the regulars' names and what they're training for. When a new face turns up looking lost near the rig, she doesn't pitch — she racks a bar for them, shows them the setup, and says “I'm Taylor, I coach here, give me a yell if you want a hand with anything.” Three of her current clients started exactly that way.",
+      managerNote:
+        "New PTs hide — they cluster at the desk or bury themselves in their phone between sessions. Floor time is where their book gets built. Set the expectation early: when you're in the building and not with a client, you're on the floor.",
     },
     {
       heading: "Active listening",
@@ -56,6 +62,8 @@ export const part4: OnboardingPart = {
           multiline: true,
         },
       ],
+      managerNote:
+        "New PTs over-talk — they fill silence with instruction because silence feels like failure. The fix is one line: ask one more question before you give one more answer. If a PT is doing 80% of the talking in a check-in, they're not listening, they're broadcasting.",
     },
     {
       heading: "Motivational interviewing",
@@ -72,6 +80,10 @@ export const part4: OnboardingPart = {
           multiline: true,
         },
       ],
+      workedExample:
+        "Taylor's client Dan, a fly-in-fly-out worker, is eight weeks in and his attendance has dropped to once a fortnight. The instinct is to lecture him about consistency. Instead Taylor opens: “How's training been sitting with you lately?” (open question). Dan admits he feels like a fraud booking sessions he keeps missing. Taylor reflects: “So it's less about the training and more that missing sessions makes you feel like you're failing at it.” Dan agrees, then says “I actually feel heaps better on the weeks I get in twice.” That's change talk. Taylor draws it out: “What's different about those weeks?” Dan ends the chat proposing his own fix — two locked sessions on his weeks home. Taylor didn't sell it. She pulled it out of him.",
+      managerNote:
+        "MI is the hardest skill in this part to actually do, because the instinct to fix is so strong. Watch for PTs who turn every reflection into a mini-lecture. The test: in a five-minute check-in, did the client talk more than the PT? If not, they're advising, not interviewing.",
     },
     {
       heading: "Body language essentials",
@@ -88,6 +100,8 @@ export const part4: OnboardingPart = {
           multiline: true,
         },
       ],
+      managerNote:
+        "Labour the consent point on hands-on cueing. New PTs adjust people without asking because their cert trained the cue, not the consent. One bad moment here can end a client relationship or worse. The rule is simple and non-negotiable: ask first, every time.",
     },
     {
       heading: "Giving feedback and corrections without crushing the client",
@@ -107,6 +121,10 @@ export const part4: OnboardingPart = {
           multiline: true,
         },
       ],
+      workedExample:
+        "Same fault, two clients. Taylor's beginner, a nervous night-shift nurse on her third session, rounds her back on a deadlift. Taylor: “Really nice tempo on that one. Let's try the next rep with your chest up like you're showing off the logo on your shirt, that'll keep your back happy.” One cue, framed as a win.\n\nTaylor's regular, a confident tradie who's trained for a year, makes the same error. Taylor: “Back's rounding, reset and brace.” Four words, because he wants efficiency, not reassurance. Reading which client is in front of her is the actual skill.",
+      managerNote:
+        "The most common new-PT failure here is over-coaching: narrating every fault on every rep until the client feels like they can't do anything right. Coach them to pick one cue and then be quiet. Silence while a client works is a feature, not a gap to fill.",
     },
     {
       heading: "Difficult conversations",
@@ -125,6 +143,10 @@ export const part4: OnboardingPart = {
           multiline: true,
         },
       ],
+      workedExample:
+        "Taylor has a long-term client, Mick, who's late-cancelled three times this month and never been charged, because Taylor likes him and felt awkward. The fourth time, she gets ahead of it: “Mick, I've let the last few slide, but I need to start applying my cancellation policy properly, including today's. Nothing personal, it's just how the business has to run. Easiest fix is we lock your sessions into your roster so they're protected.” Mick's a bit embarrassed, but he respects it, and he stops cancelling. The boundary fixed the behaviour the leniency was feeding.",
+      managerNote:
+        "New PTs let clients walk all over the cancellation policy because they're scared of losing them. The irony is clients respect a coach with clear boundaries more, not less. Role-play the rate-rise and the no-show conversations in a 1:1 — they're the two that cause the most avoidance and the most lost income.",
     },
     {
       heading: "Communication channels",
@@ -141,6 +163,8 @@ export const part4: OnboardingPart = {
           prompt: "Write your availability boundary in one sentence, the one you'd send a new client.",
         },
       ],
+      managerNote:
+        "The PTs who burn out fastest are the ones answering messages at all hours in their first few months, thinking it's good service. It isn't — it's unsustainable, and it trains clients to expect it. Push new PTs to set hours from day one, before they've built habits they'll have to walk back.",
     },
     {
       heading: "Reflection: pushing vs empathy",
@@ -154,6 +178,10 @@ export const part4: OnboardingPart = {
           multiline: true,
         },
       ],
+      workedExample:
+        "Empathy means acknowledging the challenge without judgement so the client feels supported. Pushing means keeping them aligned with the goal they set and reframing the setback rather than ignoring it. The balance lives in tailoring the response: when the barrier is mostly in their head, challenge it; when it's a genuine life event, scale the program back temporarily and show you respect their limits. Done well, the client feels both held and moved forward — which is what keeps them in the game through the rough patches.",
+      managerNote:
+        "This is the reflection that separates coaches who think about their craft from those who run on autopilot. Use it as a 1:1 discussion prompt. Most new PTs lean hard one way: too soft (a friend, not a coach) or too pushy (a drill sergeant). Help them name their default so they can catch it.",
     },
     {
       heading: "Roleplay activities",
@@ -170,7 +198,7 @@ export const part4: OnboardingPart = {
         },
       ],
       managerNote:
-        "This is the single highest-value session to run in person rather than let a trainer skip. If you only sit in on one roleplay block across the 12 weeks, make it this one — it's where you'll actually see their coaching voice, not just read about it.",
+        "Don't let PTs skip this because it feels awkward — awkward is the point. Better to fumble the rate-rise conversation with a colleague than with a paying client. If a PT says they've got no one to practise with, that's a flag in itself: this job is built on relationships, and a PT who can't find a single person to run a five-minute roleplay with will struggle to build a book. Pair them up during onboarding.",
     },
   ],
 };

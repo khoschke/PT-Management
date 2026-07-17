@@ -21,6 +21,8 @@ export const part5: OnboardingPart = {
           multiline: true,
         },
       ],
+      managerNote:
+        "New PTs treat the consult like a form to fill in. Push them away from that. The waiver collects the data — the consult is where they listen for what isn't written down. If a PT leaves a consult with a completed form and no read on the person, they missed the point.",
     },
     {
       heading: "The PT Waiver Form: pre-consult screening",
@@ -47,6 +49,10 @@ export const part5: OnboardingPart = {
           url: "https://drive.google.com/file/d/18lrnr04jdzABbgt5LEq9aOHfl7jN2tdW/view",
         },
       ],
+      workedExample:
+        "I send the link the moment we lock in a consult time, by both text and email so it's hard to miss. The message: “Looking forward to meeting you Thursday. Before we catch up, can you fill in this quick form? Takes about five minutes and means I can walk in with a plan that actually fits you: [link].” Then a short reminder the morning of the consult if it hasn't come back yet.",
+      managerNote:
+        "The gym provides the waiver as a template only — an example Google Form plus a printable PDF for walk-ins. Each PT builds their own version on their own Google account and stores their own client data, keeping the privacy and storage responsibility with the PT, not the gym. Make sure new PTs actually build their own rather than sharing one form.",
     },
     {
       heading: "The consult structure: Open, Discover, Screen, Align, Close",
@@ -65,6 +71,10 @@ export const part5: OnboardingPart = {
           multiline: true,
         },
       ],
+      workedExample:
+        "Taylor (ex-paramedic, now training shift workers) runs a consult with a FIFO worker, Dan. Open: “I work with a lot of shift workers, so let's figure out what training around your roster actually looks like.” Discover: Dan's real goal isn't the six-pack he wrote down, it's energy to get through a night shift without three energy drinks. Screen: high blood pressure on the waiver, so Taylor flags it. Align: “Two sessions a week built around your roster, focused on energy and strength, not smashing you into the ground.” Close: books the first session before Dan leaves.",
+      managerNote:
+        "PTs collapse Discover and Align because they're keen to pitch. Slow them down — the order matters: you cannot align to a goal you haven't properly discovered. The certainty to close comes from how well they listened earlier, not from how hard they push at the end.",
     },
     {
       heading: "The questions that matter",
@@ -84,6 +94,10 @@ export const part5: OnboardingPart = {
           multiline: true,
         },
       ],
+      workedExample:
+        "Client says she wants to “tone up”. Taylor doesn't run with it — she asks what stopped her before. The real answer: she starts strong every January, then a busy fortnight at work blows up the routine and she quits out of guilt. Now Taylor knows the goal isn't toning, it's building a routine that survives a bad week. Everything she designs points at that.",
+      managerNote:
+        "The scale-of-ten question and the barriers question do the heavy lifting — they're lifted straight from motivational interviewing (Part 4). A ‘6’ isn't a problem, it's an invitation: ‘what would make it an 8?’ Teach PTs to follow the number with a question, not a sales pitch.",
     },
     {
       heading: "Spotting red flags and referral triggers",
@@ -101,8 +115,10 @@ export const part5: OnboardingPart = {
           multiline: true,
         },
       ],
+      workedExample:
+        "A prospect tells Taylor he gets “a bit of a tight chest” on the stairs but reckons it's nothing. Taylor doesn't argue and doesn't train him. She says: “That's exactly the kind of thing I want your GP to give the tick on first. Let's get that sorted, and in the meantime I'll map out where we're heading.” He gets checked, it turns out to be manageable, and he comes back a fortnight later a more committed client because she took it seriously.",
       managerNote:
-        "This is the section worth roleplaying live rather than trusting the written answer alone — watch for trainers who soften the message so much the prospect doesn't realise it's a hard stop until cleared.",
+        "This is the section most likely to be skimmed and most important not to. Drill the script — a PT who freezes when a client mentions chest pain is a liability. The line we want: ‘I'd rather lose a fortnight getting clearance than train someone into an ambulance.’ Scope of practice and referral pathways are covered fully in Part 3.",
     },
     {
       heading: "Setting SMART goals with clients",
@@ -118,6 +134,10 @@ export const part5: OnboardingPart = {
           multiline: true,
         },
       ],
+      workedExample:
+        "Taylor's client says “I want to lose weight.” Taylor reshapes it with her, not for her: “Lose 5 kg in 12 weeks by training twice a week and walking the dog three mornings.” Then a short-term marker: “First 2 kg in the first month, and we'll know it's working when you're sleeping better.” The non-scale win matters as much as the number.",
+      managerNote:
+        "The single full SMART definition lives in Part 9 — here it's applied, not redefined. If a PT wants the deep version, point them to Part 9 rather than repeating it.",
     },
     {
       heading: "Closing the consult",
@@ -132,6 +152,8 @@ export const part5: OnboardingPart = {
           multiline: true,
         },
       ],
+      managerNote:
+        "New PTs either skip the close entirely (too nervous) or lurch into a pushy pitch. The fix is the same: anchor the close to what the client already said they wanted. The certainty comes from the listening, not the pressure. Default frequency to pitch is 2x/week, per Part 7.",
     },
     {
       heading: "Client records and note-taking",
@@ -147,6 +169,10 @@ export const part5: OnboardingPart = {
           multiline: true,
         },
       ],
+      workedExample:
+        "Taylor keeps every client in her coaching app: waiver, goals, the barriers each one named, and session notes. When a client who ‘fell off’ three months ago comes back, she opens their file, sees the exact reason it stalled last time, and picks up like no time passed. The client feels remembered. That's retention built on good records.",
+      managerNote:
+        "Most new PTs have never thought about privacy obligations. They don't need the full Privacy Act, they need the five habits above. The single biggest real-world risk is storing client health data somewhere insecure or shared. Tie this back to the Waiver section: each PT owns their own form and is responsible for storing responses securely.",
     },
     {
       heading: "Trial and intro session framing",
@@ -162,6 +188,8 @@ export const part5: OnboardingPart = {
           multiline: true,
         },
       ],
+      managerNote:
+        "Trial-to-paid conversion is one of the few numbers a new PT can move fast. The two common mistakes: treating the trial as a throwaway, or using it to show off with a brutal session. Coach both out — the trial should feel like a great normal session and end with a clear ask. Lead allocation and the cold/warm lead process feed into this; covered in Part 7.",
     },
     {
       heading: "When and why to reassess",
@@ -178,6 +206,10 @@ export const part5: OnboardingPart = {
           multiline: true,
         },
       ],
+      workedExample:
+        "Taylor's client hits a plateau on her weight goal. Instead of booking a reassessment, Taylor books a check-in. Turns out the client's started a new roster and is sleeping four hours before early shifts. No test would've found that. They adjust the plan around recovery, and progress restarts. The session logs already told the strength story; the conversation told the rest.",
+      managerNote:
+        "Reassessment means the data you already collect every session plus regular check-in conversations. Formal physical retests are the exception — used when the goal is a benchmark the session logs don't capture, not a default ritual. If a PT proposes a monthly test day, ask them what question the test answers that their session logs don't. If they can't name one, it's a check-in they need, not a test.",
     },
     {
       heading: "Roleplay: a full intake consultation",
@@ -197,6 +229,8 @@ export const part5: OnboardingPart = {
           multiline: true,
         },
       ],
+      managerNote:
+        "Run this live in a one-hour session if you can. Watching a PT run a consult tells you in ten minutes what a written answer never will. Look for: did they listen or wait to talk, did they screen properly, did they actually ask for the booking.",
     },
   ],
 };

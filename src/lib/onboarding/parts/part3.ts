@@ -21,6 +21,8 @@ export const part3: OnboardingPart = {
         "- Set up your client payment system",
         "- Decide whether to register with AUSactive or similar (not mandatory, useful for events/discounts/industry recognition)",
       ],
+      managerNote:
+        "Most PTs walk in with the certificate sorted and nothing else. Run this checklist line by line in the first 1:1 — ABN and insurance are non-negotiable before they take a paying client. Push the separate bank account hard: PTs who mix personal and business banking spend twice as long at tax time and usually undercount their expenses.",
     },
     {
       heading: "Australian tax and super for sole traders",
@@ -30,6 +32,8 @@ export const part3: OnboardingPart = {
         "**GST and BAS.** Register for GST once turnover hits $75,000 in a 12-month period (or you expect to). Below that, stay unregistered and keep pricing GST-free. Once registered, charge 10% GST and lodge a Business Activity Statement, usually quarterly. Keep an eye on your rolling 12-month turnover — the clock doesn't reset at the financial year.",
         "**Superannuation.** Not legally required to pay yourself super as a sole trader, but you should. Personal contributions are tax-deductible up to the concessional cap (currently $32,500 from 1 July 2026, indexed to AWOTE). Treat it like rent for your future self.",
       ],
+      managerNote:
+        "This is the section new PTs zone out on. Don't try to teach tax in one sitting. Tell them: get an ABN, open a separate bank account, set aside 25-30% of every dollar, and book an accountant before EOFY. That's 90% of the value.",
     },
     {
       heading: "Insurance",
@@ -39,6 +43,8 @@ export const part3: OnboardingPart = {
         "**Professional Indemnity** — covers you if a client claims your advice or service caused them loss or harm. Minimum cover $5M.",
         "Get quotes from a few providers (Guild Insurance, AON Sport, Marsh, Sport & Fitness Insurance Brokers). AUSactive membership often includes or discounts insurance.",
       ],
+      managerNote:
+        "Confirm both policies are in place and current before the PT runs their first paid session at Fitaz Gym. Get a copy on file. Diarise the renewal date.",
     },
     {
       heading: "Accounting tools",
@@ -50,6 +56,8 @@ export const part3: OnboardingPart = {
         "- **MYOB** — similar to Xero. Pick one, don't run both.",
         "Good tracking looks like: income logged within 7 days, expenses categorised, receipts kept (a photo is fine), and a 30-minute monthly review.",
       ],
+      managerNote:
+        "Don't push specific software unless the PT asks. The point is they pick something and use it weekly. A spreadsheet used weekly beats Xero opened twice a year.",
     },
     {
       heading: "Client payment systems",
@@ -80,6 +88,10 @@ export const part3: OnboardingPart = {
           multiline: true,
         },
       ],
+      workedExample:
+        "Taylor wants $1,500/week personal income.\n\nWeekly business expenses: $275 gym rent + $20 insurance + $15 software + $30 education + $10 phone = $350.\n\nTax + super buffer at 35% of gross ≈ $900.\n\nTotal weekly revenue target: $1,500 + $350 + $900 = $2,750.\n\nAt $80 per session: $2,750 ÷ $80 = 35 sessions per week. With a 15% cancellation buffer, book around 40 sessions/week to reliably hit target.\n\nTaylor decides 35 is the realistic ceiling, so revises personal income down to $1,200/week for the first 6 months and scales from there. Her weekly program-and-app fees ($20 per active client) come in on top as recurring income, which is why the session count is a ceiling, not the whole picture.",
+      managerNote:
+        "When the maths spits out 40+ sessions per week, that's your cue to talk about session rate, small-group training, or trimming the lifestyle goal. 40 sessions/week is a recipe for burnout — use it to start the pricing conversation in the next section.",
     },
     {
       heading: "Your pricing foundation",
@@ -97,8 +109,10 @@ export const part3: OnboardingPart = {
           multiline: true,
         },
       ],
+      workedExample:
+        "Taylor started at $70 per 45-minute session out of nerves. After 4 months with 95% retention and a small waitlist, she ran the numbers: minimum viable rate was $78, market rate at Fitaz Gym was $80. She raised to $80, gave existing clients four weeks' notice by email, and started new clients at the new rate. Zero churn.",
       managerNote:
-        "The price-increase email template lives in the full workbook (Part 3) — point new PTs to it directly rather than having them draft one from scratch the first time they need it.",
+        "Newer PTs almost always underprice — they confuse ‘a price I'm comfortable saying’ with ‘the right price’. Use the Step 5 number from Revenue Targets as the anchor; if their comfort price is below their minimum viable rate, they're choosing to subsidise their clients. (The ready-to-use price-increase email template is in the full workbook — point them to it rather than having them draft one cold.)",
     },
     {
       heading: "Your terms and conditions",
@@ -125,6 +139,8 @@ export const part3: OnboardingPart = {
           multiline: true,
         },
       ],
+      managerNote:
+        "Most new PTs don't have written T&Cs, and they get caught out the first time a client no-shows and refuses to pay. The template above is a clean starting point, not a Fitaz Gym mandate — walk through it together and have them adapt it to their business in the first 1:1.",
     },
     {
       heading: "Scope of practice",
@@ -134,6 +150,8 @@ export const part3: OnboardingPart = {
         "**Out of scope:** diagnosing or treating injuries, prescribing meal plans or calorie targets for a medical condition, mental health counselling, programming through pain without clearance, supplement or medication advice.",
         "The simple test: if you wouldn't be comfortable defending your advice to the relevant qualified professional, you're out of scope. Refer out.",
       ],
+      managerNote:
+        "Scope creep is the most common quiet risk new PTs run. It usually starts with ‘my client has back pain, can I just…’. The answer is no. Build the referral-pathway habit early and your insurance, reputation, and client all benefit.",
     },
     {
       heading: "Referral pathways",
@@ -150,6 +168,8 @@ export const part3: OnboardingPart = {
           multiline: true,
         },
       ],
+      managerNote:
+        "There's no Fitaz Gym referral list to plug into — PTs build their own as their client base evolves. Encourage them to log every referral relationship (name, specialty, who introduced them, what they're good for) so it compounds over their career.",
     },
     {
       heading: "The Fitaz Gym setup hook",
@@ -161,6 +181,8 @@ export const part3: OnboardingPart = {
       activities: [
         { key: "weekly-gym-fee", prompt: "Write your weekly Fitaz Gym fee here (see your contract)." },
       ],
+      managerNote:
+        "Tick this off in week one. Anything missing becomes a blocker on the PT taking their first paying session at Fitaz Gym. Diarise certification renewal dates the same day they're checked in.",
     },
     {
       heading: "Business setup snapshot",
@@ -194,7 +216,7 @@ export const part3: OnboardingPart = {
         },
       ],
       managerNote:
-        "This snapshot is the fastest way to spot a trainer who's behind on the operational basics before it becomes a problem — worth reviewing together in session one alongside the pre-start checklist.",
+        "Use this snapshot as the working checklist in your first 1:1. Anything blank gets a deadline; anything filled gets a sense-check. By end of week 4, every line should be locked in.",
     },
   ],
 };

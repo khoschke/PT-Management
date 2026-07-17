@@ -18,6 +18,8 @@ export const part10: OnboardingPart = {
         "- Continuing education: required to hold your AUSactive registration and any other industry memberships.",
         "Your PT contract spells out the full certification and insurance requirements for working at Fitaz Gym. Keep your renewal dates somewhere you'll actually see them, because letting one lapse can put you off the floor.",
       ],
+      managerNote:
+        "Check each PT's CPR and First Aid are current at induction and diarise the expiry dates yourself. A lapsed cert is an insurance problem, not just a paperwork one. The contract holds the full requirement, so point them there rather than relying on memory.",
     },
     {
       heading: "The six focus areas for early-career PTs",
@@ -30,6 +32,8 @@ export const part10: OnboardingPart = {
         "5. **Nutrition fundamentals** — teach the basics well (energy balance, food habits) and stay inside your scope. Resist the urge to hand out macro splits and supplement stacks early.",
         "6. **Program design** — learn to layer it: session to week, week to block, block to goal. That's how clients stay safe, see results, and feel looked after.",
       ],
+      managerNote:
+        "These are pointers, not a curriculum. When a PT asks where to start, match the focus area to their actual gap. Most new PTs need Business Basics and Behaviour Change long before they need more exercise science — even though exercise science is the comfortable place to retreat to.",
     },
     {
       heading: "Filtering trends from gimmicks",
@@ -41,6 +45,8 @@ export const part10: OnboardingPart = {
         "- Would I still rate it in a year, or is it riding a wave?",
         "Curiosity is good. Chasing every trend so you look current is not. Your clients trust you to be the filter, not the early adopter.",
       ],
+      managerNote:
+        "New PTs are the most susceptible to trend-chasing because they're hungry to look current and credible. Model the filter instead of shutting them down: when one brings you a shiny new method, ask ‘will it help your clients?’ and walk them through the evidence question. You're teaching judgement, not handing down a verdict.",
     },
     {
       heading: "Build your development plan",
@@ -57,8 +63,10 @@ export const part10: OnboardingPart = {
         },
         { key: "dev-first-step", prompt: "What's your first step, and by when?", multiline: true },
       ],
+      workedExample:
+        "Taylor's plan: the area to improve is behaviour change with shift workers who turn up to train exhausted. It sits under Behaviour Change and Psychology. The resource is a short motivational interviewing course plus shadowing a senior trainer who coaches FIFO clients. First step: book the course by the end of the month.",
       managerNote:
-        "This is a good use of one of the four 1:1 hours near the end of onboarding — help them make the development plan concrete and time-bound rather than a vague 'get better at nutrition'. A named course, mentor or date is what turns intention into follow-through.",
+        "This is a good use of one of the four 1:1 hours near the end of onboarding — help them make the development plan concrete and time-bound rather than a vague ‘get better at nutrition’. A named course, mentor or date is what turns intention into follow-through.",
     },
     {
       heading: "Shadowing senior trainers",
@@ -67,6 +75,8 @@ export const part10: OnboardingPart = {
         "**Goal: 4 hours of shadowing per week across your 12 weeks.** Don't just stand there — ask questions, take notes, and watch how trainers adapt on the fly to keep clients safe and engaged.",
         "Mentoring beyond shadowing isn't a formal program here, and it doesn't need to be. Your PT Manager is always around for a debrief, a second opinion, or a hand when you're stuck. Use them.",
       ],
+      managerNote:
+        "Hold PTs to the 4 hours a week — it's the first thing to slip once they get busy with their own clients. Pair new PTs with different senior trainers so they see a range of styles, not just one. And make yourself genuinely available for debriefs. An open door beats a formal mentoring program every time.",
     },
     {
       heading: "The Fitaz Gym session delivery culture",
@@ -87,6 +97,10 @@ export const part10: OnboardingPart = {
           multiline: true,
         },
       ],
+      workedExample:
+        "Taylor between sets: the next station is set up before the client's last rep, there's a quick word with a member walking past to the water fountain, and the client is never left standing idle. The session feels run, not winged, and the member three metres away notices.",
+      managerNote:
+        "This is the hardest thing to teach and the easiest to spot when it's missing. Watch new PTs on the floor in their first few weeks for the tells: phone use between sets, dead transitions, training in a bubble and ignoring the rest of the room. Coach it early and specifically, because it sets in fast.",
     },
     {
       heading: "Review and ongoing development",
@@ -105,7 +119,7 @@ export const part10: OnboardingPart = {
         { key: "coach-in-a-year", prompt: "What kind of coach do you want to be a year from now?", multiline: true },
       ],
       managerNote:
-        "These seven-plus focus areas and the wrap-up questions tie back to the expectations set in Part 1. This is the natural moment to do a genuine take-stock 1:1 — celebrate the ground covered, name the real gaps honestly, and agree the next development goal before onboarding formally ends.",
+        "Sit down with each PT at the end of the 12 weeks and run through these questions together — it's your best read on where they're at and what they need next. Open and close on what they've done well. They'll remember that the onboarding ended on a vote of confidence, and it carries them into the next stretch.",
     },
   ],
 };

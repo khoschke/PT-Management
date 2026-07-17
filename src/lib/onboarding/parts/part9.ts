@@ -21,6 +21,10 @@ export const part9: OnboardingPart = {
         },
         { key: "short-and-long-term-goal", prompt: "Write one short-term goal (next 12 months) and one long-term goal (2-5 years) for your business.", multiline: true },
       ],
+      workedExample:
+        "Taylor's six-month goal: “Build to 22 active clients on recurring coaching by the end of the half, holding two evening blocks a week for my shift workers, and keeping monthly churn under one client.” Specific, measurable, and pointed at the income she actually wants.",
+      managerNote:
+        "Push for measurable and tied to recurring revenue or active clients, not vanity metrics like follower count. A goal you can't put a number against is a wish. Make sure their deadlines are real.",
     },
     {
       heading: "The four types of work",
@@ -34,6 +38,8 @@ export const part9: OnboardingPart = {
       activities: [
         { key: "power-hours", prompt: "Work out your power hours. Are you a morning or evening person? Time-block or set-outcome worker? When are you sharpest?", multiline: true },
       ],
+      managerNote:
+        "The bucket new PTs neglect is ‘on the business’. They get busy training and the marketing stops, then in two months the pipeline is dry. Get them to protect a weekly block for it from day one.",
     },
     {
       heading: "Scheduling and time management",
@@ -48,6 +54,8 @@ export const part9: OnboardingPart = {
           multiline: true,
         },
       ],
+      managerNote:
+        "The mistake is letting the diary fill reactively, booking clients into whatever slot they ask for until the week is a patchwork. Coach them to set the blocks first, then offer clients the slots that exist.",
     },
     {
       heading: "Protecting your energy",
@@ -60,7 +68,7 @@ export const part9: OnboardingPart = {
         { key: "energy-nonnegotiables", prompt: "What are your non-negotiables for protecting your energy? Think boundaries around hours, recovery, and time off.", multiline: true },
       ],
       managerNote:
-        "If a trainer flags more than two or three burnout signs here, that's worth a direct, unhurried conversation in their next one-hour session rather than waiting for it to show up as a retention or no-show problem later.",
+        "Watch your PTs for the burnout signs above, especially in weeks 6 to 10 when the novelty wears off. Normalise imposter syndrome early so they don't read it as a sign they've chosen the wrong job. Remind them you're available any time, not just at shadowing.",
     },
     {
       heading: "Outsourcing: when and what",
@@ -71,6 +79,10 @@ export const part9: OnboardingPart = {
       activities: [
         { key: "outsource-candidate", prompt: "What's one task you could hand off in the next three months, and who could do it?", multiline: true },
       ],
+      workedExample:
+        "Taylor outsources bookkeeping first. An hour of her coaching is worth far more than the bookkeeper's hourly fee, and tax time stops being a fortnight of dread. Social scheduling is next on her list once cash flow is steady.",
+      managerNote:
+        "PTs hold onto admin and bookkeeping far too long because handing it over feels like an expense, not an investment. Frame it against their effective hourly rate: an hour they claw back is an hour they can coach or rest.",
     },
     {
       heading: "Tracking your business health",
@@ -90,6 +102,8 @@ export const part9: OnboardingPart = {
           url: "https://docs.google.com/spreadsheets/d/1GmGjfPHrNKMN5W2rHipGdZ4H0pIzrZjBW8jVdpgrv08/edit",
         },
       ],
+      managerNote:
+        "Most new PTs obsess over the top of the funnel (chase more leads) when their real leak is the sales chat — use the weekly numbers to show them where they're actually losing people. The sessions-per-client number is the early-warning metric: a client quietly dropping from twice a week to once a fortnight rarely announces they're leaving, the frequency just fades. On churn, make sure they capture the why behind every cancellation, not just the number — a pattern of ‘too expensive’ is a value-framing problem, ‘got bored’ is a programming or community problem. Read churn alongside referrals before they conclude it's a marketing issue.",
     },
     {
       heading: "Reassessing your business model",
@@ -99,6 +113,10 @@ export const part9: OnboardingPart = {
       activities: [
         { key: "reassess-signal-and-lever", prompt: "What will be your signal that it's time to reassess, and which lever would you pull first?", multiline: true },
       ],
+      workedExample:
+        "Taylor hits fully booked with a waitlist forming. Rather than cram in more hours, she lifts her rate, emails existing clients four weeks out with a warm, clear note, and starts new clients at the higher price. She loses one client, nets more income, and gets her evenings back.",
+      managerNote:
+        "The most common issue by a mile is undercharging, not overwork. PTs are terrified a rate rise will empty their book. Reassure them: in a subscription model continuation is the default, so a well-communicated rise loses very few clients and the ones who stay are worth more. Coach them through the email rather than letting them avoid it.",
     },
     {
       heading: "Your Fitaz Gym commercial terms, at a glance",

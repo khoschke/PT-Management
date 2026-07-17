@@ -56,8 +56,10 @@ export const part2: OnboardingPart = {
           multiline: true,
         },
       ],
+      workedExample:
+        "Sample answers from a PT named Taylor, ex-paramedic, now training shift workers:\n\n1. Got into training after years of helping other people in crisis with nothing left for myself. Realised fitness was the one thing that consistently brought me back.\n\n2. Burnout from emergency medicine. Watching colleagues fall apart. Wanting a job where the goal was building people up before they break, not patching them after.\n\n3. Shift workers, frontline staff, mid-career professionals who've put their own health last for a decade.\n\n4. People ask me how I stay calm under pressure, how I built my training back after burnout, and how to talk to a partner who refuses to look after themselves.\n\n5. The session where a client cried after their first proper deadlift PB. They'd been told their back was “broken” for ten years.\n\n6. People who've written themselves off thinking it's too late or too risky. I want to give them their bodies back.\n\nTaylor's drafted why statement: “To help shift workers and burnt-out professionals rebuild the energy and strength they need to live the rest of their lives well.”",
       managerNote:
-        "Some PTs land on their why straight away; others uncover it slowly through experience and a few setbacks. Don't push for polish here — a rough, honest answer beats a slick one. Revisit this with them in 6-12 months, it usually sharpens.",
+        "The story reflection questions are the engine of this section. Most PTs find one or two easy and one or two confronting — the confronting ones are the gold. Question 4 (what people come to you for) is the one PTs most often shrug at; push them on it, the answer usually reveals a natural strength they undervalue. If the why statement reads like a marketing slogan or a generic “empower people to be their best version,” send them back to their story answers. The strongest whys are specific, personal, and slightly uncomfortable to say out loud.",
     },
     {
       heading: "Discovering your Ikigai",
@@ -76,6 +78,10 @@ export const part2: OnboardingPart = {
           multiline: true,
         },
       ],
+      workedExample:
+        "Taylor's Ikigai:\n\nLove: coaching people through long rebuild phases. Programming. The quiet 1:1 work, not big group classes.\n\nGood at: building rapport with high-stress, time-poor clients. Pacing programs. Reading when someone's burning out before they say so.\n\nWorld needs: better support for shift workers and frontline staff. Most gym programming assumes office hours.\n\nPaid for: 1:1 PT, small group sessions for shift workers (5am, 8pm), online programming for night-shift clients.\n\nOverlap: “Coaching shift workers and high-stress professionals to rebuild strength and energy through programs that actually fit their life.”",
+      managerNote:
+        "Most PTs find “what you love” and “what you're good at” easy. “What the world needs” and “what you can be paid for” are where they get stuck. If a PT is vague on “what the world needs,” point them at the gym floor: who's struggling, who's not being served well by the current PT offering in Brisbane? That's the real-world version of the question.",
     },
     {
       heading: "Identifying your values",
@@ -105,6 +111,10 @@ export const part2: OnboardingPart = {
           multiline: true,
         },
       ],
+      workedExample:
+        "Taylor's top 5 values: Integrity, Service, Resilience, Mastery, Connection.\n\nCurrently shows up: Connection (1:1 rapport with shift workers, follow-up texts). Mastery (continual programming education). Integrity (referring out when a client needs a physio).\n\nGap: Resilience is a stated value but not yet visible in marketing or service design — no content, no programs aimed at burnt-out clients rebuilding.\n\nAction this week: focus on Resilience. Write one post telling the story of a client who rebuilt their training after a setback. Pin it to my social profile.",
+      managerNote:
+        "This is the section where a PT often spots the gap between their stated values and what they're actually doing on the floor. That gap is the most useful thing to discuss in a 1:1 — the PT who says they value “connection” but never remembers a member's name has work to do. Surface it gently and concretely.",
     },
     {
       heading: "Drafting your purpose and mission",
@@ -125,6 +135,10 @@ export const part2: OnboardingPart = {
           multiline: true,
         },
       ],
+      workedExample:
+        "Taylor's three statements:\n\nPurpose: “I want to help shift workers and frontline staff get their health back, so the rest of their lives don't suffer for the work they do.”\n\nPersonal mission: “I show up calm, prepared, and willing to meet clients exactly where they are, especially when they're running on empty.”\n\nBusiness mission: “I deliver evidence-based, time-realistic 1:1 and small-group training for shift workers in Brisbane, with programming and check-ins that fit non-standard hours.”\n\nWhat makes Taylor different: ex-paramedic credibility, fluency with shift-work physiology, calm under pressure, evening and early-morning availability, willingness to coach the head as much as the body.",
+      managerNote:
+        "PTs reliably confuse these three. Keep them separate: Purpose = why you do the work. Personal mission = how you show up while doing it. Business mission = what you deliver to the client. If a PT writes three statements that all sound interchangeable, send them back with that framing.",
     },
     {
       heading: "Mapping yourself against Fitaz Gym",
@@ -151,7 +165,7 @@ export const part2: OnboardingPart = {
         },
       ],
       managerNote:
-        "Ask them to bring this page to session one rather than re-deriving it live with you. Where they've named a genuine divergence from the gym's values, treat it as useful signal, not a red flag to correct.",
+        "Divergence is not a red flag. A PT who values quiet 1:1 work and brings a calmer energy adds something the gym needs. The only time divergence becomes a problem is when it sits in opposition to Community, Integrity, or Growth themselves — a PT who genuinely doesn't care about community contribution will struggle here, and it's worth raising directly.",
     },
     {
       heading: "Applying your why",
@@ -175,6 +189,8 @@ export const part2: OnboardingPart = {
           multiline: true,
         },
       ],
+      managerNote:
+        "Part 2 is the most introspective section in the workbook — don't rush a PT through it, and use one of the four 1:1 hours to walk their answers together. This closing section is the turning point, where reflection becomes operating principle. In quarterly 1:1s, refer back to a PT's answers here whenever they're facing a hard call (a client they should let go, a pricing change they're avoiding, a 6am they keep saying yes to). The answers they wrote in week one are usually the right call.",
     },
   ],
 };

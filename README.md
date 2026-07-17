@@ -158,20 +158,18 @@ than a staff operations tool.
   `onboarding_responses` and are visible only to that trainer and to
   managers, enforced by row level security exactly like `leads`.
 - **Managers** see the same 10 parts and can flip to **Manager view** (the
-  toggle in the header) to reveal coaching notes alongside the trainer's
-  material, so the two can never say different things, only show or hide
-  the manager's lens. A trainer can flip to Manager view too, nothing in it
-  is sensitive.
+  toggle in the header) to reveal, alongside the trainer's material, two
+  kinds of coaching content drawn from the PT Manager Cheat Sheet: yellow
+  **Manager notes** (how to use each section in a 1:1) and green **Worked
+  examples** (model answers in the voice of the example trainer, Taylor).
+  The trainer material is identical in both views, so the two documents can
+  never say different things — the manager lens only adds, never rewrites. A
+  trainer can flip to Manager view too; nothing in it is sensitive.
 - Content lives in code, not the database: `src/lib/onboarding/parts/*.ts`,
-  one file per part. Editing the workbook means editing those files, not a
-  CMS.
-- **Known gap:** Part 10 ("Growing as a Coach") and the PT Manager Cheat
-  Sheet (the coaching-notes companion document referenced in the Directors
-  Overview memo) aren't in this build yet — the Part 10 text was truncated
-  during PDF extraction from Google Drive, and the Cheat Sheet doesn't exist
-  as a written document yet, only as a description of an intended one. Both
-  are placeholders in `src/lib/onboarding/parts/part10.ts` and the
-  `managerNote` fields until the real source material is available.
+  one file per part, each section carrying its own `managerNote` and
+  `workedExample`. Editing the workbook means editing those files, not a
+  CMS. All 10 parts are populated from the full workbook and the full PT
+  Manager Cheat Sheet (~90 manager notes and ~45 worked examples).
 
 ## Privacy
 

@@ -15,7 +15,7 @@ export const part1: OnboardingPart = {
         "Across the 12 weeks you've got four one-hour sessions with the PT Manager. Book them when you need them: working through an activity together, feedback on a consult, troubleshooting a client situation, or planning the next phase of your business. You're self-employed, so you set the agenda.",
       ],
       managerNote:
-        "Four one-hour sessions across 12 weeks are the trainer's to book, not yours to schedule for them. If a new PT hasn't booked their first session by the end of Part 1, that's worth a nudge — it's usually a sign they don't yet know it's genuinely their call to make.",
+        "Walk the PT through this section in person on day one — it's the only section you typically read together. Use it to gauge their excitement and surface first-week nerves. Re-emphasise that the four one-hour sessions are bookable on the PT's timing, not a fixed cadence. Push them to book the first within their first week; if they haven't booked by day 10, reach out yourself.",
     },
     {
       heading: "Who's who",
@@ -28,6 +28,8 @@ export const part1: OnboardingPart = {
           placeholder: "Done — or note who you still need details for",
         },
       ],
+      managerNote:
+        "Walk the PT around the gym in week one and introduce them to each person on the list. Don't rely on the workbook to do it for you — faces beat names on a page every time.",
     },
     {
       heading: "Introduction to Fitaz Gym",
@@ -60,8 +62,10 @@ export const part1: OnboardingPart = {
           multiline: true,
         },
       ],
+      workedExample:
+        "As a coach, my job is to design and deliver sessions that move clients toward their goals safely, while building the kind of trust that keeps them coming back.\n\nAs an operator, my job is to run a business that pays me well, doesn't burn me out, and gives me room to keep growing.\n\nAs a community contributor, my job is to leave the gym better than I found it. Know the members, back the team, add to the culture.",
       managerNote:
-        "This is a good icebreaker for the first one-hour session — ask them to read their three sentences back to you and probe the operator one specifically. Most new PTs undersell it because they came in for the coaching, not the business.",
+        "Use these answers in your first 1:1. If they only fill in the coach hat, or skip the community contributor one, that's a flag worth a conversation. Revisit at the end of the 12 weeks to see how their definitions have evolved.",
     },
     {
       heading: "Expectations over the next 12 weeks",
@@ -74,6 +78,8 @@ export const part1: OnboardingPart = {
         "6. **Revenue and business development** — know your numbers: sessions needed each week, your pricing, and how you articulate the value of what you do.",
         "7. **Self-reflection and growth** — block time weekly to review what's working. Ask for feedback. Set development goals and track them.",
       ],
+      managerNote:
+        "These seven expectations get revisited in the Part 10 wrap-up. Refer back to them in 1:1s if a PT seems off track on one — they're also handy as a self-rating exercise midway through the 12 weeks.",
     },
     {
       heading: "How you'll be assessed",
@@ -89,6 +95,8 @@ export const part1: OnboardingPart = {
           placeholder: "Date and time booked, or note if still pending",
         },
       ],
+      managerNote:
+        "Confirm the booking happens within the first 7 days. If it hasn't by day 10, send a quick check-in — don't wait for them to come to you in week one. Some PTs read “self-driven” as “hands-off”.",
     },
     {
       heading: "General gym cleanliness",
@@ -128,7 +136,7 @@ export const part1: OnboardingPart = {
         "This is the short version. Read the full Safety and Emergency Protocols document, and sign the acknowledgement, before your first session. If you spot a gap in it, tell management.",
       ],
       managerNote:
-        "Confirm the signed Safety and Emergency Protocols acknowledgement is on file before this trainer's first floor session — don't rely on them self-reporting it in the activity below.",
+        "Don't leave this as a paper exercise. Walk the PT physically through every emergency location in week one: defib, first aid kits, fire exits, assembly point. The workbook entry is reference only. And confirm the signed Safety and Emergency Protocols acknowledgement is on file before their first floor session.",
     },
     {
       heading: "Reporting an incident — the form",
@@ -159,6 +167,8 @@ export const part1: OnboardingPart = {
           multiline: true,
         },
       ],
+      managerNote:
+        "Ask about this in your next 1:1. Was it natural? Did they look up names? Did members notice? It's a small reps exercise that builds the floor presence we want every Fitaz Gym PT to have.",
     },
   ],
 };
