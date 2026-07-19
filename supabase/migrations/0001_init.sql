@@ -70,7 +70,12 @@ create table leads (
 
   -- timing
   created_at timestamptz not null default now(),
-  first_contact_due_at timestamptz generated always as (created_at + interval '48 hours') stored,
+  -- 48 hours after creation. Set via a default rather than a generated column:
+  -- adding an interval to a timestamptz isn't immutable (it can depend on the
+  -- session time zone), which Postgres won't allow in a generated column.
+  -- now() is fixed for the whole insert transaction, so this lands exactly
+  -- 48 hours after created_at.
+  first_contact_due_at timestamptz not null default (now() + interval '48 hours'),
   first_contacted_at timestamptz,
 
   -- housekeeping
