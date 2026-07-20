@@ -5,11 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { sendTrainerAllocationEmail } from "@/lib/email";
 import { sweepLeadSchema } from "@/lib/validation";
 import type { LeadStatus } from "@/lib/types";
-
-export interface ActionResult {
-  ok: boolean;
-  message?: string;
-}
+import type { ActionResult, AddSweepLeadState } from "./state";
 
 export async function allocateLead(leadId: string, trainerId: string): Promise<ActionResult> {
   const supabase = await createClient();
@@ -88,14 +84,6 @@ export async function hardDeleteLead(leadId: string): Promise<ActionResult> {
   revalidatePath("/admin");
   return { ok: true };
 }
-
-export interface AddSweepLeadState {
-  status: "idle" | "success" | "error";
-  message?: string;
-  fieldErrors?: Record<string, string>;
-}
-
-export const initialAddSweepLeadState: AddSweepLeadState = { status: "idle" };
 
 export async function addSweepLead(
   _prevState: AddSweepLeadState,

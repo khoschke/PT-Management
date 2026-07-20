@@ -3,7 +3,8 @@
 import { useActionState, useState, useTransition } from "react";
 import { useFormStatus } from "react-dom";
 import type { Trainer } from "@/lib/types";
-import { addTrainer, updateTrainer, setTrainerActive, initialTrainerFormState } from "../actions";
+import { addTrainer, updateTrainer, setTrainerActive } from "../actions";
+import { initialTrainerFormState } from "../state";
 import TrainerFields from "./TrainerFields";
 
 function SaveButton({ label }: { label: string }) {

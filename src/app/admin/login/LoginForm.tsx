@@ -2,7 +2,8 @@
 
 import { useActionState } from "react";
 import { useSearchParams } from "next/navigation";
-import { login, initialLoginState } from "./actions";
+import { login } from "./actions";
+import { initialLoginState } from "./state";
 
 const inputClass =
   "mt-2 w-full rounded-xl border-none bg-fill px-4 py-3.5 text-[17px] text-foreground outline-none ring-1 ring-transparent transition focus:ring-2 focus:ring-foreground";

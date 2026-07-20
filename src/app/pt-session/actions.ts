@@ -4,14 +4,7 @@ import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { leadFormSchema } from "@/lib/validation";
 import { hashIp } from "@/lib/ip";
-
-export interface LeadFormState {
-  status: "idle" | "success" | "error";
-  message?: string;
-  fieldErrors?: Record<string, string>;
-}
-
-export const initialLeadFormState: LeadFormState = { status: "idle" };
+import type { LeadFormState } from "./state";
 
 export async function submitLead(
   _prevState: LeadFormState,

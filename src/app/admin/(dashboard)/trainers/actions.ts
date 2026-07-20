@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { GOAL_OPTIONS } from "@/lib/goals";
+import type { TrainerFormState } from "./state";
 
 const GOAL_CODES = GOAL_OPTIONS.map((g) => g.code) as [string, ...string[]];
 
@@ -14,14 +15,6 @@ const trainerSchema = z.object({
   availability: z.enum(["AM", "PM", "both"]),
   specialties: z.array(z.enum(GOAL_CODES)).optional().default([]),
 });
-
-export interface TrainerFormState {
-  status: "idle" | "success" | "error";
-  message?: string;
-  fieldErrors?: Record<string, string>;
-}
-
-export const initialTrainerFormState: TrainerFormState = { status: "idle" };
 
 function parseTrainerForm(formData: FormData) {
   return trainerSchema.safeParse({

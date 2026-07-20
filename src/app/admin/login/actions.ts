@@ -2,13 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-
-export interface LoginState {
-  status: "idle" | "error";
-  message?: string;
-}
-
-export const initialLoginState: LoginState = { status: "idle" };
+import type { LoginState } from "./state";
 
 export async function login(_prevState: LoginState, formData: FormData): Promise<LoginState> {
   const email = formData.get("email")?.toString().trim() ?? "";

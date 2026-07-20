@@ -3,7 +3,8 @@
 import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { GOAL_OPTIONS } from "@/lib/goals";
-import { submitLead, initialLeadFormState } from "../actions";
+import { submitLead } from "../actions";
+import { initialLeadFormState } from "../state";
 
 interface Trainer {
   id: string;

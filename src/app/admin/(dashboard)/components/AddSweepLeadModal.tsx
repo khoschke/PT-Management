@@ -4,7 +4,8 @@ import { useActionState, useEffect } from "react";
 import { useFormStatus } from "react-dom";
 import { GOAL_OPTIONS } from "@/lib/goals";
 import type { Trainer } from "@/lib/types";
-import { addSweepLead, initialAddSweepLeadState } from "../actions";
+import { addSweepLead } from "../actions";
+import { initialAddSweepLeadState } from "../state";
 
 const inputClass =
   "mt-1.5 w-full rounded-xl border-none bg-fill px-3.5 py-2.5 text-sm text-foreground outline-none ring-1 ring-transparent transition focus:ring-2 focus:ring-foreground";
