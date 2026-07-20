@@ -2,6 +2,11 @@ import { Suspense } from "react";
 import Image from "next/image";
 import LoginForm from "./LoginForm";
 
+// Rendered per request rather than prerendered as a static page. The sign-in
+// form reads the ?redirectTo query param, and forcing dynamic rendering
+// avoids a static-generation edge case on the hosting platform.
+export const dynamic = "force-dynamic";
+
 export default function LoginPage() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-background px-5">
