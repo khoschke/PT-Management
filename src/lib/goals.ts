@@ -1,26 +1,30 @@
-// Goal options shared between the public form (field 5) and trainer
-// specialties, so the two can be matched for allocation.
+// Goal / specialty options shared between the public form (field 5, "what
+// results do you want to achieve?") and trainer specialties, so the two can be
+// matched for allocation. These mirror the Kinetic Hustl waiver form so a
+// client sees the same wording on both touchpoints.
 
 export type GoalCode =
-  | "lose_fat"
-  | "build_muscle"
-  | "get_stronger"
-  | "general_fitness"
-  | "consistent_routine"
-  | "reduce_stress"
-  | "sport_event"
-  | "move_better"
+  | "reduce_body_fat"
+  | "weight_loss"
+  | "increase_muscle_mass"
+  | "improve_muscle_tone"
+  | "reshape"
+  | "cardio_endurance"
+  | "sports_conditioning"
+  | "stress_management"
+  | "rehabilitation"
   | "other";
 
 export const GOAL_OPTIONS: { code: GoalCode; label: string }[] = [
-  { code: "lose_fat", label: "Lose body fat" },
-  { code: "build_muscle", label: "Build muscle or tone up" },
-  { code: "get_stronger", label: "Get stronger" },
-  { code: "general_fitness", label: "Improve general fitness and energy" },
-  { code: "consistent_routine", label: "Build a consistent routine" },
-  { code: "reduce_stress", label: "Reduce stress and feel better mentally" },
-  { code: "sport_event", label: "Train for a sport or event" },
-  { code: "move_better", label: "Move better or reduce pain" },
+  { code: "reduce_body_fat", label: "Reduce body fat" },
+  { code: "weight_loss", label: "Weight loss" },
+  { code: "increase_muscle_mass", label: "Increase muscle mass" },
+  { code: "improve_muscle_tone", label: "Improve muscle tone" },
+  { code: "reshape", label: "Reshape" },
+  { code: "cardio_endurance", label: "Improve cardiovascular endurance" },
+  { code: "sports_conditioning", label: "Sports conditioning" },
+  { code: "stress_management", label: "Stress management" },
+  { code: "rehabilitation", label: "Rehabilitation" },
   { code: "other", label: "Other" },
 ];
 
