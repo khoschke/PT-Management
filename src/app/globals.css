@@ -88,3 +88,64 @@ body {
     transform: scale(1);
   }
 }
+
+/*
+ * The PT onboarding dashboard is a deliberately different visual layer from
+ * the rest of this app: a personal, self-paced companion rather than a
+ * staff operations tool, styled closer to Apple's own product language
+ * (system font stack, soft depth, light + dark mode). Scoped to
+ * .onboarding-scope so none of it leaks into /admin or /pt-session.
+ */
+.onboarding-scope {
+  --ob-bg: #f5f5f7;
+  --ob-surface: #ffffff;
+  --ob-surface-raised: #ffffff;
+  --ob-border: rgba(0, 0, 0, 0.08);
+  --ob-text: #1d1d1f;
+  --ob-text-secondary: #6e6e73;
+  --ob-accent: #0071e3;
+  --ob-accent-soft: rgba(0, 113, 227, 0.1);
+  --ob-success: #1d8a4c;
+  --ob-success-soft: rgba(29, 138, 76, 0.12);
+  --ob-amber: #b7791f;
+  --ob-amber-soft: rgba(183, 121, 31, 0.12);
+  --ob-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 30px rgba(0, 0, 0, 0.06);
+  --ob-header-bg: rgba(245, 245, 247, 0.72);
+
+  background: var(--ob-bg);
+  color: var(--ob-text);
+  font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif;
+  min-height: 100vh;
+}
+
+@media (prefers-color-scheme: dark) {
+  .onboarding-scope {
+    --ob-bg: #000000;
+    --ob-surface: #1c1c1e;
+    --ob-surface-raised: #2c2c2e;
+    --ob-border: rgba(255, 255, 255, 0.1);
+    --ob-text: #f5f5f7;
+    --ob-text-secondary: #98989d;
+    --ob-accent: #2997ff;
+    --ob-accent-soft: rgba(41, 151, 255, 0.16);
+    --ob-success: #32d74b;
+    --ob-success-soft: rgba(50, 215, 75, 0.14);
+    --ob-amber: #ffd60a;
+    --ob-amber-soft: rgba(255, 214, 10, 0.14);
+    --ob-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 30px rgba(0, 0, 0, 0.45);
+    --ob-header-bg: rgba(0, 0, 0, 0.6);
+  }
+}
+
+.onboarding-scope ::selection {
+  background: var(--ob-accent-soft);
+}
+
+.onboarding-scope .no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.onboarding-scope .no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
