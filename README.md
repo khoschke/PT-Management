@@ -40,9 +40,11 @@ database size, point in time recovery) at that point, not before.
 ### 1. Create the Supabase project
 
 1. Create a new project at [supabase.com](https://supabase.com).
-2. In the SQL editor, run `supabase/migrations/0001_init.sql`, then
-   `supabase/migrations/0002_onboarding.sql`, then `supabase/seed.sql` to add
-   five placeholder trainers.
+2. In the SQL editor, run the migrations in order:
+   `supabase/migrations/0001_init.sql`, then
+   `supabase/migrations/0002_onboarding.sql`, then
+   `supabase/migrations/0003_trainer_bio.sql`. Optionally run
+   `supabase/seed.sql` to add five placeholder trainers.
 3. Under Project Settings > API, copy the project URL, the `anon` public
    key and the `service_role` key.
 
