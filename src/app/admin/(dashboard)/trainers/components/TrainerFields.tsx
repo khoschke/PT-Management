@@ -66,6 +66,21 @@ export default function TrainerFields({
           ))}
         </div>
       </div>
+
+      <div className="mt-3">
+        <label className="text-sm font-semibold text-foreground">More about this trainer</label>
+        <p className="mt-0.5 text-xs text-secondary-label">
+          Free text for anything the tags above don&rsquo;t cover, e.g. boxing, kettlebells, pre/post-natal, rehab,
+          certifications, coaching style.
+        </p>
+        <textarea
+          name="bio"
+          rows={3}
+          defaultValue={defaults?.bio ?? ""}
+          maxLength={1000}
+          className={`${inputClass} resize-y`}
+        />
+      </div>
     </>
   );
 }

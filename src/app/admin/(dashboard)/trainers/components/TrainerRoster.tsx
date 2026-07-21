@@ -50,6 +50,9 @@ function TrainerRow({ trainer }: { trainer: Trainer }) {
           <p className="mt-0.5 text-sm text-secondary-label">
             {trainer.email ?? "No email on file"} &middot; {trainer.gender} &middot; {trainer.availability}
           </p>
+          {trainer.bio && (
+            <p className="mt-1.5 max-w-md text-sm text-foreground">{trainer.bio}</p>
+          )}
         </div>
         <div className="flex gap-2">
           <button

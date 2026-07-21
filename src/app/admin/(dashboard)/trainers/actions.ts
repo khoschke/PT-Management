@@ -14,6 +14,7 @@ const trainerSchema = z.object({
   gender: z.enum(["male", "female"]),
   availability: z.enum(["AM", "PM", "both"]),
   specialties: z.array(z.enum(GOAL_CODES)).optional().default([]),
+  bio: z.string().trim().max(1000).optional().or(z.literal("")),
 });
 
 function parseTrainerForm(formData: FormData) {
@@ -23,6 +24,7 @@ function parseTrainerForm(formData: FormData) {
     gender: formData.get("gender")?.toString(),
     availability: formData.get("availability")?.toString(),
     specialties: formData.getAll("specialties").map((s) => s.toString()),
+    bio: formData.get("bio")?.toString() ?? "",
   });
 }
 
@@ -47,6 +49,7 @@ export async function addTrainer(
     gender: parsed.data.gender,
     availability: parsed.data.availability,
     specialties: parsed.data.specialties,
+    bio: parsed.data.bio || null,
     active: true,
   });
 
@@ -83,6 +86,7 @@ export async function updateTrainer(
       gender: parsed.data.gender,
       availability: parsed.data.availability,
       specialties: parsed.data.specialties,
+      bio: parsed.data.bio || null,
     })
     .eq("id", trainerId);
 

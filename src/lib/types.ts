@@ -23,6 +23,7 @@ export interface Trainer {
   email: string | null;
   gender: TrainerGender;
   specialties: GoalCode[];
+  bio: string | null;
   availability: TrainerAvailability;
   active: boolean;
   created_at: string;
