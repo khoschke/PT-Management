@@ -7,6 +7,7 @@ export type GoalCode =
   | "reduce_body_fat"
   | "weight_loss"
   | "increase_muscle_mass"
+  | "increase_strength"
   | "improve_muscle_tone"
   | "reshape"
   | "cardio_endurance"
@@ -19,6 +20,7 @@ export const GOAL_OPTIONS: { code: GoalCode; label: string }[] = [
   { code: "reduce_body_fat", label: "Reduce body fat" },
   { code: "weight_loss", label: "Weight loss" },
   { code: "increase_muscle_mass", label: "Increase muscle mass" },
+  { code: "increase_strength", label: "Increase strength" },
   { code: "improve_muscle_tone", label: "Improve muscle tone" },
   { code: "reshape", label: "Reshape" },
   { code: "cardio_endurance", label: "Improve cardiovascular endurance" },

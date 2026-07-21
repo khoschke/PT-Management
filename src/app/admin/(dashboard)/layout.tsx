@@ -50,6 +50,14 @@ export default async function DashboardLayout({ children }: { children: React.Re
                   Trainers
                 </Link>
               )}
+              {isManager && (
+                <Link
+                  href="/admin/staff"
+                  className="rounded-full px-3 py-1.5 transition hover:bg-fill hover:text-foreground"
+                >
+                  Staff
+                </Link>
+              )}
               <Link
                 href="/onboarding"
                 className="rounded-full px-3 py-1.5 transition hover:bg-fill hover:text-foreground"
