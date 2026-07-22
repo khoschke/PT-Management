@@ -105,6 +105,7 @@ export default function LeadBoard({
           <option value="">All sources</option>
           <option value="form">Form (warm)</option>
           <option value="gymmaster_sweep">Sweep (cold)</option>
+          <option value="gymmaster_api">GymMaster (cold)</option>
         </select>
 
         {isManager && (

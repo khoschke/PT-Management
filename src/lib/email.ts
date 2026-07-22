@@ -24,7 +24,7 @@ export async function sendTrainerAllocationEmail(trainer: Trainer, lead: Lead) {
   const sourceText =
     lead.lead_source === "form"
       ? "Filled in the form themselves, so this is a warm lead."
-      : "Found on the GymMaster sweep, so this is a cold lead. They haven't opted in yet, go in accordingly.";
+      : "From GymMaster, so this is a cold lead. They haven't opted in yet, go in accordingly.";
 
   await client.emails.send({
     from: FROM_ADDRESS,

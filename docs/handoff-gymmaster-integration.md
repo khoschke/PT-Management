@@ -55,3 +55,32 @@ Do not hardcode any of these — the API key is an env var
 A new sign-up in GymMaster shows up as a lead on the board automatically within
 the sync interval, with no duplicates, correctly tagged as a GymMaster import,
 and the manual entry path still works.
+
+## Phase 1 build status (scaffolding in, API shape pending)
+
+Everything that doesn't depend on GymMaster's exact API is built and passing
+build/tsc/lint on branch `claude/gymmaster-phase-1-pull-7yuxuy`:
+
+- **Migrations** `0004_gymmaster_lead_source.sql` (adds the `gymmaster_api`
+  `lead_source` value — isolated because a new enum value can't be used in the
+  same transaction that adds it) and `0005_gymmaster_sync.sql` (unique
+  `leads.gymmaster_member_id` for dedupe, widened cold-lead goals check,
+  `gymmaster_sync_log` table). **Not yet applied to the live Supabase project.**
+- **Cron** `/api/cron/gymmaster-sync` (in `vercel.json`, daily `0 20 * * *`,
+  an hour before the digest). CRON_SECRET-guarded, a clean no-op until the API
+  is configured. Pulls members since the last successful `watermark`, dedupes
+  on `gymmaster_member_id`, inserts cold `gymmaster_api` leads, logs every run.
+  Note: Vercel **Hobby caps crons at once/day** — more frequent needs Pro.
+- **Client seam** `src/lib/gymmaster/client.ts` + `mapMember.ts` — all wire
+  format and field mapping live here. The board, badge, CSV, board filter and
+  allocation email already understand the new source.
+- **Env** `GYMMASTER_API_BASE_URL`, `GYMMASTER_API_KEY`, optional
+  `GYMMASTER_BOOTSTRAP_DAYS` (see `.env.local.example`).
+
+**Remaining when the owners send the API docs** — all confined to the client
+seam, marked `TODO(gymmaster-docs)`: confirm the base URL / endpoint path, auth
+placement (header vs query/body), the "created since" filter param, the
+pagination shape, and the real member field names (the mapper currently reads
+across likely spellings defensively). Then apply the two migrations to Supabase,
+set the env vars in Vercel, and verify a live run writes a `gymmaster_sync_log`
+success row and a deduped lead on the board.

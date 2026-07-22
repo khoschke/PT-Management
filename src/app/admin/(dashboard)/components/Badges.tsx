@@ -1,15 +1,33 @@
 import type { LeadSource, LeadStatus } from "@/lib/types";
 
+const SOURCE_META: Record<LeadSource, { label: string; title: string; warm: boolean }> = {
+  form: {
+    label: "Form (warm)",
+    title: "Warm lead: filled in the form themselves",
+    warm: true,
+  },
+  gymmaster_sweep: {
+    label: "Sweep (cold)",
+    title: "Cold lead: entered by hand from the GymMaster sweep",
+    warm: false,
+  },
+  gymmaster_api: {
+    label: "GymMaster (cold)",
+    title: "Cold lead: imported automatically from GymMaster",
+    warm: false,
+  },
+};
+
 export function SourceBadge({ source }: { source: LeadSource }) {
-  const isForm = source === "form";
+  const meta = SOURCE_META[source];
   return (
     <span
       className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${
-        isForm ? "bg-foreground text-white" : "bg-fill text-foreground"
+        meta.warm ? "bg-foreground text-white" : "bg-fill text-foreground"
       }`}
-      title={isForm ? "Warm lead: filled in the form themselves" : "Cold lead: found on the GymMaster sweep"}
+      title={meta.title}
     >
-      {isForm ? "Form (warm)" : "Sweep (cold)"}
+      {meta.label}
     </span>
   );
 }

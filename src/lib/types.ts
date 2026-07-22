@@ -4,7 +4,7 @@ import type { GoalCode } from "./goals";
 
 export type TrainerGender = "male" | "female";
 export type TrainerAvailability = "AM" | "PM" | "both";
-export type LeadSource = "form" | "gymmaster_sweep";
+export type LeadSource = "form" | "gymmaster_sweep" | "gymmaster_api";
 export type LeadStatus =
   | "New"
   | "Allocated"
@@ -43,6 +43,7 @@ export interface Lead {
   preferred_trainer_id: string | null;
   contact_preference: string | null;
   lead_source: LeadSource;
+  gymmaster_member_id: string | null;
   allocated_trainer_id: string | null;
   status: LeadStatus;
   notes: string | null;
@@ -70,6 +71,12 @@ export interface Profile {
   full_name: string | null;
   created_at: string;
 }
+
+export const LEAD_SOURCE_LABELS: Record<LeadSource, string> = {
+  form: "Form",
+  gymmaster_sweep: "GymMaster sweep",
+  gymmaster_api: "GymMaster (auto)",
+};
 
 export const LEAD_STATUSES: LeadStatus[] = [
   "New",
