@@ -44,11 +44,26 @@ export default async function PtSessionPage() {
 
         <PTSessionForm trainers={trainers ?? []} />
 
-        <footer className="mt-8 rounded-2xl bg-white/60 px-5 py-4 text-xs leading-relaxed text-secondary-label">
-          Fitaz Gym collects these details to match you with a trainer and arrange
-          your complimentary session. Only gym staff and the trainer you&rsquo;re
-          matched with can see them. We don&rsquo;t share your details with anyone
-          outside the gym, and you can ask us to remove them at any time.
+        <footer className="mx-auto mt-12 flex max-w-lg items-start gap-2.5 px-1 text-xs leading-relaxed text-secondary-label">
+          <svg
+            viewBox="0 0 24 24"
+            className="mt-0.5 h-4 w-4 shrink-0"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={1.6}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden
+          >
+            <rect x="5" y="11" width="14" height="9" rx="2" />
+            <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+          </svg>
+          <span>
+            Fitaz Gym collects these details to match you with a trainer and arrange
+            your complimentary session. Only gym staff and the trainer you&rsquo;re
+            matched with can see them. We don&rsquo;t share your details with anyone
+            outside the gym, and you can ask us to remove them at any time.
+          </span>
         </footer>
       </div>
     </main>
