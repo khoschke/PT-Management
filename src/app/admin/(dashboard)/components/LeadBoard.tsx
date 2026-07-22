@@ -54,8 +54,21 @@ export default function LeadBoard({
   }, [leads, filters]);
 
   const selectedLead = selectedLeadId ? leads.find((l) => l.id === selectedLeadId) ?? null : null;
+
+  const overdueCount = useMemo(
+    () =>
+      filteredLeads.filter(
+        (lead) => getContactClock(lead.first_contact_due_at, lead.first_contacted_at).band === "red",
+      ).length,
+    [filteredLeads],
+  );
+
+  const hasFilters = Boolean(
+    filters.status || filters.source || filters.allocatedTrainerId || filters.overdueOnly,
+  );
+
   const selectClass =
-    "appearance-none rounded-full bg-fill px-4 py-2 pr-8 text-sm font-medium text-foreground outline-none ring-1 ring-transparent transition focus:ring-2 focus:ring-foreground bg-[url('data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%236e6e73%22%3E%3Cpath%20d%3D%22M5.5%207.5l4.5%204.5%204.5-4.5%22%20stroke%3D%22%236e6e73%22%20stroke-width%3D%221.5%22%20fill%3D%22none%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[right_0.6rem_center] bg-[length:14px]";
+    "appearance-none rounded-full bg-fill px-4 py-2 pr-8 text-sm font-medium text-foreground outline-none ring-1 ring-transparent transition hover:bg-fill/70 focus-visible:ring-2 focus-visible:ring-foreground bg-[url('data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%236e6e73%22%3E%3Cpath%20d%3D%22M5.5%207.5l4.5%204.5%204.5-4.5%22%20stroke%3D%22%236e6e73%22%20stroke-width%3D%221.5%22%20fill%3D%22none%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[right_0.6rem_center] bg-[length:14px]";
 
   return (
     <div>
@@ -67,7 +80,7 @@ export default function LeadBoard({
           <button
             type="button"
             onClick={() => downloadCsv(`fitaz-pt-leads-${new Date().toISOString().split("T")[0]}.csv`, leadsToCsv(filteredLeads))}
-            className="press rounded-full bg-fill px-4 py-2 text-sm font-semibold text-foreground"
+            className="press rounded-full bg-fill px-4 py-2 text-sm font-semibold text-foreground outline-none transition hover:bg-fill/70 focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
             Export CSV
           </button>
@@ -75,7 +88,7 @@ export default function LeadBoard({
             <button
               type="button"
               onClick={() => setShowAddSweepLead(true)}
-              className="press rounded-full bg-foreground px-4 py-2 text-sm font-semibold text-white"
+              className="press rounded-full bg-foreground px-4 py-2 text-sm font-semibold text-white outline-none transition focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               Add sweep lead
             </button>
@@ -122,7 +135,7 @@ export default function LeadBoard({
           </select>
         )}
 
-        <label className="press flex cursor-pointer items-center gap-1.5 rounded-full bg-fill px-4 py-2 text-sm font-medium text-foreground has-[:checked]:bg-foreground has-[:checked]:text-white">
+        <label className="press flex cursor-pointer items-center gap-1.5 rounded-full bg-fill px-4 py-2 text-sm font-medium text-foreground transition has-[:checked]:bg-foreground has-[:checked]:text-white has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-foreground">
           <input
             type="checkbox"
             checked={filters.overdueOnly}
@@ -132,11 +145,11 @@ export default function LeadBoard({
           Overdue only
         </label>
 
-        {(filters.status || filters.source || filters.allocatedTrainerId || filters.overdueOnly) && (
+        {hasFilters && (
           <button
             type="button"
             onClick={() => setFilters(DEFAULT_FILTERS)}
-            className="px-2 text-sm font-medium text-secondary-label underline hover:text-foreground"
+            className="rounded-full px-3 py-2 text-sm font-medium text-secondary-label outline-none transition hover:text-foreground focus-visible:ring-2 focus-visible:ring-foreground"
           >
             Clear filters
           </button>
@@ -145,6 +158,9 @@ export default function LeadBoard({
 
       <p className="mt-4 text-sm text-secondary-label">
         {filteredLeads.length} lead{filteredLeads.length === 1 ? "" : "s"}
+        {overdueCount > 0 && (
+          <span className="text-red-600"> &middot; {overdueCount} overdue</span>
+        )}
       </p>
 
       <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -152,9 +168,22 @@ export default function LeadBoard({
           <LeadCard key={lead.id} lead={lead} onClick={() => setSelectedLeadId(lead.id)} />
         ))}
         {filteredLeads.length === 0 && (
-          <p className="col-span-full rounded-2xl border border-dashed border-black/10 py-12 text-center text-sm text-secondary-label">
-            No leads match these filters.
-          </p>
+          <div className="col-span-full flex flex-col items-center gap-3 rounded-2xl border border-dashed border-black/10 px-6 py-16 text-center">
+            <span className="flex h-11 w-11 items-center justify-center rounded-full bg-fill" aria-hidden>
+              <svg viewBox="0 0 24 24" className="h-5 w-5 text-secondary-label" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="7" />
+                <path d="M21 21l-4.3-4.3" />
+              </svg>
+            </span>
+            <p className="text-sm font-medium text-foreground">
+              {hasFilters ? "No leads match these filters" : "No leads yet"}
+            </p>
+            <p className="max-w-xs text-sm text-secondary-label">
+              {hasFilters
+                ? "Try clearing a filter to see more."
+                : "New leads will appear here as members raise their hand or get added from a sweep."}
+            </p>
+          </div>
         )}
       </div>
 
