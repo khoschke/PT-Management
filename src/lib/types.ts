@@ -3,7 +3,6 @@
 import type { GoalCode } from "./goals";
 
 export type TrainerGender = "male" | "female";
-export type TrainerAvailability = "AM" | "PM" | "both";
 export type LeadSource = "form" | "gymmaster_sweep";
 export type LeadStatus =
   | "New"
@@ -24,7 +23,8 @@ export interface Trainer {
   gender: TrainerGender;
   specialties: GoalCode[];
   bio: string | null;
-  availability: TrainerAvailability;
+  available_am: boolean;
+  available_pm: boolean;
   active: boolean;
   created_at: string;
 }

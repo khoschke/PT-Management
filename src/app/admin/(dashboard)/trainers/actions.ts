@@ -8,21 +8,28 @@ import type { TrainerFormState } from "./state";
 
 const GOAL_CODES = GOAL_OPTIONS.map((g) => g.code) as [string, ...string[]];
 
-const trainerSchema = z.object({
-  name: z.string().trim().min(1, "Name is required").max(200),
-  email: z.string().trim().email("Enter a valid email address").max(320).optional().or(z.literal("")),
-  gender: z.enum(["male", "female"]),
-  availability: z.enum(["AM", "PM", "both"]),
-  specialties: z.array(z.enum(GOAL_CODES)).optional().default([]),
-  bio: z.string().trim().max(1000).optional().or(z.literal("")),
-});
+const trainerSchema = z
+  .object({
+    name: z.string().trim().min(1, "Name is required").max(200),
+    email: z.string().trim().email("Enter a valid email address").max(320).optional().or(z.literal("")),
+    gender: z.enum(["male", "female"]),
+    available_am: z.boolean(),
+    available_pm: z.boolean(),
+    specialties: z.array(z.enum(GOAL_CODES)).optional().default([]),
+    bio: z.string().trim().max(1000).optional().or(z.literal("")),
+  })
+  .refine((data) => data.available_am || data.available_pm, {
+    message: "Choose at least one — AM, PM, or both.",
+    path: ["availability"],
+  });
 
 function parseTrainerForm(formData: FormData) {
   return trainerSchema.safeParse({
     name: formData.get("name")?.toString() ?? "",
     email: formData.get("email")?.toString() ?? "",
     gender: formData.get("gender")?.toString(),
-    availability: formData.get("availability")?.toString(),
+    available_am: formData.get("available_am") != null,
+    available_pm: formData.get("available_pm") != null,
     specialties: formData.getAll("specialties").map((s) => s.toString()),
     bio: formData.get("bio")?.toString() ?? "",
   });
@@ -47,7 +54,8 @@ export async function addTrainer(
     name: parsed.data.name,
     email: parsed.data.email || null,
     gender: parsed.data.gender,
-    availability: parsed.data.availability,
+    available_am: parsed.data.available_am,
+    available_pm: parsed.data.available_pm,
     specialties: parsed.data.specialties,
     bio: parsed.data.bio || null,
     active: true,
@@ -84,7 +92,8 @@ export async function updateTrainer(
       name: parsed.data.name,
       email: parsed.data.email || null,
       gender: parsed.data.gender,
-      availability: parsed.data.availability,
+      available_am: parsed.data.available_am,
+      available_pm: parsed.data.available_pm,
       specialties: parsed.data.specialties,
       bio: parsed.data.bio || null,
     })

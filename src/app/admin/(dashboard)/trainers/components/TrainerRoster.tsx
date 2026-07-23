@@ -7,6 +7,11 @@ import { addTrainer, updateTrainer, setTrainerActive } from "../actions";
 import { initialTrainerFormState } from "../state";
 import TrainerFields from "./TrainerFields";
 
+function availabilityLabel(trainer: Trainer): string {
+  const slots = [trainer.available_am && "AM", trainer.available_pm && "PM"].filter(Boolean);
+  return slots.length > 0 ? slots.join(" & ") : "No availability set";
+}
+
 function SaveButton({ label }: { label: string }) {
   const { pending } = useFormStatus();
   return (
@@ -48,7 +53,7 @@ function TrainerRow({ trainer }: { trainer: Trainer }) {
             )}
           </div>
           <p className="mt-0.5 text-sm text-secondary-label">
-            {trainer.email ?? "No email on file"} &middot; {trainer.gender} &middot; {trainer.availability}
+            {trainer.email ?? "No email on file"} &middot; {trainer.gender} &middot; {availabilityLabel(trainer)}
           </p>
           {trainer.bio && (
             <p className="mt-1.5 max-w-md text-sm text-foreground">{trainer.bio}</p>
