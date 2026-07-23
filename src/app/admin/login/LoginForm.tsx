@@ -1,12 +1,32 @@
 "use client";
 
 import { useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import { useSearchParams } from "next/navigation";
 import { login } from "./actions";
 import { initialLoginState } from "./state";
 
 const inputClass =
   "mt-2 w-full rounded-xl border-none bg-fill px-4 py-3.5 text-[17px] text-foreground outline-none ring-1 ring-transparent transition focus:ring-2 focus:ring-foreground";
+
+function SubmitButton() {
+  const { pending } = useFormStatus();
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      className="press mt-2 flex w-full items-center justify-center gap-2.5 rounded-full bg-foreground px-6 py-3.5 text-[17px] font-semibold text-white outline-none transition-opacity focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-surface disabled:cursor-not-allowed disabled:opacity-60"
+    >
+      {pending && (
+        <span
+          aria-hidden
+          className="spinner h-[18px] w-[18px] rounded-full border-2 border-white/30 border-t-white"
+        />
+      )}
+      {pending ? "Signing in" : "Sign in"}
+    </button>
+  );
+}
 
 export default function LoginForm() {
   const [state, formAction] = useActionState(login, initialLoginState);
@@ -29,7 +49,7 @@ export default function LoginForm() {
           <label htmlFor="email" className="block text-[15px] font-semibold text-foreground">
             Email
           </label>
-          <input id="email" name="email" type="email" required autoComplete="email" className={inputClass} />
+          <input id="email" name="email" type="email" required autoFocus autoComplete="email" className={inputClass} />
         </div>
 
         <div>
@@ -46,12 +66,7 @@ export default function LoginForm() {
           />
         </div>
 
-        <button
-          type="submit"
-          className="press mt-2 w-full rounded-full bg-foreground px-6 py-3.5 text-[17px] font-semibold text-white"
-        >
-          Sign in
-        </button>
+        <SubmitButton />
       </form>
     </div>
   );
