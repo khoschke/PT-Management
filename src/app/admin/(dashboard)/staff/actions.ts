@@ -141,6 +141,42 @@ export async function addTrainerLogin(
   return { status: "success" };
 }
 
+// Manager-assisted email change. Updates a staff member's sign-in email with
+// the service-role client and email_confirm: true, so the change takes effect
+// immediately without the usual confirmation email — handy while email sending
+// is still off. This changes the login (auth) email only, not a trainer's
+// roster contact email (that's edited on the Trainers screen).
+const changeEmailSchema = z.string().trim().email("Enter a valid email address").max(320);
+
+export async function changeStaffEmail(userId: string, newEmail: string): Promise<ActionResult> {
+  if (!(await callerIsManager())) {
+    return { ok: false, message: "Only managers can change sign-in emails." };
+  }
+
+  const parsed = changeEmailSchema.safeParse(newEmail);
+  if (!parsed.success) {
+    return { ok: false, message: parsed.error.issues[0]?.message ?? "Enter a valid email address." };
+  }
+
+  const admin = createAdminClient();
+
+  // Guard against colliding with another existing login's email, which would
+  // otherwise surface as an opaque error.
+  const existing = await findUserIdByEmail(admin, parsed.data);
+  if (existing && existing !== userId) {
+    return { ok: false, message: "Another login already uses that email." };
+  }
+
+  const { error } = await admin.auth.admin.updateUserById(userId, {
+    email: parsed.data,
+    email_confirm: true,
+  });
+  if (error) return { ok: false, message: "Couldn't update that email. Please try again." };
+
+  revalidatePath("/admin/staff");
+  return { ok: true };
+}
+
 // Promote an existing trainer login to manager. Keeps their trainer link, so
 // they stay on the roster and can still receive their own leads.
 export async function makeManager(userId: string): Promise<ActionResult> {
