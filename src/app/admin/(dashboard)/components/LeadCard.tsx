@@ -1,15 +1,7 @@
 import ClockPill from "./ClockPill";
 import { SourceBadge, StatusBadge } from "./Badges";
+import Avatar from "./Avatar";
 import type { LeadRow } from "../page";
-
-function initials(name: string) {
-  return name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase() ?? "")
-    .join("");
-}
 
 export default function LeadCard({
   lead,
@@ -40,9 +32,7 @@ export default function LeadCard({
       <div className="flex items-center gap-2 border-t border-black/5 pt-3 text-sm">
         {lead.allocated_trainer ? (
           <>
-            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-foreground text-[10px] font-semibold text-white">
-              {initials(lead.allocated_trainer.name)}
-            </span>
+            <Avatar name={lead.allocated_trainer.name} size="sm" />
             <span className="truncate text-secondary-label">{lead.allocated_trainer.name}</span>
           </>
         ) : (

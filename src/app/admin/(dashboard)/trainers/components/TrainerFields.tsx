@@ -1,5 +1,6 @@
 import { GOAL_OPTIONS } from "@/lib/goals";
 import type { Trainer } from "@/lib/types";
+import { focusRingWithin } from "../../components/ui";
 
 const inputClass =
   "mt-1.5 w-full rounded-xl border-none bg-fill px-3.5 py-2.5 text-sm text-foreground outline-none ring-1 ring-transparent transition focus:ring-2 focus:ring-foreground";
@@ -52,7 +53,7 @@ export default function TrainerFields({
           {GOAL_OPTIONS.filter((g) => g.code !== "other").map((goal) => (
             <label
               key={goal.code}
-              className="press cursor-pointer rounded-full bg-fill px-3 py-1.5 text-xs font-medium text-foreground transition has-[:checked]:bg-foreground has-[:checked]:text-white"
+              className={`press cursor-pointer rounded-full bg-fill px-3 py-1.5 text-xs font-medium text-foreground transition has-[:checked]:bg-foreground has-[:checked]:text-white ${focusRingWithin}`}
             >
               <input
                 type="checkbox"
