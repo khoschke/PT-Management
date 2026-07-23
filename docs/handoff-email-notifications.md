@@ -61,12 +61,19 @@ Three environment variables are unset in Vercel:
   or wait for the scheduled run, and confirm the digest lands in `PT_MANAGER_EMAIL`.
 - Check Resend's dashboard logs for delivery/bounce status.
 
-## Optional polish (code, only if wanted)
+## Optional polish (code) — done
 
-- The emails are plain text. If you want HTML/branded templates, that's in
-  `src/lib/email.ts`.
-- If you add `NEXT_PUBLIC_SITE_URL` (see the custom-domain note), you can put a
-  real "Open the dashboard" link into the digest instead of the plain sentence.
+Both of the items that used to live here are now built in `src/lib/email.ts`:
+
+- **Branded HTML templates.** Each email now sends as both HTML (monochrome, to
+  match `/admin`) and plain text (fallback + deliverability). Lead-supplied
+  fields are HTML-escaped. Tweak the copy or styling in that one file.
+- **Real dashboard link.** Set `NEXT_PUBLIC_SITE_URL` (e.g.
+  `https://pt-management-two.vercel.app`, or the custom domain once it's live)
+  and both emails render an "Open the dashboard" button linking to `/admin`. If
+  it's unset, they fall back to the plain sentence — so this is a nice-to-have,
+  not a fourth blocker. Add it alongside the three env vars above if you want the
+  links.
 
 ## Definition of done
 
