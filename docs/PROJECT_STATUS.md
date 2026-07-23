@@ -95,4 +95,5 @@ strength". Change it in that one file and it flows to both sides.
 - **GymMaster integration** — see `docs/handoff-gymmaster-integration.md`.
 - **Apple-grade design pass** — see `docs/handoff-apple-design-pass.md`.
 - **Email notifications** — code ready, turn on once the sending domain is set.
-- **Custom web address** — pending the gym owner's (Georgio's) decision.
+- **Custom web address** — decided: **pt.fitazgym.com**, DNS via Shopify. See
+  `docs/handoff-custom-domain.md`.
