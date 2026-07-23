@@ -95,5 +95,11 @@ strength". Change it in that one file and it flows to both sides.
 - **GymMaster integration** — see `docs/handoff-gymmaster-integration.md`.
 - **Apple-grade design pass** — see `docs/handoff-apple-design-pass.md`.
 - **Email notifications** — code ready, turn on once the sending domain is set.
+- **Change-email on the Account screen** — the `/admin/account` screen currently
+  does self-service password only. Add a "change my email" field there too
+  (`supabase.auth.updateUser({ email })`), so users can update their own login
+  details. **Blocked on email being turned on:** Supabase sends a confirmation
+  link to verify an email change, which won't deliver until Resend/SMTP is
+  configured. Resurface this right after **Email notifications** goes live.
 - **Custom web address** — decided: **pt.fitazgym.com**, DNS via Shopify. See
   `docs/handoff-custom-domain.md`.
