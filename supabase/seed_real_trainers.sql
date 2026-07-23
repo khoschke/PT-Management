@@ -42,7 +42,7 @@ insert into trainers (name, email, gender, availability, specialties, bio, activ
     'Karl Hoschke',
     'khoschke@gmail.com',
     'male',
-    'am',
+    'AM',
     array['increase_strength', 'rehabilitation'],
     'Builds long-term habits and quality of life, coaches all ages and abilities. Balanced, evidence-based exercise and behaviour change for sustainable health.',
     true
@@ -51,7 +51,7 @@ insert into trainers (name, email, gender, availability, specialties, bio, activ
     'Michael Hammett',
     'michael@puremomentum.com.au',
     'male',
-    'am',
+    'AM',
     array['increase_strength', 'increase_muscle_mass', 'reduce_body_fat', 'rehabilitation'],
     'Structured training programs and long-term consistency. Helps driven individuals build strength, improve performance and create lasting physical change.',
     true
