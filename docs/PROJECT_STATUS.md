@@ -105,6 +105,11 @@ strength". Change it in that one file and it flows to both sides.
   (Note: managers can already change *anyone's* sign-in email immediately from
   the Staff screen — that path uses the admin client and needs no confirmation
   email. This item is specifically the self-service version.)
+- **Forgot-password on the login page** — a self-serve "Forgot password?" reset
+  link for locked-out staff/trainers. **Blocked on email being turned on:** the
+  recovery link is emailed by Supabase Auth (needs Custom SMTP + the verified
+  sending domain). See `docs/handoff-forgot-password.md`. Build and ship it in one
+  go once auth email works — don't merge a dead reset link before then.
 - **Availability as AM + PM (not "both")** — change trainer availability to
   independent AM/PM selection. See `docs/handoff-availability-am-pm.md`.
 - **Custom web address** — decided: **pt.fitazgym.com**, DNS via Shopify. See
