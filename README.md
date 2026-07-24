@@ -43,9 +43,16 @@ database size, point in time recovery) at that point, not before.
 2. In the SQL editor, run the migrations in order:
    `supabase/migrations/0001_init.sql`, then
    `supabase/migrations/0002_onboarding.sql`, then
-   `supabase/migrations/0003_trainer_bio.sql`. Optionally run
+   `supabase/migrations/0003_trainer_bio.sql`, then
+   `supabase/migrations/0004_trainer_documents.sql`. Optionally run
    `supabase/seed.sql` to add five placeholder trainers.
-3. Under Project Settings > API, copy the project URL, the `anon` public
+3. The documents feature stores files in a **private** Storage bucket called
+   `trainer-documents`. The `0004` migration creates it and its access
+   policies automatically. If your project blocks writes to the `storage`
+   schema from the SQL editor, create it by hand instead: Storage > New
+   bucket, name it `trainer-documents`, leave **Public** off, then re-run
+   just the `storage.objects` policy statements at the bottom of `0004`.
+4. Under Project Settings > API, copy the project URL, the `anon` public
    key and the `service_role` key.
 
 ### 2. Environment variables
@@ -60,7 +67,7 @@ Copy `.env.local.example` to `.env.local` and fill in:
 | `IP_HASH_SALT` | Any long random string, e.g. `openssl rand -hex 32` |
 | `RESEND_API_KEY` | [resend.com](https://resend.com), optional, leave blank to run without email |
 | `NOTIFICATIONS_FROM_EMAIL` | The "from" address for notification emails, needs a domain verified in Resend, or use their shared `onboarding@resend.dev` sender for testing |
-| `PT_MANAGER_EMAIL` | Where the 7am daily digest goes |
+| `PT_MANAGER_EMAIL` | Where the 7am daily digest, document-review alerts and document-expiry reminders go |
 | `CRON_SECRET` | Any long random string. Set the same value in Vercel's project settings, Vercel sends it automatically on cron requests |
 
 ### 3. Create the manager and trainer logins
@@ -98,9 +105,10 @@ onboarding workbook is at `/onboarding` (behind the same login).
 1. Push this repository to GitHub and import it in Vercel.
 2. Add the same environment variables from step 2 in the Vercel project
    settings.
-3. Deploy. `vercel.json` already defines the 7am AEST daily digest cron job
-   (`0 21 * * *` UTC, Brisbane doesn't observe daylight saving so this
-   offset is fixed year round).
+3. Deploy. `vercel.json` defines two daily cron jobs: the 7am AEST lead
+   digest (`0 21 * * *` UTC) and the 8am AEST document-expiry check
+   (`0 22 * * *` UTC). Brisbane doesn't observe daylight saving, so these
+   offsets are fixed year round.
 4. The Fitaz Gym wordmark lives at `public/logo-fitaz.svg`. It's a vector
    rebuild of the brand mark, so it stays crisp at any size. To use the
    official asset instead, drop it in and update the `Image` src on the
@@ -249,15 +257,45 @@ src/
     admin/
       login/            sign in
       (dashboard)/       lead board, trainer roster (all behind auth)
+        documents/       a trainer's own compliance documents (self-service)
+        compliance/      manager: all-trainer overview, per-trainer review,
+                          [trainerId]/ and types/ (document-type config)
     onboarding/         PT onboarding workbook dashboard (behind auth)
       [part]/            one of the 10 parts
       components/        activity fields, manager-view toggle, parts nav
-    api/cron/daily-digest/  7am AEST digest, called by Vercel Cron
+    api/cron/daily-digest/     7am AEST lead digest, called by Vercel Cron
+    api/cron/document-expiry/  8am AEST document-expiry reminders
   lib/                  shared logic: validation, allocation engine, email,
-                         the 48 hour clock, Supabase clients
+                         the 48 hour clock, documents (expiry/status rules),
+                         Supabase clients
     onboarding/         workbook content (parts/*.ts) and progress helpers
 supabase/
-  migrations/0001_init.sql       schema, RLS policies, triggers
-  migrations/0002_onboarding.sql onboarding responses and part progress
+  migrations/0001_init.sql            schema, RLS policies, triggers
+  migrations/0002_onboarding.sql      onboarding responses and part progress
+  migrations/0003_trainer_bio.sql     trainer free-text bio field
+  migrations/0004_trainer_documents.sql  compliance documents, types,
+                                       reminders, private Storage bucket
   seed.sql                    five placeholder trainers
 ```
+
+## PT compliance documents
+
+Each trainer has a **My documents** area to upload qualifications, CPR/First
+Aid, insurances and free-text "other" items (a Blue Card, say). Files live in a
+private Supabase Storage bucket, served only through short-lived signed links.
+
+- **Per-type expiry rules.** Qualifications never expire, CPR/First Aid and
+  insurances require an expiry date, "other" makes it optional. The manager can
+  add, rename, hide or re-rule document types under Compliance > Manage
+  document types. There's no limit on how many documents a trainer holds.
+- **Manager review.** A trainer's upload lands as *Pending review* and emails
+  the manager; the manager verifies or rejects it (with an optional reason).
+  Documents the manager uploads are verified on the spot.
+- **Expiry reminders.** The daily `document-expiry` cron emails both the trainer
+  and the manager at 60, 30 and 7 days before an expiry, then daily once it has
+  lapsed. Uploading a replacement with a later expiry stops the reminders.
+  Every reminder is logged so a re-run never double-sends. Like the lead digest,
+  it's a no-op when email isn't configured.
+- **Compliance dashboard.** The manager's Compliance tab shows every trainer's
+  status at a glance — expired, expiring soon, pending review or all current —
+  and links through to each trainer's documents.

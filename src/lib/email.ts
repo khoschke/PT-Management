@@ -85,3 +85,69 @@ export async function sendManagerDailyDigest(
     ].join("\n"),
   });
 }
+
+// A trainer uploaded a document that now needs the manager to review it.
+export async function sendDocumentUploadedManagerNotification(
+  managerEmail: string,
+  params: { trainerName: string; documentLabel: string; expiryDate: string | null },
+) {
+  const client = getClient();
+  if (!client) return;
+
+  await client.emails.send({
+    from: FROM_ADDRESS,
+    to: managerEmail,
+    subject: `Document to review: ${params.trainerName} — ${params.documentLabel}`,
+    text: [
+      `${params.trainerName} has uploaded a new compliance document that needs your review.`,
+      "",
+      `Document: ${params.documentLabel}`,
+      params.expiryDate ? `Expiry: ${params.expiryDate}` : "Expiry: none recorded",
+      "",
+      "Open the compliance dashboard to verify or reject it.",
+    ].join("\n"),
+  });
+}
+
+interface ExpiryReminderParams {
+  trainerName: string;
+  documentLabel: string;
+  expiryDate: string;
+  expired: boolean;
+  daysRemaining: number;
+}
+
+// Reminder that a document is approaching expiry, or has lapsed. Sent to both
+// the trainer and the PT manager. `to` may be one or more addresses; nulls are
+// dropped so a missing trainer email doesn't stop the manager's copy.
+export async function sendDocumentExpiryReminder(
+  to: (string | null | undefined)[],
+  params: ExpiryReminderParams,
+) {
+  const client = getClient();
+  const recipients = [...new Set(to.filter((address): address is string => !!address))];
+  if (!client || recipients.length === 0) return;
+
+  const when = params.expired
+    ? `expired on ${params.expiryDate}`
+    : `expires on ${params.expiryDate} (${params.daysRemaining} day${params.daysRemaining === 1 ? "" : "s"} away)`;
+
+  await client.emails.send({
+    from: FROM_ADDRESS,
+    to: recipients,
+    subject: params.expired
+      ? `Expired: ${params.trainerName} — ${params.documentLabel}`
+      : `Renewal due: ${params.trainerName} — ${params.documentLabel}`,
+    text: [
+      params.expired
+        ? `${params.trainerName}'s ${params.documentLabel} has ${when}.`
+        : `${params.trainerName}'s ${params.documentLabel} ${when}.`,
+      "",
+      params.expired
+        ? "Please renew it and upload the new document as soon as possible."
+        : "Please arrange the renewal and upload the new document before it lapses.",
+      "",
+      "Uploading a replacement with a later expiry date stops these reminders.",
+    ].join("\n"),
+  });
+}

@@ -31,6 +31,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   }
 
   const isManager = user.profile.role === "manager";
+  const isTrainer = user.profile.role === "trainer";
 
   return (
     <div className="min-h-screen bg-background">
@@ -56,6 +57,22 @@ export default async function DashboardLayout({ children }: { children: React.Re
                   className="rounded-full px-3 py-1.5 transition hover:bg-fill hover:text-foreground"
                 >
                   Staff
+                </Link>
+              )}
+              {isManager && (
+                <Link
+                  href="/admin/compliance"
+                  className="rounded-full px-3 py-1.5 transition hover:bg-fill hover:text-foreground"
+                >
+                  Compliance
+                </Link>
+              )}
+              {isTrainer && (
+                <Link
+                  href="/admin/documents"
+                  className="rounded-full px-3 py-1.5 transition hover:bg-fill hover:text-foreground"
+                >
+                  My documents
                 </Link>
               )}
               <Link
