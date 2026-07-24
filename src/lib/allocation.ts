@@ -56,7 +56,7 @@ export function suggestTrainer(
     const availabilityMatch =
       !!lead.time_preference &&
       lead.time_preference !== "either" &&
-      (trainer.availability === "both" || trainer.availability === lead.time_preference);
+      (lead.time_preference === "AM" ? trainer.available_am : trainer.available_pm);
 
     const score = goalOverlap.length * 10 + (availabilityMatch ? 5 : 0);
 
