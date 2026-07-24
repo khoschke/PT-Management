@@ -105,9 +105,6 @@ strength". Change it in that one file and it flows to both sides.
   (Note: managers can already change *anyone's* sign-in email immediately from
   the Staff screen — that path uses the admin client and needs no confirmation
   email. This item is specifically the self-service version.)
-- **Link PT form to gym trainer profiles** — add a new-tab link from `/pt-session`
-  to https://fitazgym.com/pages/personal-trainers. See
-  `docs/handoff-trainer-profiles-link.md`.
 - **Availability as AM + PM (not "both")** — change trainer availability to
   independent AM/PM selection. See `docs/handoff-availability-am-pm.md`.
 - **Custom web address** — decided: **pt.fitazgym.com**, DNS via Shopify. See
