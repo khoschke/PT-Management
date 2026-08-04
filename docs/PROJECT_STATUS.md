@@ -114,9 +114,10 @@ strength". Change it in that one file and it flows to both sides.
   independent AM/PM selection. See `docs/handoff-availability-am-pm.md`.
 - **Custom web address** — decided: **pt.fitazgym.com**, DNS via Shopify. See
   `docs/handoff-custom-domain.md`.
-- **Editable trainer pages** — the vision of giving each PT a self-editable
-  profile/page. **Not started, and not yet scoped:** the deciding question
-  (public marketing pages vs. internal profile) is still open, and there's an
-  architecture misconception to clear up first ("one mother MCP hosted through
-  Shopify" — it's actually this one app on Vercel + Supabase). See
+- **Editable trainer pages** — give each PT a self-editable profile. **Scoped,
+  not started.** Decided: **internal only** (not public — the public reach
+  trainers via the gym website already), trainer edits their own row *and*
+  manager keeps the roster override, **bio + specialties only** for now (no
+  photo). Small build: reuses the existing `bio`/`specialties` columns, needs a
+  per-trainer RLS `update` policy + a self-service screen in `/admin`. See
   `docs/handoff-trainer-portal.md`.
