@@ -8,6 +8,18 @@
 of UI and UX at Apple." Take that literally. The app is currently clean and
 "Apple-adjacent"; the job is to make it genuinely Apple-grade.
 
+## Branding (from the gym owner)
+
+Use the real FITAZ GYM logo, the one in the top-right of fitazgym.com. The owner
+has supplied the logo file directly; use it unmodified (don't redraw, restyle or
+recolour the mark itself). Keep the Apple craft already built, and blend a layer
+of the gym site's own look into the app so the two feel like one brand. Apply the
+logo consistently across the public form, the login screen and the admin header.
+
+Note for whoever picks this up: the file must be committed into the repo (e.g.
+`public/`) to be usable. The old `public/logo-fitaz.svg` was a hand-built text
+approximation, not the official mark.
+
 ## Operating principles (how Apple's design team would approach it)
 
 - **Content first, not decoration.** Ruthless visual hierarchy; one clear
