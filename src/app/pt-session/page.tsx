@@ -22,7 +22,7 @@ export default async function PtSessionPage() {
     <main className="min-h-screen bg-background">
       <header className="glass-header sticky top-0 z-10 border-b border-black/5">
         <div className="mx-auto flex max-w-2xl items-center px-5 py-3.5 sm:px-6">
-          <Image src="/logo-fitaz.svg" alt="Fitaz Gym" width={118} height={34} priority />
+          <Image src="/logo-fitaz.svg" alt="Fitaz Gym" width={133} height={34} priority />
         </div>
       </header>
 

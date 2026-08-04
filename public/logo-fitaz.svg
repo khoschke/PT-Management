@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 404 116" role="img" aria-label="Fitaz Gym">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 452 116" role="img" aria-label="Fitaz Gym">
   <g fill="#0a0a0a">
     <rect x="0" y="10" width="15" height="100"/>
     <rect x="0" y="10" width="56" height="15"/>
@@ -14,7 +14,7 @@
     <polygon points="315,25 333,25 293,95 275,95"/>
   </g>
   <g>
-    <rect x="316" y="0" width="86" height="35" rx="8" fill="#0a0a0a"/>
-    <text x="359" y="24" text-anchor="middle" font-family="'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="700" letter-spacing="1.5" fill="#ffffff">GYM</text>
+    <rect x="357" y="26" width="90" height="46" rx="9" fill="#0a0a0a"/>
+    <text x="402" y="58" text-anchor="middle" font-family="'Helvetica Neue', Arial, sans-serif" font-size="23" font-weight="700" letter-spacing="1.5" fill="#ffffff">GYM</text>
   </g>
 </svg>
