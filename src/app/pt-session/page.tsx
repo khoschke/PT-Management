@@ -28,7 +28,7 @@ export default async function PtSessionPage() {
 
       <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:px-6 sm:py-16">
         <div className="mb-9 sm:mb-12">
-          <h1 className="text-[2.5rem] leading-[1.05] font-semibold tracking-tight text-foreground sm:text-6xl">
+          <h1 className="display-heading text-[2.5rem] leading-[1.02] text-foreground sm:text-6xl">
             Your Complimentary
             <br />
             PT Session

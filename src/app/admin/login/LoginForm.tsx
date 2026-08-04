@@ -35,7 +35,7 @@ export default function LoginForm() {
 
   return (
     <div className="rounded-3xl border border-black/5 bg-surface p-8 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_24px_rgba(0,0,0,0.06)]">
-      <h1 className="text-xl font-semibold tracking-tight text-foreground">PT leads dashboard</h1>
+      <h1 className="display-heading text-2xl text-foreground">PT leads dashboard</h1>
       <p className="mt-1 text-[15px] text-secondary-label">Sign in to continue.</p>
 
       <form action={formAction} className="mt-6 flex flex-col gap-4">

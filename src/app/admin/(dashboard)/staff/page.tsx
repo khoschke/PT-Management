@@ -56,7 +56,7 @@ export default async function StaffPage() {
 
   return (
     <div>
-      <h1 className="text-[28px] font-semibold tracking-tight text-foreground">Staff &amp; access</h1>
+      <h1 className="display-heading text-[28px] text-foreground">Staff &amp; access</h1>
       <p className="mt-1 max-w-2xl text-[15px] text-secondary-label">
         Who can sign in, and what they can see. Managers see and allocate every lead; trainers see only the leads
         allocated to them. Add the gym owners as managers here so the business always has access.

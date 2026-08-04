@@ -45,6 +45,21 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* The FITAZ voice, borrowed from the gym site's athletic display type: heavy,
+   italic, uppercase, tightly tracked. Reserved for top-level page titles so the
+   product speaks with the brand, while the rest stays in the clean system UI.
+   Built from the system font (the gym's condensed face isn't available here),
+   with a slight horizontal compression to echo its condensed feel. */
+.display-heading {
+  display: inline-block;
+  font-weight: 800;
+  font-style: italic;
+  text-transform: uppercase;
+  letter-spacing: -0.015em;
+  transform: scaleX(0.94);
+  transform-origin: left;
+}
+
 /* Apple's pill buttons give tactile feedback with a slight press-down scale
    rather than a colour change alone. */
 .press {

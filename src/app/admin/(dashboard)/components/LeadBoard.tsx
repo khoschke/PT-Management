@@ -73,7 +73,7 @@ export default function LeadBoard({
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-[28px] font-semibold tracking-tight text-foreground">
+        <h1 className="display-heading text-[28px] text-foreground">
           {isManager ? "Lead board" : "Your leads"}
         </h1>
         <div className="flex gap-2">
