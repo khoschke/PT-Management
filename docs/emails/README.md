@@ -131,8 +131,6 @@ import.
 | Tag | Value | Notes |
 |-----|-------|-------|
 | `{{first_name}}` | Member's first name | Set a fallback of "there". A blank name renders "Welcome to Fitaz, ." |
-| `{{facebook_url}}` | Fitaz Gym Facebook page | **Still a placeholder.** Fill this in before sending. |
-| `{{instagram_url}}` | Fitaz Gym Instagram profile | **Still a placeholder.** Fill this in before sending. |
 | `{{unsubscribe_url}}` | ESP unsubscribe link | Required. Also set the `List-Unsubscribe` header. |
 | `{{preferences_url}}` | Preference centre | Point at the unsubscribe link if there is no preference centre yet. |
 
@@ -204,6 +202,18 @@ footer colour and the icon background have to stay in step: if you ever change
 
 Both carry `alt` text, so with images blocked the footer degrades to two
 readable "Facebook" and "Instagram" links rather than to empty boxes.
+
+They point at the live profiles, hardcoded rather than merged in:
+
+```
+https://www.facebook.com/FitazfkGym/
+https://www.instagram.com/fitazfk_gym/
+```
+
+The Instagram address is stored without the `?hl=en` that Instagram appends in
+the browser. That parameter only forces the interface language for the person
+clicking, so leaving it on would pin every member to English regardless of
+their own setting, and it is not part of the profile address.
 
 ## Build notes
 
@@ -289,8 +299,6 @@ on and set the dark palette to canvas `#000000`, surface `#161618`, fill
 
 - [ ] Render test across Gmail web, Gmail app, Apple Mail, Outlook desktop and
       Outlook.com, in both light and dark mode.
-- [ ] Fill in `{{facebook_url}}` and `{{instagram_url}}`. They ship as
-      placeholders and a live send would put dead links in the footer.
 - [ ] Confirm the two footer icons load from `pt.fitazgym.com/email/`, and that
       they sit flush on the black block with no grey ring around them.
 - [ ] Check with images blocked. Only the two social icons should change, and
