@@ -90,6 +90,18 @@ strength". Change it in that one file and it flows to both sides.
 - Verify changes in a real browser with screenshots where it matters
   (thoroughness is preferred over speed here).
 
+## Member email series
+
+Separate from the two internal ops emails in `src/lib/email.ts`. Member-facing
+lifecycle emails live in `docs/emails/`, with the strategy, merge tags and
+send checklist in `docs/emails/README.md`.
+
+- **Email 1, 24 hour welcome nurture** — built (`docs/emails/01-welcome-nurture.html`
+  plus a plain text part). Goes to Fitness Passport and standard members alike.
+  Its one job is to convert an unverified member into a warm lead by getting
+  them to complete `/pt-session`. Not yet sending: blocked on the same verified
+  sending domain as everything else email here.
+
 ## Outstanding / next up
 
 - **GymMaster integration** — see `docs/handoff-gymmaster-integration.md`.
