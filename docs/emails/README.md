@@ -123,6 +123,27 @@ monitored inbox, because the email explicitly invites replies.
 right trainer.* It adds information rather than repeating the subject, which is
 what the preheader slot is for.
 
+## House rules for this series
+
+Two conventions that apply to every email here, not just this one:
+
+**The brand is always "Fitaz Gym", never "Fitaz" on its own.** That includes
+mid-sentence copy, the sign off and the footer. The only exceptions are the
+wordmark itself, where FITAZ and the GYM chip are separate design elements,
+and the social profile addresses, which are fixed by the platforms.
+
+**Every link opens in a new tab.** All seven anchors carry
+`target="_blank"`, and both Outlook VML buttons carry it too, so the
+behaviour is the same in Outlook as everywhere else. In a webmail client the
+member keeps their inbox open behind the tab, which matters here: someone who
+loses the email to navigate away is a member who cannot get back to the button
+if they abandon the form halfway.
+
+They also carry `rel="noopener"`, which stops the opened page from reaching
+back into the referring window. Deliberately **not** `noreferrer`: that would
+strip the referrer header and make email traffic show up in analytics as
+direct, which quietly breaks attribution for the campaign.
+
 ## Merge tags
 
 The file uses `{{tag}}` placeholders. Rename to your platform's syntax on
@@ -130,7 +151,7 @@ import.
 
 | Tag | Value | Notes |
 |-----|-------|-------|
-| `{{first_name}}` | Member's first name | Set a fallback of "there". A blank name renders "Welcome to Fitaz, ." |
+| `{{first_name}}` | Member's first name | Set a fallback of "there". A blank name renders "Welcome to Fitaz Gym, ." |
 | `{{unsubscribe_url}}` | ESP unsubscribe link | Required. Also set the `List-Unsubscribe` header. |
 | `{{preferences_url}}` | Preference centre | Point at the unsubscribe link if there is no preference centre yet. |
 
@@ -161,7 +182,7 @@ return 4 for the HTML and 2 for the text part.
 
 ## Header and footer
 
-Both match the rest of the Fitaz series in Postcards, so this email sits
+Both match the rest of the Fitaz Gym series in Postcards, so this email sits
 alongside the New Member Flow emails rather than looking like a one off.
 
 **Header.** Centred FITAZ GYM wordmark with a hairline rule beneath it. The
@@ -181,7 +202,7 @@ Two deliberate choices in there:
   block still separates cleanly, so there is nothing to gain by moving it.
 - **The compliance text lives inside the black block**, not on the canvas
   below it, so the block stays the last thing in the email exactly as it is in
-  the other Fitaz emails. `#a1a1a6` on `#1d1d1f` is about 6.5:1, comfortably
+  the other Fitaz Gym emails. `#a1a1a6` on `#1d1d1f` is about 6.5:1, comfortably
   past AA.
 
 ### The social icons

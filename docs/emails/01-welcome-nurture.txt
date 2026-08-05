@@ -1,4 +1,4 @@
-Welcome to Fitaz, {{first_name}}.
+Welcome to Fitaz Gym, {{first_name}}.
 
 Your PT consultation and starter session came with your membership, so
 there is nothing to pay and nothing to sign up for. All that is left is
