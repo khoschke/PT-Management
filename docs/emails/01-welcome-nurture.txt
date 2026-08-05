@@ -5,7 +5,7 @@ there is nothing to pay and nothing to sign up for. All that is left is
 to tell us what you are chasing, so we can put you with the right
 trainer instead of whoever happens to be free.
 
-Get me booked in: {{cta_url}}
+Get me booked in: https://pt.fitazgym.com/pt-session
 Takes about two minutes. No app, no login.
 
 
@@ -64,7 +64,7 @@ READY WHEN YOU ARE
 
 The session is already yours. This just tells us who to send.
 
-Get me booked in: {{cta_url}}
+Get me booked in: https://pt.fitazgym.com/pt-session
 
 Still weighing it up? Hit reply and tell us what is holding you back. It
 comes through to a real person at the gym, not a no reply inbox.

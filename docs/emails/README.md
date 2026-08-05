@@ -128,14 +128,34 @@ import.
 | Tag | Value | Notes |
 |-----|-------|-------|
 | `{{first_name}}` | Member's first name | Set a fallback of "there". A blank name renders "Welcome to Fitaz, ." |
-| `{{cta_url}}` | `https://pt-management-two.vercel.app/pt-session` | Becomes `https://pt.fitazgym.com/pt-session` once the custom domain lands. Add campaign params here. |
 | `{{gym_address}}` | Physical postal address | Required for anti-spam compliance. |
 | `{{unsubscribe_url}}` | ESP unsubscribe link | Required. Also set the `List-Unsubscribe` header. |
 | `{{preferences_url}}` | Preference centre | Point at the unsubscribe link if there is no preference centre yet. |
 
-`{{cta_url}}` appears twice, in the hero and in the closing panel. Both must
-carry the same tracking params or the two buttons will report as separate
-campaigns.
+## The call to action link
+
+Both buttons point at the live custom domain, hardcoded rather than merged in:
+
+```
+https://pt.fitazgym.com/pt-session
+```
+
+It appears **four times** in the HTML, because each button is written twice: a
+VML `roundrect` for Outlook and a styled anchor for everything else. It appears
+twice more in the text part. Change it in all six places or the two clients
+will disagree about where the button goes.
+
+If you add campaign tracking, put the same query string on every one of those
+six, otherwise the hero button and the closing button report as separate
+campaigns and the real click through rate looks about half what it is. For
+example:
+
+```
+https://pt.fitazgym.com/pt-session?utm_source=email&utm_medium=lifecycle&utm_campaign=welcome-24h
+```
+
+Sanity check before any send: `grep -c 'pt.fitazgym.com/pt-session'` should
+return 4 for the HTML and 2 for the text part.
 
 ## Build notes
 
