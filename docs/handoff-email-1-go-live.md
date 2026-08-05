@@ -1,13 +1,14 @@
-# Handoff: Get Email 1 Sending
+# Handoff: Get the Member Email Series Sending
 
 **Start a new session with this note.** Read `docs/PROJECT_STATUS.md` first, then
-this, then `docs/emails/README.md` for the email itself.
+this, then `docs/emails/README.md` for the emails themselves.
 
 ## What this is
 
-The 24 hour welcome nurture (`docs/emails/01-welcome-nurture.html`) is **built
-and finished**. Nothing in the template is outstanding. Everything below is
-operational, and none of it is a code change.
+All three member emails are **built and finished**: the day 1 welcome, the day 10
+follow up and the day 30 deadline, each with an HTML and a plain text part.
+Nothing in the templates is outstanding. Everything below is operational, and
+none of it is a code change.
 
 The open items are tracked here rather than in a chat thread so they can be
 picked up cold. **If you are reviewing this and any item is still unticked,
@@ -18,6 +19,14 @@ raise it** rather than assuming it was handled elsewhere.
 - **`pt.fitazgym.com` resolves.** Confirmed by Karl, 5 August 2026. Every button
   in the email points at `https://pt.fitazgym.com/pt-session`, so this was the
   one thing that would have made the whole send pointless. It is fine.
+- **The sending platform and the trigger are both GymMaster.** Decided by Karl,
+  5 August 2026. The series is automated off the member's own join date, so the
+  day 1, 10 and 30 timings are exact per member. This closes what used to be the
+  two riskiest open items, and means no GymMaster *integration* work is needed in
+  this repo: the sending happens entirely inside GymMaster.
+- **The PTs get the unverified leads after email 2**, around day 11, rather than
+  on day one. See `docs/emails/README.md` for why and for what to strip out of
+  the list first.
 
 ## Open, with Georgio
 
@@ -34,39 +43,29 @@ pass on a test send.
 Do not send member facing volume from the `onboarding@resend.dev` testing
 sender. It is fine for proving the flow internally and nothing else.
 
-### 2. Sending platform: Resend or an ESP
+### 2. What GymMaster actually gives you
 
-Resend is already wired into `src/lib/email.ts`, but that is for the two
-**internal ops** emails. This one goes to members, which needs three things the
-raw Resend API does not provide:
+The platform is decided, but three things still have to be **checked inside
+GymMaster** before a real send, because the emails assume them:
 
-- an unsubscribe link and a `List-Unsubscribe` header,
-- a suppression list that is actually honoured on later sends,
-- a scheduled delay rather than a send triggered by an app event.
+- **Unsubscribe and a `List-Unsubscribe` header.** Non-negotiable for a member
+  facing send. Both templates have an `{{unsubscribe_url}}` placeholder waiting
+  for whatever GymMaster's equivalent is called.
+- **A suppression list that is honoured.** So an unsubscribe on email 1 actually
+  stops emails 2 and 3.
+- **Which domain it sends from.** If GymMaster sends from its own infrastructure,
+  the `fitazgym.com` DNS work below may not be needed for these three emails at
+  all, though it is still needed for the internal ops emails through Resend. If
+  GymMaster sends as `@fitazgym.com`, it will want its own SPF and DKIM records,
+  which is the same DNS access either way. **Find out which before promising a
+  date.**
 
-An ESP gives all three out of the box. **Recommendation: use an ESP for the
-member series** and leave Resend doing the internal ops emails it already does.
-Splitting them is not duplication, they are genuinely different jobs.
-
-**Done looks like:** a platform chosen, the HTML and text parts both imported,
-and `{{first_name}}` mapped with a fallback of "there" so a blank name does not
-render "Welcome to Fitaz Gym, ."
-
-### 3. Where the 24 hour trigger comes from
-
-**This is the item most likely to stall, and it has no default.** Nothing in
-this repo knows when somebody joined the gym, so nothing can currently fire this
-email automatically. Two routes:
-
-- **GymMaster integration** (`docs/handoff-gymmaster-integration.md`). Gives a
-  real signup feed and a true 24 hour trigger. More work, correct outcome.
-- **Manual weekly batch** to everyone who joined that week. Ships immediately,
-  but loses the 24 hour timing, which is most of why the email works: day one is
-  peak motivation, and by day six the member has already had the week where life
-  got in the way.
-
-**Done looks like:** a decision recorded here, and if it is the manual route, a
-named person and a day of the week.
+Also worth an early look: **merge tags**. GymMaster will not use `{{tag}}` syntax.
+`{{first_name}}` will map to something obvious. `{{expiry_date}}` is the one to
+check, because it needs date arithmetic (join date plus 37 days) that not every
+gym CRM can do. If it cannot, say so and the copy can drop to "closes in seven
+days", which is always true given the email fires on day 30 anyway, and costs
+only the specificity of a named date.
 
 ## Then, before the first send
 
@@ -76,12 +75,18 @@ get skipped:
 - **`Reply-To` must reach a monitored inbox.** The copy says "it comes through
   to a real person at the gym, not a no reply inbox". If that is not true, the
   email is lying to members in writing.
-- **The footer icons** load from `pt.fitazgym.com/email/`, which only exists
-  once the email branch is merged and Vercel has deployed. Check them on a real
-  send, not just in a preview.
+- **The footer icons** load from `pt.fitazgym.com/email/`. That merged on
+  5 August 2026, so they should be live, but confirm on a real send rather than
+  in a preview. If they 404, the Vercel deploy stalled; push again to retrigger.
+- **Suppression before each send of emails 2 and 3.** See
+  `docs/emails/README.md`. Email 3 in particular asserts the session is still
+  unclaimed, so sending it to somebody who already booked is wrong, not just
+  redundant.
 
 ## Definition of done
 
-A member who joins the gym gets this email 24 hours later, from a verified
-`@fitazgym.com` address, with working buttons, a working unsubscribe, and
-replies landing somewhere a human reads them.
+A member who joins the gym gets email 1 the next day, email 2 on day 10 and, if
+they still have not claimed it, email 3 on day 30, from an address that passes
+authentication, with working buttons, a working unsubscribe, and replies landing
+somewhere a human reads them. The PTs get the unverified leads after email 2,
+with the members who already responded stripped out.

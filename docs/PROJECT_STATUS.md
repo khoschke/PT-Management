@@ -96,14 +96,20 @@ Separate from the two internal ops emails in `src/lib/email.ts`. Member-facing
 lifecycle emails live in `docs/emails/`, with the strategy, merge tags and
 send checklist in `docs/emails/README.md`.
 
-- **Email 1, 24 hour welcome nurture** — built (`docs/emails/01-welcome-nurture.html`
-  plus a plain text part). Goes to Fitness Passport and standard members alike.
-  Its one job is to convert an unverified member into a warm lead by getting
-  them to complete `/pt-session`. **The template is finished; nothing about it
-  is outstanding.** Not yet sending, for three operational reasons, all with
-  Georgio and all tracked in `docs/handoff-email-1-go-live.md`: the verified
-  sending domain, the choice of sending platform, and where the 24 hour trigger
-  comes from. `pt.fitazgym.com` is confirmed resolving.
+- **Three emails, built and finished.** Day 1 `01-welcome-nurture`, day 10
+  `02-plan-not-motivation`, day 30 `03-last-call`, each with an HTML and a plain
+  text part. They go to Fitness Passport and standard members alike, and share
+  one goal: turn an unverified member into a warm lead by getting them to
+  complete `/pt-session`. The complimentary session expires on day 37.
+- **Sending and triggering happen in GymMaster**, automated off the member's own
+  join date. No integration work is needed in this repo for that.
+- **The PTs get the unverified leads after email 2**, around day 11, with anyone
+  who already responded stripped out. The emails take the easy conversions and
+  the PTs spend their calls on people who need one.
+- **Not sending yet.** What is left is operational and tracked in
+  `docs/handoff-email-1-go-live.md`: DNS for the sending domain, and confirming
+  what GymMaster gives you for unsubscribe, suppression and merge tags.
+  `pt.fitazgym.com` is confirmed resolving.
 
 Brand assets for the series live in `public/brand/`, documented in
 `docs/brand-assets.md`. Use `fitaz-gym-logo.svg` by default; the `-email`

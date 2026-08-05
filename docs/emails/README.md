@@ -54,21 +54,58 @@ as a plain fact** in its closing panel. A deadline that appears from nowhere on
 day 30 reads as invented, and the sceptical members are exactly the ones you are
 still trying to convert.
 
+## How this runs alongside the PT contact list
+
+The emails are automated in GymMaster off the member's own join date, so the
+day 1, 10 and 30 timings are exact per member rather than batched. The PT
+outreach runs alongside it, but **deliberately behind it**:
+
+| Day | What happens |
+|-----|--------------|
+| 1 | Email 1 |
+| 10 | Email 2 |
+| ~11 | Anyone who has not responded goes to the PTs as an unverified lead |
+| 30 | Email 3 |
+| 37 | The session expires |
+
+**Why the PTs come after email 2 rather than before email 1.** The emails do the
+easy conversions on their own, and the people who convert that way arrive as
+warm leads carrying their goals, their time preference and their trainer
+preference, which is what makes the allocation deliberate instead of arbitrary.
+The PTs then spend their calls only on people who actually need a call. Handing
+the whole list over on day one means ringing people who would happily have
+filled in a form, and it contradicts the email, which promises the member gets
+matched to a trainer on purpose.
+
+**Before handing the list over**, remove anyone who has already responded. That
+is the members now on the lead board with `Source = form`.
+
 ## Who to leave out of emails 2 and 3
 
-Anyone who has already booked. There is no automatic suppression, but the list
-is two minutes' work:
+Anyone who has already dealt with it. The lead board is the source of truth, and
+**Export CSV** on the board gives you both the status and the email address.
 
-1. Open `/admin`, the lead board.
-2. **Export CSV** (the button top right of the board).
-3. Filter to `Source = form`. Those are the members who completed the form.
-4. Paste that email column into the sending platform's suppression for the send.
+**Before email 2:** drop `Source = form`. They have responded.
 
-Do this before every send of 2 and 3. It matters more than it looks: without it
-the copy has to hedge every sentence with "in case you have not already", which
-weakens the email for the people who have *not* booked, who are the only
-audience it is for. Both emails still carry a single "already booked in? ignore
-this one" line as a safety net, but that line is not a substitute for the export.
+**Before email 3:** drop `Source = form`, plus anyone whose status is **Booked**,
+**Completed** or **Not interested**. By day 30 the PTs have worked the list, so
+this is the send where it matters. "Not interested" especially: somebody who
+told a trainer no on the phone and then gets "your session closes in seven days"
+is how you earn a spam complaint.
+
+**Keep "Unreachable" in.** A PT could not get them on the phone, which makes them
+exactly who email is for. Probably the highest value segment in the sequence.
+
+Suppressing is not optional politeness on email 3. Its opening line asserts the
+session **"is still unclaimed"**. Send that to somebody who booked a fortnight
+ago and the email is not just redundant, it is wrong, in a way that makes the
+gym look like it is not paying attention.
+
+Doing this properly is also what lets emails 2 and 3 be written straight. Without
+it the copy would have to hedge every sentence with "in case you have not
+already", which weakens it for the people who have *not* booked, who are the only
+audience it is for. Both emails carry a single "already booked in? ignore this
+one" line as a safety net, but that line is not a substitute for the export.
 
 **Before email 3, also drop anyone who did not open 1 or 2.** Sending a third
 email to people who have opened nothing is what gets a new sending domain
