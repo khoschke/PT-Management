@@ -14,6 +14,13 @@ The open items are tracked here rather than in a chat thread so they can be
 picked up cold. **If you are reviewing this and any item is still unticked,
 raise it** rather than assuming it was handled elsewhere.
 
+Three things are outstanding, and none of them are code:
+
+1. The sending domain, **with Georgio**.
+2. What GymMaster actually provides, **with Georgio and Danny**.
+3. Telling the PTs how leads reach them now, **with Karl**, once the flow is
+   live.
+
 ## Confirmed
 
 - **`pt.fitazgym.com` resolves.** Confirmed by Karl, 5 August 2026. Every button
@@ -28,7 +35,10 @@ raise it** rather than assuming it was handled elsewhere.
   on day one. See `docs/emails/README.md` for why and for what to strip out of
   the list first.
 
-## Open, with Georgio
+## Open, with Georgio and Danny
+
+Both of the items below are **theirs, not the PT Manager's**. Send them across
+and chase them; do not try to answer them from this repo.
 
 ### 1. Verified sending domain on `fitazgym.com`
 
@@ -79,9 +89,34 @@ get skipped:
   5 August 2026, so they should be live, but confirm on a real send rather than
   in a preview. If they 404, the Vercel deploy stalled; push again to retrigger.
 - **Suppression before each send of emails 2 and 3.** See
-  `docs/emails/README.md`. Email 3 in particular asserts the session is still
-  unclaimed, so sending it to somebody who already booked is wrong, not just
-  redundant.
+  `docs/emails/README.md`. Both are written so that reaching the wrong person is
+  awkward rather than wrong, but suppression is still the thing that keeps them
+  sharp.
+
+## Once it is live: tell the PTs
+
+**Do not skip this, and do not let it happen by accident.** The way leads reach
+the PTs is changing, and they will notice before anyone explains it. Send them a
+note covering:
+
+- **There is now a three email nurture flow** going to every new member, on days
+  1, 10 and 30, pointing them at the `/pt-session` form.
+- **Leads will arrive later, and warmer.** The PTs get the unverified leads
+  after email 2, around day 11, not on day one. That is deliberate: the members
+  who respond to the emails come through as warm leads carrying their goals,
+  their preferred training time and any trainer they asked for, so allocation is
+  deliberate rather than arbitrary.
+- **Their list will be shorter, and that is the point.** Anyone who already
+  responded is stripped out before handover, so the calls they do make are to
+  people who actually need one.
+- **The complimentary session now expires on day 37.** They should know the
+  deadline exists, because members will mention it, and because it gives them a
+  legitimate reason to follow up.
+- **The 48 hour first contact rule is unchanged** once a lead lands on their
+  board.
+
+Worth doing as a short conversation rather than only an email, since it changes
+the shape of their week.
 
 ## Definition of done
 
@@ -89,4 +124,5 @@ A member who joins the gym gets email 1 the next day, email 2 on day 10 and, if
 they still have not claimed it, email 3 on day 30, from an address that passes
 authentication, with working buttons, a working unsubscribe, and replies landing
 somewhere a human reads them. The PTs get the unverified leads after email 2,
-with the members who already responded stripped out.
+with the members who already responded stripped out, **and they have been told
+that is how it now works**.

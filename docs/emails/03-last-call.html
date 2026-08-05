@@ -98,7 +98,7 @@
   <!-- Preheader. Shows next to the subject in the inbox, then disappears.
        Deliberately adds new information rather than repeating the subject. -->
   <div style="display:none; font-size:1px; line-height:1px; max-height:0; max-width:0; opacity:0; overflow:hidden; mso-hide:all; font-family:sans-serif;">
-    One month in. The session that came with your membership has a week left on it.
+    One month in, and the session that came with your membership closes this week.
     &#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;
   </div>
 
@@ -160,11 +160,11 @@
               </h1>
 
               <p class="sm-lead d-text-secondary" style="margin:22px 0 0 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:18px; line-height:29px; font-weight:400; color:#6e6e73;">
-                You joined Fitaz Gym a month ago, {{first_name}}, and the
+                You joined Fitaz Gym a month ago, {{first_name}}. The
                 complimentary PT consultation and starter session that came with
-                your membership is still unclaimed. It closes in seven days.
-                Our trainers hold time aside for these, so we cannot leave them
-                open forever.
+                your membership closes on {{expiry_date}}, and if you have not
+                used yours yet, this is the week to sort it. Our trainers hold
+                time aside for these, so we cannot leave them open forever.
               </p>
             </td>
           </tr>
@@ -246,9 +246,10 @@
 
           <!-- ============================================================
                THE WAY OUT
-               A deadline without a graceful exit reads as pressure. Saying
-               this plainly costs a few bookings and keeps the goodwill of
-               everyone who was never going to book anyway.
+               Covers both cases the send might reach by accident: somebody who
+               already had their session, and somebody who is never going to
+               book. Suppression should catch the first, but this is the line
+               that keeps the email from reading badly when it does not.
                ============================================================ -->
           <tr>
             <td class="sm-px-24" style="padding:36px 40px 0 40px;">
@@ -256,10 +257,11 @@
                 <tr>
                   <td class="d-border" style="border-left:3px solid #1d1d1f; padding:2px 0 2px 18px;">
                     <p class="d-text-secondary" style="margin:0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:16px; line-height:26px; color:#6e6e73;">
-                      <span class="d-text" style="color:#1d1d1f; font-weight:600;">Not for you?</span>
-                      That is genuinely fine. Ignore this one and we will leave
-                      you to it. This is the last email you will get about it, and
-                      it changes nothing about your membership.
+                      <span class="d-text" style="color:#1d1d1f; font-weight:600;">Already sorted, or not for you?</span>
+                      If you have had your session, ignore this one and enjoy the
+                      rest of it. If it is genuinely not for you, that is fine
+                      too. Either way this is the last email you will get about
+                      it, and it changes nothing about your membership.
                     </p>
                   </td>
                 </tr>

@@ -96,10 +96,15 @@ is how you earn a spam complaint.
 **Keep "Unreachable" in.** A PT could not get them on the phone, which makes them
 exactly who email is for. Probably the highest value segment in the sequence.
 
-Suppressing is not optional politeness on email 3. Its opening line asserts the
-session **"is still unclaimed"**. Send that to somebody who booked a fortnight
-ago and the email is not just redundant, it is wrong, in a way that makes the
-gym look like it is not paying attention.
+**Email 3 is written to survive reaching the wrong person.** It never asserts
+that the member has not claimed their session: it states the deadline as a fact
+about the offer and puts the only conditional on the action, "if you have not
+used yours yet". Its closing block then covers both cases out loud, someone who
+already had their session and someone who never wanted one. So a suppression
+miss is mildly redundant rather than plainly wrong.
+
+That is a safety net, not a reason to skip the export. An email that reads as
+though nobody checked still costs you, it just costs less.
 
 Doing this properly is also what lets emails 2 and 3 be written straight. Without
 it the copy would have to hedge every sentence with "in case you have not
