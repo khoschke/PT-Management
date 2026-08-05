@@ -31,8 +31,11 @@ trainer as *"filled in the form themselves, so this is a warm lead"*, and the
 
 So this email has exactly one job: **get the click that produces a form
 submission.** Everything in it either drives that click or removes a reason not
-to. There is no secondary ask, no social links competing for the tap, no
-newsletter sign up. One email, one action, asked twice.
+to. There is no secondary ask and no newsletter sign up. The only other links
+are the trainer page and the two social icons, and those sit in the footer
+below the closing call to action, where they cannot pull anyone out of the
+flow before they have had both chances to click. One email, one action, asked
+twice.
 
 ## Why 24 hours is the right moment
 
@@ -128,7 +131,8 @@ import.
 | Tag | Value | Notes |
 |-----|-------|-------|
 | `{{first_name}}` | Member's first name | Set a fallback of "there". A blank name renders "Welcome to Fitaz, ." |
-| `{{gym_address}}` | Physical postal address | Required for anti-spam compliance. |
+| `{{facebook_url}}` | Fitaz Gym Facebook page | **Still a placeholder.** Fill this in before sending. |
+| `{{instagram_url}}` | Fitaz Gym Instagram profile | **Still a placeholder.** Fill this in before sending. |
 | `{{unsubscribe_url}}` | ESP unsubscribe link | Required. Also set the `List-Unsubscribe` header. |
 | `{{preferences_url}}` | Preference centre | Point at the unsubscribe link if there is no preference centre yet. |
 
@@ -157,15 +161,58 @@ https://pt.fitazgym.com/pt-session?utm_source=email&utm_medium=lifecycle&utm_cam
 Sanity check before any send: `grep -c 'pt.fitazgym.com/pt-session'` should
 return 4 for the HTML and 2 for the text part.
 
+## Header and footer
+
+Both match the rest of the Fitaz series in Postcards, so this email sits
+alongside the New Member Flow emails rather than looking like a one off.
+
+**Header.** Centred FITAZ GYM wordmark with a hairline rule beneath it. The
+wordmark is live text, not an image: light letter-spaced FITAZ next to a solid
+GYM chip, mirroring `public/logo-fitaz.svg`. In dark mode the chip inverts to
+white with dark type, the same flip the logo already implies.
+
+**Footer.** A solid `#1d1d1f` block with rounded bottom corners, carrying the
+Facebook and Instagram icons, the gym address, the permission line and the
+unsubscribe links, all centred in white.
+
+Two deliberate choices in there:
+
+- **The footer block does not change colour in dark mode.** The icons are
+  flattened onto `#1d1d1f`, so if the block shifted you would see two lighter
+  tiles floating around the glyphs. Against the near black dark canvas the
+  block still separates cleanly, so there is nothing to gain by moving it.
+- **The compliance text lives inside the black block**, not on the canvas
+  below it, so the block stays the last thing in the email exactly as it is in
+  the other Fitaz emails. `#a1a1a6` on `#1d1d1f` is about 6.5:1, comfortably
+  past AA.
+
+### The social icons
+
+`public/email/icon-facebook.png` and `public/email/icon-instagram.png`, served
+by the Next.js app from the same domain as the CTA:
+
+```
+https://pt.fitazgym.com/email/icon-facebook.png
+https://pt.fitazgym.com/email/icon-instagram.png
+```
+
+96px assets displayed at 24px, so they stay sharp on retina. They are **opaque,
+drawn on the footer colour rather than on transparency**, because Outlook
+composites PNG alpha badly and would ring them with grey. That does mean the
+footer colour and the icon background have to stay in step: if you ever change
+`#1d1d1f` in the footer, regenerate the icons to match.
+
+Both carry `alt` text, so with images blocked the footer degrades to two
+readable "Facebook" and "Instagram" links rather than to empty boxes.
+
 ## Build notes
 
 Things in the file that are deliberate, so nobody "tidies" them away:
 
-- **No images at all.** The wordmark is live text that mirrors
-  `public/logo-fitaz.svg`: light letter-spaced FITAZ next to a solid GYM chip.
-  A meaningful share of first sends from a new domain render with images
-  blocked, and this email is pixel identical either way. It also keeps the
-  message small, which helps Gmail clipping.
+- **The only images are the two social icons.** Everything else, including the
+  wordmark, is live text. A meaningful share of first sends from a new domain
+  render with images blocked, and this email loses nothing but the two glyphs.
+  It also keeps the message small, which helps Gmail clipping.
 - **Deliberate dark mode, not inherited.** The brand is black on white, which
   is exactly what Gmail and Apple Mail invert worst: the black pill button
   turns invisible against an auto-darkened card. The `@media (prefers-color-scheme: dark)`
@@ -221,7 +268,7 @@ block:
 
 | Postcards block | Settings |
 |---|---|
-| Header / logo | Text block, not an image. `FITAZ` at 26px, weight 300, letter spacing 5px, `#1d1d1f`. `GYM` at 13px, weight 700, letter spacing 1.5px, white on a `#1d1d1f` chip, 4px radius. Left aligned, 32px top padding. |
+| Header / logo | Text block, not an image, centred. `FITAZ` at 30px, weight 300, letter spacing 6px, `#1d1d1f`. `GYM` at 13px, weight 700, letter spacing 1.5px, white on a `#1d1d1f` chip, 4px radius. 36px top padding, then a 1px `#e0e0e5` separator 22px below. |
 | Hero | Eyebrow "INCLUDED WITH YOUR MEMBERSHIP", 12px, weight 700, letter spacing 1.6px, `#6e6e73`. Heading 44px desktop and 34px mobile, weight 600, letter spacing -1.2px, line height 48px. Body 18px on 29px, `#6e6e73`. |
 | Button | Full width on mobile. Background `#1d1d1f`, white text, 17px weight 600, padding 19px by 40px, radius 999px. Caption underneath at 14px `#6e6e73`. |
 | Divider | 1px, `#e0e0e5`, full content width. |
@@ -230,7 +277,7 @@ block:
 | Goal pills | Tag or badge block, `#e8e8ed` fill, `#1d1d1f` text, 14px weight 500, padding 11px by 16px, radius 999px, 8px gap. |
 | Passport note | Quote block, 3px left rule in `#1d1d1f`, 18px left padding. |
 | Closing panel | White card, 20px radius, centred, heading 24px weight 600, then the same button. |
-| Footer | Small wordmark, address, permission line, unsubscribe and preferences, all 13px on 21px `#6e6e73`. |
+| Footer | Solid `#1d1d1f` block, full container width, 24px radius on the bottom two corners only, 38px top and 34px bottom padding. Centred: 24px social icons with 22px between them, address at 16px white, then permission line and unsubscribe at 13px on 21px `#a1a1a6`. |
 
 Set the template background to `#f5f5f7`, content width 600px, and the global
 font stack to `'Helvetica Neue', Helvetica, Arial, sans-serif`. Turn dark mode
@@ -242,7 +289,12 @@ on and set the dark palette to canvas `#000000`, surface `#161618`, fill
 
 - [ ] Render test across Gmail web, Gmail app, Apple Mail, Outlook desktop and
       Outlook.com, in both light and dark mode.
-- [ ] Check with images blocked. Nothing should change.
+- [ ] Fill in `{{facebook_url}}` and `{{instagram_url}}`. They ship as
+      placeholders and a live send would put dead links in the footer.
+- [ ] Confirm the two footer icons load from `pt.fitazgym.com/email/`, and that
+      they sit flush on the black block with no grey ring around them.
+- [ ] Check with images blocked. Only the two social icons should change, and
+      they should fall back to readable "Facebook" and "Instagram" text.
 - [ ] Confirm the total HTML is under 102KB so Gmail does not clip the closing
       CTA.
 - [ ] Send a live seed test to a real inbox and click both buttons.

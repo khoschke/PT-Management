@@ -120,16 +120,25 @@
                light letter-spaced FITAZ plus a solid GYM chip.
                ============================================================ -->
           <tr>
-            <td align="left" class="sm-px-24" style="padding:32px 40px 0 40px;">
-              <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+            <td align="center" class="sm-px-24" style="padding:36px 40px 0 40px;">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center">
                 <tr>
-                  <td style="padding:0 10px 0 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:26px; line-height:30px; font-weight:300; letter-spacing:5px; color:#1d1d1f;" class="d-text">
+                  <td style="padding:0 10px 0 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:30px; line-height:34px; font-weight:300; letter-spacing:6px; color:#1d1d1f;" class="d-text">
                     FITAZ
                   </td>
                   <td class="d-bg-invert" style="background-color:#1d1d1f; border-radius:4px; padding:5px 9px; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:13px; line-height:15px; font-weight:700; letter-spacing:1.5px; color:#ffffff;">
                     <span class="d-text-invert" style="color:#ffffff;">GYM</span>
                   </td>
                 </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Rule under the masthead, as per the rest of the Fitaz series. -->
+          <tr>
+            <td class="sm-px-24" style="padding:22px 40px 0 40px;">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tr><td class="d-rule" height="1" style="height:1px; line-height:1px; font-size:1px; background-color:#e0e0e5;">&nbsp;</td></tr>
               </table>
             </td>
           </tr>
@@ -446,34 +455,56 @@
                FOOTER
                ============================================================ -->
           <tr>
-            <td class="sm-px-24" style="padding:40px 40px 48px 40px;">
-              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
-                <tr><td class="d-rule" height="1" style="height:1px; line-height:1px; font-size:1px; background-color:#e0e0e5;">&nbsp;</td></tr>
-              </table>
+            <td style="padding:44px 0 0 0;">
 
-              <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top:26px;">
+              <!-- The solid block stays #1d1d1f in dark mode as well as light.
+                   The icons are flattened onto that exact colour, so letting it
+                   shift would leave two visible tiles around the glyphs. On the
+                   near black dark canvas it still separates cleanly. -->
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color:#1d1d1f; border-radius:0 0 24px 24px;">
                 <tr>
-                  <td style="padding:0 8px 0 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:16px; line-height:19px; font-weight:300; letter-spacing:3px; color:#6e6e73;" class="d-text-secondary">
-                    FITAZ
-                  </td>
-                  <td style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:10px; line-height:19px; font-weight:700; letter-spacing:1px; color:#6e6e73;" class="d-text-secondary">
-                    GYM
+                  <!-- color is set on the cell as well as each paragraph, so a
+                       client that strips inline styles from <p> still inherits
+                       white here rather than falling back to black on black. -->
+                  <td align="center" class="sm-px-24" style="padding:38px 40px 34px 40px; border-radius:0 0 24px 24px; color:#ffffff; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+
+                    <!-- Socials. Opaque PNGs on the footer colour rather than
+                         transparent ones, because Outlook composites PNG alpha
+                         badly. Alt text carries the link when images are off. -->
+                    <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center">
+                      <tr>
+                        <td style="padding:0 11px;">
+                          <a href="{{facebook_url}}" style="text-decoration:none;">
+                            <img src="https://pt.fitazgym.com/email/icon-facebook.png" width="24" height="24" alt="Facebook" style="display:block; width:24px; height:24px; border:0; color:#ffffff; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:13px;" />
+                          </a>
+                        </td>
+                        <td style="padding:0 11px;">
+                          <a href="{{instagram_url}}" style="text-decoration:none;">
+                            <img src="https://pt.fitazgym.com/email/icon-instagram.png" width="24" height="24" alt="Instagram" style="display:block; width:24px; height:24px; border:0; color:#ffffff; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:13px;" />
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <p class="unstyle-auto-detected-links" style="margin:20px 0 0 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:16px; line-height:24px; color:#ffffff;">
+                      101 Main St, Kangaroo Point.
+                    </p>
+
+                    <p style="margin:18px 0 0 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:13px; line-height:21px; color:#a1a1a6;">
+                      You are receiving this because you joined Fitaz Gym. We use
+                      your details only to arrange your complimentary session and
+                      we do not share them outside the gym.
+                    </p>
+
+                    <p style="margin:12px 0 0 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:13px; line-height:21px; color:#a1a1a6;">
+                      <a href="{{unsubscribe_url}}" style="color:#a1a1a6; text-decoration:underline;">Unsubscribe</a>
+                      &nbsp;&#183;&nbsp;
+                      <a href="{{preferences_url}}" style="color:#a1a1a6; text-decoration:underline;">Email preferences</a>
+                    </p>
+
                   </td>
                 </tr>
               </table>
-
-              <p class="d-text-secondary unstyle-auto-detected-links" style="margin:14px 0 0 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:13px; line-height:21px; color:#6e6e73;">
-                {{gym_address}}<br />
-                You are receiving this because you joined Fitaz Gym. We use your
-                details only to arrange your complimentary session and we do not
-                share them outside the gym.
-              </p>
-
-              <p style="margin:14px 0 0 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:13px; line-height:21px; color:#6e6e73;" class="d-text-secondary">
-                <a href="{{unsubscribe_url}}" class="d-text-secondary" style="color:#6e6e73; text-decoration:underline;">Unsubscribe</a>
-                &nbsp;&#183;&nbsp;
-                <a href="{{preferences_url}}" class="d-text-secondary" style="color:#6e6e73; text-decoration:underline;">Email preferences</a>
-              </p>
             </td>
           </tr>
 

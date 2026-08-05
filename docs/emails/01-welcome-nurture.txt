@@ -73,8 +73,11 @@ Karl
 PT Manager, Fitaz Gym
 
 --
-Fitaz Gym
-{{gym_address}}
+FITAZ GYM
+101 Main St, Kangaroo Point.
+
+Facebook: {{facebook_url}}
+Instagram: {{instagram_url}}
 
 You are receiving this because you joined Fitaz Gym. We use your details
 only to arrange your complimentary session and we do not share them
