@@ -2,15 +2,45 @@
 
 Traced, self-contained versions of the FITAZ GYM lockup, in `public/brand/`.
 
-| File | Use |
-|---|---|
-| `fitaz-gym-logo.svg` | Primary. Dark ink, for light backgrounds. Scales to any size. |
-| `fitaz-gym-logo.png` | Same, 1600px wide, transparent. For anywhere SVG is awkward. |
-| `fitaz-gym-logo-white.svg` | Reversed. White wordmark, dark GYM on a white chip, for dark backgrounds. |
-| `fitaz-gym-logo-white.png` | Same, 1600px wide, transparent. |
+## Three variants, pick one
 
-All four have a **transparent background**, so they sit on any colour. The PNGs
-are RGBA with antialiased edges, not a white box.
+They differ in two things: how tightly FITAZ is tracked, and how big the GYM
+chip is relative to the wordmark.
+
+| Variant | Files | Tracking | Chip |
+|---|---|---|---|
+| **A. Header lockup** | `fitaz-gym-logo.*` | 0.200em, wide | Large, centred on the caps |
+| **B. Original chip** | `fitaz-gym-logo-classic-chip.*` | 0.200em, wide | Small, centred on the caps |
+| **C. Original** | `fitaz-gym-logo-original.*` | 0.066em, tight | Small, hung at the top right |
+
+**A** is what the welcome email uses today. **C** is a faithful trace of
+`public/logo-fitaz.svg`, the mark as it was originally drawn. **B** is the
+midpoint: the original's chip proportion on the header's wider tracking.
+
+Each comes in four files: `.svg` and `.png` in dark ink for light backgrounds,
+and `-white.svg` / `-white.png` reversed for dark ones. All have a
+**transparent background**, so they sit on any colour. The PNGs are 1600px wide
+RGBA with antialiased edges, not a white box.
+
+If you only ever want one, take **C**: it is the actual brand mark. A is worth
+keeping only because it reads better at inbox sizes, which is why the email
+uses it.
+
+## What actually differs
+
+Worth knowing before choosing, because the chip is not the biggest difference:
+
+- **Tracking.** The original tracks FITAZ at 0.066em. The email header tracks it
+  at 0.200em, three times looser. At a glance that reads as a different mark
+  more than the chip size does. Wide tracking holds up better at small sizes,
+  which is why the header has it; the original is more confident at large sizes.
+- **Chip size.** The original sets GYM at 28% of the FITAZ size, giving a chip
+  about 60% of the cap height. The header sets it at 43%, giving a chip about
+  90% of cap height.
+- **Chip alignment.** The original hangs the chip at the **top** of the
+  wordmark, its top edge just above the cap line and its bottom around the
+  middle of the caps. The header centres it. This is easy to miss and is a real
+  part of the original's character.
 
 ## What "traced" means here
 
@@ -37,16 +67,22 @@ these match what members see. They are **not** an exact trace of Helvetica Neue:
 if you have a licensed copy and want true brand fidelity, the trace should be
 redone from it. The difference is subtle at a glance and real at large sizes.
 
-**The chip is proportioned like the email header, not like `logo-fitaz.svg`.**
-The original sets GYM at roughly 28% of the FITAZ size; the email header, and so
-this trace, sets it at about 43%, which reads better at small sizes and in an
-inbox. If you want the original proportion instead, say so and it can be
-re-traced to match.
+**The trace is geometric, not a scan.** The letterforms come from the font
+outlines and the chip from its measured proportions, so the marks are clean at
+any size. What they are not is a pixel copy of a rendered image, which means
+tiny differences from `logo-fitaz.svg` as your machine renders it are expected
+and are down to the font substitution above.
 
 ## Geometry
 
-Sized from the email header at 4x: FITAZ at 120px with 24px tracking, the GYM
-chip at 52px with 6px tracking, 36px and 20px of chip padding, a 16px corner
-radius, and 40px between the wordmark and the chip. Ink is `#1d1d1f`, the same
-foreground token as `src/app/globals.css`. The viewBox is trimmed to the ink
-with 8px of padding, so the files have no dead margin to fight when placing them.
+All three are built at a common FITAZ size of 120px so they can be compared like
+for like, with the chip padding, corner radius and gap derived as ratios rather
+than hardcoded, so any of them can be rebuilt at another size without drift. Ink
+is `#1d1d1f`, the same foreground token as `src/app/globals.css`. The viewBox is
+trimmed to the ink with 8px of padding, so the files carry no dead margin to
+fight when placing them.
+
+Variant C reproduces `logo-fitaz.svg`'s own ratios: GYM at 0.283 of the FITAZ
+size, chip padding of 0.95 and 0.38 of the GYM size, a corner radius of 0.114 of
+the chip height, a gap of 0.81 of the cap height, and the chip's top edge
+0.069 of the cap height above the cap line.
