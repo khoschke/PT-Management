@@ -34,7 +34,9 @@
     a { text-decoration: none; }
 
     /* Stop iOS and Outlook auto-linking phone numbers and addresses into
-       blue underlined text that breaks the monochrome palette. */
+       blue underlined text that breaks the monochrome palette.
+       .aBn is not ours and will not appear in the markup below: Gmail injects
+       it around anything it decides to auto-link, so it has to stay. */
     a[x-apple-data-detectors], .unstyle-auto-detected-links a, .aBn {
       border-bottom: 0 !important; cursor: default !important; color: inherit !important;
       text-decoration: none !important; font-size: inherit !important; font-family: inherit !important;
@@ -45,7 +47,6 @@
     @media screen and (max-width: 600px) {
       .sm-w-full { width: 100% !important; }
       .sm-px-24 { padding-left: 24px !important; padding-right: 24px !important; }
-      .sm-py-32 { padding-top: 32px !important; padding-bottom: 32px !important; }
       .sm-hero { font-size: 34px !important; line-height: 38px !important; }
       .sm-lead { font-size: 17px !important; line-height: 27px !important; }
       /* Full width buttons on mobile. The side padding has to go to zero as
@@ -58,8 +59,6 @@
         padding-left: 0 !important; padding-right: 0 !important;
       }
       .sm-center { text-align: center !important; }
-      .sm-mt-8 { margin-top: 8px !important; }
-      .sm-hide { display: none !important; }
     }
 
     /* ------------------------- Dark mode -------------------------
@@ -184,7 +183,7 @@
               </v:roundrect>
               <![endif]-->
               <!--[if !mso]><!-->
-              <a href="https://pt.fitazgym.com/pt-session" class="d-bg-invert d-text-invert sm-block" style="display:inline-block; background-color:#1d1d1f; color:#ffffff; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:17px; line-height:17px; font-weight:600; letter-spacing:-0.2px; text-align:center; text-decoration:none; padding:19px 40px; border-radius:999px; mso-hide:all;" target="_blank" rel="noopener">
+              <a href="https://pt.fitazgym.com/pt-session" class="d-bg-invert d-text-invert sm-block" style="display:inline-block; background-color:#1d1d1f; color:#ffffff; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:17px; line-height:17px; font-weight:600; letter-spacing:-0.2px; text-align:center; text-decoration:none; padding:19px 40px; border-radius:999px;" target="_blank" rel="noopener">
                 Get me booked in
               </a>
               <!--<![endif]-->
@@ -425,7 +424,7 @@
                     </v:roundrect>
                     <![endif]-->
                     <!--[if !mso]><!-->
-                    <a href="https://pt.fitazgym.com/pt-session" class="d-bg-invert d-text-invert sm-block" style="display:inline-block; background-color:#1d1d1f; color:#ffffff; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:17px; line-height:17px; font-weight:600; letter-spacing:-0.2px; text-align:center; text-decoration:none; padding:19px 40px; border-radius:999px; mso-hide:all;" target="_blank" rel="noopener">
+                    <a href="https://pt.fitazgym.com/pt-session" class="d-bg-invert d-text-invert sm-block" style="display:inline-block; background-color:#1d1d1f; color:#ffffff; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:17px; line-height:17px; font-weight:600; letter-spacing:-0.2px; text-align:center; text-decoration:none; padding:19px 40px; border-radius:999px;" target="_blank" rel="noopener">
                       Get me booked in
                     </a>
                     <!--<![endif]-->
