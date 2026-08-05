@@ -2,45 +2,38 @@
 
 Traced, self-contained versions of the FITAZ GYM lockup, in `public/brand/`.
 
-## Three variants, pick one
+![The two marks](brand-logo-comparison.png)
 
-They differ in two things: how tightly FITAZ is tracked, and how big the GYM
-chip is relative to the wordmark.
+## Which one to use
 
-| Variant | Files | Tracking | Chip |
-|---|---|---|---|
-| **A. Header lockup** | `fitaz-gym-logo.*` | 0.200em, wide | Large, centred on the caps |
-| **B. Original chip** | `fitaz-gym-logo-classic-chip.*` | 0.200em, wide | Small, centred on the caps |
-| **C. Original** | `fitaz-gym-logo-original.*` | 0.066em, tight | Small, hung at the top right |
+**Use `fitaz-gym-logo.svg` unless you have a specific reason not to.** It is the
+brand mark, traced from `public/logo-fitaz.svg`: tight 0.066em tracking on
+FITAZ, a small GYM chip hung at the top right rather than centred.
 
-**A** is what the welcome email uses today. **C** is a faithful trace of
-`public/logo-fitaz.svg`, the mark as it was originally drawn. **B** is the
-midpoint: the original's chip proportion on the header's wider tracking.
+| File | Use |
+|---|---|
+| `fitaz-gym-logo.svg` / `.png` | **The brand mark.** Default for everything. |
+| `fitaz-gym-logo-white.svg` / `.png` | Same, reversed for dark backgrounds. |
+| `fitaz-gym-logo-email.svg` / `.png` | **Email headers only.** See below. |
+| `fitaz-gym-logo-email-white.svg` / `.png` | Same, reversed. |
 
-Each comes in four files: `.svg` and `.png` in dark ink for light backgrounds,
-and `-white.svg` / `-white.png` reversed for dark ones. All have a
-**transparent background**, so they sit on any colour. The PNGs are 1600px wide
-RGBA with antialiased edges, not a white box.
+All have a **transparent background**, so they sit on any colour. The PNGs are
+1600px wide RGBA with antialiased edges, not a white box. The SVGs scale to any
+size.
 
-If you only ever want one, take **C**: it is the actual brand mark. A is worth
-keeping only because it reads better at inbox sizes, which is why the email
-uses it.
+## Why there is a separate email mark
 
-## What actually differs
+The email header uses a deliberately different lockup: FITAZ tracked three times
+looser at 0.200em, and a chip roughly 90% of the cap height rather than 60%,
+centred rather than hung at the top.
 
-Worth knowing before choosing, because the chip is not the biggest difference:
+That is not a second brand. It is the same mark adjusted to survive being about
+30px tall in an inbox, where the brand mark's tight tracking closes up and its
+small chip stops being legible. Anywhere the mark is bigger than an email
+header, the brand mark is the right one.
 
-- **Tracking.** The original tracks FITAZ at 0.066em. The email header tracks it
-  at 0.200em, three times looser. At a glance that reads as a different mark
-  more than the chip size does. Wide tracking holds up better at small sizes,
-  which is why the header has it; the original is more confident at large sizes.
-- **Chip size.** The original sets GYM at 28% of the FITAZ size, giving a chip
-  about 60% of the cap height. The header sets it at 43%, giving a chip about
-  90% of cap height.
-- **Chip alignment.** The original hangs the chip at the **top** of the
-  wordmark, its top edge just above the cap line and its bottom around the
-  middle of the caps. The header centres it. This is easy to miss and is a real
-  part of the original's character.
+Do not introduce a third variant. If a new context needs something in between,
+change one of these two rather than adding to the set.
 
 ## What "traced" means here
 
@@ -49,8 +42,8 @@ Worth knowing before choosing, because the chip is not the biggest difference:
 machine that has the font. Anywhere else it silently falls back to something
 else, and the letter spacing and weight shift with it.
 
-These four have the letterforms converted to **outlines**: every character is a
-filled path, so there is no font to be missing and the mark is pixel identical
+These have the letterforms converted to **outlines**: every character is a
+filled path, so there is no font to be missing and the mark is identical
 everywhere. That is what makes them safe to hand to a printer, drop into a deck,
 or upload to a platform you do not control.
 
@@ -75,14 +68,13 @@ and are down to the font substitution above.
 
 ## Geometry
 
-All three are built at a common FITAZ size of 120px so they can be compared like
-for like, with the chip padding, corner radius and gap derived as ratios rather
-than hardcoded, so any of them can be rebuilt at another size without drift. Ink
-is `#1d1d1f`, the same foreground token as `src/app/globals.css`. The viewBox is
-trimmed to the ink with 8px of padding, so the files carry no dead margin to
-fight when placing them.
+Both are built at a common FITAZ size of 120px, with chip padding, corner radius
+and gap derived as ratios rather than hardcoded, so either can be rebuilt at
+another size without drift. Ink is `#1d1d1f`, the same foreground token as
+`src/app/globals.css`. The viewBox is trimmed to the ink with 8px of padding, so
+the files carry no dead margin to fight when placing them.
 
-Variant C reproduces `logo-fitaz.svg`'s own ratios: GYM at 0.283 of the FITAZ
-size, chip padding of 0.95 and 0.38 of the GYM size, a corner radius of 0.114 of
-the chip height, a gap of 0.81 of the cap height, and the chip's top edge
-0.069 of the cap height above the cap line.
+The brand mark reproduces `logo-fitaz.svg`'s own ratios: GYM at 0.283 of the
+FITAZ size, chip padding of 0.95 and 0.38 of the GYM size, a corner radius of
+0.114 of the chip height, a gap of 0.81 of the cap height, and the chip's top
+edge 0.069 of the cap height above the cap line.
