@@ -61,9 +61,9 @@ and the manual entry path still works.
 Everything that doesn't depend on GymMaster's exact API is built and passing
 build/tsc/lint on branch `claude/gymmaster-phase-1-pull-7yuxuy`:
 
-- **Migrations** `0004_gymmaster_lead_source.sql` (adds the `gymmaster_api`
+- **Migrations** `0006_gymmaster_lead_source.sql` (adds the `gymmaster_api`
   `lead_source` value — isolated because a new enum value can't be used in the
-  same transaction that adds it) and `0005_gymmaster_sync.sql` (unique
+  same transaction that adds it) and `0007_gymmaster_sync.sql` (unique
   `leads.gymmaster_member_id` for dedupe, widened cold-lead goals check,
   `gymmaster_sync_log` table). **Not yet applied to the live Supabase project.**
 - **Cron** `/api/cron/gymmaster-sync` (in `vercel.json`, daily `0 20 * * *`,
