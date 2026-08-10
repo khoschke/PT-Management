@@ -12,16 +12,18 @@ hours. Built for a five-PT gym, ~30 leads/month.
 
 ## Live now
 
-- **Public form:** https://pt-management-two.vercel.app/pt-session
-- **Manager/trainer dashboard:** https://pt-management-two.vercel.app/admin
-- **PT onboarding workbook:** https://pt-management-two.vercel.app/onboarding
+- **Public form:** https://pt.fitazgym.com/pt-session
+- **Manager/trainer dashboard:** https://pt.fitazgym.com/admin
+- **PT onboarding workbook:** https://pt.fitazgym.com/onboarding
+- The `pt-management-two.vercel.app` addresses still work and are what Vercel
+  deploys to, but `pt.fitazgym.com` is live and is the address to use and share.
 - Everything is deployed and working end to end with real data.
 
 ## Stack & hosting
 
 - **Next.js 16** (App Router, Turbopack) + TypeScript + Tailwind v4.
 - **Supabase** — Postgres, Auth, Row Level Security. Project ref `fbzearypwpjcyrmdivsz`.
-- **Resend** — the two notification emails. **LIVE** and sending from `noreply@mail.fitazgym.com` (confirmed 4 Aug 2026 by a real trainer allocation email landing in the inbox). Georgio added the Shopify DNS records. **One defect: the SPF record was sent with a copy-paste error** (`v=spf1 include: v=spf1 include:amazonses.com ~all`) and needs replacing with `v=spf1 include:amazonses.com ~all`. Mail is delivering on DKIM alignment meanwhile.
+- **Resend** — the two notification emails. **LIVE** and sending from `noreply@mail.fitazgym.com` (confirmed 4 Aug 2026 by a real trainer allocation email landing in the inbox). Georgio added the DNS records. **DNS lives at CrazyDomains (Dreamscape), not Shopify** (confirmed 5 Aug 2026); fitazgym.com is connected to Shopify but not bought through it, so the zone is elsewhere. **One defect: the SPF record was sent with a copy-paste error** (`v=spf1 include: v=spf1 include:amazonses.com ~all`) and needs replacing with `v=spf1 include:amazonses.com ~all`. Mail is delivering on DKIM alignment meanwhile.
 - **Vercel** — hosting + a daily-digest cron (`vercel.json`). Hobby (free) plan.
 - **GitHub:** `khoschke/pt-management`. Active branch: `claude/fitaz-gym-pt-leads-76ffhv` (this is also Vercel's production branch — pushing to it auto-deploys).
 
@@ -118,10 +120,60 @@ Brand assets for the series live in `public/brand/`, documented in
 `docs/brand-assets.md`. Use `fitaz-gym-logo.svg` by default; the `-email`
 variant exists only for email headers.
 
+## Where each workstream lives (branch map)
+
+Every workstream has its own branch, which is also the session that built it.
+**Several have finished work sitting unmerged**, so check here before starting
+anything: the thing may already be built.
+
+Status as at 6 August 2026, measured against the production branch
+`claude/fitaz-gym-pt-leads-76ffhv`.
+
+| Branch / thread | Workstream | State |
+|---|---|---|
+| `claude/apple-design-pass-ymnm14` | Apple-grade design pass | **13 commits unmerged.** Public form, lead board, trainers, staff, login all done, plus the FITAZ GYM wordmark across app headers. Looks finished. |
+| `claude/custom-domain-dns-setup-v45oc6` | Custom domain + security hardening | **8 commits unmerged.** Includes real security work: CSV export auth, cron auth, RLS hardening, and migration `0004_public_access_hardening.sql`. |
+| `claude/pt-document-expiry-feature-ppsy30` | PT compliance documents with expiry reminders | **1 commit, ~1,900 lines unmerged.** A whole feature that is not listed in the backlog below. |
+| `claude/gymmaster-phase-1-pull-7yuxuy` | GymMaster integration | **1 commit unmerged.** Phase 1 pull scaffolding plus migrations. |
+| `claude/handoff-email-notifications-9m67a6` | Branded HTML notification emails | **1 commit unmerged.** Replaces the plain-text ops emails with branded HTML plus a dashboard link. |
+| `claude/gym-nurture-email-design-uw9nvu` | Member email series | **5 commits unmerged.** Emails 2 and 3, CMS-safe variants, this doc. |
+| `claude/self-service-password-change-3ydtqu` | Forgot-password | Handoff note only, no implementation. |
+| `claude/availability-am-pm-model-yj1dby` | Trainer AM/PM availability | Merged, nothing pending. |
+| `claude/trainer-portal-handoff-doc-o0on8j` | Editable trainer pages | Merged (scoping note only, build not started). |
+| `claude/pt-onboarding-dashboard-9wwl17` | PT onboarding workbook | Merged and live. |
+| `claude/handoff-trainer-profiles-link-buudia` | Trainer profile links | Merged. |
+| `claude/project-pause-prevention-083n5y` | Supabase keep-alive cron | Merged and live. |
+
+### Migration collision, read before merging any of these
+
+Three unmerged branches each add a **different `0004_` migration**:
+
+- `custom-domain-dns-setup` → `0004_public_access_hardening.sql`
+- `gymmaster-phase-1-pull` → `0004_gymmaster_lead_source.sql` (plus `0005_gymmaster_sync.sql`)
+- `pt-document-expiry-feature` → `0004_trainer_documents.sql`
+
+They will collide. Whichever merges first keeps `0004`; the others must be
+renumbered before they go in, and the Supabase project needs them applied in
+the new order. **Do not merge two of these on the same day without renumbering.**
+
 ## Outstanding / next up
 
 - **GymMaster integration** — see `docs/handoff-gymmaster-integration.md`.
+  **Phase 1 scaffolding already exists unmerged** on
+  `claude/gymmaster-phase-1-pull-7yuxuy`.
 - **Apple-grade design pass** — see `docs/handoff-apple-design-pass.md`.
+  **Appears finished and unmerged** on `claude/apple-design-pass-ymnm14`. Review
+  and merge rather than rebuild. Note it also touches the FITAZ wordmark, so
+  check it against `public/brand/` before merging.
+- **PT compliance documents with expiry reminders** — built and unmerged on
+  `claude/pt-document-expiry-feature-ppsy30`. Was missing from this list
+  entirely. Needs a review and a decision on whether it ships.
+- **Branded HTML notification emails** — built and unmerged on
+  `claude/handoff-email-notifications-9m67a6`. Replaces the plain-text trainer
+  and digest emails. Now that sending is live this is the cheapest visible win
+  available.
+- **Security hardening** — CSV export auth, cron auth, RLS tightening, built and
+  unmerged on `claude/custom-domain-dns-setup-v45oc6`. Should not sit unmerged.
 - ~~**Email notifications**~~ — **DONE.** Live and sending from
   `noreply@mail.fitazgym.com`. Only the SPF typo above is outstanding.
 - **Change-email on the Account screen** — the `/admin/account` screen currently
@@ -140,8 +192,8 @@ variant exists only for email headers.
   works, don't merge a dead reset link before then.
 - **Availability as AM + PM (not "both")** — change trainer availability to
   independent AM/PM selection. See `docs/handoff-availability-am-pm.md`.
-- **Custom web address** — decided: **pt.fitazgym.com**, DNS via Shopify. See
-  `docs/handoff-custom-domain.md`.
+- ~~**Custom web address**~~ — **DONE.** `pt.fitazgym.com` is live, DNS added in
+  Shopify by Georgio. `docs/handoff-custom-domain.md` is now history, not a task.
 - **Editable trainer pages** — give each PT a self-editable profile. **Scoped,
   not started.** Decided: **internal only** (not public — the public reach
   trainers via the gym website already), trainer edits their own row *and*
