@@ -42,6 +42,11 @@ Migrations in `supabase/migrations/`, all applied to the live Supabase project:
 - `0001_init.sql` — trainers, leads, status_history, profiles, rate_limit_log, RLS, triggers.
 - `0002_onboarding.sql` — onboarding_responses, onboarding_part_status, RLS.
 - `0003_trainer_bio.sql` — free-text `bio` column on trainers.
+- `0004_trainer_am_pm.sql` — independent AM/PM trainer availability.
+
+**Next free number is 0005, and it is already claimed.** See the branch map
+below: the unmerged branches hold 0005 through 0008. Anything new starts at
+0009.
 
 Roles live in `profiles` (`manager` / `trainer`). Managers see/allocate all
 leads; trainers see only their own. RLS enforces this at the database level.
@@ -120,6 +125,49 @@ Brand assets for the series live in `public/brand/`, documented in
 `docs/brand-assets.md`. Use `fitaz-gym-logo.svg` by default; the `-email`
 variant exists only for email headers.
 
+### Newly added, not yet scoped
+
+- **Staff development pathway into the PT portal, with an upgrade to trainer
+  status.** Connect the existing onboarding workbook to the trainer roster so a
+  staff member who completes the pathway can be promoted to `trainer` in one
+  action, rather than someone hand-creating a roster row and a login. Touches
+  `profiles` (the `manager`/`trainer` role), the `trainers` table, and
+  `/admin/staff`. The interesting design question is what "complete" means: is
+  promotion gated on finishing every onboarding part, or is it a manual call by
+  the PT Manager with the progress shown alongside? Recommend the latter to
+  start, since a hard gate needs the workbook to be a reliable record before it
+  can be trusted as one.
+
+- **PT prospect interview system in the PT Manager area.** Structured interviews
+  for hiring trainers. STAR has been suggested. It is a sound framework for the
+  behavioural part, but on its own it is the weaker half of what makes an
+  interview predictive, so the recommendation is to build three things and treat
+  STAR as one of them:
+  1. **A scorecard of defined competencies**, each rated independently and
+     *before* any group discussion. Structured, pre-agreed criteria with separate
+     scoring is the single biggest lift in interview reliability, well ahead of
+     the question format.
+  2. **A practical component.** Have the candidate actually coach someone for ten
+     minutes. Work samples predict job performance better than any interview
+     question, and for a PT the floor is where it shows.
+  3. **STAR prompts for the behavioural section**, capturing Situation, Task,
+     Action and Result against the competencies above, so answers are comparable
+     across candidates rather than free text.
+  The thing worth building that a paper process cannot do: store the per
+  competency scores, so months later you can look back and see whether the
+  ratings actually predicted who worked out. That is what turns an interview
+  form into a hiring system.
+
+- **Ezidebit connected to the PT Manager dashboard via an MCP, reading live.**
+  Georgio's request, raised in the rents thread on 3 August. Trainer rent
+  payments currently get checked by hand against Ezidebit notifications.
+  Notes before starting: scope it **read only**, never touch card data or
+  payment instruments, keep credentials server side in Vercel environment
+  variables the same as the Supabase service key, and confirm what the Ezidebit
+  API actually exposes before designing the screen. Start with the one question
+  the dashboard needs to answer, which is whether each trainer's rent is current,
+  rather than a general purpose payments view.
+
 ## Where each workstream lives (branch map)
 
 Every workstream has its own branch, which is also the session that built it.
@@ -144,17 +192,23 @@ Status as at 6 August 2026, measured against the production branch
 | `claude/handoff-trainer-profiles-link-buudia` | Trainer profile links | Merged. |
 | `claude/project-pause-prevention-083n5y` | Supabase keep-alive cron | Merged and live. |
 
-### Migration collision, read before merging any of these
+### Migration order, already sorted
 
-Three unmerged branches each add a **different `0004_` migration**:
+Three unmerged branches each added their own `0004_`, which would have
+collided on merge. They have been renumbered, and `0004` was never free
+anyway because `0004_trainer_am_pm.sql` merged with the availability work.
 
-- `custom-domain-dns-setup` → `0004_public_access_hardening.sql`
-- `gymmaster-phase-1-pull` → `0004_gymmaster_lead_source.sql` (plus `0005_gymmaster_sync.sql`)
-- `pt-document-expiry-feature` → `0004_trainer_documents.sql`
+| Number | Migration | Branch |
+|---|---|---|
+| 0004 | `trainer_am_pm` | merged, on production |
+| 0005 | `public_access_hardening` | `custom-domain-dns-setup-v45oc6` |
+| 0006 | `trainer_documents` | `pt-document-expiry-feature-ppsy30` |
+| 0007, 0008 | `gymmaster_lead_source`, `gymmaster_sync` | `gymmaster-phase-1-pull-7yuxuy` |
 
-They will collide. Whichever merges first keeps `0004`; the others must be
-renumbered before they go in, and the Supabase project needs them applied in
-the new order. **Do not merge two of these on the same day without renumbering.**
+Merge in that order and Supabase stays in step. GymMaster is deliberately last:
+it is the largest and most likely to change again, so it absorbs any further
+renumbering rather than forcing it on the others. None of these have been
+applied to the live project yet.
 
 ## Outstanding / next up
 
