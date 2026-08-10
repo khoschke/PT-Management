@@ -2,6 +2,11 @@
 
 Traced, self-contained versions of the FITAZ GYM lockup, in `public/brand/`.
 
+> **These are the primary marks.** An earlier trace of the same wordmark exists
+> on the `claude/apple-design-pass-ymnm14` branch, made before these and not
+> considered good enough. It is superseded. When that branch merges, keep the
+> files here and drop the older trace rather than letting the merge pick.
+
 ![The two marks](brand-logo-comparison.png)
 
 ## Which one to use
