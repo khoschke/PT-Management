@@ -218,6 +218,13 @@ applied to the live project yet.
   per-trainer RLS `update` policy + a self-service screen in `/admin`. See
   `docs/handoff-trainer-portal.md`.
 
+- **Email the PT team about everything built so far** — inspiration and
+  momentum piece, invites them into the portal, attaches the nurture emails for
+  feedback, and asks for preferred days and times for fortnightly development
+  sessions from September. Fully briefed in
+  `docs/handoff-pt-team-update-email.md`. Karl must create the five logins
+  first.
+
 ### Newly added, not yet scoped
 
 Reminders only. Each gets scoped and built in its own session.
