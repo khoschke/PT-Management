@@ -33,8 +33,10 @@ Set and working: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 (a new-style `sb_publishable_…` key), `SUPABASE_SERVICE_ROLE_KEY` (a new-style
 `sb_secret_…` key), `IP_HASH_SALT`, `PT_MANAGER_EMAIL`.
 
-`RESEND_API_KEY` and `NOTIFICATIONS_FROM_EMAIL` are now set (email is sending).
-`CRON_SECRET` still needs confirming.
+`RESEND_API_KEY`, `NOTIFICATIONS_FROM_EMAIL`, and `CRON_SECRET` are all set —
+email is fully live. Both the trainer allocation email and the manager daily
+digest (Vercel cron) are confirmed sending from the branded
+`noreply@mail.fitazgym.com` sender. See `docs/handoff-email-notifications.md`.
 
 ## Database
 
@@ -164,7 +166,7 @@ fix the table in the same session rather than leaving it to mislead the next one
 | `claude/custom-domain-dns-setup-v45oc6` | Custom domain + security hardening | **9 unmerged.** Real security work: CSV export auth, cron auth, RLS hardening, migration `0005_public_access_hardening.sql`. Should not sit unmerged. |
 | `claude/gymmaster-phase-1-pull-7yuxuy` | GymMaster integration | **3 unmerged.** Phase 1 pull scaffolding plus migrations `0007` and `0008`. |
 | `claude/pt-team-onboarding-rw5awg` | PT team update email | **3 unmerged.** Drafts of the team update email and the login details email, from `docs/handoff-pt-team-update-email.md`. |
-| `claude/handoff-email-notifications-9m67a6` | Branded HTML notification emails | **1 unmerged.** Replaces the plain-text ops emails with branded HTML plus a dashboard link. Cheapest visible win now that sending is live. |
+| `claude/handoff-email-notifications-9m67a6` | Branded HTML notification emails | **Merged** (PR #4). Replaced the plain-text ops emails with branded HTML plus a dashboard link. |
 | `claude/self-service-password-change-3ydtqu` | Forgot-password | **1 unmerged**, a handoff note only. No implementation; still needs Supabase Custom SMTP. |
 | `claude/gym-nurture-email-design-uw9nvu` | Member email series | **Merged** (PR #13 and #14). Emails 1 to 3, CMS-safe variants, brand assets, this doc. |
 | `claude/pt-document-expiry-feature-ppsy30` | PT compliance documents with expiry reminders | **Merged** (PR #8). |
@@ -204,10 +206,9 @@ applied to the live project yet.
 - **PT compliance documents with expiry reminders** — built and unmerged on
   `claude/pt-document-expiry-feature-ppsy30`. Was missing from this list
   entirely. Needs a review and a decision on whether it ships.
-- **Branded HTML notification emails** — built and unmerged on
-  `claude/handoff-email-notifications-9m67a6`. Replaces the plain-text trainer
-  and digest emails. Now that sending is live this is the cheapest visible win
-  available.
+- ~~**Branded HTML notification emails**~~ — **DONE.** Merged (PR #4) on
+  `claude/handoff-email-notifications-9m67a6`. The plain-text trainer and digest
+  emails are now branded HTML with a dashboard link, live in production.
 - **Security hardening** — CSV export auth, cron auth, RLS tightening, built and
   unmerged on `claude/custom-domain-dns-setup-v45oc6`. Should not sit unmerged.
 - ~~**Email notifications**~~ — **DONE.** Live and sending from
