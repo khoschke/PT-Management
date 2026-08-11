@@ -4,17 +4,132 @@ Member-facing lifecycle emails, separate from the two internal ops emails in
 `src/lib/email.ts` (trainer allocation, manager daily digest). Those tell staff
 what to do. These talk to members.
 
-| # | Email | Trigger | Single goal | Status |
-|---|-------|---------|-------------|--------|
-| 1 | Welcome nurture | 24 hours after joining the gym | Complete the `/pt-session` form | Built |
-| 2 | ... | | | Not started |
+| # | Email | Sent | Angle | Status |
+|---|-------|------|-------|--------|
+| 1 | `01-welcome-nurture` | Day 1 | You already own a session | Built |
+| 2 | `02-plan-not-motivation` | Day 10 | The plan runs out, not the motivation | Built |
+| 3 | `03-last-call` | Day 30 | It closes in seven days | Built |
+
+Three emails, one CTA between them: complete the `/pt-session` form. The
+complimentary session **expires on day 37**, seven days after email 3 lands.
+
+## Why three, and why these three
+
+The count is not the point. **Each email needs its own reason to exist.** Three
+variations of "did you see our last email" is spam; three different angles on
+the same offer is a sequence. So:
+
+- **Day 1** sells nothing. It tells a brand new member they already own
+  something and explains how to claim it, while motivation and permission are
+  both at their peak.
+- **Day 10** does not mention the offer until the fourth sentence. By now the
+  member has either been in a few times and is cycling the same three machines,
+  or has already missed a few days. The email leads with that problem and
+  arrives at the session as the fix, so it reads as useful rather than as a
+  chase.
+- **Day 30** is the deadline, and it is the shortest of the three on purpose.
+  Deadline emails dilute when padded. It states the date, restates the offer
+  once for anyone who never opened the first two, and gives a clean way out.
+
+**Do not add a fourth.** Past three, on a young sending domain, you are training
+members to ignore gym email and teaching filters to bin it.
+
+## The expiry is what makes email 3 work
+
+Without a real deadline, email 3 has nothing to say: "it is still available" is
+not a reason to open anything, and an offer with no end has no urgency ever.
+
+The window is deliberately short and late: **the session expires seven days
+after email 3**, on day 37. A 60 day expiry announced on day 30 would be
+forgotten by day 45. Seven days is close enough to act on.
+
+**The deadline must be real.** If somebody replies on day 40 and gets the
+session anyway, the mechanism is spent for every member they talk to. The one
+sanctioned exception is in the copy itself: email 3 offers to hold it for anyone
+who replies before the date, which converts the pressure into a conversation
+rather than a lost lead.
+
+It also has to be true from the start, which is why **email 2 states the expiry
+as a plain fact** in its closing panel. A deadline that appears from nowhere on
+day 30 reads as invented, and the sceptical members are exactly the ones you are
+still trying to convert.
+
+## How this runs alongside the PT contact list
+
+The emails are automated in GymMaster off the member's own join date, so the
+day 1, 10 and 30 timings are exact per member rather than batched. The PT
+outreach runs alongside it, but **deliberately behind it**:
+
+| Day | What happens |
+|-----|--------------|
+| 1 | Email 1 |
+| 10 | Email 2 |
+| ~11 | Anyone who has not responded goes to the PTs as an unverified lead |
+| 30 | Email 3 |
+| 37 | The session expires |
+
+**Why the PTs come after email 2 rather than before email 1.** The emails do the
+easy conversions on their own, and the people who convert that way arrive as
+warm leads carrying their goals, their time preference and their trainer
+preference, which is what makes the allocation deliberate instead of arbitrary.
+The PTs then spend their calls only on people who actually need a call. Handing
+the whole list over on day one means ringing people who would happily have
+filled in a form, and it contradicts the email, which promises the member gets
+matched to a trainer on purpose.
+
+**Before handing the list over**, remove anyone who has already responded. That
+is the members now on the lead board with `Source = form`.
+
+## Who to leave out of emails 2 and 3
+
+Anyone who has already dealt with it. The lead board is the source of truth, and
+**Export CSV** on the board gives you both the status and the email address.
+
+**Before email 2:** drop `Source = form`. They have responded.
+
+**Before email 3:** drop `Source = form`, plus anyone whose status is **Booked**,
+**Completed** or **Not interested**. By day 30 the PTs have worked the list, so
+this is the send where it matters. "Not interested" especially: somebody who
+told a trainer no on the phone and then gets "your session closes in seven days"
+is how you earn a spam complaint.
+
+**Keep "Unreachable" in.** A PT could not get them on the phone, which makes them
+exactly who email is for. Probably the highest value segment in the sequence.
+
+**Email 3 is written to survive reaching the wrong person.** It never asserts
+that the member has not claimed their session: it states the deadline as a fact
+about the offer and puts the only conditional on the action, "if you have not
+used yours yet". Its closing block then covers both cases out loud, someone who
+already had their session and someone who never wanted one. So a suppression
+miss is mildly redundant rather than plainly wrong.
+
+That is a safety net, not a reason to skip the export. An email that reads as
+though nobody checked still costs you, it just costs less.
+
+Doing this properly is also what lets emails 2 and 3 be written straight. Without
+it the copy would have to hedge every sentence with "in case you have not
+already", which weakens it for the people who have *not* booked, who are the only
+audience it is for. Both emails carry a single "already booked in? ignore this
+one" line as a safety net, but that line is not a substitute for the export.
+
+**Before email 3, also drop anyone who did not open 1 or 2.** Sending a third
+email to people who have opened nothing is what gets a new sending domain
+filtered. Three emails to 60% of the list beats three to 100% and landing the
+whole gym in spam.
 
 ## Files
 
-- `01-welcome-nurture.html` — production HTML, ready to send.
-- `01-welcome-nurture.txt` — the plain text alternative. Send both parts. A
-  multipart message measurably improves inbox placement, and some members read
-  in clients that prefer text.
+Each email has an HTML part and a plain text part. **Send both.** A multipart
+message measurably improves inbox placement, and some members read in clients
+that prefer text.
+
+- `01-welcome-nurture.html` / `.txt`
+- `02-plan-not-motivation.html` / `.txt`
+- `03-last-call.html` / `.txt`
+
+All three share the same masthead, footer, dark mode rules and button code,
+lifted from email 1 rather than rewritten, so the series cannot drift. If you
+change the chrome, change it in all three.
 
 ---
 
@@ -105,7 +220,7 @@ and two templates means two things to keep in sync.
 
 ## Subject lines
 
-Primary, using the gym's own words from `/pt-session`:
+**Email 1**, using the gym's own words from `/pt-session`:
 
 > **{{first_name}}, your first session is on us**
 
@@ -114,6 +229,22 @@ Test against:
 - *Your first PT session is already included* — entitlement framing, no name.
 - *One thing to sort before your first workout* — curiosity plus urgency.
 - *We just need to know one thing* — shortest, highest curiosity, weakest clarity.
+
+**Email 2:**
+
+> **Most people run out of plan, not motivation**
+
+Test against *{{first_name}}, week two is the tricky one* and *The same three
+machines*. Do not use anything that reads as a reminder about email 1. The whole
+point of this one is that it opens on a different subject.
+
+**Email 3:**
+
+> **Your complimentary session closes {{expiry_date}}**
+
+Test against *Seven days left, {{first_name}}* and *Last call on your first
+session*. Put the date in the subject rather than "closing soon": a specific
+date is harder to defer than a vague one.
 
 Send from a person, not a department: `Karl at Fitaz Gym`. Set `Reply-To` to a
 monitored inbox, because the email explicitly invites replies.
@@ -152,6 +283,20 @@ import.
 | Tag | Value | Notes |
 |-----|-------|-------|
 | `{{first_name}}` | Member's first name | Set a fallback of "there". A blank name renders "Welcome to Fitaz Gym, ." |
+| `{{expiry_date}}` | The day the session closes, day 37 | **Emails 2 and 3 only.** See below. |
+
+`{{expiry_date}}` is a per-member date, 37 days after they joined. Two ways to
+handle it:
+
+- **If the platform knows the join date**, compute it and merge it per
+  recipient. Cleanest, and the only option if you ever send daily.
+- **If you send in weekly batches**, everyone in a batch joined within a few
+  days of each other, so hardcode one date per batch and use the **latest**
+  member's expiry. Being a couple of days generous is fine; being a couple of
+  days short means telling someone their session expired when it had not.
+
+Format it the way a person would say it, "12 September", not "2026-09-12". It
+appears in email 3's headline, so it is read aloud in someone's head.
 | `{{unsubscribe_url}}` | ESP unsubscribe link | Required. Also set the `List-Unsubscribe` header. |
 | `{{preferences_url}}` | Preference centre | Point at the unsubscribe link if there is no preference centre yet. |
 
@@ -178,7 +323,9 @@ https://pt.fitazgym.com/pt-session?utm_source=email&utm_medium=lifecycle&utm_cam
 ```
 
 Sanity check before any send: `grep -c 'pt.fitazgym.com/pt-session'` should
-return 4 for the HTML and 2 for the text part.
+return **4 in each HTML and 2 in each text part**, for all three emails. Each
+email asks twice, and each HTML button is written twice (VML plus anchor), so
+the numbers are the same across the series.
 
 ## Header and footer
 
