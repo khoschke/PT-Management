@@ -40,31 +40,20 @@ Three things are outstanding, and none of them are code:
 Both of the items below are **theirs, not the PT Manager's**. Send them across
 and chase them; do not try to answer them from this repo.
 
-### 0. The SPF record is malformed. Fix this first.
+### 0. The SPF record. ✅ Fixed (11 August 2026).
 
-The sending domain is verified and mail is going out, but the SPF value that
-went into DNS on 4 August 2026 has a copy-paste error in it:
-
-```
-v=spf1 include: v=spf1 include:amazonses.com ~all
-```
-
-The prefix appears twice and the first `include:` has no value, which makes the
-record invalid. **The correct value, exactly:**
+The SPF value that first went into DNS on 4 August 2026 had a copy-paste error
+(`v=spf1 include: v=spf1 include:amazonses.com ~all` — the prefix doubled and
+the first `include:` empty, which made the record invalid). **This has since
+been corrected.** The `send.mail` TXT record in the CrazyDomains (Dreamscape)
+zone now reads, exactly:
 
 ```
 v=spf1 include:amazonses.com ~all
 ```
 
-**Where it goes:** the DNS zone is at **CrazyDomains (Dreamscape Networks)**,
-not Shopify. `fitazgym.com` is a third-party domain *connected* to Shopify
-rather than bought through it, so the zone lives elsewhere. Edit the **TXT**
-record named **`send.mail`** in the CrazyDomains control panel, under DNS
-management, and replace the value.
-
-Mail is currently delivering on DKIM alignment, which is why nothing looks
-broken. SPF is not passing, and that costs inbox placement as volume grows.
-Fix it before the member emails start going out.
+and shows Active, alongside the Active `resend._domainkey.mail` DKIM record.
+SPF and DKIM both pass — no action left here. (Kept as a record; nothing to do.)
 
 ### 1. Verified sending domain on `fitazgym.com`
 
