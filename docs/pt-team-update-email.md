@@ -22,7 +22,8 @@ templates are `01-welcome-nurture`, `02-plan-not-motivation` and `03-last-call`
 in `docs/emails/`.
 
 **Do not put any passwords in this email.** It is a group send. Each PT's login
-details go out individually, which is what the copy below promises.
+details go out individually using the template in
+`docs/pt-login-details-email.md`, which is what the copy below promises.
 
 **Subject:** What we have been building for the PT team
 
