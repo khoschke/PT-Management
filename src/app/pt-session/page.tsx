@@ -40,6 +40,15 @@ export default async function PtSessionPage() {
             doing. Fill out this quick form so we can match you with the right
             trainer and get you booked in.
           </p>
+          <a
+            href="https://fitazgym.com/pages/personal-trainers"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="press mt-5 inline-flex items-center gap-1.5 text-[15px] font-semibold text-foreground underline decoration-black/20 underline-offset-4 transition hover:decoration-foreground"
+          >
+            Meet our trainers
+            <span aria-hidden="true">&rarr;</span>
+          </a>
         </div>
 
         <PTSessionForm trainers={trainers ?? []} />
