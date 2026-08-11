@@ -147,7 +147,7 @@ export async function sendDocumentExpiryReminder(
         ? "Please renew it and upload the new document as soon as possible."
         : "Please arrange the renewal and upload the new document before it lapses.",
       "",
-      "Uploading a replacement with a later expiry date stops these reminders.",
+      "Once a replacement with a later expiry date is uploaded and approved, these reminders stop.",
     ].join("\n"),
   });
 }

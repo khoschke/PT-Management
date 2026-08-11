@@ -47,11 +47,11 @@ database size, point in time recovery) at that point, not before.
    `supabase/migrations/0006_trainer_documents.sql`. Optionally run
    `supabase/seed.sql` to add five placeholder trainers.
 3. The documents feature stores files in a **private** Storage bucket called
-   `trainer-documents`. The `0004` migration creates it and its access
+   `trainer-documents`. The `0006` migration creates it and its access
    policies automatically. If your project blocks writes to the `storage`
    schema from the SQL editor, create it by hand instead: Storage > New
    bucket, name it `trainer-documents`, leave **Public** off, then re-run
-   just the `storage.objects` policy statements at the bottom of `0004`.
+   just the `storage.objects` policy statements at the bottom of `0006`.
 4. Under Project Settings > API, copy the project URL, the `anon` public
    key and the `service_role` key.
 
@@ -293,7 +293,8 @@ private Supabase Storage bucket, served only through short-lived signed links.
   Documents the manager uploads are verified on the spot.
 - **Expiry reminders.** The daily `document-expiry` cron emails both the trainer
   and the manager at 60, 30 and 7 days before an expiry, then daily once it has
-  lapsed. Uploading a replacement with a later expiry stops the reminders.
+  lapsed. Uploading a replacement with a later expiry, once the manager verifies
+  it, stops the reminders.
   Every reminder is logged so a re-run never double-sends. Like the lead digest,
   it's a no-op when email isn't configured.
 - **Compliance dashboard.** The manager's Compliance tab shows every trainer's

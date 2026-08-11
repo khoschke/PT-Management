@@ -146,32 +146,35 @@ export function verificationLabel(status: DocumentStatus): string {
 }
 
 // Within a trainer, only the newest-expiring document of a given kind should
-// drive expiry reminders and count toward the "coverage" view: uploading a
-// renewal supersedes the old one. Grouping key is the type plus the "other"
-// label, so a Cert III and a Cert IV (both qualifications, no expiry) never
-// suppress each other, but two insurance certificates do.
+// drive expiry reminders and count toward the "coverage" view: a renewal
+// supersedes the old one. Grouping key is the type plus the "other" label, so a
+// Cert III and a Cert IV (both qualifications, no expiry) never suppress each
+// other, but two insurance certificates do.
 export function supersessionKey(doc: Pick<TrainerDocument, "document_type_id" | "custom_label">): string {
   return `${doc.document_type_id}::${doc.custom_label ?? ""}`;
 }
 
 // From a trainer's documents, the set of document ids that are superseded by a
-// later-expiring, non-rejected sibling of the same kind. Reminders skip these.
+// later-expiring, *verified* sibling of the same kind. Reminders skip these.
+// Only a verified replacement silences the old document: a renewal still sitting
+// in "pending review" doesn't, so reminders keep going until the manager signs
+// the new one off.
 export function supersededDocumentIds(docs: TrainerDocument[]): Set<string> {
-  const latestByKey = new Map<string, TrainerDocument>();
+  const latestVerifiedExpiryByKey = new Map<string, string>();
   for (const doc of docs) {
-    if (doc.status === "rejected" || !doc.expiry_date) continue;
+    if (doc.status !== "verified" || !doc.expiry_date) continue;
     const key = supersessionKey(doc);
-    const current = latestByKey.get(key);
-    if (!current || (current.expiry_date && doc.expiry_date > current.expiry_date)) {
-      latestByKey.set(key, doc);
+    const current = latestVerifiedExpiryByKey.get(key);
+    if (!current || doc.expiry_date > current) {
+      latestVerifiedExpiryByKey.set(key, doc.expiry_date);
     }
   }
 
   const superseded = new Set<string>();
   for (const doc of docs) {
     if (doc.status === "rejected" || !doc.expiry_date) continue;
-    const winner = latestByKey.get(supersessionKey(doc));
-    if (winner && winner.id !== doc.id) superseded.add(doc.id);
+    const latestVerified = latestVerifiedExpiryByKey.get(supersessionKey(doc));
+    if (latestVerified && doc.expiry_date < latestVerified) superseded.add(doc.id);
   }
   return superseded;
 }
