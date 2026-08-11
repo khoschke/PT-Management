@@ -71,6 +71,38 @@ export interface Profile {
   created_at: string;
 }
 
+export type DocumentExpiryRule = "none" | "optional" | "required";
+export type DocumentStatus = "pending" | "verified" | "rejected";
+
+export interface DocumentType {
+  id: string;
+  key: string | null;
+  label: string;
+  expiry_rule: DocumentExpiryRule;
+  active: boolean;
+  sort_order: number;
+  is_custom: boolean;
+  created_at: string;
+}
+
+export interface TrainerDocument {
+  id: string;
+  trainer_id: string;
+  document_type_id: string;
+  custom_label: string | null;
+  file_path: string;
+  file_name: string;
+  file_size: number;
+  mime_type: string;
+  expiry_date: string | null;
+  status: DocumentStatus;
+  rejection_reason: string | null;
+  verified_by: string | null;
+  verified_at: string | null;
+  uploaded_by: string | null;
+  uploaded_at: string;
+}
+
 export const LEAD_STATUSES: LeadStatus[] = [
   "New",
   "Allocated",
