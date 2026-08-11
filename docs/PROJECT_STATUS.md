@@ -43,10 +43,12 @@ Migrations in `supabase/migrations/`, all applied to the live Supabase project:
 - `0002_onboarding.sql` — onboarding_responses, onboarding_part_status, RLS.
 - `0003_trainer_bio.sql` — free-text `bio` column on trainers.
 - `0004_trainer_am_pm.sql` — independent AM/PM trainer availability.
+- `0006_trainer_documents.sql` — PT compliance documents and expiry reminders.
 
-**Next free number is 0005, and it is already claimed.** See the branch map
-below: the unmerged branches hold 0005 through 0008. Anything new starts at
-0009.
+**0005 is deliberately missing on production.** It is reserved for
+`0005_public_access_hardening.sql`, still unmerged on
+`claude/custom-domain-dns-setup-v45oc6`. `0007` and `0008` are reserved for
+GymMaster. See the migration order below. Anything new starts at **0009**.
 
 Roles live in `profiles` (`manager` / `trainer`). Managers see/allocate all
 leads; trainers see only their own. RLS enforces this at the database level.
@@ -133,22 +135,40 @@ discard the older trace rather than letting the merge decide.
 ## Where each workstream lives (branch map)
 
 Every workstream has its own branch, which is also the session that built it.
-**Several have finished work sitting unmerged**, so check here before starting
+Some carry finished work that is not on production yet, so check before starting
 anything: the thing may already be built.
 
-Status as at 6 August 2026, measured against the production branch
-`claude/fitaz-gym-pt-leads-76ffhv`.
+### Check this yourself, do not trust the table
+
+**The table below is a snapshot and it goes stale every time anything merges.**
+Do not report a branch as unmerged on the strength of it. Run this first:
+
+```sh
+git fetch origin
+PROD=origin/claude/fitaz-gym-pt-leads-76ffhv
+for b in $(git ls-remote --heads origin | sed 's|.*refs/heads/||' | grep -v fitaz-gym-pt-leads | sort); do
+  n=$(git rev-list --count $PROD..origin/$b)
+  printf "%-46s %s\n" "$b" "$([ "$n" = 0 ] && echo merged || echo "$n unmerged")"
+done
+```
+
+Zero means everything on that branch is already on production, whatever the
+table says. If what you find disagrees with the table, **the command is right**:
+fix the table in the same session rather than leaving it to mislead the next one.
+
+### Snapshot, 10 August 2026
 
 | Branch / thread | Workstream | State |
 |---|---|---|
-| `claude/apple-design-pass-ymnm14` | Apple-grade design pass | **13 commits unmerged.** Public form, lead board, trainers, staff, login all done, plus the FITAZ GYM wordmark across app headers. Looks finished. |
-| `claude/custom-domain-dns-setup-v45oc6` | Custom domain + security hardening | **8 commits unmerged.** Includes real security work: CSV export auth, cron auth, RLS hardening, and migration `0004_public_access_hardening.sql`. |
-| `claude/pt-document-expiry-feature-ppsy30` | PT compliance documents with expiry reminders | **1 commit, ~1,900 lines unmerged.** A whole feature that is not listed in the backlog below. |
-| `claude/gymmaster-phase-1-pull-7yuxuy` | GymMaster integration | **1 commit unmerged.** Phase 1 pull scaffolding plus migrations. |
-| `claude/handoff-email-notifications-9m67a6` | Branded HTML notification emails | **1 commit unmerged.** Replaces the plain-text ops emails with branded HTML plus a dashboard link. |
-| `claude/gym-nurture-email-design-uw9nvu` | Member email series | **5 commits unmerged.** Emails 2 and 3, CMS-safe variants, this doc. |
-| `claude/self-service-password-change-3ydtqu` | Forgot-password | Handoff note only, no implementation. |
-| `claude/availability-am-pm-model-yj1dby` | Trainer AM/PM availability | Merged, nothing pending. |
+| `claude/apple-design-pass-ymnm14` | Apple-grade design pass | **13 unmerged.** Public form, lead board, trainers, staff, login, plus the FITAZ GYM wordmark across app headers. Looks finished. Carries a superseded wordmark trace: keep the `public/brand/` marks. |
+| `claude/custom-domain-dns-setup-v45oc6` | Custom domain + security hardening | **9 unmerged.** Real security work: CSV export auth, cron auth, RLS hardening, migration `0005_public_access_hardening.sql`. Should not sit unmerged. |
+| `claude/gymmaster-phase-1-pull-7yuxuy` | GymMaster integration | **3 unmerged.** Phase 1 pull scaffolding plus migrations `0007` and `0008`. |
+| `claude/pt-team-onboarding-rw5awg` | PT team update email | **3 unmerged.** Drafts of the team update email and the login details email, from `docs/handoff-pt-team-update-email.md`. |
+| `claude/handoff-email-notifications-9m67a6` | Branded HTML notification emails | **1 unmerged.** Replaces the plain-text ops emails with branded HTML plus a dashboard link. Cheapest visible win now that sending is live. |
+| `claude/self-service-password-change-3ydtqu` | Forgot-password | **1 unmerged**, a handoff note only. No implementation; still needs Supabase Custom SMTP. |
+| `claude/gym-nurture-email-design-uw9nvu` | Member email series | **Merged** (PR #13 and #14). Emails 1 to 3, CMS-safe variants, brand assets, this doc. |
+| `claude/pt-document-expiry-feature-ppsy30` | PT compliance documents with expiry reminders | **Merged** (PR #8). |
+| `claude/availability-am-pm-model-yj1dby` | Trainer AM/PM availability | Merged. |
 | `claude/trainer-portal-handoff-doc-o0on8j` | Editable trainer pages | Merged (scoping note only, build not started). |
 | `claude/pt-onboarding-dashboard-9wwl17` | PT onboarding workbook | Merged and live. |
 | `claude/handoff-trainer-profiles-link-buudia` | Trainer profile links | Merged. |
@@ -164,7 +184,7 @@ anyway because `0004_trainer_am_pm.sql` merged with the availability work.
 |---|---|---|
 | 0004 | `trainer_am_pm` | merged, on production |
 | 0005 | `public_access_hardening` | `custom-domain-dns-setup-v45oc6` |
-| 0006 | `trainer_documents` | `pt-document-expiry-feature-ppsy30` |
+| 0006 | `trainer_documents` | merged, on production |
 | 0007, 0008 | `gymmaster_lead_source`, `gymmaster_sync` | `gymmaster-phase-1-pull-7yuxuy` |
 
 Merge in that order and Supabase stays in step. GymMaster is deliberately last:
