@@ -60,11 +60,24 @@ Migrations live in `supabase/migrations/`. Status column set from an audit run o
 | `0004_trainer_am_pm.sql` | independent AM/PM trainer availability | Applied — verified |
 | `0006_trainer_documents.sql` | PT compliance documents, expiry reminders, `trainer-documents` Storage bucket | Applied 12 Aug 2026 — verified, incl. bucket + storage policies. Upload/view/delete exercised end to end on the live site. |
 | `0007`, `0008` | GymMaster (`gymmaster_lead_source`, `gymmaster_sync`) | Not applied; unmerged branch |
-| `0009_public_access_hardening.sql` | trainer-email column grants, status_history soft-delete guard, trainer_documents self-verify guard, `submit_form_lead` RPC | **PART A applied 12 Aug 2026 — verified. PART B still pending**, and must not run until this deploy is live. |
+| `0009_public_access_hardening.sql` | trainer-email column grants, status_history soft-delete guard, trainer_documents self-verify guard, `submit_form_lead` RPC | Applied 12 Aug 2026 — **both parts, verified** |
 
-**The drift is closed.** `0006` had never been applied despite this doc claiming
-it was, which left `/admin/compliance` and `/admin/documents` erroring in
-production. Both work again.
+**The drift is closed and the hardening is deployed.** `0006` had never been
+applied despite this doc claiming it was, which left `/admin/compliance` and
+`/admin/documents` erroring in production. Both work again, with an upload,
+view and delete exercised end to end. `0009` then went in either side of the
+code deploy, and two real leads were submitted through the live public form —
+one before PART B removed anon's direct insert, one after.
+
+Confirmed from outside with the public key on 12 Aug 2026:
+`…/rest/v1/trainers?select=email` returns `42501 permission denied`, while
+`…/rest/v1/trainers?select=id,name` still lists the five PTs — the public
+form's trainer picker, which had to keep working.
+
+`check_form_rate_limit` still exists but is no longer executable by `anon` or
+`authenticated`, and nothing calls it. `submit_form_lead` does the rate limiting
+and the insert in one transaction. Leave it or drop it in a later migration; it
+is inert either way.
 
 `0005` is permanently unused. It was held for the hardening migration, which has
 since been renumbered to `0009` because it rewrites a policy on
@@ -266,17 +279,15 @@ now retired rather than reserved: don't fill it.
   `/admin/compliance` and `/admin/documents` work again. The audit query that
   found it lives in `supabase/reconcile/` and should be re-run whenever anyone
   needs to state what is on live.
-- **Security hardening** — CSV injection, IP salt and digest-cron auth were
-  **merged earlier** (PR #18). The remaining DB items (anon column grants on
-  trainers, `status_history` soft-delete guard, `trainer_documents` self-verify
-  guard, the `submit_form_lead` RPC, and explicit manager checks) are in
-  migration `0009_public_access_hardening.sql`. **PART A is applied and verified;
-  PART B is the one step still outstanding** and must run only after this code is
-  deployed — it removes anon's direct insert on `leads`, which the old code path
-  still relies on. Runbook in `supabase/reconcile/README.md`; the findings behind
-  it are in `docs/handoff-security-hardening.md`. The old
-  `custom-domain-dns-setup-v45oc6` branch stays **parked — do not merge it**;
-  these fixes were re-done fresh.
+- ~~**Security hardening**~~ — **DONE, 12 Aug 2026.** CSV injection, IP salt and
+  digest-cron auth landed earlier (PR #18). The DB half —
+  `0009_public_access_hardening.sql`: anon column grants on trainers, the
+  `status_history` soft-delete guard, the `trainer_documents` self-verify guard,
+  the `submit_form_lead` RPC — is applied, both parts, and verified against live.
+  Explicit manager checks and the shared cron auth helper (`src/lib/cron.ts`)
+  deployed with it. Findings and rationale in
+  `docs/handoff-security-hardening.md`. The old `custom-domain-dns-setup-v45oc6`
+  branch stays **parked — do not merge it**; these fixes were re-done fresh.
 - ~~**Email notifications**~~ — **DONE.** Live and sending from
   `noreply@mail.fitazgym.com`. SPF and DKIM both pass (the earlier SPF typo has
   been corrected).

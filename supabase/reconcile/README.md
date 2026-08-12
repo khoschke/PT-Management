@@ -1,5 +1,15 @@
 # Live database reconciliation + security deploy runbook
 
+> **Completed 12 August 2026. Nothing here is outstanding.**
+> `0006` was applied, then `0009` PART A → deploy → PART B, each step verified
+> by audit and by exercising the live site. Kept as the record of what was done
+> and as the procedure for the next migration that has to land around a deploy —
+> GymMaster's `0007`/`0008` are the obvious next candidates.
+>
+> `01_audit_live_schema.sql` is **not** finished business. Re-run it whenever
+> anyone needs to state what is on the live database. That is the habit whose
+> absence caused this.
+
 Work through this top to bottom in the Supabase SQL editor for project
 `fbzearypwpjcyrmdivsz`. Nothing here can be run from a Claude build workspace —
 that environment has no outbound network to Supabase, which is exactly how the

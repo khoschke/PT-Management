@@ -1,6 +1,16 @@
-# Handoff: Security Hardening (remaining items)
+# Security Hardening — SHIPPED, 12 August 2026
 
-**Start a new session with this note.** Read `docs/PROJECT_STATUS.md` first, then this.
+> **All items below are built, deployed and verified against live.** This note is
+> now the record of what was found and why each fix looks the way it does — read
+> it before changing any of this, not as a to-do list.
+>
+> `0009_public_access_hardening.sql` is applied to the live project, both parts,
+> either side of the code deploy. Verified: trainer email returns `42501` to the
+> publishable key while the form's trainer picker still reads `id, name`; two
+> real leads submitted through the live form, one either side of PART B. The
+> execution record is in `docs/handoff-migration-reconciliation.md`.
+
+Read `docs/PROJECT_STATUS.md` first, then this.
 
 A security sweep was run in the custom-domain session (2026-08). Three isolated
 fixes have already landed; the heavier items are captured here to pick up in a
@@ -125,13 +135,18 @@ fill it. **No collision with GymMaster:** it keeps its existing
 `0007_gymmaster_lead_source.sql` / `0008_gymmaster_sync.sql`, unchanged. Anything
 new starts at `0010`.
 
-## How to actually apply it
+## How it was applied
 
-Do not run this file on its own. It is step 3 and step 5 of the reconciliation
-runbook, **`supabase/reconcile/README.md`**, which audits the live schema first,
-applies the missing `0006`, then goes PART A → deploy → PART B. PART B removes
+Applied 12 Aug 2026 as steps 3 and 5 of the reconciliation runbook,
+**`supabase/reconcile/README.md`** — audit the live schema, apply the missing
+`0006`, then PART A → deploy → PART B, verifying at each step. PART B removes
 anon's direct insert on `leads`, so running it before the code that calls
-`submit_form_lead()` is deployed takes the public form down.
+`submit_form_lead()` was deployed would have taken the public form down.
+
+**If you ever re-apply this to a fresh project**, keep that ordering. And note
+that a fresh setup runs the whole file top to bottom in one go, which is fine —
+the two-part split only matters when there is already a live form running the
+old code.
 
 ## Also review (new code the original sweep never saw) — DONE
 

@@ -1,11 +1,19 @@
-# Handoff: Reconcile the live database (BLOCKER, do this before more schema work)
+# Reconciling the live database — CLOSED, 12 August 2026
 
-Read `docs/PROJECT_STATUS.md` first, then this.
+**This is history, not a task.** Kept because the failure it describes is worth
+not repeating. Read `docs/PROJECT_STATUS.md` for current state.
 
-**Status: the repo-side work is done. The live-database work is not, and cannot
-be done from a Claude session** — build workspaces have no outbound network to
-Supabase. Someone has to sit at the Supabase SQL editor and work through
-[`supabase/reconcile/README.md`](../supabase/reconcile/README.md).
+**Outcome:** `0006` applied to live, then `0009` PART A → deploy → PART B, every
+step verified by audit query and by exercising the live site. `/admin/compliance`
+and `/admin/documents` work again. Trainer email is off the public internet
+(`42501` on `…/rest/v1/trainers?select=email` with the publishable key), while
+the form's trainer picker still reads `id, name`. Two real leads went through the
+public form, one either side of PART B.
+
+**The lesson, in one line:** a migration sitting in `supabase/migrations/` is not
+evidence it ran. Nothing applies them automatically. Run
+`supabase/reconcile/01_audit_live_schema.sql` before claiming anything about the
+live schema.
 
 ## What was discovered (12 Aug 2026 session)
 
@@ -16,13 +24,14 @@ live — but it is not.** So the "migrations applied to live" list was not
 trustworthy, and the real live schema has to be checked directly rather than read
 off the doc.
 
-## Impact
+## Impact at the time (all since resolved)
 
-- **`/admin/compliance` and `/admin/documents` are broken on the live site** —
-  the deployed code queries `trainer_documents`, which doesn't exist in the DB.
-  This is still true until step 2 of the runbook is done.
-- The security hardening migration references `trainer_documents`, so it cannot
-  fully run until `0006` is applied.
+- **`/admin/compliance` and `/admin/documents` were broken on the live site** —
+  the deployed code queried `trainer_documents`, which didn't exist in the DB.
+  Nobody had reported it, which says something about how much those screens were
+  being used, but it had been true since the compliance feature shipped.
+- The security hardening migration references `trainer_documents`, so it could
+  not fully run until `0006` was applied.
 
 ## Done in the repo (branch `claude/reconcile-database-security-deploy-01sf2h`)
 
@@ -45,27 +54,33 @@ off the doc.
    the audit query is the evidence. Added a matching entry to the "hard-won
    gotchas" list, since that is where a future session will actually look.
 
-## Left to do — needs a human at the Supabase SQL editor
+## How it was executed, 12 August 2026
 
-Work through [`supabase/reconcile/README.md`](../supabase/reconcile/README.md).
-In short:
+Each step was verified before the next one started, which is the only reason the
+ordering hazards never bit:
 
-1. Run `01_audit_live_schema.sql` and keep the output.
-2. Apply whatever it reports missing, in number order — expected to be `0006`.
-   Confirm `/admin/compliance` and `/admin/documents` come back to life.
-3. Run PART A of `0009_public_access_hardening.sql` (lines 1–282).
-4. Merge `claude/reconcile-database-security-deploy-01sf2h` into
-   `claude/fitaz-gym-pt-leads-76ffhv` to deploy, then submit a real test lead
-   through the live form while the old insert path is still there as a net.
-5. Run PART B (line 283 to the end).
-6. Re-run the audit, submit one more test lead, confirm
-   `…/rest/v1/trainers?select=email` is closed to the anon key, delete the test
-   leads, and set the "On live?" column in `PROJECT_STATUS.md` from the audit
-   output.
+1. Audited the live schema. `0001`–`0004` all present; `0006` uniformly absent —
+   not half-applied, which meant it could go in as one clean paste.
+2. Applied `0006` whole, storage block included. Re-audited: all nine rows
+   present, bucket and all three storage policies included. Confirmed by
+   uploading, viewing and deleting a real document on the live site — the one
+   thing no SQL query can prove.
+3. Ran PART A. Checked the public form's trainer picker still populated in an
+   incognito window, since PART A narrows the exact grant it depends on.
+4. Merged to `claude/fitaz-gym-pt-leads-76ffhv` (fast-forward, no conflicts) and
+   let Vercel deploy. Submitted a real lead through the live form and confirmed
+   it reached `/admin` — proving `submit_form_lead()` worked end to end **while
+   the old insert path was still there as a net**.
+5. Ran PART B, then immediately submitted a second lead. This is the moment the
+   net is gone, so the test happens within the minute, not the next morning.
+6. Re-audited (everything present but GymMaster's `0007`/`0008`), confirmed
+   `…/rest/v1/trainers?select=email` returns `42501` to the publishable key while
+   `?select=id,name` still lists the five PTs, and deleted the test leads.
 
-**Do not merge the branch before step 3.** The deployed code calls
-`submit_form_lead()`, which PART A creates. Deploying first breaks the public
-form.
+**The ordering constraint that drove all of it:** the deployed code calls
+`submit_form_lead()`, which PART A creates, so PART A had to precede the deploy.
+PART B removes anon's direct insert, which the *old* code still needed, so it had
+to follow the deploy. Get either backwards and the public form goes down.
 
 ## Note on the storage bucket
 
@@ -75,12 +90,10 @@ step in the normal case. Some Supabase projects block writes to the `storage`
 schema from the SQL editor; if that happens, make the bucket by hand (Public OFF)
 and run `supabase/reconcile/02_storage_bucket_fallback.sql`, which is idempotent.
 
-## Safe shortcut if you only want the form hardening now
+## Note on the branches
 
-Three of the four hardening blocks — trainer PII column grants, the
-`status_history` soft-delete guard, and the `submit_form_lead` RPC — do **not**
-depend on `trainer_documents` and only touch `0001` objects. Block 3 (the
-`trainer_documents_insert` policy) is the only part that needs `0006`. So the
-public-facing hardening can go ahead of the reconciliation if there is a reason to
-rush it. There isn't an obvious one, and doing the reconciliation first is cleaner
-— it also un-breaks two production screens.
+`claude/security-merge-pending-parta` and
+`claude/security-hardening-validation-0ry4cz` are both fully contained in what
+was deployed. They can be deleted. `claude/custom-domain-dns-setup-v45oc6`
+remains parked — its DB security findings were re-done fresh as `0009` rather
+than merged.
