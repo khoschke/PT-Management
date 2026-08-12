@@ -1,5 +1,15 @@
 -- Public access hardening.
 --
+-- ---------------------------------------------------------------------------
+-- Numbering: this file depends on 0006_trainer_documents.sql
+-- ---------------------------------------------------------------------------
+-- Block 3 below rewrites a policy on `trainer_documents`, which does not exist
+-- until 0006 has run. It was originally written as `0005`, which would have
+-- failed on a fresh setup by running before the table it edits was created.
+-- It is numbered 0009 so it lands after 0006 and after the GymMaster pair
+-- (0007/0008), which are already written on `claude/gymmaster-phase-1-pull-7yuxuy`
+-- and did not need renumbering as a result. 0005 is now permanently unused.
+--
 -- Four changes, all about what the PUBLIC anon key can reach:
 --   1. Trainer emails are no longer readable with the anon key (column grants).
 --   2. A trainer can no longer read the status history of their own

@@ -39,26 +39,34 @@ readable with the anon key, `status_history_select_trainer` still had no
 and the manager-only actions still relied on RLS alone.
 
 Built, plus the fresh findings from the "also review" pass below:
-`supabase/migrations/0007_public_access_hardening.sql`, `src/lib/cron.ts`,
+`supabase/migrations/0009_public_access_hardening.sql`, `src/lib/cron.ts`,
 `src/lib/auth.ts` (`callerIsManager`), and the actions/routes that use them.
 
 ### Deploy runbook — the ordering is not optional
 
-`0007_public_access_hardening.sql` is split into PART A and PART B for this.
+`0009_public_access_hardening.sql` is split into PART A and PART B for this.
 
-1. **Run PART A** in the Supabase SQL editor. Safe against the currently
+1. **Reconcile the live DB first.** `0006_trainer_documents.sql` is not on the
+   live database, and PART A rewrites a policy on a table `0006` creates, so
+   PART A cannot fully run until that is fixed. This is a hard prerequisite, not
+   a nicety — it is what the first attempt died on.
+2. **Run PART A** in the Supabase SQL editor. Safe against the currently
    deployed code: it only adds `submit_form_lead` and tightens grants/policies
    the public form doesn't depend on. The old insert path keeps working.
-2. **Merge to `claude/fitaz-gym-pt-leads-76ffhv`** and let Vercel deploy. The
+3. **Merge to `claude/fitaz-gym-pt-leads-76ffhv`** and let Vercel deploy. The
    form now calls the RPC.
-3. **Run PART B.** This drops anon's direct INSERT on `leads` and revokes
-   `check_form_rate_limit`. Running it before step 2 takes the live form down —
+4. **Run PART B.** This drops anon's direct INSERT on `leads` and revokes
+   `check_form_rate_limit`. Running it before step 3 takes the live form down —
    the old code would have neither path.
 
 After PART A, check the public form still submits. After PART B, check it again,
 and confirm `…/rest/v1/trainers?select=email` with the anon key now 403s.
 
-## Remaining items (re-validate, then implement)
+**`supabase/reconcile/README.md` is the executable version of this list** — same
+ordering, with the audit query, the rollback SQL and the per-step verification
+filled in. Follow that; this section is the summary.
+
+## The four findings, as built
 
 ### 1. Trainer PII readable by the public anon key (Medium)
 RLS is row-level, so the "anon can read active trainers" policy also exposes the
@@ -100,17 +108,30 @@ silently open them. Leave status/note updates to RLS (trainers use them on their
 own leads). **Re-apply against current `actions.ts` files** — they changed for
 the AM/PM availability work.
 
-## Migration numbering
+## Migration numbering — settled at `0009`
 
-This work is **`0005_public_access_hardening.sql`** — the slot `PROJECT_STATUS.md`
-always reserved for it. On merge (this session) the branch's file was renumbered
-from `0007` to `0005`. Production has `0001`–`0004_trainer_am_pm` and
-`0006_trainer_documents`, so `0005` runs after `0006` on the live DB; that's fine,
-the changes are independent.
+This work is **`0009_public_access_hardening.sql`**.
 
-**No collision with GymMaster.** Because the hardening took `0005`, GymMaster keeps
-its existing `0007_gymmaster_lead_source.sql` / `0008_gymmaster_sync.sql` — no
-renumber needed when that branch merges.
+It was briefly numbered `0005`, the slot `PROJECT_STATUS.md` had reserved, on the
+reasoning that the four blocks were independent of each other. They are not
+independent of `0006`: block 3 rewrites the `trainer_documents_insert` policy, and
+`trainer_documents` is created by `0006`. As `0005` it runs *before* the table
+exists and fails on any fresh setup. That is not hypothetical — it is how the
+live-DB drift was discovered, when PART A died on
+`42P01: relation "trainer_documents" does not exist`.
+
+So it sits after `0006`, at `0009`. **`0005` is retired, not reserved** — don't
+fill it. **No collision with GymMaster:** it keeps its existing
+`0007_gymmaster_lead_source.sql` / `0008_gymmaster_sync.sql`, unchanged. Anything
+new starts at `0010`.
+
+## How to actually apply it
+
+Do not run this file on its own. It is step 3 and step 5 of the reconciliation
+runbook, **`supabase/reconcile/README.md`**, which audits the live schema first,
+applies the missing `0006`, then goes PART A → deploy → PART B. PART B removes
+anon's direct insert on `leads`, so running it before the code that calls
+`submit_form_lead()` is deployed takes the public form down.
 
 ## Also review (new code the original sweep never saw) — DONE
 
@@ -122,7 +143,7 @@ Reviewed against production. Findings and what was done:
   doesn't escape `'`, which is correct here — nothing lands in a single-quoted
   attribute; the one attribute interpolation is `href="${esc(DASHBOARD_URL)}"`,
   and that's env config, not user input. The document emails are text-only.
-- **Trainer documents — one real finding, fixed in 0007.** The
+- **Trainer documents — one real finding, fixed in 0009.** The
   `trainer_documents_insert` policy constrained `trainer_id` and `uploaded_by`
   but not `status`, so a trainer posting straight at the REST API with the
   public key could insert their own document as `status='verified'` and sign off

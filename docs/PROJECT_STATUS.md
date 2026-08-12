@@ -40,25 +40,43 @@ digest (Vercel cron) are confirmed sending from the branded
 
 ## Database
 
-Migrations in `supabase/migrations/`, all applied to the live Supabase project:
-- `0001_init.sql` — trainers, leads, status_history, profiles, rate_limit_log, RLS, triggers.
-- `0002_onboarding.sql` — onboarding_responses, onboarding_part_status, RLS.
-- `0003_trainer_bio.sql` — free-text `bio` column on trainers.
-- `0004_trainer_am_pm.sql` — independent AM/PM trainer availability.
-- `0006_trainer_documents.sql` — PT compliance documents and expiry reminders.
+> **This list drifted once. Do not trust it — verify it.**
+> On 12 Aug 2026 this section claimed `0006_trainer_documents.sql` was applied
+> to live. It was not, and `/admin/compliance` and `/admin/documents` were
+> broken in production as a result. The list is a claim; the evidence is
+> `supabase/reconcile/01_audit_live_schema.sql`, a read-only query that reports
+> PRESENT/MISSING for every migration's objects. **Run it before you assert
+> anything about the live schema, and update the status column below from what
+> it returns — not from what you expect it to say.**
 
-- `0005_public_access_hardening.sql` — **merged into code, NOT yet applied to
-  the live Supabase project.** The DB half of the public-access hardening
-  (trainer-email column grants, status_history soft-delete guard,
-  trainer_documents self-verify guard, and the `submit_form_lead` security-definer
-  RPC). It fills the previously-reserved `0005` slot, so GymMaster's `0007/0008`
-  stay untouched. **It must be applied in two parts around the code deploy** — see
-  the banner at the top of the file: PART A before the new code is live, PART B
-  after. The merged code in `src/app/pt-session/actions.ts` already calls
-  `submit_form_lead`, so PART A must be run before/with that deploy or the public
-  form breaks.
+Migrations live in `supabase/migrations/`. Status column last set from an audit
+run on **12 Aug 2026**:
 
-`0007` and `0008` stay reserved for GymMaster. Anything new starts at **0009**.
+| Migration | What it adds | On live? |
+|---|---|---|
+| `0001_init.sql` | trainers, leads, status_history, profiles, rate_limit_log, RLS, triggers | Applied |
+| `0002_onboarding.sql` | onboarding_responses, onboarding_part_status, RLS | Applied |
+| `0003_trainer_bio.sql` | free-text `bio` column on trainers | Applied |
+| `0004_trainer_am_pm.sql` | independent AM/PM trainer availability | Applied |
+| `0006_trainer_documents.sql` | PT compliance documents, expiry reminders, `trainer-documents` Storage bucket | **NOT APPLIED — apply first** |
+| `0007`, `0008` | GymMaster (`gymmaster_lead_source`, `gymmaster_sync`) | Not applied; unmerged branch |
+| `0009_public_access_hardening.sql` | trainer-email column grants, status_history soft-delete guard, trainer_documents self-verify guard, `submit_form_lead` RPC | **NOT APPLIED — two parts, after 0006** |
+
+`0005` is permanently unused. It was held for the hardening migration, which has
+since been renumbered to `0009` because it rewrites a policy on
+`trainer_documents` and therefore has to run *after* `0006` — as `0005` it would
+have failed on a fresh setup. GymMaster keeps `0007/0008` untouched. Anything new
+starts at **0010**.
+
+**`0009` must be applied in two parts around the code deploy**, per the banner at
+the top of the file: PART A before the new code is live, PART B after. The code
+in `src/app/pt-session/actions.ts` already calls `submit_form_lead`, so PART A
+has to be in place before that deploy or the public form breaks.
+
+The full runbook — audit, apply `0006`, PART A, deploy, PART B, verify — is
+`supabase/reconcile/README.md`. **None of it can be run from a Claude build
+workspace** (no outbound network to Supabase), which is how the drift happened
+in the first place. Someone has to run it in the Supabase SQL editor.
 
 Roles live in `profiles` (`manager` / `trainer`). Managers see/allocate all
 leads; trainers see only their own. RLS enforces this at the database level.
@@ -96,6 +114,12 @@ strength". Change it in that one file and it flows to both sides.
 - **This build workspace has no outbound network** to Supabase, Google,
   GymMaster, etc. You cannot test those live from here — build, deploy, and
   verify on the live site (which is not network-restricted).
+- **A migration in `supabase/migrations/` is not proof it ran on live.** Nothing
+  applies migrations automatically; a human pastes them into the Supabase SQL
+  editor, and that step has been silently skipped before (`0006`, which broke two
+  production screens for days while this doc said it was applied). Run
+  `supabase/reconcile/01_audit_live_schema.sql` and believe the output, not the
+  file listing and not the table above it.
 - **Supabase's new API key format** (`sb_publishable_…`, `sb_secret_…`) works
   with the installed `@supabase/*` versions; they map to the anon and
   service-role roles respectively.
@@ -166,15 +190,18 @@ Zero means everything on that branch is already on production, whatever the
 table says. If what you find disagrees with the table, **the command is right**:
 fix the table in the same session rather than leaving it to mislead the next one.
 
-### Snapshot, 11 August 2026
+### Snapshot, 12 August 2026 (verified with the command above)
 
 | Branch / thread | Workstream | State |
 |---|---|---|
-| `claude/apple-design-pass-ymnm14` | Apple-grade design pass | **13 unmerged.** Public form, lead board, trainers, staff, login, plus the FITAZ GYM wordmark across app headers. Looks finished. Carries a superseded wordmark trace: keep the `public/brand/` marks. |
-| `claude/custom-domain-dns-setup-v45oc6` | Custom domain + security hardening | **PARKED — do NOT merge.** Its deliverable (pt.fitazgym.com + email) is already live via the dashboards, and it forked ~50 commits back, so a merge would conflict and regress newer work. The CSV/cron/IP-salt fixes were re-done fresh and merged (PR #18); the remaining DB security is scoped in `docs/handoff-security-hardening.md` (fresh session, migration `0005`). Ignore or delete this branch. |
+| `claude/reconcile-database-security-deploy-01sf2h` | Live-DB reconciliation + security deploy | **Unmerged, and the one to merge next.** Carries the whole security hardening merge (via `security-merge-pending-parta`), the migration renumbered `0005` → `0009`, the `supabase/reconcile/` audit + runbook, and this doc's corrected migration table. **Merge only as step 4 of `supabase/reconcile/README.md`** — the code calls `submit_form_lead`, so deploying it before PART A has run breaks the public form. |
+| `claude/security-merge-pending-parta` | Security hardening merge | **2 unmerged**, but both are now carried by the reconcile branch above. Merge that one instead; this branch's migration number was wrong. |
+| `claude/apple-design-pass-ymnm14` | Apple-grade design pass | **Merged.** Public form, lead board, trainers, staff, login, plus the FITAZ GYM wordmark across app headers. The superseded wordmark trace was discarded in favour of the `public/brand/` marks, as planned. |
+| `claude/docs-reconcile-live-state` | Branch-map reconciliation | **Merged.** Docs only. |
+| `claude/custom-domain-dns-setup-v45oc6` | Custom domain + security hardening | **PARKED — do NOT merge.** 9 unmerged, but its deliverable (pt.fitazgym.com + email) is already live via the dashboards, and it forked ~50 commits back, so a merge would conflict and regress newer work. The CSV/cron/IP-salt fixes were re-done fresh and merged (PR #18); the DB security was re-done fresh as migration `0009`. Ignore or delete this branch. |
 | `claude/security-hardening-csv-ip-cron` | Security hardening (CSV/IP/cron) | **Merged** (PR #18). CSV formula-injection guard, IP-salt production guard, cron fail-closed + constant-time auth. Also added `docs/handoff-security-hardening.md` for the remaining items. |
-| `claude/security-hardening-validation-0ry4cz` | Security hardening (DB / RLS) | **1 unmerged.** Closes the anon-key gaps and adds explicit manager checks (the remaining DB security work). Review and merge. |
-| `claude/gymmaster-phase-1-pull-7yuxuy` | GymMaster integration | **3 unmerged.** Phase 1 pull scaffolding plus migrations `0007` and `0008`. |
+| `claude/security-hardening-validation-0ry4cz` | Security hardening (DB / RLS) | **1 unmerged against production**, but already merged into the reconcile branch above. Nothing to do here directly. |
+| `claude/gymmaster-phase-1-pull-7yuxuy` | GymMaster integration | **3 unmerged.** Phase 1 pull scaffolding plus migrations `0007` and `0008`, which keep those numbers. |
 | `claude/pt-team-onboarding-rw5awg` | PT team update email | **Merged.** The team update email and the login details email, from `docs/handoff-pt-team-update-email.md`. Both were sent on 12 August 2026; the files are kept as the record of what went out and as the template for the next trainer who joins. |
 | `claude/handoff-email-notifications-9m67a6` | Branded HTML notification emails | **Merged** (PR #4). Replaced the plain-text ops emails with branded HTML plus a dashboard link. |
 | `claude/self-service-password-change-3ydtqu` | Forgot-password | **1 unmerged**, a handoff note only. No implementation; still needs Supabase Custom SMTP. |
@@ -195,42 +222,58 @@ anyway because `0004_trainer_am_pm.sql` merged with the availability work.
 | Number | Migration | Branch |
 |---|---|---|
 | 0004 | `trainer_am_pm` | merged, on production |
-| 0005 | `public_access_hardening` | merged into code (this session); **apply in two parts, PART A → deploy → PART B** |
-| 0006 | `trainer_documents` | merged, on production |
+| 0005 | — | permanently unused (see below) |
+| 0006 | `trainer_documents` | merged to production, **not yet on the live DB** |
 | 0007, 0008 | `gymmaster_lead_source`, `gymmaster_sync` | `gymmaster-phase-1-pull-7yuxuy` (already numbered correctly, no renumber needed) |
+| 0009 | `public_access_hardening` | merged into code; **apply in two parts, PART A → deploy → PART B** |
 
-Merge in that order and Supabase stays in step. GymMaster is deliberately last:
-it is the largest and most likely to change again, so it absorbs any further
-renumbering rather than forcing it on the others.
+Merge in that order and Supabase stays in step. GymMaster is deliberately in the
+middle rather than last: its numbers were already written and pushed, and moving
+the hardening migration was free by comparison.
 
-`0005_public_access_hardening.sql` **runs in two parts around the code deploy**
-(PART A → deploy → PART B). The file says so at the top; the runbook is in
-`docs/handoff-security-hardening.md`.
+**Why the hardening migration is `0009` and not `0005`.** It rewrites the
+`trainer_documents_insert` policy, and that table is created by `0006`. Numbered
+`0005` it would run before the table existed and fail on any fresh setup — which
+is precisely how the live-DB drift surfaced. It has to sit after `0006`, and
+`0009` was the first free slot that left GymMaster's `0007/0008` alone. `0005` is
+now retired rather than reserved: don't fill it.
+
+`0009_public_access_hardening.sql` **runs in two parts around the code deploy**
+(PART A → deploy → PART B). The file says so at the top; the runbook is
+`supabase/reconcile/README.md`.
 
 ## Outstanding / next up
 
 - **GymMaster integration** — see `docs/handoff-gymmaster-integration.md`.
   **Phase 1 scaffolding already exists unmerged** on
   `claude/gymmaster-phase-1-pull-7yuxuy`.
-- **Apple-grade design pass** — see `docs/handoff-apple-design-pass.md`.
-  **Appears finished and unmerged** on `claude/apple-design-pass-ymnm14`. Review
-  and merge rather than rebuild. It also carries an earlier trace of the FITAZ
-  wordmark: that one is superseded, keep the `public/brand/` marks.
-- **PT compliance documents with expiry reminders** — built and unmerged on
-  `claude/pt-document-expiry-feature-ppsy30`. Was missing from this list
-  entirely. Needs a review and a decision on whether it ships.
+- ~~**Apple-grade design pass**~~ — **DONE.** Merged and deployed from
+  `claude/apple-design-pass-ymnm14`. The superseded wordmark trace it carried was
+  discarded in favour of the `public/brand/` marks.
+- **PT compliance documents with expiry reminders** — code is **merged** (PR #8)
+  and deployed, but migration `0006` was never applied to the live DB, so
+  `/admin/compliance` and `/admin/documents` are broken in production. Not a
+  build problem — see the reconciliation item above.
 - ~~**Branded HTML notification emails**~~ — **DONE.** Merged (PR #4) on
   `claude/handoff-email-notifications-9m67a6`. The plain-text trainer and digest
   emails are now branded HTML with a dashboard link, live in production.
+- **Reconcile the live database** — **THE BLOCKER, do this first.** `0006` is on
+  production in code but was never applied to the live Supabase project, so
+  `/admin/compliance` and `/admin/documents` are **broken in production right
+  now**, and the hardening migration can't fully run until it's fixed. Audit
+  query, apply scripts and the full runbook are in `supabase/reconcile/`. Needs
+  someone at the Supabase SQL editor — it cannot be done from a build session.
 - **Security hardening** — CSV injection, IP salt and digest-cron auth were
   **merged earlier** (PR #18). The remaining DB items (anon column grants on
   trainers, `status_history` soft-delete guard, `trainer_documents` self-verify
   guard, the `submit_form_lead` RPC, and explicit manager checks) are now **merged
-  into code** (migration `0005_public_access_hardening.sql`). **The migration is
-  not yet applied to live Supabase** and must run in two parts around the deploy:
-  PART A before the new code is live, PART B after. Runbook in
-  `docs/handoff-security-hardening.md`. The old `custom-domain-dns-setup-v45oc6`
-  branch stays **parked — do not merge it**; these fixes were re-done fresh.
+  into code** (migration `0009_public_access_hardening.sql`). **The migration is
+  not yet applied to live Supabase**, is blocked behind `0006` above, and must
+  then run in two parts around the deploy: PART A before the new code is live,
+  PART B after. Runbook in `supabase/reconcile/README.md`; the findings behind it
+  are in `docs/handoff-security-hardening.md`. The old
+  `custom-domain-dns-setup-v45oc6` branch stays **parked — do not merge it**;
+  these fixes were re-done fresh.
 - ~~**Email notifications**~~ — **DONE.** Live and sending from
   `noreply@mail.fitazgym.com`. SPF and DKIM both pass (the earlier SPF typo has
   been corrected).
