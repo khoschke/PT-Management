@@ -7,14 +7,9 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getCurrentUser } from "@/lib/auth";
+import { callerIsManager, getCurrentUser } from "@/lib/auth";
 import type { ActionResult } from "../state";
 import type { StaffFormState } from "./state";
-
-async function callerIsManager(): Promise<boolean> {
-  const user = await getCurrentUser();
-  return user?.profile?.role === "manager";
-}
 
 async function findUserIdByEmail(
   admin: ReturnType<typeof createAdminClient>,

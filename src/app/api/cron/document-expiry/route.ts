@@ -16,6 +16,7 @@ import {
   type ReminderMilestone,
 } from "@/lib/documents";
 import { emailEnabled, sendDocumentExpiryReminder } from "@/lib/email";
+import { isAuthorisedCronRequest } from "@/lib/cron";
 import type { TrainerDocument } from "@/lib/types";
 
 type ReminderDocument = TrainerDocument & {
@@ -24,8 +25,7 @@ type ReminderDocument = TrainerDocument & {
 };
 
 export async function GET(request: Request) {
-  const authHeader = request.headers.get("authorization");
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (!isAuthorisedCronRequest(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

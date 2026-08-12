@@ -47,10 +47,13 @@ Migrations in `supabase/migrations/`, all applied to the live Supabase project:
 - `0004_trainer_am_pm.sql` — independent AM/PM trainer availability.
 - `0006_trainer_documents.sql` — PT compliance documents and expiry reminders.
 
-**0005 is deliberately missing on production.** It is reserved for
-`0005_public_access_hardening.sql`, still unmerged on
-`claude/custom-domain-dns-setup-v45oc6`. `0007` and `0008` are reserved for
-GymMaster. See the migration order below. Anything new starts at **0009**.
+**0005 is deliberately missing on production.** It was reserved for the
+hardening work on `claude/custom-domain-dns-setup-v45oc6`; that branch is parked
+and must not be merged, so 0005 stays permanently skipped. The hardening was
+re-applied fresh as **`0007_public_access_hardening.sql`** on
+`claude/security-hardening-validation-0ry4cz`. GymMaster's two migrations
+therefore move to **0008/0009** when that branch merges. Anything new after that
+starts at **0010**.
 
 Roles live in `profiles` (`manager` / `trainer`). Managers see/allocate all
 leads; trainers see only their own. RLS enforces this at the database level.
@@ -185,14 +188,18 @@ anyway because `0004_trainer_am_pm.sql` merged with the availability work.
 | Number | Migration | Branch |
 |---|---|---|
 | 0004 | `trainer_am_pm` | merged, on production |
-| 0005 | `public_access_hardening` | `custom-domain-dns-setup-v45oc6` |
+| 0005 | — | permanently skipped, see above |
 | 0006 | `trainer_documents` | merged, on production |
-| 0007, 0008 | `gymmaster_lead_source`, `gymmaster_sync` | `gymmaster-phase-1-pull-7yuxuy` |
+| 0007 | `public_access_hardening` | `security-hardening-validation-0ry4cz` |
+| 0008, 0009 | `gymmaster_lead_source`, `gymmaster_sync` | `gymmaster-phase-1-pull-7yuxuy`, **still numbered 0007/0008 on that branch — renumber on merge** |
 
 Merge in that order and Supabase stays in step. GymMaster is deliberately last:
 it is the largest and most likely to change again, so it absorbs any further
-renumbering rather than forcing it on the others. None of these have been
-applied to the live project yet.
+renumbering rather than forcing it on the others.
+
+`0007_public_access_hardening.sql` **runs in two parts around the code deploy**
+(PART A → deploy → PART B). The file says so at the top; the runbook is in
+`docs/handoff-security-hardening.md`.
 
 ## Outstanding / next up
 
@@ -209,8 +216,13 @@ applied to the live project yet.
 - ~~**Branded HTML notification emails**~~ — **DONE.** Merged (PR #4) on
   `claude/handoff-email-notifications-9m67a6`. The plain-text trainer and digest
   emails are now branded HTML with a dashboard link, live in production.
-- **Security hardening** — CSV export auth, cron auth, RLS tightening, built and
-  unmerged on `claude/custom-domain-dns-setup-v45oc6`. Should not sit unmerged.
+- **Security hardening** — CSV injection, IP salt and digest-cron auth are
+  **merged** (PR #18). The remaining four items (anon column grants on trainers,
+  `status_history` soft-delete guard, the `submit_form_lead` RPC, explicit
+  manager checks) plus fresh findings are built and unmerged on
+  `claude/security-hardening-validation-0ry4cz`. **Read the two-part deploy
+  runbook in `docs/handoff-security-hardening.md` before merging** — the
+  migration must be run either side of the code deploy, not all at once.
 - ~~**Email notifications**~~ — **DONE.** Live and sending from
   `noreply@mail.fitazgym.com`. SPF and DKIM both pass (the earlier SPF typo has
   been corrected).

@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
-import { getCurrentUser } from "@/lib/auth";
+import { callerIsManager, getCurrentUser } from "@/lib/auth";
 import {
   DOCUMENTS_BUCKET,
   OTHER_TYPE_KEY,
@@ -197,9 +197,12 @@ export async function deleteDocument(documentId: string) {
   return { ok: true };
 }
 
-// Manager marks a document verified. RLS restricts the update to managers, so
-// a trainer calling this changes nothing.
+// Manager marks a document verified. RLS restricts the update to managers, and
+// the explicit check here means that's stated in both places — a trainer must
+// never be able to sign off their own compliance document.
 export async function verifyDocument(documentId: string) {
+  if (!(await callerIsManager())) return { ok: false };
+
   const user = await getCurrentUser();
   const supabase = await createClient();
   const { data: doc, error } = await supabase
@@ -224,6 +227,8 @@ export async function verifyDocument(documentId: string) {
 
 // Manager rejects a document, with an optional reason shown back to the trainer.
 export async function rejectDocument(documentId: string, reason: string) {
+  if (!(await callerIsManager())) return { ok: false };
+
   const user = await getCurrentUser();
   const supabase = await createClient();
   const { data: doc, error } = await supabase
@@ -232,7 +237,7 @@ export async function rejectDocument(documentId: string, reason: string) {
       status: "rejected",
       verified_by: user?.id ?? null,
       verified_at: new Date().toISOString(),
-      rejection_reason: reason.trim() || null,
+      rejection_reason: reason.trim().slice(0, 500) || null,
     })
     .eq("id", documentId)
     .select("trainer_id")
