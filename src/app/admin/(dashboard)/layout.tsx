@@ -1,7 +1,8 @@
-import Link from "next/link";
+import Image from "next/image";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { signOut } from "../actions";
+import DashboardNav from "./components/DashboardNav";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser();
@@ -38,56 +39,26 @@ export default async function DashboardLayout({ children }: { children: React.Re
       <header className="glass-header sticky top-0 z-10 border-b border-black/5">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3.5 sm:px-6">
           <div className="flex items-center gap-8">
-            <span className="text-[15px] font-semibold tracking-tight text-foreground">Fitaz Gym PT leads</span>
-            <nav className="flex gap-1 text-sm font-medium text-secondary-label">
-              <Link href="/admin" className="rounded-full px-3 py-1.5 transition hover:bg-fill hover:text-foreground">
-                Lead board
-              </Link>
-              {isManager && (
-                <Link
-                  href="/admin/trainers"
-                  className="rounded-full px-3 py-1.5 transition hover:bg-fill hover:text-foreground"
-                >
-                  Trainers
-                </Link>
-              )}
-              {isManager && (
-                <Link
-                  href="/admin/staff"
-                  className="rounded-full px-3 py-1.5 transition hover:bg-fill hover:text-foreground"
-                >
-                  Staff
-                </Link>
-              )}
-              {isManager && (
-                <Link
-                  href="/admin/compliance"
-                  className="rounded-full px-3 py-1.5 transition hover:bg-fill hover:text-foreground"
-                >
-                  Compliance
-                </Link>
-              )}
-              {isTrainer && (
-                <Link
-                  href="/admin/documents"
-                  className="rounded-full px-3 py-1.5 transition hover:bg-fill hover:text-foreground"
-                >
-                  My documents
-                </Link>
-              )}
-              <Link
-                href="/onboarding"
-                className="rounded-full px-3 py-1.5 transition hover:bg-fill hover:text-foreground"
-              >
-                PT onboarding
-              </Link>
-              <Link
-                href="/admin/account"
-                className="rounded-full px-3 py-1.5 transition hover:bg-fill hover:text-foreground"
-              >
-                Account
-              </Link>
-            </nav>
+            <div className="flex items-center gap-2.5">
+              <Image src="/brand/fitaz-gym-logo.svg" alt="Fitaz Gym" width={122} height={22} priority />
+              <span className="h-3.5 w-px bg-black/15" aria-hidden />
+              <span className="text-[13px] font-medium text-secondary-label">PT leads</span>
+            </div>
+            <DashboardNav
+              items={[
+                { href: "/admin", label: "Lead board" },
+                ...(isManager
+                  ? [
+                      { href: "/admin/trainers", label: "Trainers" },
+                      { href: "/admin/staff", label: "Staff" },
+                      { href: "/admin/compliance", label: "Compliance" },
+                    ]
+                  : []),
+                ...(isTrainer ? [{ href: "/admin/documents", label: "My documents" }] : []),
+                { href: "/onboarding", label: "PT onboarding" },
+                { href: "/admin/account", label: "Account" },
+              ]}
+            />
           </div>
           <div className="flex items-center gap-4 text-sm text-secondary-label">
             <span className="flex items-center gap-1.5">
