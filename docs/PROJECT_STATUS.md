@@ -47,13 +47,13 @@ Migrations in `supabase/migrations/`, all applied to the live Supabase project:
 - `0004_trainer_am_pm.sql` — independent AM/PM trainer availability.
 - `0006_trainer_documents.sql` — PT compliance documents and expiry reminders.
 
-**0005 is deliberately missing on production.** It stays reserved for
-`0005_public_access_hardening.sql` — the remaining DB security work (trainer-email
-RLS, form rate-limit RPC, status_history guard), to be built fresh per
-`docs/handoff-security-hardening.md`. (It was originally staged on
-`claude/custom-domain-dns-setup-v45oc6`, but that branch is now **parked/abandoned**
-— see the branch map.) `0007` and `0008` are reserved for GymMaster. See the
-migration order below. Anything new starts at **0009**.
+**0005 is permanently skipped on production.** It was originally reserved for the
+hardening work on `claude/custom-domain-dns-setup-v45oc6`; that branch is parked
+and must not be merged, so 0005 stays skipped. The hardening was re-applied fresh
+as **`0007_public_access_hardening.sql`** — it modifies the `0006`
+`trainer_documents` policy, so it must run *after* 0006, which is why it takes
+0007 rather than the old 0005 slot. GymMaster's two migrations therefore move to
+**0008/0009** when that branch merges. Anything new after that starts at **0010**.
 
 Roles live in `profiles` (`manager` / `trainer`). Managers see/allocate all
 leads; trainers see only their own. RLS enforces this at the database level.
@@ -190,14 +190,18 @@ anyway because `0004_trainer_am_pm.sql` merged with the availability work.
 | Number | Migration | Branch |
 |---|---|---|
 | 0004 | `trainer_am_pm` | merged, on production |
-| 0005 | `public_access_hardening` | fresh session — see `handoff-security-hardening.md` (v45oc6 parked) |
+| 0005 | — | permanently skipped, see above |
 | 0006 | `trainer_documents` | merged, on production |
-| 0007, 0008 | `gymmaster_lead_source`, `gymmaster_sync` | `gymmaster-phase-1-pull-7yuxuy` |
+| 0007 | `public_access_hardening` | `security-hardening-validation-0ry4cz` |
+| 0008, 0009 | `gymmaster_lead_source`, `gymmaster_sync` | `gymmaster-phase-1-pull-7yuxuy`, **still numbered 0007/0008 on that branch — renumber on merge** |
 
 Merge in that order and Supabase stays in step. GymMaster is deliberately last:
 it is the largest and most likely to change again, so it absorbs any further
-renumbering rather than forcing it on the others. None of these have been
-applied to the live project yet.
+renumbering rather than forcing it on the others.
+
+`0007_public_access_hardening.sql` **runs in two parts around the code deploy**
+(PART A → deploy → PART B). The file says so at the top; the runbook is in
+`docs/handoff-security-hardening.md`.
 
 ## Outstanding / next up
 
@@ -214,12 +218,24 @@ applied to the live project yet.
 - ~~**Branded HTML notification emails**~~ — **DONE.** Merged (PR #4) on
   `claude/handoff-email-notifications-9m67a6`. The plain-text trainer and digest
   emails are now branded HTML with a dashboard link, live in production.
-- **Security hardening** — CSV export guard, IP-salt guard, and cron auth are
-  **DONE** (PR #18, live in production). The remaining DB items (trainer-email
-  RLS, form rate-limit RPC, status_history guard, explicit manager checks) are
-  scoped in `docs/handoff-security-hardening.md` for a fresh session (migration
-  `0005`). The old `custom-domain-dns-setup-v45oc6` branch is **parked — do not
-  merge it**; those fixes were re-done fresh instead.
+- **Security hardening** — CSV injection, IP salt and digest-cron auth are
+  **merged** (PR #18). The remaining four items (anon column grants on trainers,
+  `status_history` soft-delete guard, the `submit_form_lead` RPC, and the
+  trainer-document self-verify / file-path fix) plus explicit manager checks and
+  fail-closed cron auth are now **built in code** as
+  `0007_public_access_hardening.sql` and its supporting changes. It is a
+  **two-part migration run in the Supabase SQL editor**, and the order is
+  critical because the new public-form code calls the `submit_form_lead` RPC with
+  **no fallback**:
+  1. **Run PART A first, BEFORE merging/deploying** — it creates the RPC. The old
+     direct-insert path still works, so the currently-deployed form is unaffected.
+  2. **Merge the PR** → Vercel deploys the new code, which now finds the RPC. ✅
+  3. **Run PART B** — revokes anon's direct `INSERT` on `leads`. The new code
+     already uses the RPC, so it is unaffected.
+
+  ⚠️ If the PR is merged (auto-deployed) **before** PART A runs, the live public
+  form breaks until PART A is run. Full runbook in
+  `docs/handoff-security-hardening.md`.
 - ~~**Email notifications**~~ — **DONE.** Live and sending from
   `noreply@mail.fitazgym.com`. SPF and DKIM both pass (the earlier SPF typo has
   been corrected).
