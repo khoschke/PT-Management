@@ -73,9 +73,11 @@ the AM/PM availability work.
 
 ## Migration numbering
 
-Production has `0001`–`0004_trainer_am_pm` and `0006_trainer_documents` (0005 is
-intentionally skipped). **The next migration is `0007`.** Items 1–3 above can be
-bundled into one `0007_*.sql`; mind the create-before-revoke ordering for item 2.
+`PROJECT_STATUS.md` reserves **`0005_public_access_hardening.sql`** for exactly
+this work (0005 is skipped on production on purpose, held for it); `0007`/`0008`
+are reserved for GymMaster. So bundle items 1–3 above into **`0005_public_access_hardening.sql`**,
+not 0007. Mind the create-before-revoke ordering for item 2 (the RPC). Confirm
+`0005` is still free on production before writing it.
 
 ## Also review (new code the original sweep never saw)
 

@@ -47,10 +47,13 @@ Migrations in `supabase/migrations/`, all applied to the live Supabase project:
 - `0004_trainer_am_pm.sql` — independent AM/PM trainer availability.
 - `0006_trainer_documents.sql` — PT compliance documents and expiry reminders.
 
-**0005 is deliberately missing on production.** It is reserved for
-`0005_public_access_hardening.sql`, still unmerged on
-`claude/custom-domain-dns-setup-v45oc6`. `0007` and `0008` are reserved for
-GymMaster. See the migration order below. Anything new starts at **0009**.
+**0005 is deliberately missing on production.** It stays reserved for
+`0005_public_access_hardening.sql` — the remaining DB security work (trainer-email
+RLS, form rate-limit RPC, status_history guard), to be built fresh per
+`docs/handoff-security-hardening.md`. (It was originally staged on
+`claude/custom-domain-dns-setup-v45oc6`, but that branch is now **parked/abandoned**
+— see the branch map.) `0007` and `0008` are reserved for GymMaster. See the
+migration order below. Anything new starts at **0009**.
 
 Roles live in `profiles` (`manager` / `trainer`). Managers see/allocate all
 leads; trainers see only their own. RLS enforces this at the database level.
@@ -158,12 +161,13 @@ Zero means everything on that branch is already on production, whatever the
 table says. If what you find disagrees with the table, **the command is right**:
 fix the table in the same session rather than leaving it to mislead the next one.
 
-### Snapshot, 10 August 2026
+### Snapshot, 11 August 2026
 
 | Branch / thread | Workstream | State |
 |---|---|---|
 | `claude/apple-design-pass-ymnm14` | Apple-grade design pass | **13 unmerged.** Public form, lead board, trainers, staff, login, plus the FITAZ GYM wordmark across app headers. Looks finished. Carries a superseded wordmark trace: keep the `public/brand/` marks. |
-| `claude/custom-domain-dns-setup-v45oc6` | Custom domain + security hardening | **9 unmerged.** Real security work: CSV export auth, cron auth, RLS hardening, migration `0005_public_access_hardening.sql`. Should not sit unmerged. |
+| `claude/custom-domain-dns-setup-v45oc6` | Custom domain + security hardening | **PARKED — do NOT merge.** Its deliverable (pt.fitazgym.com + email) is already live via the dashboards, and it forked ~50 commits back, so a merge would conflict and regress newer work. The CSV/cron/IP-salt fixes were re-done fresh and merged (PR #18); the remaining DB security is scoped in `docs/handoff-security-hardening.md` (fresh session, migration `0005`). Ignore or delete this branch. |
+| `claude/security-hardening-csv-ip-cron` | Security hardening (CSV/IP/cron) | **Merged** (PR #18). CSV formula-injection guard, IP-salt production guard, cron fail-closed + constant-time auth. Also added `docs/handoff-security-hardening.md` for the remaining items. |
 | `claude/gymmaster-phase-1-pull-7yuxuy` | GymMaster integration | **3 unmerged.** Phase 1 pull scaffolding plus migrations `0007` and `0008`. |
 | `claude/pt-team-onboarding-rw5awg` | PT team update email | **3 unmerged.** Drafts of the team update email and the login details email, from `docs/handoff-pt-team-update-email.md`. |
 | `claude/handoff-email-notifications-9m67a6` | Branded HTML notification emails | **Merged** (PR #4). Replaced the plain-text ops emails with branded HTML plus a dashboard link. |
@@ -185,7 +189,7 @@ anyway because `0004_trainer_am_pm.sql` merged with the availability work.
 | Number | Migration | Branch |
 |---|---|---|
 | 0004 | `trainer_am_pm` | merged, on production |
-| 0005 | `public_access_hardening` | `custom-domain-dns-setup-v45oc6` |
+| 0005 | `public_access_hardening` | fresh session — see `handoff-security-hardening.md` (v45oc6 parked) |
 | 0006 | `trainer_documents` | merged, on production |
 | 0007, 0008 | `gymmaster_lead_source`, `gymmaster_sync` | `gymmaster-phase-1-pull-7yuxuy` |
 
@@ -209,8 +213,12 @@ applied to the live project yet.
 - ~~**Branded HTML notification emails**~~ — **DONE.** Merged (PR #4) on
   `claude/handoff-email-notifications-9m67a6`. The plain-text trainer and digest
   emails are now branded HTML with a dashboard link, live in production.
-- **Security hardening** — CSV export auth, cron auth, RLS tightening, built and
-  unmerged on `claude/custom-domain-dns-setup-v45oc6`. Should not sit unmerged.
+- **Security hardening** — CSV export guard, IP-salt guard, and cron auth are
+  **DONE** (PR #18, live in production). The remaining DB items (trainer-email
+  RLS, form rate-limit RPC, status_history guard, explicit manager checks) are
+  scoped in `docs/handoff-security-hardening.md` for a fresh session (migration
+  `0005`). The old `custom-domain-dns-setup-v45oc6` branch is **parked — do not
+  merge it**; those fixes were re-done fresh instead.
 - ~~**Email notifications**~~ — **DONE.** Live and sending from
   `noreply@mail.fitazgym.com`. SPF and DKIM both pass (the earlier SPF typo has
   been corrected).
@@ -230,8 +238,10 @@ applied to the live project yet.
   works, don't merge a dead reset link before then.
 - **Availability as AM + PM (not "both")** — change trainer availability to
   independent AM/PM selection. See `docs/handoff-availability-am-pm.md`.
-- ~~**Custom web address**~~ — **DONE.** `pt.fitazgym.com` is live, DNS added in
-  Shopify by Georgio. `docs/handoff-custom-domain.md` is now history, not a task.
+- ~~**Custom web address**~~ — **DONE.** `pt.fitazgym.com` is live over HTTPS. DNS
+  records live at **CrazyDomains (Dreamscape), not Shopify** — fitazgym.com is
+  connected to Shopify but its DNS zone is at CrazyDomains, which is where all
+  records were added. `docs/handoff-custom-domain.md` is now history, not a task.
 - **Editable trainer pages** — give each PT a self-editable profile. **Scoped,
   not started.** Decided: **internal only** (not public — the public reach
   trainers via the gym website already), trainer edits their own row *and*
