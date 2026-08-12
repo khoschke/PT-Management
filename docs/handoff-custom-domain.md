@@ -1,4 +1,16 @@
-# Handoff: Custom Domain (pt.fitazgym.com via Shopify DNS)
+# Handoff: Custom Domain (pt.fitazgym.com) — ✅ DONE (history)
+
+> **✅ COMPLETE (11 Aug 2026). This is a record, not a task — do not re-do it.**
+> pt.fitazgym.com is live over HTTPS and is the address to use/share. Email also
+> sends from `mail.fitazgym.com`.
+>
+> **One correction to the note below:** the DNS is **NOT** in Shopify. fitazgym.com
+> is a third-party domain *connected* to Shopify but its DNS zone lives at
+> **CrazyDomains (Dreamscape)** — that's where all records were added (the `pt`
+> CNAME to Vercel, and the Resend `mail` records). Shopify's "add domain" flow is
+> a trap: it tries to point `pt` at the Shopify store. If any future subdomain
+> work is needed, edit DNS at **CrazyDomains**, not Shopify. The steps below are
+> kept for context but describe the pre-correction Shopify assumption.
 
 **Start a new session with this note.** Read `docs/PROJECT_STATUS.md` first, then this.
 
