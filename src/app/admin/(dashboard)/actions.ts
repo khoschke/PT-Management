@@ -2,12 +2,22 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { callerIsManager } from "@/lib/auth";
 import { sendTrainerAllocationEmail } from "@/lib/email";
 import { sweepLeadSchema } from "@/lib/validation";
 import type { LeadStatus } from "@/lib/types";
 import type { ActionResult, AddSweepLeadState } from "./state";
 
+// Allocation, deletion and sweep entry are the manager's alone. RLS already
+// refuses them for a trainer; the explicit check means a future policy change
+// can't quietly open them up. updateLeadStatus and updateLeadNotes below stay
+// on RLS on purpose — trainers use both on their own leads.
+
 export async function allocateLead(leadId: string, trainerId: string): Promise<ActionResult> {
+  if (!(await callerIsManager())) {
+    return { ok: false, message: "Only managers can allocate leads." };
+  }
+
   const supabase = await createClient();
 
   const { data: lead, error: fetchError } = await supabase
@@ -63,6 +73,10 @@ export async function updateLeadNotes(leadId: string, notes: string): Promise<Ac
 }
 
 export async function softDeleteLead(leadId: string): Promise<ActionResult> {
+  if (!(await callerIsManager())) {
+    return { ok: false, message: "Only managers can remove leads." };
+  }
+
   const supabase = await createClient();
   const { error } = await supabase
     .from("leads")
@@ -76,6 +90,10 @@ export async function softDeleteLead(leadId: string): Promise<ActionResult> {
 }
 
 export async function hardDeleteLead(leadId: string): Promise<ActionResult> {
+  if (!(await callerIsManager())) {
+    return { ok: false, message: "Only managers can permanently delete leads." };
+  }
+
   const supabase = await createClient();
   const { error } = await supabase.from("leads").delete().eq("id", leadId);
 
@@ -89,6 +107,10 @@ export async function addSweepLead(
   _prevState: AddSweepLeadState,
   formData: FormData,
 ): Promise<AddSweepLeadState> {
+  if (!(await callerIsManager())) {
+    return { status: "error", message: "Only managers can add sweep leads." };
+  }
+
   const raw = {
     name: formData.get("name")?.toString() ?? "",
     phone: formData.get("phone")?.toString() ?? "",

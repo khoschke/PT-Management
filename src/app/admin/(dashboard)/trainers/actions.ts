@@ -3,8 +3,13 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { callerIsManager } from "@/lib/auth";
 import { GOAL_OPTIONS } from "@/lib/goals";
 import type { TrainerFormState } from "./state";
+
+// The whole roster screen is manager-only. RLS enforces that too (the
+// trainers write policy is is_manager()), but each action says so itself so a
+// policy change can't silently hand the roster to a trainer.
 
 const GOAL_CODES = GOAL_OPTIONS.map((g) => g.code) as [string, ...string[]];
 
@@ -39,6 +44,10 @@ export async function addTrainer(
   _prevState: TrainerFormState,
   formData: FormData,
 ): Promise<TrainerFormState> {
+  if (!(await callerIsManager())) {
+    return { status: "error", message: "Only managers can add trainers." };
+  }
+
   const parsed = parseTrainerForm(formData);
   if (!parsed.success) {
     const fieldErrors: Record<string, string> = {};
@@ -75,6 +84,10 @@ export async function updateTrainer(
   _prevState: TrainerFormState,
   formData: FormData,
 ): Promise<TrainerFormState> {
+  if (!(await callerIsManager())) {
+    return { status: "error", message: "Only managers can edit trainers." };
+  }
+
   const parsed = parseTrainerForm(formData);
   if (!parsed.success) {
     const fieldErrors: Record<string, string> = {};
@@ -109,6 +122,8 @@ export async function updateTrainer(
 }
 
 export async function setTrainerActive(trainerId: string, active: boolean) {
+  if (!(await callerIsManager())) return { ok: false };
+
   const supabase = await createClient();
   const { error } = await supabase.from("trainers").update({ active }).eq("id", trainerId);
   if (error) return { ok: false };

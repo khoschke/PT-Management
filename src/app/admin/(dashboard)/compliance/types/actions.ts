@@ -3,8 +3,13 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { callerIsManager } from "@/lib/auth";
 import type { DocumentType } from "@/lib/types";
 import type { DocumentTypeFormState } from "./state";
+
+// Document types are part of the compliance setup, so the manager owns them.
+// RLS says the same (document_types_write_manager); this is the explicit check
+// alongside it.
 
 const typeSchema = z.object({
   label: z.string().trim().min(1, "Name is required").max(80),
@@ -30,6 +35,10 @@ export async function addDocumentType(
   _prevState: DocumentTypeFormState,
   formData: FormData,
 ): Promise<DocumentTypeFormState> {
+  if (!(await callerIsManager())) {
+    return { status: "error", message: "Only managers can add document types." };
+  }
+
   const parsed = typeSchema.safeParse({
     label: formData.get("label")?.toString() ?? "",
     expiryRule: formData.get("expiryRule")?.toString(),
@@ -71,6 +80,10 @@ export async function updateDocumentType(
   _prevState: DocumentTypeFormState,
   formData: FormData,
 ): Promise<DocumentTypeFormState> {
+  if (!(await callerIsManager())) {
+    return { status: "error", message: "Only managers can edit document types." };
+  }
+
   const parsed = typeSchema.safeParse({
     label: formData.get("label")?.toString() ?? "",
     expiryRule: formData.get("expiryRule")?.toString(),
@@ -95,6 +108,8 @@ export async function updateDocumentType(
 }
 
 export async function setDocumentTypeActive(typeId: string, active: boolean) {
+  if (!(await callerIsManager())) return { ok: false };
+
   const supabase = await createClient();
   const { error } = await supabase.from("document_types").update({ active }).eq("id", typeId);
   if (error) return { ok: false };
