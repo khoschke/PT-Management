@@ -47,13 +47,18 @@ Migrations in `supabase/migrations/`, all applied to the live Supabase project:
 - `0004_trainer_am_pm.sql` — independent AM/PM trainer availability.
 - `0006_trainer_documents.sql` — PT compliance documents and expiry reminders.
 
-**0005 is deliberately missing on production.** It stays reserved for
-`0005_public_access_hardening.sql` — the remaining DB security work (trainer-email
-RLS, form rate-limit RPC, status_history guard), to be built fresh per
-`docs/handoff-security-hardening.md`. (It was originally staged on
-`claude/custom-domain-dns-setup-v45oc6`, but that branch is now **parked/abandoned**
-— see the branch map.) `0007` and `0008` are reserved for GymMaster. See the
-migration order below. Anything new starts at **0009**.
+- `0005_public_access_hardening.sql` — **merged into code, NOT yet applied to
+  the live Supabase project.** The DB half of the public-access hardening
+  (trainer-email column grants, status_history soft-delete guard,
+  trainer_documents self-verify guard, and the `submit_form_lead` security-definer
+  RPC). It fills the previously-reserved `0005` slot, so GymMaster's `0007/0008`
+  stay untouched. **It must be applied in two parts around the code deploy** — see
+  the banner at the top of the file: PART A before the new code is live, PART B
+  after. The merged code in `src/app/pt-session/actions.ts` already calls
+  `submit_form_lead`, so PART A must be run before/with that deploy or the public
+  form breaks.
+
+`0007` and `0008` stay reserved for GymMaster. Anything new starts at **0009**.
 
 Roles live in `profiles` (`manager` / `trainer`). Managers see/allocate all
 leads; trainers see only their own. RLS enforces this at the database level.
@@ -190,14 +195,17 @@ anyway because `0004_trainer_am_pm.sql` merged with the availability work.
 | Number | Migration | Branch |
 |---|---|---|
 | 0004 | `trainer_am_pm` | merged, on production |
-| 0005 | `public_access_hardening` | fresh session — see `handoff-security-hardening.md` (v45oc6 parked) |
+| 0005 | `public_access_hardening` | merged into code (this session); **apply in two parts, PART A → deploy → PART B** |
 | 0006 | `trainer_documents` | merged, on production |
-| 0007, 0008 | `gymmaster_lead_source`, `gymmaster_sync` | `gymmaster-phase-1-pull-7yuxuy` |
+| 0007, 0008 | `gymmaster_lead_source`, `gymmaster_sync` | `gymmaster-phase-1-pull-7yuxuy` (already numbered correctly, no renumber needed) |
 
 Merge in that order and Supabase stays in step. GymMaster is deliberately last:
 it is the largest and most likely to change again, so it absorbs any further
-renumbering rather than forcing it on the others. None of these have been
-applied to the live project yet.
+renumbering rather than forcing it on the others.
+
+`0005_public_access_hardening.sql` **runs in two parts around the code deploy**
+(PART A → deploy → PART B). The file says so at the top; the runbook is in
+`docs/handoff-security-hardening.md`.
 
 ## Outstanding / next up
 
@@ -214,12 +222,15 @@ applied to the live project yet.
 - ~~**Branded HTML notification emails**~~ — **DONE.** Merged (PR #4) on
   `claude/handoff-email-notifications-9m67a6`. The plain-text trainer and digest
   emails are now branded HTML with a dashboard link, live in production.
-- **Security hardening** — CSV export guard, IP-salt guard, and cron auth are
-  **DONE** (PR #18, live in production). The remaining DB items (trainer-email
-  RLS, form rate-limit RPC, status_history guard, explicit manager checks) are
-  scoped in `docs/handoff-security-hardening.md` for a fresh session (migration
-  `0005`). The old `custom-domain-dns-setup-v45oc6` branch is **parked — do not
-  merge it**; those fixes were re-done fresh instead.
+- **Security hardening** — CSV injection, IP salt and digest-cron auth were
+  **merged earlier** (PR #18). The remaining DB items (anon column grants on
+  trainers, `status_history` soft-delete guard, `trainer_documents` self-verify
+  guard, the `submit_form_lead` RPC, and explicit manager checks) are now **merged
+  into code** (migration `0005_public_access_hardening.sql`). **The migration is
+  not yet applied to live Supabase** and must run in two parts around the deploy:
+  PART A before the new code is live, PART B after. Runbook in
+  `docs/handoff-security-hardening.md`. The old `custom-domain-dns-setup-v45oc6`
+  branch stays **parked — do not merge it**; these fixes were re-done fresh.
 - ~~**Email notifications**~~ — **DONE.** Live and sending from
   `noreply@mail.fitazgym.com`. SPF and DKIM both pass (the earlier SPF typo has
   been corrected).
