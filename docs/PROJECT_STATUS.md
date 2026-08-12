@@ -49,18 +49,22 @@ digest (Vercel cron) are confirmed sending from the branded
 > anything about the live schema, and update the status column below from what
 > it returns — not from what you expect it to say.**
 
-Migrations live in `supabase/migrations/`. Status column last set from an audit
-run on **12 Aug 2026**:
+Migrations live in `supabase/migrations/`. Status column set from an audit run on
+**12 Aug 2026**, verified row by row against the live project — not asserted:
 
 | Migration | What it adds | On live? |
 |---|---|---|
-| `0001_init.sql` | trainers, leads, status_history, profiles, rate_limit_log, RLS, triggers | Applied |
-| `0002_onboarding.sql` | onboarding_responses, onboarding_part_status, RLS | Applied |
-| `0003_trainer_bio.sql` | free-text `bio` column on trainers | Applied |
-| `0004_trainer_am_pm.sql` | independent AM/PM trainer availability | Applied |
-| `0006_trainer_documents.sql` | PT compliance documents, expiry reminders, `trainer-documents` Storage bucket | **NOT APPLIED — apply first** |
+| `0001_init.sql` | trainers, leads, status_history, profiles, rate_limit_log, RLS, triggers | Applied — verified |
+| `0002_onboarding.sql` | onboarding_responses, onboarding_part_status, RLS | Applied — verified |
+| `0003_trainer_bio.sql` | free-text `bio` column on trainers | Applied — verified |
+| `0004_trainer_am_pm.sql` | independent AM/PM trainer availability | Applied — verified |
+| `0006_trainer_documents.sql` | PT compliance documents, expiry reminders, `trainer-documents` Storage bucket | Applied 12 Aug 2026 — verified, incl. bucket + storage policies. Upload/view/delete exercised end to end on the live site. |
 | `0007`, `0008` | GymMaster (`gymmaster_lead_source`, `gymmaster_sync`) | Not applied; unmerged branch |
-| `0009_public_access_hardening.sql` | trainer-email column grants, status_history soft-delete guard, trainer_documents self-verify guard, `submit_form_lead` RPC | **NOT APPLIED — two parts, after 0006** |
+| `0009_public_access_hardening.sql` | trainer-email column grants, status_history soft-delete guard, trainer_documents self-verify guard, `submit_form_lead` RPC | **PART A applied 12 Aug 2026 — verified. PART B still pending**, and must not run until this deploy is live. |
+
+**The drift is closed.** `0006` had never been applied despite this doc claiming
+it was, which left `/admin/compliance` and `/admin/documents` erroring in
+production. Both work again.
 
 `0005` is permanently unused. It was held for the hardening migration, which has
 since been renumbered to `0009` because it rewrites a policy on
@@ -257,21 +261,20 @@ now retired rather than reserved: don't fill it.
 - ~~**Branded HTML notification emails**~~ — **DONE.** Merged (PR #4) on
   `claude/handoff-email-notifications-9m67a6`. The plain-text trainer and digest
   emails are now branded HTML with a dashboard link, live in production.
-- **Reconcile the live database** — **THE BLOCKER, do this first.** `0006` is on
-  production in code but was never applied to the live Supabase project, so
-  `/admin/compliance` and `/admin/documents` are **broken in production right
-  now**, and the hardening migration can't fully run until it's fixed. Audit
-  query, apply scripts and the full runbook are in `supabase/reconcile/`. Needs
-  someone at the Supabase SQL editor — it cannot be done from a build session.
+- ~~**Reconcile the live database**~~ — **DONE, 12 Aug 2026.** `0006` had never
+  been applied to live despite this doc saying so; it is now, verified, and
+  `/admin/compliance` and `/admin/documents` work again. The audit query that
+  found it lives in `supabase/reconcile/` and should be re-run whenever anyone
+  needs to state what is on live.
 - **Security hardening** — CSV injection, IP salt and digest-cron auth were
   **merged earlier** (PR #18). The remaining DB items (anon column grants on
   trainers, `status_history` soft-delete guard, `trainer_documents` self-verify
-  guard, the `submit_form_lead` RPC, and explicit manager checks) are now **merged
-  into code** (migration `0009_public_access_hardening.sql`). **The migration is
-  not yet applied to live Supabase**, is blocked behind `0006` above, and must
-  then run in two parts around the deploy: PART A before the new code is live,
-  PART B after. Runbook in `supabase/reconcile/README.md`; the findings behind it
-  are in `docs/handoff-security-hardening.md`. The old
+  guard, the `submit_form_lead` RPC, and explicit manager checks) are in
+  migration `0009_public_access_hardening.sql`. **PART A is applied and verified;
+  PART B is the one step still outstanding** and must run only after this code is
+  deployed — it removes anon's direct insert on `leads`, which the old code path
+  still relies on. Runbook in `supabase/reconcile/README.md`; the findings behind
+  it are in `docs/handoff-security-hardening.md`. The old
   `custom-domain-dns-setup-v45oc6` branch stays **parked — do not merge it**;
   these fixes were re-done fresh.
 - ~~**Email notifications**~~ — **DONE.** Live and sending from
