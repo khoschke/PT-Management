@@ -9,6 +9,10 @@ This is separate from `docs/emails/`, which holds member-facing lifecycle emails
 This one is a personal note from a manager and should be sent from Karl's own
 address, not from the system.
 
+**Sent 12 August 2026**, along with the four individual login emails in
+`docs/pt-login-details-email.md`. Kept here as the record of what went out and
+as the starting point for the next one.
+
 ## Send details
 
 **From:** Karl's own address
@@ -120,16 +124,15 @@ Karl
 
 - **Ten parts, not nine.** The workbook has ten parts in
   `src/lib/onboarding/content.ts`. Earlier notes said nine.
-- **The technical blockers are deliberately not listed.** The nurture flow is
-  waiting on the SPF record and on GymMaster configuration, both tracked in
-  `docs/handoff-email-1-go-live.md`. The email carries one honest line that the
-  setup is in progress. A list of what is stuck would undercut the momentum this
-  email exists to create.
-- **Worth a quick check before sending** that pt.fitazgym.com is serving the app,
-  since `docs/PROJECT_STATUS.md` still lists the old vercel.app links.
+- **The technical blockers are deliberately not listed.** The email carries one
+  honest line that the setup is in progress. A list of what is stuck would
+  undercut the momentum this email exists to create. At the time of sending, the
+  SPF record had been corrected and what remained was GymMaster configuration,
+  tracked in `docs/handoff-email-1-go-live.md`.
 - **The real lead flow briefing comes later.** This email foreshadows the change
   to how leads arrive. The proper conversation is better had in person once it is
   actually live.
-- **Emails 2 and 3 are not on this branch.** They live on
-  `claude/gym-nurture-email-design-uw9nvu` in `docs/emails/`, along with the
-  handoff note this draft was written from.
+- **The follow-up to plan for** is the replies. Three asks went out: portal
+  feedback, reactions to the three member emails, and preferred days and times.
+  The days and times are the one with a deadline on them, since the fortnightly
+  sessions start in September.

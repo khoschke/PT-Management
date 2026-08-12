@@ -7,6 +7,9 @@ time**, never as a group email and never with anyone cc'd.
 Send it once the group email has gone, so the login lands in a context the PT
 already understands.
 
+**Sent 12 August 2026** to all four PTs. Kept here for the next trainer who
+joins, since the same message works unchanged.
+
 ## Filling it in
 
 | Placeholder | Where it comes from |
