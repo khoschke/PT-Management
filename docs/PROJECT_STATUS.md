@@ -207,17 +207,22 @@ Zero means everything on that branch is already on production, whatever the
 table says. If what you find disagrees with the table, **the command is right**:
 fix the table in the same session rather than leaving it to mislead the next one.
 
-### Snapshot, 12 August 2026 (verified with the command above)
+### Snapshot, 12 August 2026 (verified with the command above, after the deploy)
+
+Three branches marked "safe to delete" below were still on the remote when this
+was written — the session that finished the work could push commits but not
+delete refs. Delete them from the GitHub branches page when convenient; their
+rows can then come out of this table.
 
 | Branch / thread | Workstream | State |
 |---|---|---|
-| `claude/reconcile-database-security-deploy-01sf2h` | Live-DB reconciliation + security deploy | **Unmerged, and the one to merge next.** Carries the whole security hardening merge (via `security-merge-pending-parta`), the migration renumbered `0005` → `0009`, the `supabase/reconcile/` audit + runbook, and this doc's corrected migration table. **Merge only as step 4 of `supabase/reconcile/README.md`** — the code calls `submit_form_lead`, so deploying it before PART A has run breaks the public form. |
-| `claude/security-merge-pending-parta` | Security hardening merge | **2 unmerged**, but both are now carried by the reconcile branch above. Merge that one instead; this branch's migration number was wrong. |
+| `claude/reconcile-database-security-deploy-01sf2h` | Live-DB reconciliation + security deploy | **Merged and deployed, 12 Aug 2026.** Carried the security hardening merge, the migration renumbered `0005` → `0009`, the `supabase/reconcile/` audit + runbook, and this doc's corrected migration table. Safe to delete. |
+| `claude/security-merge-pending-parta` | Security hardening merge | **Merged** (via the reconcile branch). Its migration number was wrong — corrected there. Safe to delete. |
 | `claude/apple-design-pass-ymnm14` | Apple-grade design pass | **Merged.** Public form, lead board, trainers, staff, login, plus the FITAZ GYM wordmark across app headers. The superseded wordmark trace was discarded in favour of the `public/brand/` marks, as planned. |
 | `claude/docs-reconcile-live-state` | Branch-map reconciliation | **Merged.** Docs only. |
 | `claude/custom-domain-dns-setup-v45oc6` | Custom domain + security hardening | **PARKED — do NOT merge.** 9 unmerged, but its deliverable (pt.fitazgym.com + email) is already live via the dashboards, and it forked ~50 commits back, so a merge would conflict and regress newer work. The CSV/cron/IP-salt fixes were re-done fresh and merged (PR #18); the DB security was re-done fresh as migration `0009`. Ignore or delete this branch. |
 | `claude/security-hardening-csv-ip-cron` | Security hardening (CSV/IP/cron) | **Merged** (PR #18). CSV formula-injection guard, IP-salt production guard, cron fail-closed + constant-time auth. Also added `docs/handoff-security-hardening.md` for the remaining items. |
-| `claude/security-hardening-validation-0ry4cz` | Security hardening (DB / RLS) | **1 unmerged against production**, but already merged into the reconcile branch above. Nothing to do here directly. |
+| `claude/security-hardening-validation-0ry4cz` | Security hardening (DB / RLS) | **Merged** (via the reconcile branch). Safe to delete. |
 | `claude/gymmaster-phase-1-pull-7yuxuy` | GymMaster integration | **3 unmerged.** Phase 1 pull scaffolding plus migrations `0007` and `0008`, which keep those numbers. |
 | `claude/pt-team-onboarding-rw5awg` | PT team update email | **Merged.** The team update email and the login details email, from `docs/handoff-pt-team-update-email.md`. Both were sent on 12 August 2026; the files are kept as the record of what went out and as the template for the next trainer who joins. |
 | `claude/handoff-email-notifications-9m67a6` | Branded HTML notification emails | **Merged** (PR #4). Replaced the plain-text ops emails with branded HTML plus a dashboard link. |
@@ -267,10 +272,12 @@ now retired rather than reserved: don't fill it.
 - ~~**Apple-grade design pass**~~ — **DONE.** Merged and deployed from
   `claude/apple-design-pass-ymnm14`. The superseded wordmark trace it carried was
   discarded in favour of the `public/brand/` marks.
-- **PT compliance documents with expiry reminders** — code is **merged** (PR #8)
-  and deployed, but migration `0006` was never applied to the live DB, so
-  `/admin/compliance` and `/admin/documents` are broken in production. Not a
-  build problem — see the reconciliation item above.
+- ~~**PT compliance documents with expiry reminders**~~ — **DONE and working.**
+  Code merged (PR #8) and deployed; migration `0006` applied to live 12 Aug 2026,
+  which is what finally made `/admin/compliance` and `/admin/documents` usable.
+  Upload, view and delete confirmed against the live Storage bucket. The feature
+  had been shipped-but-broken since it merged, purely because the migration was
+  never run.
 - ~~**Branded HTML notification emails**~~ — **DONE.** Merged (PR #4) on
   `claude/handoff-email-notifications-9m67a6`. The plain-text trainer and digest
   emails are now branded HTML with a dashboard link, live in production.
