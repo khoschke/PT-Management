@@ -41,6 +41,14 @@ attempt hit. That reproduction is why the file is numbered `0009`.
 Run [`01_audit_live_schema.sql`](01_audit_live_schema.sql). Read-only, changes
 nothing.
 
+> **If the editor shows "Potential issue detected — this query creates a table
+> without enabling Row Level Security", choose "Run without RLS".** That runs
+> the query verbatim. "Run and enable RLS" appends a real
+> `alter table … enable row level security` and executes it against production.
+> The warning is a text-scan false positive: a `SELECT` over catalog views
+> creates nothing. The query has since been rewritten to avoid tripping it, but
+> the linter's heuristics change, so this holds for any read-only script here.
+
 Expected on a correctly-migrated-but-not-yet-hardened database:
 
 | Rows | Expected |
