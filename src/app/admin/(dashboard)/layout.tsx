@@ -32,6 +32,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   }
 
   const isManager = user.profile.role === "manager";
+  const isTrainer = user.profile.role === "trainer";
 
   return (
     <div className="min-h-screen bg-background">
@@ -39,7 +40,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3.5 sm:px-6">
           <div className="flex items-center gap-8">
             <div className="flex items-center gap-2.5">
-              <Image src="/logo-fitaz.svg" alt="Fitaz Gym" width={90} height={23} priority />
+              <Image src="/brand/fitaz-gym-logo.svg" alt="Fitaz Gym" width={122} height={22} priority />
               <span className="h-3.5 w-px bg-black/15" aria-hidden />
               <span className="text-[13px] font-medium text-secondary-label">PT leads</span>
             </div>
@@ -50,9 +51,12 @@ export default async function DashboardLayout({ children }: { children: React.Re
                   ? [
                       { href: "/admin/trainers", label: "Trainers" },
                       { href: "/admin/staff", label: "Staff" },
+                      { href: "/admin/compliance", label: "Compliance" },
                     ]
                   : []),
+                ...(isTrainer ? [{ href: "/admin/documents", label: "My documents" }] : []),
                 { href: "/onboarding", label: "PT onboarding" },
+                { href: "/admin/account", label: "Account" },
               ]}
             />
           </div>

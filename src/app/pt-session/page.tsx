@@ -22,7 +22,7 @@ export default async function PtSessionPage() {
     <main className="min-h-screen bg-background">
       <header className="glass-header sticky top-0 z-10 border-b border-black/5">
         <div className="mx-auto flex max-w-2xl items-center px-5 py-3.5 sm:px-6">
-          <Image src="/logo-fitaz.svg" alt="Fitaz Gym" width={133} height={34} priority />
+          <Image src="/brand/fitaz-gym-logo.svg" alt="Fitaz Gym" width={166} height={30} priority />
         </div>
       </header>
 
@@ -40,6 +40,15 @@ export default async function PtSessionPage() {
             doing. Fill out this quick form so we can match you with the right
             trainer and get you booked in.
           </p>
+          <a
+            href="https://fitazgym.com/pages/personal-trainers"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="press mt-5 inline-flex items-center gap-1.5 text-[15px] font-semibold text-foreground underline decoration-black/20 underline-offset-4 transition hover:decoration-foreground"
+          >
+            Meet our trainers
+            <span aria-hidden="true">&rarr;</span>
+          </a>
         </div>
 
         <PTSessionForm trainers={trainers ?? []} />

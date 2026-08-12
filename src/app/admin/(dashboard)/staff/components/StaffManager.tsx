@@ -2,7 +2,7 @@
 
 import { useActionState, useState, useTransition } from "react";
 import { useFormStatus } from "react-dom";
-import { addManager, addTrainerLogin, makeManager, removeStaffAccess } from "../actions";
+import { addManager, addTrainerLogin, changeStaffEmail, makeManager, removeStaffAccess } from "../actions";
 import { initialStaffFormState } from "../state";
 import type { StaffMember } from "../page";
 import Avatar from "../../components/Avatar";
@@ -39,13 +39,25 @@ function RoleBadge({ role }: { role: "manager" | "trainer" }) {
 function StaffRow({ member, isSelf }: { member: StaffMember; isSelf: boolean }) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [editingEmail, setEditingEmail] = useState(false);
+  const [emailValue, setEmailValue] = useState(member.email ?? "");
 
-  function run(fn: () => Promise<{ ok: boolean; message?: string }>) {
+  function run(fn: () => Promise<{ ok: boolean; message?: string }>, onSuccess?: () => void) {
     setError(null);
     startTransition(async () => {
       const result = await fn();
-      if (!result.ok) setError(result.message ?? "Something went wrong.");
+      if (result.ok) onSuccess?.();
+      else setError(result.message ?? "Something went wrong.");
     });
+  }
+
+  function submitEmail() {
+    const next = emailValue.trim();
+    if (next === (member.email ?? "")) {
+      setEditingEmail(false);
+      return;
+    }
+    run(() => changeStaffEmail(member.id, next), () => setEditingEmail(false));
   }
 
   return (
@@ -68,6 +80,20 @@ function StaffRow({ member, isSelf }: { member: StaffMember; isSelf: boolean }) 
           </div>
         </div>
         <div className="flex shrink-0 gap-2">
+          {!editingEmail && (
+            <button
+              type="button"
+              disabled={isPending}
+              onClick={() => {
+                setError(null);
+                setEmailValue(member.email ?? "");
+                setEditingEmail(true);
+              }}
+              className={`press rounded-full bg-fill px-3 py-1.5 text-xs font-semibold text-foreground transition hover:bg-fill/70 disabled:opacity-50 ${focusRing}`}
+            >
+              Change email
+            </button>
+          )}
           {member.role === "trainer" && (
             <button
               type="button"
@@ -93,6 +119,46 @@ function StaffRow({ member, isSelf }: { member: StaffMember; isSelf: boolean }) 
           </button>
         </div>
       </div>
+
+      {editingEmail && (
+        <div className="mt-3 rounded-xl bg-fill/60 p-3">
+          <label htmlFor={`email-${member.id}`} className="text-xs font-semibold text-foreground">
+            New sign-in email
+          </label>
+          <div className="mt-1.5 flex flex-wrap items-center gap-2">
+            <input
+              id={`email-${member.id}`}
+              type="email"
+              value={emailValue}
+              onChange={(e) => setEmailValue(e.target.value)}
+              className="min-w-0 flex-1 rounded-xl border-none bg-surface px-3.5 py-2.5 text-sm text-foreground outline-none ring-1 ring-transparent transition focus:ring-2 focus:ring-foreground"
+            />
+            <button
+              type="button"
+              disabled={isPending}
+              onClick={submitEmail}
+              className="press rounded-full bg-foreground px-4 py-2 text-xs font-semibold text-white disabled:opacity-50"
+            >
+              {isPending ? "Saving..." : "Save email"}
+            </button>
+            <button
+              type="button"
+              disabled={isPending}
+              onClick={() => {
+                setEditingEmail(false);
+                setError(null);
+              }}
+              className="press rounded-full bg-surface px-4 py-2 text-xs font-semibold text-foreground disabled:opacity-50"
+            >
+              Cancel
+            </button>
+          </div>
+          <p className="mt-1.5 text-xs text-secondary-label">
+            Changes the address they sign in with. Takes effect immediately, no confirmation email.
+          </p>
+        </div>
+      )}
+
       {error && <p className="mt-2 text-xs text-red-600">{error}</p>}
     </li>
   );

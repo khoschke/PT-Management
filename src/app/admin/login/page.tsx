@@ -12,7 +12,7 @@ export default function LoginPage() {
     <main className="flex min-h-screen items-center justify-center bg-background px-5">
       <div className="w-full max-w-sm">
         <div className="mb-8 flex justify-center">
-          <Image src="/logo-fitaz.svg" alt="Fitaz Gym" width={156} height={40} priority />
+          <Image src="/brand/fitaz-gym-logo.svg" alt="Fitaz Gym" width={188} height={34} priority />
         </div>
         <Suspense fallback={null}>
           <LoginForm />

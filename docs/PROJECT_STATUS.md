@@ -12,16 +12,18 @@ hours. Built for a five-PT gym, ~30 leads/month.
 
 ## Live now
 
-- **Public form:** https://pt-management-two.vercel.app/pt-session
-- **Manager/trainer dashboard:** https://pt-management-two.vercel.app/admin
-- **PT onboarding workbook:** https://pt-management-two.vercel.app/onboarding
+- **Public form:** https://pt.fitazgym.com/pt-session
+- **Manager/trainer dashboard:** https://pt.fitazgym.com/admin
+- **PT onboarding workbook:** https://pt.fitazgym.com/onboarding
+- The `pt-management-two.vercel.app` addresses still work and are what Vercel
+  deploys to, but `pt.fitazgym.com` is live and is the address to use and share.
 - Everything is deployed and working end to end with real data.
 
 ## Stack & hosting
 
 - **Next.js 16** (App Router, Turbopack) + TypeScript + Tailwind v4.
 - **Supabase** — Postgres, Auth, Row Level Security. Project ref `fbzearypwpjcyrmdivsz`.
-- **Resend** — the two notification emails. Built but currently **OFF** (no API key set), by choice, until the sending domain is sorted.
+- **Resend** — the two notification emails. **LIVE** and sending from `noreply@mail.fitazgym.com` (confirmed 4 Aug 2026 by a real trainer allocation email landing in the inbox). Georgio added the DNS records. **DNS lives at CrazyDomains (Dreamscape), not Shopify** (confirmed 5 Aug 2026); fitazgym.com is connected to Shopify but not bought through it, so the zone is elsewhere. The SPF record had a copy-paste error early on but **has since been corrected** (confirmed 11 Aug 2026 in the CrazyDomains DNS panel): `send.mail.fitazgym.com` now reads `v=spf1 include:amazonses.com ~all` and is Active, alongside the Active `resend._domainkey` DKIM record. SPF and DKIM both pass.
 - **Vercel** — hosting + a daily-digest cron (`vercel.json`). Hobby (free) plan.
 - **GitHub:** `khoschke/pt-management`. Active branch: `claude/fitaz-gym-pt-leads-76ffhv` (this is also Vercel's production branch — pushing to it auto-deploys).
 
@@ -31,8 +33,10 @@ Set and working: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 (a new-style `sb_publishable_…` key), `SUPABASE_SERVICE_ROLE_KEY` (a new-style
 `sb_secret_…` key), `IP_HASH_SALT`, `PT_MANAGER_EMAIL`.
 
-Not yet set (email is off): `RESEND_API_KEY`, `NOTIFICATIONS_FROM_EMAIL`,
-`CRON_SECRET`.
+`RESEND_API_KEY`, `NOTIFICATIONS_FROM_EMAIL`, and `CRON_SECRET` are all set —
+email is fully live. Both the trainer allocation email and the manager daily
+digest (Vercel cron) are confirmed sending from the branded
+`noreply@mail.fitazgym.com` sender. See `docs/handoff-email-notifications.md`.
 
 ## Database
 
@@ -40,6 +44,16 @@ Migrations in `supabase/migrations/`, all applied to the live Supabase project:
 - `0001_init.sql` — trainers, leads, status_history, profiles, rate_limit_log, RLS, triggers.
 - `0002_onboarding.sql` — onboarding_responses, onboarding_part_status, RLS.
 - `0003_trainer_bio.sql` — free-text `bio` column on trainers.
+- `0004_trainer_am_pm.sql` — independent AM/PM trainer availability.
+- `0006_trainer_documents.sql` — PT compliance documents and expiry reminders.
+
+**0005 is deliberately missing on production.** It stays reserved for
+`0005_public_access_hardening.sql` — the remaining DB security work (trainer-email
+RLS, form rate-limit RPC, status_history guard), to be built fresh per
+`docs/handoff-security-hardening.md`. (It was originally staged on
+`claude/custom-domain-dns-setup-v45oc6`, but that branch is now **parked/abandoned**
+— see the branch map.) `0007` and `0008` are reserved for GymMaster. See the
+migration order below. Anything new starts at **0009**.
 
 Roles live in `profiles` (`manager` / `trainer`). Managers see/allocate all
 leads; trainers see only their own. RLS enforces this at the database level.
@@ -90,9 +104,167 @@ strength". Change it in that one file and it flows to both sides.
 - Verify changes in a real browser with screenshots where it matters
   (thoroughness is preferred over speed here).
 
+## Member email series
+
+Separate from the two internal ops emails in `src/lib/email.ts`. Member-facing
+lifecycle emails live in `docs/emails/`, with the strategy, merge tags and
+send checklist in `docs/emails/README.md`.
+
+- **Three emails, built and finished.** Day 1 `01-welcome-nurture`, day 10
+  `02-plan-not-motivation`, day 30 `03-last-call`, each with an HTML and a plain
+  text part. They go to Fitness Passport and standard members alike, and share
+  one goal: turn an unverified member into a warm lead by getting them to
+  complete `/pt-session`. The complimentary session expires on day 37.
+- **Sending and triggering happen in GymMaster**, automated off the member's own
+  join date. No integration work is needed in this repo for that.
+- **The PTs get the unverified leads after email 2**, around day 11, with anyone
+  who already responded stripped out. The emails take the easy conversions and
+  the PTs spend their calls on people who need one.
+- **Not sending yet**, but the domain is no longer the blocker. What is left is
+  tracked in `docs/handoff-email-1-go-live.md`: confirming what GymMaster gives
+  us for unsubscribe, suppression and merge tags. (The SPF record has been
+  corrected — see the Resend line above.) `pt.fitazgym.com` is confirmed resolving.
+- **CMS-safe variants** in `docs/emails/cms-safe/` exist because GymMaster
+  corrupts pasted HTML and the buttons lose their position. Generated by
+  `docs/emails/make-cms-safe.py`, never edited by hand.
+
+Brand assets live in `public/brand/`, documented in `docs/brand-assets.md`.
+Use `fitaz-gym-logo.svg` by default; the `-email` variant exists only for email
+headers.
+
+**These are the primary marks.** The `claude/apple-design-pass-ymnm14` branch
+carries an earlier trace of the same wordmark, made before these. It is
+superseded. When that branch is merged, keep the `public/brand/` versions and
+discard the older trace rather than letting the merge decide.
+
+## Where each workstream lives (branch map)
+
+Every workstream has its own branch, which is also the session that built it.
+Some carry finished work that is not on production yet, so check before starting
+anything: the thing may already be built.
+
+### Check this yourself, do not trust the table
+
+**The table below is a snapshot and it goes stale every time anything merges.**
+Do not report a branch as unmerged on the strength of it. Run this first:
+
+```sh
+git fetch origin
+PROD=origin/claude/fitaz-gym-pt-leads-76ffhv
+for b in $(git ls-remote --heads origin | sed 's|.*refs/heads/||' | grep -v fitaz-gym-pt-leads | sort); do
+  n=$(git rev-list --count $PROD..origin/$b)
+  printf "%-46s %s\n" "$b" "$([ "$n" = 0 ] && echo merged || echo "$n unmerged")"
+done
+```
+
+Zero means everything on that branch is already on production, whatever the
+table says. If what you find disagrees with the table, **the command is right**:
+fix the table in the same session rather than leaving it to mislead the next one.
+
+### Snapshot, 11 August 2026
+
+| Branch / thread | Workstream | State |
+|---|---|---|
+| `claude/apple-design-pass-ymnm14` | Apple-grade design pass | **13 unmerged.** Public form, lead board, trainers, staff, login, plus the FITAZ GYM wordmark across app headers. Looks finished. Carries a superseded wordmark trace: keep the `public/brand/` marks. |
+| `claude/custom-domain-dns-setup-v45oc6` | Custom domain + security hardening | **PARKED — do NOT merge.** Its deliverable (pt.fitazgym.com + email) is already live via the dashboards, and it forked ~50 commits back, so a merge would conflict and regress newer work. The CSV/cron/IP-salt fixes were re-done fresh and merged (PR #18); the remaining DB security is scoped in `docs/handoff-security-hardening.md` (fresh session, migration `0005`). Ignore or delete this branch. |
+| `claude/security-hardening-csv-ip-cron` | Security hardening (CSV/IP/cron) | **Merged** (PR #18). CSV formula-injection guard, IP-salt production guard, cron fail-closed + constant-time auth. Also added `docs/handoff-security-hardening.md` for the remaining items. |
+| `claude/gymmaster-phase-1-pull-7yuxuy` | GymMaster integration | **3 unmerged.** Phase 1 pull scaffolding plus migrations `0007` and `0008`. |
+| `claude/pt-team-onboarding-rw5awg` | PT team update email | **3 unmerged.** Drafts of the team update email and the login details email, from `docs/handoff-pt-team-update-email.md`. |
+| `claude/handoff-email-notifications-9m67a6` | Branded HTML notification emails | **Merged** (PR #4). Replaced the plain-text ops emails with branded HTML plus a dashboard link. |
+| `claude/self-service-password-change-3ydtqu` | Forgot-password | **1 unmerged**, a handoff note only. No implementation; still needs Supabase Custom SMTP. |
+| `claude/gym-nurture-email-design-uw9nvu` | Member email series | **Merged** (PR #13 and #14). Emails 1 to 3, CMS-safe variants, brand assets, this doc. |
+| `claude/pt-document-expiry-feature-ppsy30` | PT compliance documents with expiry reminders | **Merged** (PR #8). |
+| `claude/availability-am-pm-model-yj1dby` | Trainer AM/PM availability | Merged. |
+| `claude/trainer-portal-handoff-doc-o0on8j` | Editable trainer pages | Merged (scoping note only, build not started). |
+| `claude/pt-onboarding-dashboard-9wwl17` | PT onboarding workbook | Merged and live. |
+| `claude/handoff-trainer-profiles-link-buudia` | Trainer profile links | Merged. |
+| `claude/project-pause-prevention-083n5y` | Supabase keep-alive cron | Merged and live. |
+
+### Migration order, already sorted
+
+Three unmerged branches each added their own `0004_`, which would have
+collided on merge. They have been renumbered, and `0004` was never free
+anyway because `0004_trainer_am_pm.sql` merged with the availability work.
+
+| Number | Migration | Branch |
+|---|---|---|
+| 0004 | `trainer_am_pm` | merged, on production |
+| 0005 | `public_access_hardening` | fresh session — see `handoff-security-hardening.md` (v45oc6 parked) |
+| 0006 | `trainer_documents` | merged, on production |
+| 0007, 0008 | `gymmaster_lead_source`, `gymmaster_sync` | `gymmaster-phase-1-pull-7yuxuy` |
+
+Merge in that order and Supabase stays in step. GymMaster is deliberately last:
+it is the largest and most likely to change again, so it absorbs any further
+renumbering rather than forcing it on the others. None of these have been
+applied to the live project yet.
+
 ## Outstanding / next up
 
 - **GymMaster integration** — see `docs/handoff-gymmaster-integration.md`.
+  **Phase 1 scaffolding already exists unmerged** on
+  `claude/gymmaster-phase-1-pull-7yuxuy`.
 - **Apple-grade design pass** — see `docs/handoff-apple-design-pass.md`.
-- **Email notifications** — code ready, turn on once the sending domain is set.
-- **Custom web address** — pending the gym owner's (Georgio's) decision.
+  **Appears finished and unmerged** on `claude/apple-design-pass-ymnm14`. Review
+  and merge rather than rebuild. It also carries an earlier trace of the FITAZ
+  wordmark: that one is superseded, keep the `public/brand/` marks.
+- **PT compliance documents with expiry reminders** — built and unmerged on
+  `claude/pt-document-expiry-feature-ppsy30`. Was missing from this list
+  entirely. Needs a review and a decision on whether it ships.
+- ~~**Branded HTML notification emails**~~ — **DONE.** Merged (PR #4) on
+  `claude/handoff-email-notifications-9m67a6`. The plain-text trainer and digest
+  emails are now branded HTML with a dashboard link, live in production.
+- **Security hardening** — CSV export guard, IP-salt guard, and cron auth are
+  **DONE** (PR #18, live in production). The remaining DB items (trainer-email
+  RLS, form rate-limit RPC, status_history guard, explicit manager checks) are
+  scoped in `docs/handoff-security-hardening.md` for a fresh session (migration
+  `0005`). The old `custom-domain-dns-setup-v45oc6` branch is **parked — do not
+  merge it**; those fixes were re-done fresh instead.
+- ~~**Email notifications**~~ — **DONE.** Live and sending from
+  `noreply@mail.fitazgym.com`. SPF and DKIM both pass (the earlier SPF typo has
+  been corrected).
+- **Change-email on the Account screen** — the `/admin/account` screen currently
+  does self-service password only. Add a "change my email" field there too
+  (`supabase.auth.updateUser({ email })`), so users can update their own login
+  details. **No longer blocked:** email is live, so the Supabase confirmation
+  link will now deliver. Needs Supabase Custom SMTP pointed at Resend.
+  (Note: managers can already change *anyone's* sign-in email immediately from
+  the Staff screen — that path uses the admin client and needs no confirmation
+  email. This item is specifically the self-service version.)
+- **Forgot-password on the login page** — a self-serve "Forgot password?" reset
+  link for locked-out staff/trainers. **No longer blocked by the domain:** the
+  sending domain is verified. Still needs Supabase Custom SMTP configured against
+  Resend before the recovery link will deliver. See
+  `docs/handoff-forgot-password.md`. Build and ship it in one go once auth email
+  works, don't merge a dead reset link before then.
+- **Availability as AM + PM (not "both")** — change trainer availability to
+  independent AM/PM selection. See `docs/handoff-availability-am-pm.md`.
+- ~~**Custom web address**~~ — **DONE.** `pt.fitazgym.com` is live over HTTPS. DNS
+  records live at **CrazyDomains (Dreamscape), not Shopify** — fitazgym.com is
+  connected to Shopify but its DNS zone is at CrazyDomains, which is where all
+  records were added. `docs/handoff-custom-domain.md` is now history, not a task.
+- **Editable trainer pages** — give each PT a self-editable profile. **Scoped,
+  not started.** Decided: **internal only** (not public — the public reach
+  trainers via the gym website already), trainer edits their own row *and*
+  manager keeps the roster override, **bio + specialties only** for now (no
+  photo). Small build: reuses the existing `bio`/`specialties` columns, needs a
+  per-trainer RLS `update` policy + a self-service screen in `/admin`. See
+  `docs/handoff-trainer-portal.md`.
+
+- **Email the PT team about everything built so far** — inspiration and
+  momentum piece, invites them into the portal, attaches the nurture emails for
+  feedback, and asks for preferred days and times for fortnightly development
+  sessions from September. Fully briefed in
+  `docs/handoff-pt-team-update-email.md`. Karl must create the five logins
+  first.
+
+### Newly added, not yet scoped
+
+Reminders only. Each gets scoped and built in its own session.
+
+- **Staff development pathway into the PT portal**, with an upgrade of a staff
+  member to trainer status. Touches the onboarding workbook, the `manager` /
+  `trainer` role in `profiles`, the `trainers` table and `/admin/staff`.
+- **PT prospect interview system** in the PT Manager area. STAR method has been
+  suggested; approach to be agreed when it is scoped.
+- **Ezidebit connected to the PT Manager dashboard via an MCP, reading live.**
+  Georgio's request, raised in the rents thread on 3 August 2026. Read only.

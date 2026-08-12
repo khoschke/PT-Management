@@ -1,0 +1,52 @@
+SEVEN DAYS LEFT
+
+Your first session closes {{expiry_date}}.
+
+You joined Fitaz Gym a month ago, {{first_name}}. The complimentary PT
+consultation and starter session that came with your membership closes
+on {{expiry_date}}, and if you have not used yours yet, this is the week
+to sort it. Our trainers hold time aside for these, so we cannot leave
+them open forever.
+
+Claim it before it goes: https://pt.fitazgym.com/pt-session
+Takes about two minutes. No app, no login.
+
+
+IN CASE THIS IS THE FIRST ONE YOU HAVE OPENED
+
+It is a full session with one of our trainers, not a sales pitch. You
+set your goals, learn your way around the floor and the gear, and walk
+out with a plan you can run on your own. It costs nothing, it is already
+part of your membership, and plenty of members take it and never book
+another. That is completely fine.
+
+
+Claim it before it goes: https://pt.fitazgym.com/pt-session
+
+
+ALREADY SORTED, OR NOT FOR YOU?
+
+If you have had your session, ignore this one and enjoy the rest of it.
+If it is genuinely not for you, that is fine too. Either way this is the
+last email you will get about it, and it changes nothing about your
+membership.
+
+If the timing is the only problem, reply and say so. If you tell me
+before {{expiry_date}} that you want it, I will hold it for you.
+
+Karl
+PT Manager, Fitaz Gym
+
+--
+FITAZ GYM
+101 Main St, Kangaroo Point.
+
+Facebook: https://www.facebook.com/FitazfkGym/
+Instagram: https://www.instagram.com/fitazfk_gym/
+
+You are receiving this because you joined Fitaz Gym. We use your details
+only to arrange your complimentary session and we do not share them
+outside the gym.
+
+Unsubscribe: {{unsubscribe_url}}
+Email preferences: {{preferences_url}}

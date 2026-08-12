@@ -39,11 +39,23 @@ export default function TrainerFields({
         </div>
         <div>
           <label className="text-sm font-semibold text-foreground">Availability</label>
-          <select name="availability" defaultValue={defaults?.availability ?? "both"} className={inputClass}>
-            <option value="AM">Morning</option>
-            <option value="PM">Evening</option>
-            <option value="both">Both</option>
-          </select>
+          <div className="mt-1.5 flex flex-wrap gap-1.5">
+            {(
+              [
+                { name: "available_am", label: "Morning", checked: defaults ? defaults.available_am : true },
+                { name: "available_pm", label: "Evening", checked: defaults ? defaults.available_pm : true },
+              ] as const
+            ).map((slot) => (
+              <label
+                key={slot.name}
+                className={`press cursor-pointer rounded-full bg-fill px-3 py-1.5 text-xs font-medium text-foreground transition has-[:checked]:bg-foreground has-[:checked]:text-white ${focusRingWithin}`}
+              >
+                <input type="checkbox" name={slot.name} defaultChecked={slot.checked} className="sr-only" />
+                {slot.label}
+              </label>
+            ))}
+          </div>
+          {errors.availability && <p className="mt-1 text-xs text-red-600">{errors.availability}</p>}
         </div>
       </div>
 
