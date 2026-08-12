@@ -29,6 +29,35 @@ already live).
 - **Cron auth** — `src/app/api/cron/daily-digest/route.ts` now fails closed when
   `CRON_SECRET` is unset and uses a constant-time compare.
 
+## Status: items 1–4 built on `claude/security-hardening-validation-0ry4cz`
+
+Every finding below was re-validated against production (`claude/fitaz-gym-pt-leads-76ffhv`,
+merge 2c95593) before anything was written. **All four still applied** — none had
+been quietly fixed since the stale sweep. The trainer `email` column was still
+readable with the anon key, `status_history_select_trainer` still had no
+`deleted_at` clause, `leads_insert_public_form` still gave anon a direct INSERT,
+and the manager-only actions still relied on RLS alone.
+
+Built, plus the fresh findings from the "also review" pass below:
+`supabase/migrations/0007_public_access_hardening.sql`, `src/lib/cron.ts`,
+`src/lib/auth.ts` (`callerIsManager`), and the actions/routes that use them.
+
+### Deploy runbook — the ordering is not optional
+
+`0007_public_access_hardening.sql` is split into PART A and PART B for this.
+
+1. **Run PART A** in the Supabase SQL editor. Safe against the currently
+   deployed code: it only adds `submit_form_lead` and tightens grants/policies
+   the public form doesn't depend on. The old insert path keeps working.
+2. **Merge to `claude/fitaz-gym-pt-leads-76ffhv`** and let Vercel deploy. The
+   form now calls the RPC.
+3. **Run PART B.** This drops anon's direct INSERT on `leads` and revokes
+   `check_form_rate_limit`. Running it before step 2 takes the live form down —
+   the old code would have neither path.
+
+After PART A, check the public form still submits. After PART B, check it again,
+and confirm `…/rest/v1/trainers?select=email` with the anon key now 403s.
+
 ## Remaining items (re-validate, then implement)
 
 ### 1. Trainer PII readable by the public anon key (Medium)
@@ -73,22 +102,60 @@ the AM/PM availability work.
 
 ## Migration numbering
 
-`PROJECT_STATUS.md` reserves **`0005_public_access_hardening.sql`** for exactly
-this work (0005 is skipped on production on purpose, held for it); `0007`/`0008`
-are reserved for GymMaster. So bundle items 1–3 above into **`0005_public_access_hardening.sql`**,
-not 0007. Mind the create-before-revoke ordering for item 2 (the RPC). Confirm
-`0005` is still free on production before writing it.
+This work is **`0005_public_access_hardening.sql`** — the slot `PROJECT_STATUS.md`
+always reserved for it. On merge (this session) the branch's file was renumbered
+from `0007` to `0005`. Production has `0001`–`0004_trainer_am_pm` and
+`0006_trainer_documents`, so `0005` runs after `0006` on the live DB; that's fine,
+the changes are independent.
 
-## Also review (new code the original sweep never saw)
+**No collision with GymMaster.** Because the hardening took `0005`, GymMaster keeps
+its existing `0007_gymmaster_lead_source.sql` / `0008_gymmaster_sync.sql` — no
+renumber needed when that branch merges.
 
-Production gained a lot since the fork. Give these a security pass for *new*
-findings, don't assume they're clean:
-- Branded HTML emails (`src/lib/email.ts`) — lead values are HTML-escaped via
-  `esc()`; confirm every interpolation is covered.
-- Trainer documents feature + `0006_trainer_documents` migration (RLS, uploads).
-- Self-service password change + manager-assisted email change.
-- Keep-alive cron (another route to auth-check like the digest).
-- GymMaster phase 1 pull + the member nurture email series.
+## Also review (new code the original sweep never saw) — DONE
+
+Reviewed against production. Findings and what was done:
+
+- **Branded HTML emails (`src/lib/email.ts`) — clean.** Every lead-supplied
+  interpolation in both HTML bodies goes through `esc()`: name, phone, email,
+  goals, contact preference, due date, and the digest's lead names. `esc()`
+  doesn't escape `'`, which is correct here — nothing lands in a single-quoted
+  attribute; the one attribute interpolation is `href="${esc(DASHBOARD_URL)}"`,
+  and that's env config, not user input. The document emails are text-only.
+- **Trainer documents — one real finding, fixed in 0007.** The
+  `trainer_documents_insert` policy constrained `trainer_id` and `uploaded_by`
+  but not `status`, so a trainer posting straight at the REST API with the
+  public key could insert their own document as `status='verified'` and sign off
+  their own CPR certificate. The policy now pins `status`/`verified_by`/
+  `verified_at`/`rejection_reason` on the trainer branch, and pins `file_path`
+  to the trainer's own storage folder. `verifyDocument`/`rejectDocument` also
+  gained explicit manager checks.
+- **Keep-alive cron — real finding, fixed.** The digest was hardened in the last
+  pass, but `keepalive` and `document-expiry` were left on the old
+  `authHeader !== \`Bearer ${process.env.CRON_SECRET}\`` compare. Both fail
+  **open** when `CRON_SECRET` is unset (a literal `Bearer undefined` header gets
+  in) and both leak the secret to a timing attack. All three now share
+  `isAuthorisedCronRequest` in `src/lib/cron.ts`.
+- **Password change — real finding, fixed.** `supabase.auth.updateUser({password})`
+  doesn't ask for the old password, so anyone reaching an unlocked signed-in
+  browser could take the account over. The form now requires the current
+  password and verifies it on a throwaway client (`persistSession: false`, so a
+  failed attempt can't clobber the real session cookies).
+- **Manager-assisted email change (`staff/actions.ts`) — clean.** Every action
+  there already checks `callerIsManager()` before touching the service-role
+  client, collision-checks the new address, and blocks self-revocation. Now
+  imports the shared helper instead of a local copy.
+- **GymMaster phase 1 (unmerged branch) — two findings, NOT fixed here.** Left
+  for that branch so this one stays reviewable:
+  1. `src/app/api/cron/gymmaster-sync/route.ts` has the same fail-open cron
+     auth. It should use `isAuthorisedCronRequest` from `src/lib/cron.ts`.
+  2. `src/lib/gymmaster/client.ts` puts the API key in the query string
+     (`url.searchParams.set("api_key", apiKey)`), which lands in proxy and
+     access logs. Move it to a header once the real auth scheme is confirmed —
+     it's already flagged `TODO(gymmaster-docs)`.
+- **Member nurture email series — clean.** Static HTML in `docs/emails/`, no
+  interpolation of anything this app holds; merge tags are resolved by
+  GymMaster, not here.
 
 ## Process notes
 
