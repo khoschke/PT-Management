@@ -2,10 +2,44 @@
 
 Traced, self-contained versions of the FITAZ GYM lockup, in `public/brand/`.
 
-> **These are the primary marks.** An earlier trace of the same wordmark exists
-> on the `claude/apple-design-pass-ymnm14` branch, made before these and not
-> considered good enough. It is superseded. When that branch merges, keep the
-> files here and drop the older trace rather than letting the merge pick.
+> **These are the primary marks in use**, and an earlier trace on the
+> `claude/apple-design-pass-ymnm14` branch is superseded by them. When that
+> branch merges, keep the files here and drop the older trace.
+>
+> **But all of them are traces, not the real logo.** Karl supplied the official
+> artwork on 18 August 2026 and it differs from what we have. See "The official
+> logo, and how ours differs" below. The originals still need adding to
+> `public/brand/source/`.
+
+## The official logo, and how ours differs
+
+Karl supplied the official Fitaz Gym artwork on 18 August 2026, as raster
+images in a chat session. **They could not be saved into the repo from there**,
+so `public/brand/source/` is still empty and everything in `public/brand/`
+remains a trace built before the real mark was available.
+
+Three differences are visible even in the raster, and two of them are things we
+got wrong:
+
+- **The GYM chip has square corners.** Ours are rounded, 4px in the email
+  masthead and a radius ratio in the brand marks. The official chip is a plain
+  black rectangle. This is the most obvious mismatch and the easiest to fix.
+- **The letterforms are a geometric sans, not Helvetica or Arial.** The A has a
+  sharp apex and the characters are wider and more evenly stroked than the
+  Liberation Sans we traced from. The exact face cannot be identified from a
+  raster; the source file would say.
+- **Chip size and placement are close to what we have.** It sits top aligned
+  against the cap line, at roughly half the cap height, which is what the
+  "original" trace already does. That part holds up.
+
+**Do not correct these by eye against the images.** Get the vector original into
+`public/brand/source/` and re-trace from it. Redrawing from a JPEG to match a
+JPEG is how a mark drifts twice instead of once.
+
+One of the two files supplied looks like an **incomplete export**: it is a blank
+canvas with the word GYM alone, no wordmark and no chip, positioned where the
+chip would sit in the full lockup. Worth checking at source whether that is a
+deliberate standalone asset or a broken export before anyone uses it.
 
 ![The two marks](brand-logo-comparison.png)
 

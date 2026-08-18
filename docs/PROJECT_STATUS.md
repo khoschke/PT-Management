@@ -127,10 +127,16 @@ Brand assets live in `public/brand/`, documented in `docs/brand-assets.md`.
 Use `fitaz-gym-logo.svg` by default; the `-email` variant exists only for email
 headers.
 
-**These are the primary marks.** The `claude/apple-design-pass-ymnm14` branch
-carries an earlier trace of the same wordmark, made before these. It is
-superseded. When that branch is merged, keep the `public/brand/` versions and
-discard the older trace rather than letting the merge decide.
+**These are the primary marks in use**, and the earlier trace on
+`claude/apple-design-pass-ymnm14` is superseded by them: when that branch merges,
+keep the `public/brand/` versions.
+
+**All of them are traces, though, not the real logo.** Karl supplied the official
+artwork on 18 August 2026 and it differs, most visibly in the GYM chip, which is
+square cornered rather than rounded, and in the letterforms, which are a
+geometric sans rather than the Arial-metric face we traced. The originals still
+need to land in `public/brand/source/`, and the marks should be re-traced from
+vector rather than corrected by eye. See `docs/brand-assets.md`.
 
 ## Where each workstream lives (branch map)
 
