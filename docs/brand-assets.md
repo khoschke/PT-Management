@@ -57,10 +57,22 @@ Worth confirming the licence covers the uses we put it to.
 existing tracer in the brand tooling can be pointed at the correct font file
 and the marks rebuilt from real outlines.
 
-One of the two files supplied looks like an **incomplete export**: it is a blank
-canvas with the word GYM alone, no wordmark and no chip, positioned where the
-chip would sit in the full lockup. Worth checking at source whether that is a
-deliberate standalone asset or a broken export before anyone uses it.
+### One of the supplied PNGs is empty. Do not use it.
+
+The Drive file named **"Fitaz Gym Logo Black Transparent Background.png"**
+(`1NhXJOkNkdNnkOuhR7kWmHXZpv__xKemi`, 1080 x 1080, RGBA, 20,061 bytes) contains
+**no artwork at all**. This is not a guess from looking at it: the file was
+decoded and its pixels inspected directly. Every one of the 1,035 scanlines that
+could be recovered is fully transparent, alpha zero, edge to edge. Its embedded
+XMP title is `GYM - 1`, and its author field says `FitazFK Gym`, so it looks
+like a real export that simply rendered nothing.
+
+The filename is the trap here. It reads like the definitive asset, so it is the
+one anybody would reach for first. **Delete it at source or rename it**, because
+the next person to go looking will pick it for the same reason we did.
+
+The other supplied PNG (`1xOsEBRvRYTl0ovApzml8X2AEInwVDJ1i`, 19,333 bytes) has
+not been pixel-checked yet and may have the same problem.
 
 ![The two marks](brand-logo-comparison.png)
 
