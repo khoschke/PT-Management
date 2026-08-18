@@ -51,12 +51,29 @@ def convert(src: str) -> str:
     # 4. Buttons: padded anchor -> table cell with the padding on the cell.
     def button(m):
         start = m.start()
-        # Inherit the alignment of the cell the button sits in.
-        before = h[max(0, start - 600):start]
-        aligns = re.findall(r'<td[^>]*\salign="(left|center|right)"', before)
+        # Inherit the alignment of the cell the button actually sits in.
+        # Walking a <td> depth counter rather than searching a fixed window
+        # back: the closing CTA sits behind two long paragraphs, so a window
+        # wide enough to clear them would also reach past the enclosing cell
+        # on the shorter buttons and pick up the wrong one. Depth is exact at
+        # any distance.
+        depth, stack = 0, []
+        for t in re.finditer(r'<td\b[^>]*>|</td>', h[:start]):
+            if t.group(0) == '</td>':
+                depth -= 1
+            else:
+                depth += 1
+                # Remember this cell at the depth it opens, so the innermost
+                # one still open when we reach the button is the one that wins.
+                if depth > 0:
+                    while len(stack) > depth - 1:
+                        stack.pop()
+                    stack.append(t.group(0))
+        enclosing = stack[-1] if stack else ''
+        a = re.search(r'\salign="(left|center|right)"', enclosing)
         # Only ever set align for centring. align="left" makes the table float,
         # and the caption underneath then wraps up alongside the button.
-        align = ' align="center"' if (aligns and aligns[-1] == 'center') else ''
+        align = ' align="center"' if (a and a.group(1) == 'center') else ''
         href, label = m.group('href'), m.group('label').strip()
         return (
             f'<table role="presentation" border="0" cellpadding="0" cellspacing="0"{align}>\n'
