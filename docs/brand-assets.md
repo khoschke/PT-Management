@@ -36,6 +36,27 @@ got wrong:
 `public/brand/source/` and re-trace from it. Redrawing from a JPEG to match a
 JPEG is how a mark drifts twice instead of once.
 
+### The PDF is vector, and the font is in it
+
+Karl supplied a PDF export alongside the rasters. Reading its contents returns
+the strings `FITAZ`, `GYM`, `GYM` as **live text**, not outlines. That is good
+news twice over:
+
+- **It is genuinely vector**, so a proper re-trace is possible rather than an
+  approximation.
+- **The typeface is embedded and named inside it.** Open the PDF in any viewer
+  and look at Document Properties, then Fonts. That is the answer to the
+  question these notes have been carrying since the first trace, and it takes
+  about ten seconds to get.
+
+The mark was made in Canva (`xmp:CreatorTool` says so), so the face is most
+likely one of Canva's bundled fonts rather than a licensed foundry release.
+Worth confirming the licence covers the uses we put it to.
+
+**Once the font name is known**, the re-trace does not even need the PDF: the
+existing tracer in the brand tooling can be pointed at the correct font file
+and the marks rebuilt from real outlines.
+
 One of the two files supplied looks like an **incomplete export**: it is a blank
 canvas with the word GYM alone, no wordmark and no chip, positioned where the
 chip would sit in the full lockup. Worth checking at source whether that is a
