@@ -96,12 +96,15 @@ GymMaster** before a real send, because the emails assume them:
   which is the same DNS access either way. **Find out which before promising a
   date.**
 
-Also worth an early look: **merge tags**. GymMaster will not use `{{tag}}` syntax.
-`{{first_name}}` will map to something obvious. `{{expiry_date}}` is the one to
-check, because it needs date arithmetic (join date plus 37 days) that not every
-gym CRM can do. If it cannot, say so and the copy can drop to "closes in seven
-days", which is always true given the email fires on day 30 anyway, and costs
-only the specificity of a named date.
+**Merge tags are settled.** Karl and Danny worked through this in GymMaster on
+18 August 2026. The templates now carry GymMaster's own syntax,
+`{58:Member First Name}`, so they import without find and replace.
+
+GymMaster **cannot** do the date arithmetic the old `{{expiry_date}}` tag needed
+(join date plus 37 days), so that tag is gone from all three templates. Email 3
+says "closes in seven days" and email 2 says "will not stay open forever". Both
+stay true because email 3 only ever fires on day 30. **If the send day moves,
+the copy has to move with it.**
 
 ## Then, before the first send
 
@@ -114,7 +117,8 @@ get skipped:
 - **The templates no longer carry a header or footer.** GymMaster's club
   template supplies both. Confirm its footer has an unsubscribe link, a
   `List-Unsubscribe` header, the postal address and a permission line, because
-  ours were removed on the assumption that it does.
+  ours were removed on the assumption that it does. **This is the one item that
+  can still stop a compliant send**, and nothing in the templates can fix it.
 - **Suppression before each send of emails 2 and 3.** See
   `docs/emails/README.md`. Both are written so that reaching the wrong person is
   awkward rather than wrong, but suppression is still the thing that keeps them

@@ -223,7 +223,7 @@ and two templates means two things to keep in sync.
 
 **Email 1**, using the gym's own words from `/pt-session`:
 
-> **{{first_name}}, your first session is on us**
+> **{58:Member First Name}, your first session is on us**
 
 Test against:
 
@@ -235,17 +235,18 @@ Test against:
 
 > **Most people run out of plan, not motivation**
 
-Test against *{{first_name}}, week two is the tricky one* and *The same three
+Test against *{58:Member First Name}, week two is the tricky one* and *The same three
 machines*. Do not use anything that reads as a reminder about email 1. The whole
 point of this one is that it opens on a different subject.
 
 **Email 3:**
 
-> **Your complimentary session closes {{expiry_date}}**
+> **Your complimentary session closes in seven days**
 
-Test against *Seven days left, {{first_name}}* and *Last call on your first
-session*. Put the date in the subject rather than "closing soon": a specific
-date is harder to defer than a vague one.
+Test against *Seven days left* and *Last call on your first session*. A named
+date would be harder to defer than a relative one, but GymMaster cannot do the
+date arithmetic, so "seven days" is what we have. It is always true, because
+the email only ever fires on day 30.
 
 Send from a person, not a department: `Karl at Fitaz Gym`. Set `Reply-To` to a
 monitored inbox, because the email explicitly invites replies.
@@ -278,26 +279,24 @@ direct, which quietly breaks attribution for the campaign.
 
 ## Merge tags
 
-The file uses `{{tag}}` placeholders. Rename to your platform's syntax on
-import.
+The files carry **GymMaster's own merge syntax**, so they import as-is. There
+is exactly one tag.
 
 | Tag | Value | Notes |
 |-----|-------|-------|
-| `{{first_name}}` | Member's first name | Set a fallback of "there". A blank name renders "Welcome to Fitaz Gym, ." |
-| `{{expiry_date}}` | The day the session closes, day 37 | **Emails 2 and 3 only.** See below. |
+| `{58:Member First Name}` | Member's first name | Set a fallback of "there". A blank name renders "Welcome to Fitaz Gym, ." |
 
-`{{expiry_date}}` is a per-member date, 37 days after they joined. Two ways to
-handle it:
+**There is no expiry date tag, deliberately.** The templates used to carry
+`{{expiry_date}}`, a per-member date 37 days after joining. GymMaster cannot do
+that arithmetic, so the copy states the deadline in relative terms instead:
+"closes in seven days" in email 3, and "will not stay open forever" in email 2.
 
-- **If the platform knows the join date**, compute it and merge it per
-  recipient. Cleanest, and the only option if you ever send daily.
-- **If you send in weekly batches**, everyone in a batch joined within a few
-  days of each other, so hardcode one date per batch and use the **latest**
-  member's expiry. Being a couple of days generous is fine; being a couple of
-  days short means telling someone their session expired when it had not.
-
-Format it the way a person would say it, "12 September", not "2026-09-12". It
-appears in email 3's headline, so it is read aloud in someone's head.
+That costs the specificity of a named date, which would have been the stronger
+deadline, and buys back something worth having: nothing to compute, nothing to
+get wrong, and no risk of telling a member their session expired when it had
+not. It stays true because email 3 only ever fires on day 30, exactly seven days
+out. **If you change the send day, change the copy**, in the headline, the lead
+paragraph and the sign off in email 3, and in the closing block of email 2.
 
 There is no unsubscribe tag any more. That link now comes from GymMaster's club
 footer, which is the thing to verify before sending. See the section on the
@@ -447,7 +446,7 @@ on and set the dark palette to canvas `#000000`, surface `#161618`, fill
 - [ ] Confirm the total HTML is under 102KB so Gmail does not clip the closing
       CTA.
 - [ ] Send a live seed test to a real inbox and click both buttons.
-- [ ] Confirm `{{first_name}}` has a fallback and test a record with no name.
+- [ ] Confirm `{58:Member First Name}` has a fallback and test a record with no name.
 - [ ] Confirm the unsubscribe link works and writes to the suppression list.
 - [ ] Confirm `Reply-To` reaches a monitored inbox, because the copy invites replies.
 - [ ] Confirm SPF, DKIM and DMARC pass on `fitazgym.com`.
