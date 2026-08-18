@@ -433,6 +433,46 @@ on and set the dark palette to canvas `#000000`, surface `#161618`, fill
 `#232326`, text `#f5f5f7`, secondary `#a1a1a6`, and an inverted button of
 `#f5f5f7` with `#1d1d1f` text.
 
+## Why alignment breaks inside GymMaster, and the rule that prevents it
+
+GymMaster pastes our HTML inside its club template, and that template brings
+its own stylesheet. **Any CSS rule it carries beats `align=` and `valign=`**,
+because presentational attributes map to the very bottom of the cascade. So a
+club template with nothing more exotic than
+
+```css
+td { text-align: left; vertical-align: middle; line-height: 1.6; }
+p  { text-align: left; }
+```
+
+is enough to push every digit to the bottom left of its numbered disc, drop the
+discs to the middle of their row instead of level with the heading, and shove
+the line under the first button hard left. That is exactly what Karl
+photographed on 18 August 2026, and it was reproduced here by wrapping the
+template in those four rules.
+
+**Inline `style` does not lose.** So the rule is:
+
+> Anything whose position matters states it **inline as well as** in the
+> attribute. Keep `align="center"` and `valign="top"` for the old Outlook
+> renderers that only understand attributes, and add `text-align:center` and
+> `vertical-align:top` to the `style` for everything else.
+
+`host-template-test.py` renders a template inside those hostile rules so this
+shows up here rather than in a member's inbox:
+
+```
+python3 host-template-test.py cms-safe/01-welcome-nurture.html out.png
+```
+
+Check the numbered discs and the line under the first button. If they hold
+under that, they will hold in the club template.
+
+One thing the cascade cannot save: **a table is block level**, so a parent
+cell's `text-align` will never centre it. Button tables need `align="center"`
+on the table itself. `make-cms-safe.py` sets that by walking `<td>` depth to
+find the genuinely enclosing cell.
+
 ## Before the first send
 
 - [ ] Render test across Gmail web, Gmail app, Apple Mail, Outlook desktop and
