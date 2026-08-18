@@ -45,6 +45,21 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* The FITAZ voice, borrowed from the gym site's athletic display type: heavy,
+   italic, uppercase, tightly tracked. Reserved for top-level page titles so the
+   product speaks with the brand, while the rest stays in the clean system UI.
+   Built from the system font (the gym's condensed face isn't available here),
+   with a slight horizontal compression to echo its condensed feel. */
+.display-heading {
+  display: inline-block;
+  font-weight: 800;
+  font-style: italic;
+  text-transform: uppercase;
+  letter-spacing: -0.015em;
+  transform: scaleX(0.94);
+  transform-origin: left;
+}
+
 /* Apple's pill buttons give tactile feedback with a slight press-down scale
    rather than a colour change alone. */
 .press {
@@ -52,6 +67,52 @@ body {
 }
 .press:active {
   transform: scale(0.97);
+}
+
+/* Motion is used only to communicate a state change, and never when the
+   visitor has asked their system for reduced motion. */
+.animate-scale-in {
+  animation: scaleIn 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.animate-fade-in {
+  animation: fadeIn 260ms ease both;
+}
+
+/* The success checkmark draws itself once, as confirmation the details sent. */
+@keyframes checkDraw {
+  from {
+    stroke-dashoffset: 26;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.animate-check {
+  stroke-dasharray: 26;
+  animation: checkDraw 520ms 140ms cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.spinner {
+  animation: spin 700ms linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .press:active {
+    transform: none;
+  }
 }
 
 .glass-header {

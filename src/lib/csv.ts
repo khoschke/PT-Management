@@ -27,10 +27,16 @@ const COLUMNS = [
 ] as const;
 
 function escapeCell(value: string): string {
-  if (/[",\n]/.test(value)) {
-    return `"${value.replace(/"/g, '""')}"`;
+  // Neutralise spreadsheet formula injection. Lead fields a member types into
+  // the public form (name, current exercise, contact preference, other goal)
+  // land in this export. A cell starting with =, +, -, @, tab or CR is run as a
+  // formula by Excel and Google Sheets, so prefix a single quote to force it to
+  // be read as plain text.
+  const guarded = /^[=+\-@\t\r]/.test(value) ? `'${value}` : value;
+  if (/[",\n]/.test(guarded)) {
+    return `"${guarded.replace(/"/g, '""')}"`;
   }
-  return value;
+  return guarded;
 }
 
 export function leadsToCsv(leads: LeadRow[]): string {

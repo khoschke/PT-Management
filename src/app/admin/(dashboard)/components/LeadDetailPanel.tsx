@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { goalLabel } from "@/lib/goals";
 import { suggestTrainer, type TrainerWithLoad } from "@/lib/allocation";
 import { LEAD_STATUSES, type LeadStatus, type Trainer } from "@/lib/types";
@@ -28,7 +28,12 @@ const PREFERENCE_LABELS: Record<string, string> = {
 };
 
 const selectClass =
-  "w-full rounded-xl border-none bg-fill px-3.5 py-2.5 text-sm text-foreground outline-none ring-1 ring-transparent transition focus:ring-2 focus:ring-foreground";
+  "w-full rounded-xl border-none bg-fill px-3.5 py-2.5 text-sm text-foreground outline-none ring-1 ring-transparent transition focus-visible:ring-2 focus-visible:ring-foreground";
+
+// Shared focus ring for the drawer's action buttons, offset against the white
+// panel so keyboard focus is always legible.
+const btnFocus =
+  "outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-surface";
 
 export default function LeadDetailPanel({
   lead,
@@ -47,6 +52,21 @@ export default function LeadDetailPanel({
   const [notes, setNotes] = useState(lead.notes ?? "");
   const [overrideTrainerId, setOverrideTrainerId] = useState(lead.allocated_trainer_id ?? "");
   const [error, setError] = useState<string | null>(null);
+
+  // Close on Escape, and stop the board behind the panel from scrolling while
+  // it is open. Small details that make a drawer feel native.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKey);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [onClose]);
 
   const trainersWithLoad: TrainerWithLoad[] = activeTrainers.map((t) => ({
     ...t,
@@ -79,12 +99,15 @@ export default function LeadDetailPanel({
       onClick={onClose}
     >
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={`${lead.name} lead details`}
         className="flex h-full w-full max-w-lg translate-x-0 flex-col overflow-y-auto rounded-l-3xl bg-surface shadow-2xl animate-[slideIn_220ms_cubic-bezier(0.2,0.8,0.2,1)]"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-start justify-between border-b border-black/5 px-6 py-5">
-          <div>
-            <h2 className="text-xl font-semibold tracking-tight text-foreground">{lead.name}</h2>
+        <div className="glass-header sticky top-0 z-10 flex items-start justify-between gap-3 border-b border-black/5 px-6 py-5">
+          <div className="min-w-0">
+            <h2 className="truncate text-xl font-semibold tracking-tight text-foreground">{lead.name}</h2>
             <div className="mt-2.5 flex flex-wrap gap-1.5">
               <SourceBadge source={lead.lead_source} />
               <StatusBadge status={lead.status} />
@@ -94,10 +117,12 @@ export default function LeadDetailPanel({
           <button
             type="button"
             onClick={onClose}
-            className="press flex h-8 w-8 items-center justify-center rounded-full bg-fill text-secondary-label"
+            className="press flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-fill text-secondary-label outline-none transition hover:bg-fill/70 hover:text-foreground focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
             aria-label="Close"
           >
-            ✕
+            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" aria-hidden>
+              <path d="M6 6l12 12M18 6L6 18" />
+            </svg>
           </button>
         </div>
 
@@ -173,7 +198,7 @@ export default function LeadDetailPanel({
                     type="button"
                     disabled={isPending}
                     onClick={() => runAction(() => allocateLead(lead.id, suggestion.trainer.id))}
-                    className="press mt-3 rounded-full bg-foreground px-4 py-2 text-xs font-semibold text-white disabled:opacity-50"
+                    className={`press mt-3 rounded-full bg-foreground px-4 py-2 text-xs font-semibold text-white disabled:opacity-50 ${btnFocus}`}
                   >
                     Allocate to {suggestion.trainer.name}
                   </button>
@@ -197,7 +222,7 @@ export default function LeadDetailPanel({
                   type="button"
                   disabled={isPending || !overrideTrainerId}
                   onClick={() => runAction(() => allocateLead(lead.id, overrideTrainerId))}
-                  className="press rounded-full bg-fill px-4 py-2.5 text-sm font-semibold text-foreground disabled:opacity-40"
+                  className={`press rounded-full bg-fill px-4 py-2.5 text-sm font-semibold text-foreground disabled:opacity-40 ${btnFocus}`}
                 >
                   Allocate
                 </button>
@@ -236,7 +261,7 @@ export default function LeadDetailPanel({
               type="button"
               disabled={isPending}
               onClick={() => runAction(() => updateLeadNotes(lead.id, notes))}
-              className="press mt-2.5 rounded-full bg-fill px-4 py-2 text-xs font-semibold text-foreground disabled:opacity-50"
+              className={`press mt-2.5 rounded-full bg-fill px-4 py-2 text-xs font-semibold text-foreground disabled:opacity-50 ${btnFocus}`}
             >
               Save note
             </button>
@@ -274,7 +299,7 @@ export default function LeadDetailPanel({
                   type="button"
                   disabled={isPending}
                   onClick={() => runAction(() => softDeleteLead(lead.id))}
-                  className="press rounded-full bg-fill px-4 py-2 text-xs font-semibold text-foreground disabled:opacity-50"
+                  className={`press rounded-full bg-fill px-4 py-2 text-xs font-semibold text-foreground disabled:opacity-50 ${btnFocus}`}
                 >
                   Soft delete
                 </button>
@@ -286,7 +311,7 @@ export default function LeadDetailPanel({
                       runAction(() => hardDeleteLead(lead.id));
                     }
                   }}
-                  className="press rounded-full bg-red-50 px-4 py-2 text-xs font-semibold text-red-700 disabled:opacity-50"
+                  className={`press rounded-full bg-red-50 px-4 py-2 text-xs font-semibold text-red-700 disabled:opacity-50 ${btnFocus}`}
                 >
                   Hard delete
                 </button>

@@ -186,8 +186,9 @@ what is internal, because the PTs do not need the whole list.
 Neither is Karl's to fix, both are tracked in
 `docs/handoff-email-1-go-live.md`:
 
-- **The SPF record is malformed** and needs correcting in the CrazyDomains DNS
-  zone. With Georgio. Mail delivers on DKIM meanwhile, so nothing looks broken.
+- ~~**The SPF record is malformed**~~ — **fixed (11 Aug 2026).** The `send.mail`
+  TXT record in the CrazyDomains zone now reads `v=spf1 include:amazonses.com ~all`
+  and is Active; SPF and DKIM both pass.
 - **GymMaster needs confirming**: whether it has a raw HTML or source import
   rather than a rich text paste, whether it provides unsubscribe and a
   `List-Unsubscribe` header, whether its suppression list is honoured, and

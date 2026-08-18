@@ -5,6 +5,8 @@ import { useFormStatus } from "react-dom";
 import { addManager, addTrainerLogin, changeStaffEmail, makeManager, removeStaffAccess } from "../actions";
 import { initialStaffFormState } from "../state";
 import type { StaffMember } from "../page";
+import Avatar from "../../components/Avatar";
+import { focusRing } from "../../components/ui";
 
 const inputClass =
   "mt-1.5 w-full rounded-xl border-none bg-fill px-3.5 py-2.5 text-sm text-foreground outline-none ring-1 ring-transparent transition focus:ring-2 focus:ring-foreground";
@@ -15,7 +17,7 @@ function SubmitButton({ label }: { label: string }) {
     <button
       type="submit"
       disabled={pending}
-      className="press rounded-full bg-foreground px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+      className={`press rounded-full bg-foreground px-4 py-2 text-sm font-semibold text-white disabled:opacity-50 ${focusRing}`}
     >
       {pending ? "Saving..." : label}
     </button>
@@ -61,20 +63,23 @@ function StaffRow({ member, isSelf }: { member: StaffMember; isSelf: boolean }) 
   return (
     <li className="rounded-2xl border border-black/5 bg-surface p-4 shadow-[0_1px_2px_rgba(0,0,0,0.03),0_2px_8px_rgba(0,0,0,0.04)]">
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="font-semibold tracking-tight text-foreground">
-              {member.fullName ?? member.email ?? "Unknown"}
-            </span>
-            <RoleBadge role={member.role} />
-            {isSelf && <span className="text-xs text-secondary-label">(you)</span>}
+        <div className="flex min-w-0 items-start gap-3">
+          <Avatar name={member.fullName ?? member.email ?? "?"} size="md" muted={member.role === "trainer"} />
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="font-semibold tracking-tight text-foreground">
+                {member.fullName ?? member.email ?? "Unknown"}
+              </span>
+              <RoleBadge role={member.role} />
+              {isSelf && <span className="text-xs text-secondary-label">(you)</span>}
+            </div>
+            <p className="mt-0.5 text-sm text-secondary-label">
+              {member.email ?? "No email"}
+              {member.trainerName && <> &middot; roster: {member.trainerName}</>}
+            </p>
           </div>
-          <p className="mt-0.5 text-sm text-secondary-label">
-            {member.email ?? "No email"}
-            {member.trainerName && <> &middot; roster: {member.trainerName}</>}
-          </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex shrink-0 gap-2">
           {!editingEmail && (
             <button
               type="button"
@@ -84,7 +89,7 @@ function StaffRow({ member, isSelf }: { member: StaffMember; isSelf: boolean }) 
                 setEmailValue(member.email ?? "");
                 setEditingEmail(true);
               }}
-              className="press rounded-full bg-fill px-3 py-1.5 text-xs font-semibold text-foreground disabled:opacity-50"
+              className={`press rounded-full bg-fill px-3 py-1.5 text-xs font-semibold text-foreground transition hover:bg-fill/70 disabled:opacity-50 ${focusRing}`}
             >
               Change email
             </button>
@@ -94,7 +99,7 @@ function StaffRow({ member, isSelf }: { member: StaffMember; isSelf: boolean }) 
               type="button"
               disabled={isPending}
               onClick={() => run(() => makeManager(member.id))}
-              className="press rounded-full bg-fill px-3 py-1.5 text-xs font-semibold text-foreground disabled:opacity-50"
+              className={`press rounded-full bg-fill px-3 py-1.5 text-xs font-semibold text-foreground transition hover:bg-fill/70 disabled:opacity-50 ${focusRing}`}
             >
               Make manager
             </button>
@@ -108,7 +113,7 @@ function StaffRow({ member, isSelf }: { member: StaffMember; isSelf: boolean }) 
                 run(() => removeStaffAccess(member.id));
               }
             }}
-            className="press rounded-full bg-fill px-3 py-1.5 text-xs font-semibold text-red-700 disabled:opacity-40"
+            className={`press rounded-full bg-fill px-3 py-1.5 text-xs font-semibold text-red-700 transition hover:bg-red-50 disabled:opacity-40 ${focusRing}`}
           >
             Remove access
           </button>
@@ -175,7 +180,7 @@ function AddManagerForm() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="press self-start rounded-full bg-foreground px-4 py-2 text-sm font-semibold text-white"
+        className={`press self-start rounded-full bg-foreground px-4 py-2 text-sm font-semibold text-white ${focusRing}`}
       >
         Add manager
       </button>
@@ -219,7 +224,7 @@ function AddManagerForm() {
         <button
           type="button"
           onClick={() => setOpen(false)}
-          className="press rounded-full bg-fill px-4 py-2 text-sm font-semibold text-foreground"
+          className={`press rounded-full bg-fill px-4 py-2 text-sm font-semibold text-foreground transition hover:bg-fill/70 ${focusRing}`}
         >
           Cancel
         </button>
@@ -244,7 +249,7 @@ function AddTrainerLoginForm({ trainers }: { trainers: { id: string; name: strin
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="press self-start rounded-full bg-fill px-4 py-2 text-sm font-semibold text-foreground"
+        className={`press self-start rounded-full bg-fill px-4 py-2 text-sm font-semibold text-foreground transition hover:bg-fill/70 ${focusRing}`}
       >
         Add trainer login
       </button>
@@ -295,7 +300,7 @@ function AddTrainerLoginForm({ trainers }: { trainers: { id: string; name: strin
         <button
           type="button"
           onClick={() => setOpen(false)}
-          className="press rounded-full bg-fill px-4 py-2 text-sm font-semibold text-foreground"
+          className={`press rounded-full bg-fill px-4 py-2 text-sm font-semibold text-foreground transition hover:bg-fill/70 ${focusRing}`}
         >
           Cancel
         </button>
@@ -331,8 +336,9 @@ export default function StaffManager({
           <StaffRow key={member.id} member={member} isSelf={member.id === currentUserId} />
         ))}
         {staff.length === 0 && (
-          <li className="rounded-2xl border border-dashed border-black/10 py-10 text-center text-sm text-secondary-label">
-            No staff yet.
+          <li className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-black/10 px-6 py-12 text-center">
+            <p className="text-sm font-medium text-foreground">No staff yet</p>
+            <p className="max-w-xs text-sm text-secondary-label">Add a manager or a trainer login above to give someone access.</p>
           </li>
         )}
       </ul>

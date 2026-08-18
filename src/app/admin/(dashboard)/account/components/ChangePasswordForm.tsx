@@ -40,7 +40,8 @@ export default function ChangePasswordForm() {
     >
       <h2 className="text-sm font-semibold text-foreground">Change password</h2>
       <p className="mt-0.5 text-xs text-secondary-label">
-        Sets a new password for your own login. At least 8 characters.
+        Sets a new password for your own login. At least 8 characters. You&rsquo;ll need
+        your current password to confirm it&rsquo;s you.
       </p>
 
       {state.status === "success" && state.message && (
@@ -49,6 +50,23 @@ export default function ChangePasswordForm() {
       {state.status === "error" && state.message && (
         <div className="mt-3 rounded-xl bg-red-50 px-3.5 py-2.5 text-sm text-red-700">{state.message}</div>
       )}
+
+      <div className="mt-3">
+        <label htmlFor="currentPassword" className="text-sm font-semibold text-foreground">
+          Current password
+        </label>
+        <input
+          id="currentPassword"
+          name="currentPassword"
+          type="password"
+          required
+          autoComplete="current-password"
+          className={inputClass}
+        />
+        {errors.currentPassword && (
+          <p className="mt-1 text-xs text-red-600">{errors.currentPassword}</p>
+        )}
+      </div>
 
       <div className="mt-3">
         <label htmlFor="password" className="text-sm font-semibold text-foreground">

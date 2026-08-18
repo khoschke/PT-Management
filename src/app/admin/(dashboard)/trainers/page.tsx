@@ -22,7 +22,7 @@ export default async function TrainersPage() {
 
   return (
     <div>
-      <h1 className="text-[28px] font-semibold tracking-tight text-foreground">Trainer roster</h1>
+      <h1 className="display-heading text-[28px] text-foreground">Trainer roster</h1>
       <p className="mt-1 text-[15px] text-secondary-label">
         Deactivating a trainer takes them off the public form and the allocation suggestion, but keeps every lead
         they&rsquo;ve already worked.

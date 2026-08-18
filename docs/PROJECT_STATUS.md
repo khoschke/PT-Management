@@ -23,7 +23,7 @@ hours. Built for a five-PT gym, ~30 leads/month.
 
 - **Next.js 16** (App Router, Turbopack) + TypeScript + Tailwind v4.
 - **Supabase** — Postgres, Auth, Row Level Security. Project ref `fbzearypwpjcyrmdivsz`.
-- **Resend** — the two notification emails. **LIVE** and sending from `noreply@mail.fitazgym.com` (confirmed 4 Aug 2026 by a real trainer allocation email landing in the inbox). Georgio added the DNS records. **DNS lives at CrazyDomains (Dreamscape), not Shopify** (confirmed 5 Aug 2026); fitazgym.com is connected to Shopify but not bought through it, so the zone is elsewhere. **One defect: the SPF record was sent with a copy-paste error** (`v=spf1 include: v=spf1 include:amazonses.com ~all`) and needs replacing with `v=spf1 include:amazonses.com ~all`. Mail is delivering on DKIM alignment meanwhile.
+- **Resend** — the two notification emails. **LIVE** and sending from `noreply@mail.fitazgym.com` (confirmed 4 Aug 2026 by a real trainer allocation email landing in the inbox). Georgio added the DNS records. **DNS lives at CrazyDomains (Dreamscape), not Shopify** (confirmed 5 Aug 2026); fitazgym.com is connected to Shopify but not bought through it, so the zone is elsewhere. The SPF record had a copy-paste error early on but **has since been corrected** (confirmed 11 Aug 2026 in the CrazyDomains DNS panel): `send.mail.fitazgym.com` now reads `v=spf1 include:amazonses.com ~all` and is Active, alongside the Active `resend._domainkey` DKIM record. SPF and DKIM both pass.
 - **Vercel** — hosting + a daily-digest cron (`vercel.json`). Hobby (free) plan.
 - **GitHub:** `khoschke/pt-management`. Active branch: `claude/fitaz-gym-pt-leads-76ffhv` (this is also Vercel's production branch — pushing to it auto-deploys).
 
@@ -33,22 +33,67 @@ Set and working: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 (a new-style `sb_publishable_…` key), `SUPABASE_SERVICE_ROLE_KEY` (a new-style
 `sb_secret_…` key), `IP_HASH_SALT`, `PT_MANAGER_EMAIL`.
 
-`RESEND_API_KEY` and `NOTIFICATIONS_FROM_EMAIL` are now set (email is sending).
-`CRON_SECRET` still needs confirming.
+`RESEND_API_KEY`, `NOTIFICATIONS_FROM_EMAIL`, and `CRON_SECRET` are all set —
+email is fully live. Both the trainer allocation email and the manager daily
+digest (Vercel cron) are confirmed sending from the branded
+`noreply@mail.fitazgym.com` sender. See `docs/handoff-email-notifications.md`.
 
 ## Database
 
-Migrations in `supabase/migrations/`, all applied to the live Supabase project:
-- `0001_init.sql` — trainers, leads, status_history, profiles, rate_limit_log, RLS, triggers.
-- `0002_onboarding.sql` — onboarding_responses, onboarding_part_status, RLS.
-- `0003_trainer_bio.sql` — free-text `bio` column on trainers.
-- `0004_trainer_am_pm.sql` — independent AM/PM trainer availability.
-- `0006_trainer_documents.sql` — PT compliance documents and expiry reminders.
+> **This list drifted once. Do not trust it — verify it.**
+> On 12 Aug 2026 this section claimed `0006_trainer_documents.sql` was applied
+> to live. It was not, and `/admin/compliance` and `/admin/documents` were
+> broken in production as a result. The list is a claim; the evidence is
+> `supabase/reconcile/01_audit_live_schema.sql`, a read-only query that reports
+> PRESENT/MISSING for every migration's objects. **Run it before you assert
+> anything about the live schema, and update the status column below from what
+> it returns — not from what you expect it to say.**
 
-**0005 is deliberately missing on production.** It is reserved for
-`0005_public_access_hardening.sql`, still unmerged on
-`claude/custom-domain-dns-setup-v45oc6`. `0007` and `0008` are reserved for
-GymMaster. See the migration order below. Anything new starts at **0009**.
+Migrations live in `supabase/migrations/`. Status column set from an audit run on
+**12 Aug 2026**, verified row by row against the live project — not asserted:
+
+| Migration | What it adds | On live? |
+|---|---|---|
+| `0001_init.sql` | trainers, leads, status_history, profiles, rate_limit_log, RLS, triggers | Applied — verified |
+| `0002_onboarding.sql` | onboarding_responses, onboarding_part_status, RLS | Applied — verified |
+| `0003_trainer_bio.sql` | free-text `bio` column on trainers | Applied — verified |
+| `0004_trainer_am_pm.sql` | independent AM/PM trainer availability | Applied — verified |
+| `0006_trainer_documents.sql` | PT compliance documents, expiry reminders, `trainer-documents` Storage bucket | Applied 12 Aug 2026 — verified, incl. bucket + storage policies. Upload/view/delete exercised end to end on the live site. |
+| `0007`, `0008` | GymMaster (`gymmaster_lead_source`, `gymmaster_sync`) | Not applied; unmerged branch |
+| `0009_public_access_hardening.sql` | trainer-email column grants, status_history soft-delete guard, trainer_documents self-verify guard, `submit_form_lead` RPC | Applied 12 Aug 2026 — **both parts, verified** |
+
+**The drift is closed and the hardening is deployed.** `0006` had never been
+applied despite this doc claiming it was, which left `/admin/compliance` and
+`/admin/documents` erroring in production. Both work again, with an upload,
+view and delete exercised end to end. `0009` then went in either side of the
+code deploy, and two real leads were submitted through the live public form —
+one before PART B removed anon's direct insert, one after.
+
+Confirmed from outside with the public key on 12 Aug 2026:
+`…/rest/v1/trainers?select=email` returns `42501 permission denied`, while
+`…/rest/v1/trainers?select=id,name` still lists the five PTs — the public
+form's trainer picker, which had to keep working.
+
+`check_form_rate_limit` still exists but is no longer executable by `anon` or
+`authenticated`, and nothing calls it. `submit_form_lead` does the rate limiting
+and the insert in one transaction. Leave it or drop it in a later migration; it
+is inert either way.
+
+`0005` is permanently unused. It was held for the hardening migration, which has
+since been renumbered to `0009` because it rewrites a policy on
+`trainer_documents` and therefore has to run *after* `0006` — as `0005` it would
+have failed on a fresh setup. GymMaster keeps `0007/0008` untouched. Anything new
+starts at **0010**.
+
+**`0009` must be applied in two parts around the code deploy**, per the banner at
+the top of the file: PART A before the new code is live, PART B after. The code
+in `src/app/pt-session/actions.ts` already calls `submit_form_lead`, so PART A
+has to be in place before that deploy or the public form breaks.
+
+The full runbook — audit, apply `0006`, PART A, deploy, PART B, verify — is
+`supabase/reconcile/README.md`. **None of it can be run from a Claude build
+workspace** (no outbound network to Supabase), which is how the drift happened
+in the first place. Someone has to run it in the Supabase SQL editor.
 
 Roles live in `profiles` (`manager` / `trainer`). Managers see/allocate all
 leads; trainers see only their own. RLS enforces this at the database level.
@@ -86,6 +131,12 @@ strength". Change it in that one file and it flows to both sides.
 - **This build workspace has no outbound network** to Supabase, Google,
   GymMaster, etc. You cannot test those live from here — build, deploy, and
   verify on the live site (which is not network-restricted).
+- **A migration in `supabase/migrations/` is not proof it ran on live.** Nothing
+  applies migrations automatically; a human pastes them into the Supabase SQL
+  editor, and that step has been silently skipped before (`0006`, which broke two
+  production screens for days while this doc said it was applied). Run
+  `supabase/reconcile/01_audit_live_schema.sql` and believe the output, not the
+  file listing and not the table above it.
 - **Supabase's new API key format** (`sb_publishable_…`, `sb_secret_…`) works
   with the installed `@supabase/*` versions; they map to the anon and
   service-role roles respectively.
@@ -118,17 +169,20 @@ send checklist in `docs/emails/README.md`.
 - **Not sending yet**, but very little is left and none of it is code. Merge
   tags are settled: the templates carry GymMaster's own `{58:Member First Name}`
   syntax, and `{{expiry_date}}` is gone because GymMaster cannot do the date
-  arithmetic, so the deadline is worded relatively instead. Unsubscribe and
-  `List-Unsubscribe` were raised with GymMaster on 18 August 2026 and are
-  theirs to answer. That leaves the SPF typo, with Georgio. Details in
-  `docs/handoff-email-1-go-live.md`. `pt.fitazgym.com` is confirmed resolving.
+  arithmetic, so the deadline is worded relatively instead. Unsubscribe,
+  `List-Unsubscribe` and suppression were raised with GymMaster on 18 August
+  2026 and are theirs to answer. The SPF typo is fixed, see the Resend line
+  above. Details in `docs/handoff-email-1-go-live.md`. `pt.fitazgym.com` is
+  confirmed resolving.
 - **CMS-safe variants** in `docs/emails/cms-safe/` exist because GymMaster
   corrupts pasted HTML and the buttons lose their position. Generated by
   `docs/emails/make-cms-safe.py`, never edited by hand.
 
 Brand assets live in `public/brand/`, documented in `docs/brand-assets.md`.
-Use `fitaz-gym-logo.svg` by default; the `-email` variant exists only for email
-headers.
+**Use `fitaz-gym-logo-official.png`**, extracted from the artwork Karl supplied
+on 18 August 2026. Everything else there is an earlier trace and measurably
+wrong, most visibly in the gap between the wordmark and the GYM chip. The
+traces are kept only because they are vector and the official is not.
 
 **These are the primary marks in use**, and the earlier trace on
 `claude/apple-design-pass-ymnm14` is superseded by them: when that branch merges,
@@ -165,15 +219,25 @@ Zero means everything on that branch is already on production, whatever the
 table says. If what you find disagrees with the table, **the command is right**:
 fix the table in the same session rather than leaving it to mislead the next one.
 
-### Snapshot, 10 August 2026
+### Snapshot, 12 August 2026 (verified with the command above, after the deploy)
+
+Three branches marked "safe to delete" below were still on the remote when this
+was written — the session that finished the work could push commits but not
+delete refs. Delete them from the GitHub branches page when convenient; their
+rows can then come out of this table.
 
 | Branch / thread | Workstream | State |
 |---|---|---|
-| `claude/apple-design-pass-ymnm14` | Apple-grade design pass | **13 unmerged.** Public form, lead board, trainers, staff, login, plus the FITAZ GYM wordmark across app headers. Looks finished. Carries a superseded wordmark trace: keep the `public/brand/` marks. |
-| `claude/custom-domain-dns-setup-v45oc6` | Custom domain + security hardening | **9 unmerged.** Real security work: CSV export auth, cron auth, RLS hardening, migration `0005_public_access_hardening.sql`. Should not sit unmerged. |
-| `claude/gymmaster-phase-1-pull-7yuxuy` | GymMaster integration | **3 unmerged.** Phase 1 pull scaffolding plus migrations `0007` and `0008`. |
-| `claude/pt-team-onboarding-rw5awg` | PT team update email | **3 unmerged.** Drafts of the team update email and the login details email, from `docs/handoff-pt-team-update-email.md`. |
-| `claude/handoff-email-notifications-9m67a6` | Branded HTML notification emails | **1 unmerged.** Replaces the plain-text ops emails with branded HTML plus a dashboard link. Cheapest visible win now that sending is live. |
+| `claude/reconcile-database-security-deploy-01sf2h` | Live-DB reconciliation + security deploy | **Merged and deployed, 12 Aug 2026.** Carried the security hardening merge, the migration renumbered `0005` → `0009`, the `supabase/reconcile/` audit + runbook, and this doc's corrected migration table. Safe to delete. |
+| `claude/security-merge-pending-parta` | Security hardening merge | **Merged** (via the reconcile branch). Its migration number was wrong — corrected there. Safe to delete. |
+| `claude/apple-design-pass-ymnm14` | Apple-grade design pass | **Merged.** Public form, lead board, trainers, staff, login, plus the FITAZ GYM wordmark across app headers. The superseded wordmark trace was discarded in favour of the `public/brand/` marks, as planned. |
+| `claude/docs-reconcile-live-state` | Branch-map reconciliation | **Merged.** Docs only. |
+| `claude/custom-domain-dns-setup-v45oc6` | Custom domain + security hardening | **PARKED — do NOT merge.** 9 unmerged, but its deliverable (pt.fitazgym.com + email) is already live via the dashboards, and it forked ~50 commits back, so a merge would conflict and regress newer work. The CSV/cron/IP-salt fixes were re-done fresh and merged (PR #18); the DB security was re-done fresh as migration `0009`. Ignore or delete this branch. |
+| `claude/security-hardening-csv-ip-cron` | Security hardening (CSV/IP/cron) | **Merged** (PR #18). CSV formula-injection guard, IP-salt production guard, cron fail-closed + constant-time auth. Also added `docs/handoff-security-hardening.md` for the remaining items. |
+| `claude/security-hardening-validation-0ry4cz` | Security hardening (DB / RLS) | **Merged** (via the reconcile branch). Safe to delete. |
+| `claude/gymmaster-phase-1-pull-7yuxuy` | GymMaster integration | **3 unmerged.** Phase 1 pull scaffolding plus migrations `0007` and `0008`, which keep those numbers. |
+| `claude/pt-team-onboarding-rw5awg` | PT team update email | **Merged.** The team update email and the login details email, from `docs/handoff-pt-team-update-email.md`. Both were sent on 12 August 2026; the files are kept as the record of what went out and as the template for the next trainer who joins. |
+| `claude/handoff-email-notifications-9m67a6` | Branded HTML notification emails | **Merged** (PR #4). Replaced the plain-text ops emails with branded HTML plus a dashboard link. |
 | `claude/self-service-password-change-3ydtqu` | Forgot-password | **1 unmerged**, a handoff note only. No implementation; still needs Supabase Custom SMTP. |
 | `claude/gym-nurture-email-design-uw9nvu` | Member email series | **Merged** (PR #13 and #14). Emails 1 to 3, CMS-safe variants, brand assets, this doc. |
 | `claude/pt-document-expiry-feature-ppsy30` | PT compliance documents with expiry reminders | **Merged** (PR #8). |
@@ -192,35 +256,60 @@ anyway because `0004_trainer_am_pm.sql` merged with the availability work.
 | Number | Migration | Branch |
 |---|---|---|
 | 0004 | `trainer_am_pm` | merged, on production |
-| 0005 | `public_access_hardening` | `custom-domain-dns-setup-v45oc6` |
-| 0006 | `trainer_documents` | merged, on production |
-| 0007, 0008 | `gymmaster_lead_source`, `gymmaster_sync` | `gymmaster-phase-1-pull-7yuxuy` |
+| 0005 | — | permanently unused (see below) |
+| 0006 | `trainer_documents` | merged to production, **not yet on the live DB** |
+| 0007, 0008 | `gymmaster_lead_source`, `gymmaster_sync` | `gymmaster-phase-1-pull-7yuxuy` (already numbered correctly, no renumber needed) |
+| 0009 | `public_access_hardening` | merged into code; **apply in two parts, PART A → deploy → PART B** |
 
-Merge in that order and Supabase stays in step. GymMaster is deliberately last:
-it is the largest and most likely to change again, so it absorbs any further
-renumbering rather than forcing it on the others. None of these have been
-applied to the live project yet.
+Merge in that order and Supabase stays in step. GymMaster is deliberately in the
+middle rather than last: its numbers were already written and pushed, and moving
+the hardening migration was free by comparison.
+
+**Why the hardening migration is `0009` and not `0005`.** It rewrites the
+`trainer_documents_insert` policy, and that table is created by `0006`. Numbered
+`0005` it would run before the table existed and fail on any fresh setup — which
+is precisely how the live-DB drift surfaced. It has to sit after `0006`, and
+`0009` was the first free slot that left GymMaster's `0007/0008` alone. `0005` is
+now retired rather than reserved: don't fill it.
+
+`0009_public_access_hardening.sql` **runs in two parts around the code deploy**
+(PART A → deploy → PART B). The file says so at the top; the runbook is
+`supabase/reconcile/README.md`.
 
 ## Outstanding / next up
 
 - **GymMaster integration** — see `docs/handoff-gymmaster-integration.md`.
   **Phase 1 scaffolding already exists unmerged** on
   `claude/gymmaster-phase-1-pull-7yuxuy`.
-- **Apple-grade design pass** — see `docs/handoff-apple-design-pass.md`.
-  **Appears finished and unmerged** on `claude/apple-design-pass-ymnm14`. Review
-  and merge rather than rebuild. It also carries an earlier trace of the FITAZ
-  wordmark: that one is superseded, keep the `public/brand/` marks.
-- **PT compliance documents with expiry reminders** — built and unmerged on
-  `claude/pt-document-expiry-feature-ppsy30`. Was missing from this list
-  entirely. Needs a review and a decision on whether it ships.
-- **Branded HTML notification emails** — built and unmerged on
-  `claude/handoff-email-notifications-9m67a6`. Replaces the plain-text trainer
-  and digest emails. Now that sending is live this is the cheapest visible win
-  available.
-- **Security hardening** — CSV export auth, cron auth, RLS tightening, built and
-  unmerged on `claude/custom-domain-dns-setup-v45oc6`. Should not sit unmerged.
+- ~~**Apple-grade design pass**~~ — **DONE.** Merged and deployed from
+  `claude/apple-design-pass-ymnm14`. The superseded wordmark trace it carried was
+  discarded in favour of the `public/brand/` marks.
+- ~~**PT compliance documents with expiry reminders**~~ — **DONE and working.**
+  Code merged (PR #8) and deployed; migration `0006` applied to live 12 Aug 2026,
+  which is what finally made `/admin/compliance` and `/admin/documents` usable.
+  Upload, view and delete confirmed against the live Storage bucket. The feature
+  had been shipped-but-broken since it merged, purely because the migration was
+  never run.
+- ~~**Branded HTML notification emails**~~ — **DONE.** Merged (PR #4) on
+  `claude/handoff-email-notifications-9m67a6`. The plain-text trainer and digest
+  emails are now branded HTML with a dashboard link, live in production.
+- ~~**Reconcile the live database**~~ — **DONE, 12 Aug 2026.** `0006` had never
+  been applied to live despite this doc saying so; it is now, verified, and
+  `/admin/compliance` and `/admin/documents` work again. The audit query that
+  found it lives in `supabase/reconcile/` and should be re-run whenever anyone
+  needs to state what is on live.
+- ~~**Security hardening**~~ — **DONE, 12 Aug 2026.** CSV injection, IP salt and
+  digest-cron auth landed earlier (PR #18). The DB half —
+  `0009_public_access_hardening.sql`: anon column grants on trainers, the
+  `status_history` soft-delete guard, the `trainer_documents` self-verify guard,
+  the `submit_form_lead` RPC — is applied, both parts, and verified against live.
+  Explicit manager checks and the shared cron auth helper (`src/lib/cron.ts`)
+  deployed with it. Findings and rationale in
+  `docs/handoff-security-hardening.md`. The old `custom-domain-dns-setup-v45oc6`
+  branch stays **parked — do not merge it**; these fixes were re-done fresh.
 - ~~**Email notifications**~~ — **DONE.** Live and sending from
-  `noreply@mail.fitazgym.com`. Only the SPF typo above is outstanding.
+  `noreply@mail.fitazgym.com`. SPF and DKIM both pass (the earlier SPF typo has
+  been corrected).
 - **Change-email on the Account screen** — the `/admin/account` screen currently
   does self-service password only. Add a "change my email" field there too
   (`supabase.auth.updateUser({ email })`), so users can update their own login
@@ -237,8 +326,10 @@ applied to the live project yet.
   works, don't merge a dead reset link before then.
 - **Availability as AM + PM (not "both")** — change trainer availability to
   independent AM/PM selection. See `docs/handoff-availability-am-pm.md`.
-- ~~**Custom web address**~~ — **DONE.** `pt.fitazgym.com` is live, DNS added in
-  Shopify by Georgio. `docs/handoff-custom-domain.md` is now history, not a task.
+- ~~**Custom web address**~~ — **DONE.** `pt.fitazgym.com` is live over HTTPS. DNS
+  records live at **CrazyDomains (Dreamscape), not Shopify** — fitazgym.com is
+  connected to Shopify but its DNS zone is at CrazyDomains, which is where all
+  records were added. `docs/handoff-custom-domain.md` is now history, not a task.
 - **Editable trainer pages** — give each PT a self-editable profile. **Scoped,
   not started.** Decided: **internal only** (not public — the public reach
   trainers via the gym website already), trainer edits their own row *and*
