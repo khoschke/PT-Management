@@ -84,9 +84,11 @@ sender. It is fine for proving the flow internally and nothing else.
 The platform is decided, but three things still have to be **checked inside
 GymMaster** before a real send, because the emails assume them:
 
-- **Unsubscribe and a `List-Unsubscribe` header.** Non-negotiable for a member
-  facing send. This now has to come from the club template, since the
-  templates' own footers have been removed.
+- **Unsubscribe and a `List-Unsubscribe` header.** **Raised with GymMaster by
+  Karl, 18 August 2026, and now theirs to answer.** It has to come from the club
+  template, since the templates' own footers were removed. Nothing on our side
+  is waiting on it, so do not treat it as a task for this repo. Chase GymMaster
+  for the answer, and do not send member facing volume until they confirm.
 - **A suppression list that is honoured.** So an unsubscribe on email 1 actually
   stops emails 2 and 3.
 - **Which domain it sends from.** If GymMaster sends from its own infrastructure,
@@ -115,10 +117,11 @@ get skipped:
   to a real person at the gym, not a no reply inbox". If that is not true, the
   email is lying to members in writing.
 - **The templates no longer carry a header or footer.** GymMaster's club
-  template supplies both. Confirm its footer has an unsubscribe link, a
+  template supplies both. Its footer needs an unsubscribe link, a
   `List-Unsubscribe` header, the postal address and a permission line, because
-  ours were removed on the assumption that it does. **This is the one item that
-  can still stop a compliant send**, and nothing in the templates can fix it.
+  ours were removed on the assumption that it has them. **This sits with
+  GymMaster as of 18 August 2026**, so it is not a repo task, but it is still
+  the thing that gates a compliant send. Get their answer in writing.
 - **Suppression before each send of emails 2 and 3.** See
   `docs/emails/README.md`. Both are written so that reaching the wrong person is
   awkward rather than wrong, but suppression is still the thing that keeps them

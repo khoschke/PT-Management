@@ -437,9 +437,10 @@ on and set the dark palette to canvas `#000000`, surface `#161618`, fill
 
 - [ ] Render test across Gmail web, Gmail app, Apple Mail, Outlook desktop and
       Outlook.com, in both light and dark mode.
-- [ ] **Confirm GymMaster's club footer carries an unsubscribe link, a
-      `List-Unsubscribe` header, the gym's postal address and a permission
-      line.** Ours were removed on the basis that the club template has them.
+- [ ] **Get GymMaster's confirmation that the club footer carries an
+      unsubscribe link, a `List-Unsubscribe` header, the gym's postal address
+      and a permission line.** Ours were removed on the basis that it does.
+      Raised with GymMaster 18 August 2026; theirs to answer, ours to chase.
 - [ ] Confirm the club header and footer do not clash with the content: check
       the spacing where they meet, and that there is only one wordmark.
 - [ ] Check with images blocked. Nothing should change, since there are none.
