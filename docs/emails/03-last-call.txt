@@ -36,17 +36,3 @@ before {{expiry_date}} that you want it, I will hold it for you.
 
 Karl
 PT Manager, Fitaz Gym
-
---
-FITAZ GYM
-101 Main St, Kangaroo Point.
-
-Facebook: https://www.facebook.com/FitazfkGym/
-Instagram: https://www.instagram.com/fitazfk_gym/
-
-You are receiving this because you joined Fitaz Gym. We use your details
-only to arrange your complimentary session and we do not share them
-outside the gym.
-
-Unsubscribe: {{unsubscribe_url}}
-Email preferences: {{preferences_url}}

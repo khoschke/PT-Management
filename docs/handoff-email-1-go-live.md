@@ -85,8 +85,8 @@ The platform is decided, but three things still have to be **checked inside
 GymMaster** before a real send, because the emails assume them:
 
 - **Unsubscribe and a `List-Unsubscribe` header.** Non-negotiable for a member
-  facing send. Both templates have an `{{unsubscribe_url}}` placeholder waiting
-  for whatever GymMaster's equivalent is called.
+  facing send. This now has to come from the club template, since the
+  templates' own footers have been removed.
 - **A suppression list that is honoured.** So an unsubscribe on email 1 actually
   stops emails 2 and 3.
 - **Which domain it sends from.** If GymMaster sends from its own infrastructure,
@@ -111,9 +111,10 @@ get skipped:
 - **`Reply-To` must reach a monitored inbox.** The copy says "it comes through
   to a real person at the gym, not a no reply inbox". If that is not true, the
   email is lying to members in writing.
-- **The footer icons** load from `pt.fitazgym.com/email/`. That merged on
-  5 August 2026, so they should be live, but confirm on a real send rather than
-  in a preview. If they 404, the Vercel deploy stalled; push again to retrigger.
+- **The templates no longer carry a header or footer.** GymMaster's club
+  template supplies both. Confirm its footer has an unsubscribe link, a
+  `List-Unsubscribe` header, the postal address and a permission line, because
+  ours were removed on the assumption that it does.
 - **Suppression before each send of emails 2 and 3.** See
   `docs/emails/README.md`. Both are written so that reaching the wrong person is
   awkward rather than wrong, but suppression is still the thing that keeps them

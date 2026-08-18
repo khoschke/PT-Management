@@ -127,9 +127,11 @@ that prefer text.
 - `02-plan-not-motivation.html` / `.txt`
 - `03-last-call.html` / `.txt`
 
-All three share the same masthead, footer, dark mode rules and button code,
-lifted from email 1 rather than rewritten, so the series cannot drift. If you
-change the chrome, change it in all three.
+**These are body content only.** GymMaster's club template supplies the header
+and footer, so the templates carry no wordmark, no address, no social icons and
+no unsubscribe link. They open on the eyebrow line and close on Karl's sign off.
+All three share the same dark mode rules and button code, lifted from email 1
+rather than rewritten, so the series cannot drift.
 
 ---
 
@@ -146,11 +148,10 @@ trainer as *"filled in the form themselves, so this is a warm lead"*, and the
 
 So this email has exactly one job: **get the click that produces a form
 submission.** Everything in it either drives that click or removes a reason not
-to. There is no secondary ask and no newsletter sign up. The only other links
-are the trainer page and the two social icons, and those sit in the footer
-below the closing call to action, where they cannot pull anyone out of the
-flow before they have had both chances to click. One email, one action, asked
-twice.
+to. There is no secondary ask and no newsletter sign up. The only other link is
+the trainer page, and it sits below the closing call to action where it cannot
+pull anyone out of the flow before they have had both chances to click. One
+email, one action, asked twice.
 
 ## Why 24 hours is the right moment
 
@@ -297,8 +298,10 @@ handle it:
 
 Format it the way a person would say it, "12 September", not "2026-09-12". It
 appears in email 3's headline, so it is read aloud in someone's head.
-| `{{unsubscribe_url}}` | ESP unsubscribe link | Required. Also set the `List-Unsubscribe` header. |
-| `{{preferences_url}}` | Preference centre | Point at the unsubscribe link if there is no preference centre yet. |
+
+There is no unsubscribe tag any more. That link now comes from GymMaster's club
+footer, which is the thing to verify before sending. See the section on the
+header and footer below.
 
 ## The call to action link
 
@@ -327,70 +330,38 @@ return **4 in each HTML and 2 in each text part**, for all three emails. Each
 email asks twice, and each HTML button is written twice (VML plus anchor), so
 the numbers are the same across the series.
 
-## Header and footer
+## No header or footer, on purpose
 
-Both match the rest of the Fitaz Gym series in Postcards, so this email sits
-alongside the New Member Flow emails rather than looking like a one off.
+**The templates carry neither.** GymMaster's club template already supplies a
+header and footer to every email it sends, so anything of ours would have
+duplicated it: two wordmarks, two addresses, two unsubscribe links.
 
-**Header.** Centred FITAZ GYM wordmark with a hairline rule beneath it. The
-wordmark is live text, not an image: light letter-spaced FITAZ next to a solid
-GYM chip, mirroring `public/logo-fitaz.svg`. In dark mode the chip inverts to
-white with dark type, the same flip the logo already implies.
+So these files open straight on the eyebrow line and close on the sign off.
+Removed from all three: the FITAZ GYM wordmark and the rule under it, and the
+whole dark footer block with its social icons, gym address, permission line and
+unsubscribe links.
 
-**Footer.** A solid `#1d1d1f` block with rounded bottom corners, carrying the
-Facebook and Instagram icons, the gym address, the permission line and the
-unsubscribe links, all centred in white.
+**Verify these are in GymMaster's footer before sending anything.** They were
+ours and are now not:
 
-Two deliberate choices in there:
+- **An unsubscribe link, and a `List-Unsubscribe` header.** Not optional on a
+  member facing send. If the club template does not carry one, it has to go back
+  into the templates before a single email goes out.
+- **The gym's postal address.** Required for anti-spam compliance.
+- **A permission line** saying why the member is receiving it.
 
-- **The footer block does not change colour in dark mode.** The icons are
-  flattened onto `#1d1d1f`, so if the block shifted you would see two lighter
-  tiles floating around the glyphs. Against the near black dark canvas the
-  block still separates cleanly, so there is nothing to gain by moving it.
-- **The compliance text lives inside the black block**, not on the canvas
-  below it, so the block stays the last thing in the email exactly as it is in
-  the other Fitaz Gym emails. `#a1a1a6` on `#1d1d1f` is about 6.5:1, comfortably
-  past AA.
-
-### The social icons
-
-`public/email/icon-facebook.png` and `public/email/icon-instagram.png`, served
-by the Next.js app from the same domain as the CTA:
-
-```
-https://pt.fitazgym.com/email/icon-facebook.png
-https://pt.fitazgym.com/email/icon-instagram.png
-```
-
-96px assets displayed at 24px, so they stay sharp on retina. They are **opaque,
-drawn on the footer colour rather than on transparency**, because Outlook
-composites PNG alpha badly and would ring them with grey. That does mean the
-footer colour and the icon background have to stay in step: if you ever change
-`#1d1d1f` in the footer, regenerate the icons to match.
-
-Both carry `alt` text, so with images blocked the footer degrades to two
-readable "Facebook" and "Instagram" links rather than to empty boxes.
-
-They point at the live profiles, hardcoded rather than merged in:
-
-```
-https://www.facebook.com/FitazfkGym/
-https://www.instagram.com/fitazfk_gym/
-```
-
-The Instagram address is stored without the `?hl=en` that Instagram appends in
-the browser. That parameter only forces the interface language for the person
-clicking, so leaving it on would pin every member to English regardless of
-their own setting, and it is not part of the profile address.
+`public/email/icon-facebook.png` and `icon-instagram.png` are no longer
+referenced by any template. They are left in place rather than deleted, since
+they are small and may be wanted if these ever have to stand alone again. The
+full-chrome versions are in git history if that day comes.
 
 ## Build notes
 
 Things in the file that are deliberate, so nobody "tidies" them away:
 
-- **The only images are the two social icons.** Everything else, including the
-  wordmark, is live text. A meaningful share of first sends from a new domain
-  render with images blocked, and this email loses nothing but the two glyphs.
-  It also keeps the message small, which helps Gmail clipping.
+- **No images at all.** Everything is live text, so the email renders
+  identically whether or not images are blocked, which is how a good share of
+  first sends land. It also keeps the message small, which helps Gmail clipping.
 - **Deliberate dark mode, not inherited.** The brand is black on white, which
   is exactly what Gmail and Apple Mail invert worst: the black pill button
   turns invisible against an auto-darkened card. The `@media (prefers-color-scheme: dark)`
@@ -455,7 +426,7 @@ block:
 | Goal pills | Tag or badge block, `#e8e8ed` fill, `#1d1d1f` text, 14px weight 500, padding 11px by 16px, radius 999px, 8px gap. |
 | Passport note | Quote block, 3px left rule in `#1d1d1f`, 18px left padding. |
 | Closing panel | White card, 20px radius, centred, heading 24px weight 600, then the same button. |
-| Footer | Solid `#1d1d1f` block, full container width, 24px radius on the bottom two corners only, 38px top and 34px bottom padding. Centred: 24px social icons with 22px between them, address at 16px white, then permission line and unsubscribe at 13px on 21px `#a1a1a6`. |
+| Header and footer | None. GymMaster's club template supplies both. |
 
 Set the template background to `#f5f5f7`, content width 600px, and the global
 font stack to `'Helvetica Neue', Helvetica, Arial, sans-serif`. Turn dark mode
@@ -467,10 +438,12 @@ on and set the dark palette to canvas `#000000`, surface `#161618`, fill
 
 - [ ] Render test across Gmail web, Gmail app, Apple Mail, Outlook desktop and
       Outlook.com, in both light and dark mode.
-- [ ] Confirm the two footer icons load from `pt.fitazgym.com/email/`, and that
-      they sit flush on the black block with no grey ring around them.
-- [ ] Check with images blocked. Only the two social icons should change, and
-      they should fall back to readable "Facebook" and "Instagram" text.
+- [ ] **Confirm GymMaster's club footer carries an unsubscribe link, a
+      `List-Unsubscribe` header, the gym's postal address and a permission
+      line.** Ours were removed on the basis that the club template has them.
+- [ ] Confirm the club header and footer do not clash with the content: check
+      the spacing where they meet, and that there is only one wordmark.
+- [ ] Check with images blocked. Nothing should change, since there are none.
 - [ ] Confirm the total HTML is under 102KB so Gmail does not clip the closing
       CTA.
 - [ ] Send a live seed test to a real inbox and click both buttons.
