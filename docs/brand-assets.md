@@ -1,63 +1,58 @@
 # Brand assets
 
-Traced, self-contained versions of the FITAZ GYM lockup, in `public/brand/`.
+The official Fitaz Gym artwork now lives in this repo, alongside a set of
+traced marks that predate it.
 
-> **These are the primary marks in use**, and an earlier trace on the
-> `claude/apple-design-pass-ymnm14` branch is superseded by them. When that
-> branch merges, keep the files here and drop the older trace.
->
-> **But all of them are traces, not the real logo.** Karl supplied the official
-> artwork on 18 August 2026 and it differs from what we have. See "The official
-> logo, and how ours differs" below. The originals still need adding to
-> `public/brand/source/`.
+| | |
+|---|---|
+| `public/brand/fitaz-gym-logo-official.png` | **The real logo.** Black lockup, transparent, 922 x 122. |
+| `public/brand/fitaz-gym-logo-official-white.png` | Same, reversed for dark backgrounds. |
+| `public/brand/source/fitaz-gym-logo-official.pdf` | The file Karl supplied, unmodified. |
+| `public/brand/fitaz-gym-logo*.svg` / `.png` | **Traces.** Superseded, see below. |
 
-## The official logo, and how ours differs
+## Where the official artwork came from
 
-Karl supplied the official Fitaz Gym artwork on 18 August 2026, as raster
-images in a chat session. **They could not be saved into the repo from there**,
-so `public/brand/source/` is still empty and everything in `public/brand/`
-remains a trace built before the real mark was available.
+Karl supplied it on 18 August 2026 as a Google Drive PDF, "Untitled design.pdf".
+It was extracted here rather than re-drawn: the two pages each hold a 1080 x 1080
+image plus a matching alpha mask, and the PNGs above are those images composited
+and trimmed to the ink. Page one is the black lockup, page two the reversed one.
 
-Three differences are visible even in the raster, and two of them are things we
-got wrong:
+**Correcting an earlier note in this file.** It previously said the PDF was
+vector and named its own typeface, on the strength of a text extraction that
+returned `FITAZ`, `GYM`, `GYM`. That was wrong. The PDF contains **no fonts at
+all** and no vector paths, only the two raster images. The strings came from the
+document's structure tree, not from live text. Checking Document Properties then
+Fonts, as this file previously advised, will show nothing.
 
-- **The GYM chip has square corners.** Ours are rounded, 4px in the email
-  masthead and a radius ratio in the brand marks. The official chip is a plain
-  black rectangle. This is the most obvious mismatch and the easiest to fix.
-- **The letterforms are a geometric sans, not Helvetica or Arial.** The A has a
-  sharp apex and the characters are wider and more evenly stroked than the
-  Liberation Sans we traced from. The exact face cannot be identified from a
-  raster; the source file would say.
-- **Chip size and placement are close to what we have.** It sits top aligned
-  against the cap line, at roughly half the cap height, which is what the
-  "original" trace already does. That part holds up.
+So the typeface is still unidentified, and a raster is all we have. That is
+enough for most uses at the sizes we need, and not enough to regenerate the mark
+at arbitrary size. **The face was set in Canva** (`xmp:CreatorTool`), so the
+quickest route to a name is opening the original Canva design and clicking the
+text, not forensics on the export.
 
-**Do not correct these by eye against the images.** Get the vector original into
-`public/brand/source/` and re-trace from it. Redrawing from a JPEG to match a
-JPEG is how a mark drifts twice instead of once.
+## How the traces differ from the real thing
 
-### The PDF is vector, and the font is in it
+Measured off the official artwork, not judged by eye. Proportions are given
+against the FITAZ cap height so they hold at any size.
 
-Karl supplied a PDF export alongside the rasters. Reading its contents returns
-the strings `FITAZ`, `GYM`, `GYM` as **live text**, not outlines. That is good
-news twice over:
+| | Official | Our trace |
+|---|---|---|
+| Chip corners | **Square**, a plain rectangle | Rounded, radius 0.114 of chip height |
+| Chip top edge | **Flush with the cap line** | 0.069 of cap height above it |
+| Gap, wordmark to chip | **0.197** of cap height | 0.81 of cap height |
+| Chip height | **0.582** of cap height | 0.283 of the FITAZ size |
+| Letterforms | Geometric sans, sharp-apex A | Liberation Sans |
 
-- **It is genuinely vector**, so a proper re-trace is possible rather than an
-  approximation.
-- **The typeface is embedded and named inside it.** Open the PDF in any viewer
-  and look at Document Properties, then Fonts. That is the answer to the
-  question these notes have been carrying since the first trace, and it takes
-  about ten seconds to get.
+The gap is the one that will read as wrong to anyone who knows the mark: ours
+sets the chip four times further out than it belongs.
 
-The mark was made in Canva (`xmp:CreatorTool` says so), so the face is most
-likely one of Canva's bundled fonts rather than a licensed foundry release.
-Worth confirming the licence covers the uses we put it to.
+**Use `fitaz-gym-logo-official.png` from here on.** The traces are kept because
+they are vector and the official is not, so they remain the only option where a
+mark has to scale beyond 922px wide. Anywhere else they are the wrong file.
+Nothing in the member emails depends on either, since the email header and
+footer were removed in favour of GymMaster's club template.
 
-**Once the font name is known**, the re-trace does not even need the PDF: the
-existing tracer in the brand tooling can be pointed at the correct font file
-and the marks rebuilt from real outlines.
-
-### One of the supplied PNGs is empty. Do not use it.
+## One of the supplied PNGs is empty. Do not use it.
 
 The Drive file named **"Fitaz Gym Logo Black Transparent Background.png"**
 (`1NhXJOkNkdNnkOuhR7kWmHXZpv__xKemi`, 1080 x 1080, RGBA, 20,061 bytes) contains
@@ -71,16 +66,17 @@ The filename is the trap here. It reads like the definitive asset, so it is the
 one anybody would reach for first. **Delete it at source or rename it**, because
 the next person to go looking will pick it for the same reason we did.
 
-The other supplied PNG (`1xOsEBRvRYTl0ovApzml8X2AEInwVDJ1i`, 19,333 bytes) has
-not been pixel-checked yet and may have the same problem.
-
 ![The two marks](brand-logo-comparison.png)
 
-## Which one to use
+## The traces: which one, if you need one
 
-**Use `fitaz-gym-logo.svg` unless you have a specific reason not to.** It is the
-brand mark, traced from `public/logo-fitaz.svg`: tight 0.066em tracking on
-FITAZ, a small GYM chip hung at the top right rather than centred.
+Everything below describes the traced marks, which the official artwork now
+supersedes. Reach for them only when you need vector, or a size beyond 922px.
+
+**Of the traces, use `fitaz-gym-logo.svg`.** It follows `public/logo-fitaz.svg`:
+tight 0.066em tracking on FITAZ, a small GYM chip hung at the top right rather
+than centred. Note that its chip proportions are the ones the table above marks
+as wrong.
 
 | File | Use |
 |---|---|
