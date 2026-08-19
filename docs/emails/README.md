@@ -304,11 +304,15 @@ not. It stays true because email 3 only ever fires on day 30, exactly seven days
 out. **If you change the send day, change the copy**, in the headline, the lead
 paragraph and the sign off in email 3, and in the closing block of email 2.
 
-**`{{unsubscribe_url}}` in the footer is a placeholder and will not work as
-written.** GymMaster uses `{58:...}` syntax, and nobody has yet found out what
-its unsubscribe token is called. Find it and replace the placeholder before any
-real send. This is now ours to get right: the club template is not being used,
-so nothing else supplies an unsubscribe link.
+**There is no unsubscribe link in the footer at all.** One was there, pointing
+at a `{{unsubscribe_url}}` placeholder, and it was removed on 19 August 2026
+because a visible link that goes nowhere is worse than none while testing.
+
+**It has to come back before a member facing send.** The club template is not
+being used, so nothing else supplies one, and an unsubscribe is not optional on
+marketing mail to members. What is needed is GymMaster's own unsubscribe token,
+in `{58:...}` style, which nobody has found yet. Put it back in the footer of
+all three templates once it is known.
 
 ## The call to action link
 
@@ -509,13 +513,34 @@ That same property is what makes the table trick above work. Being immune to
 `text-align` is a problem when you want a table centred and a feature when a
 host stylesheet is forcing everything left.
 
+## The images have to be live before anyone sends
+
+The templates reference three files by absolute URL:
+
+| URL | Where it comes from | Live? |
+|---|---|---|
+| `pt.fitazgym.com/email/icon-facebook.png` | `public/email/` | **Yes**, already on the deployed branch |
+| `pt.fitazgym.com/email/icon-instagram.png` | `public/email/` | **Yes**, already on the deployed branch |
+| `pt.fitazgym.com/brand/fitaz-gym-logo-official.png` | `public/brand/` | **No.** Only on this branch |
+
+**The logo will 404 until this branch is merged and deployed.** The two social
+icons predate it and should already resolve. The dark mode logo,
+`public/email/fitaz-gym-logo-white.png`, is in the same position as the main
+one: on this branch only.
+
+So a test send made before deploying shows the social icons and a broken logo.
+That is a deploy step, not a template bug, and no amount of editing the HTML
+fixes it. This could not be verified by fetching the URLs, because
+`pt.fitazgym.com` is blocked from the environment these templates were built
+in; it is read off which branch each file is committed to.
+
 ## Before the first send
 
 - [ ] Render test across Gmail web, Gmail app, Apple Mail, Outlook desktop and
       Outlook.com, in both light and dark mode.
-- [ ] **Replace `{{unsubscribe_url}}` with GymMaster's real unsubscribe token.**
-      It is a placeholder. As written the link goes nowhere, and a member facing
-      send without a working unsubscribe is not one to make.
+- [ ] **Put the unsubscribe link back**, using GymMaster's real token. It was
+      removed while testing and the footer currently has none at all.
+- [ ] **Deploy this branch first**, or the header logo 404s. See the table above.
 - [ ] **Confirm a `List-Unsubscribe` header is set.** That is a header, not
       markup, so it cannot come from the template. GymMaster has to add it.
 - [ ] Confirm the logo and the two social icons load from `pt.fitazgym.com`,

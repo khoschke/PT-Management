@@ -73,13 +73,17 @@ sender. It is fine for proving the flow internally and nothing else.
 The platform is decided, but three things still have to be **checked inside
 GymMaster** before a real send, because the emails assume them:
 
-- **Unsubscribe is ours again.** The club template is not being used as of
-  19 August 2026, so the templates carry their own footer, with the socials, the
-  address, a permission line and an unsubscribe link. **The link is a
-  placeholder**: `{{unsubscribe_url}}` is not GymMaster syntax and will not
-  resolve. Find GymMaster's real unsubscribe token and replace it before any
-  member facing send. A `List-Unsubscribe` header is separate again, because it
-  is a mail header rather than markup, and only GymMaster can set it.
+- **There is currently no unsubscribe link.** The club template is not being
+  used as of 19 August 2026, so the templates carry their own footer, with the
+  socials, the address and a permission line. The unsubscribe was taken out on
+  the same day because it pointed at a placeholder that could not resolve, and a
+  dead link is worse than none while testing. **It has to go back before a real
+  send**, using GymMaster's own unsubscribe token, which nobody has found yet. A
+  `List-Unsubscribe` header is separate and only GymMaster can set it.
+- **The header logo is not deployed yet.** It is served from
+  `pt.fitazgym.com/brand/fitaz-gym-logo-official.png`, which only exists on the
+  email branch, so it will 404 in a test send until that branch ships. The two
+  social icons predate it and should already resolve.
 - **A suppression list that is honoured.** So an unsubscribe on email 1 actually
   stops emails 2 and 3.
 - **Which domain it sends from.** If GymMaster sends from its own infrastructure,
