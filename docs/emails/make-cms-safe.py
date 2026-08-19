@@ -92,6 +92,12 @@ def convert(src: str) -> str:
         r'<a href="(?P<href>[^"]+)"[^>]*border-radius:999px;[^>]*>\s*(?P<label>[^<]+?)\s*</a>',
         button, h)
 
+    # 4a. Drop anything hidden for dark mode. The dark-mode logo only ever
+    #     appears via a class in the <style> block, which is gone by now, so in
+    #     this variant it is an image that can never be shown and would still
+    #     be fetched.
+    h = re.sub(r'\s*<img[^>]*display:none[^>]*>', '', h)
+
     # 4b. Centred paragraphs become centred tables.
     #     GymMaster left three of these hard left on 19 August 2026 even though
     #     each carried an inline text-align:center, which only a p{...!important}

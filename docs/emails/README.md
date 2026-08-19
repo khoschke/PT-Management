@@ -127,7 +127,13 @@ that prefer text.
 - `02-plan-not-motivation.html` / `.txt`
 - `03-last-call.html` / `.txt`
 
-**These are body content only.** GymMaster's club template supplies the header
+**These carry their own header and footer.** The club template is not being
+used: it brought a stylesheet that fought the templates at every turn, and
+without it everything renders as designed. The masthead is the official logo
+served from `pt.fitazgym.com`, and the footer carries the socials, the address,
+the permission line and the unsubscribe.
+
+**Superseded paragraph, kept for context:** GymMaster's club template supplies the header
 and footer, so the templates carry no wordmark, no address, no social icons and
 no unsubscribe link. They open on the eyebrow line and close on Karl's sign off.
 All three share the same dark mode rules and button code, lifted from email 1
@@ -298,9 +304,11 @@ not. It stays true because email 3 only ever fires on day 30, exactly seven days
 out. **If you change the send day, change the copy**, in the headline, the lead
 paragraph and the sign off in email 3, and in the closing block of email 2.
 
-There is no unsubscribe tag any more. That link now comes from GymMaster's club
-footer, which is the thing to verify before sending. See the section on the
-header and footer below.
+**`{{unsubscribe_url}}` in the footer is a placeholder and will not work as
+written.** GymMaster uses `{58:...}` syntax, and nobody has yet found out what
+its unsubscribe token is called. Find it and replace the placeholder before any
+real send. This is now ours to get right: the club template is not being used,
+so nothing else supplies an unsubscribe link.
 
 ## The call to action link
 
@@ -331,7 +339,11 @@ the numbers are the same across the series.
 
 ## No header or footer, on purpose
 
-**The templates carry neither.** GymMaster's club template already supplies a
+**The templates carry both again**, as of 19 August 2026, because the club
+template is not being used. What follows describes the arrangement while it
+was, and is kept because the reasoning still applies if anyone turns it back on.
+
+GymMaster's club template already supplies a
 header and footer to every email it sends, so anything of ours would have
 duplicated it: two wordmarks, two addresses, two unsubscribe links.
 
@@ -425,7 +437,7 @@ block:
 | Goal pills | Tag or badge block, `#e8e8ed` fill, `#1d1d1f` text, 14px weight 500, padding 11px by 16px, radius 999px, 8px gap. |
 | Passport note | Quote block, 3px left rule in `#1d1d1f`, 18px left padding. |
 | Closing panel | White card, 20px radius, centred, heading 24px weight 600, then the same button. |
-| Header and footer | None. GymMaster's club template supplies both. |
+| Header and footer | **Ours.** Logo masthead, and a footer with socials, address, permission line and unsubscribe. |
 
 Set the template background to `#f5f5f7`, content width 600px, and the global
 font stack to `'Helvetica Neue', Helvetica, Arial, sans-serif`. Turn dark mode
@@ -501,12 +513,14 @@ host stylesheet is forcing everything left.
 
 - [ ] Render test across Gmail web, Gmail app, Apple Mail, Outlook desktop and
       Outlook.com, in both light and dark mode.
-- [ ] **Get GymMaster's confirmation that the club footer carries an
-      unsubscribe link, a `List-Unsubscribe` header, the gym's postal address
-      and a permission line.** Ours were removed on the basis that it does.
-      Raised with GymMaster 18 August 2026; theirs to answer, ours to chase.
-- [ ] Confirm the club header and footer do not clash with the content: check
-      the spacing where they meet, and that there is only one wordmark.
+- [ ] **Replace `{{unsubscribe_url}}` with GymMaster's real unsubscribe token.**
+      It is a placeholder. As written the link goes nowhere, and a member facing
+      send without a working unsubscribe is not one to make.
+- [ ] **Confirm a `List-Unsubscribe` header is set.** That is a header, not
+      markup, so it cannot come from the template. GymMaster has to add it.
+- [ ] Confirm the logo and the two social icons load from `pt.fitazgym.com`,
+      and that the email still reads correctly with images blocked. All three
+      carry alt text, so it should.
 - [ ] Check with images blocked. Nothing should change, since there are none.
 - [ ] Confirm the total HTML is under 102KB so Gmail does not clip the closing
       CTA.

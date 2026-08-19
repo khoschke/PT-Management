@@ -21,11 +21,9 @@
   <style type="text/css">
     /* ------------------------------------------------------------------
        Fitaz Gym / Email 3: day 30, the deadline
-       Body content only. GymMaster's club template supplies the header and
-       footer, including the wordmark, the address and the unsubscribe link,
-       so this file deliberately has none of them.
-       Monochrome by brand, and no images at all, so it renders identically
-       with images blocked.
+       Carries its own header and footer: the club template is not being
+       used. The only images are the logo and the two social icons, and all
+       three have alt text, so images off costs the glyphs and nothing else.
        ------------------------------------------------------------------ */
 
     html, body { margin: 0 !important; padding: 0 !important; height: 100% !important; width: 100% !important; }
@@ -69,6 +67,11 @@
        Still monochrome, still on brand.
        ------------------------------------------------------------- */
     @media (prefers-color-scheme: dark) {
+      .logo-light { display: none !important; }
+      .logo-dark {
+        display: block !important; width: 230px !important; height: 30px !important;
+        max-height: none !important; overflow: visible !important; margin: 0 auto !important;
+      }
       .d-bg-canvas { background-color: #000000 !important; }
       .d-bg-surface { background-color: #161618 !important; }
       .d-bg-fill { background-color: #232326 !important; }
@@ -83,6 +86,8 @@
     }
 
     /* Outlook.com / Windows Mail dark mode uses these attribute hooks. */
+    [data-ogsc] .logo-light { display: none !important; }
+    [data-ogsc] .logo-dark { display: block !important; width: 230px !important; height: 30px !important; max-height: none !important; overflow: visible !important; margin: 0 auto !important; }
     [data-ogsc] .d-bg-canvas { background-color: #000000 !important; }
     [data-ogsc] .d-bg-surface { background-color: #161618 !important; }
     [data-ogsc] .d-bg-fill { background-color: #232326 !important; }
@@ -113,6 +118,33 @@
         <![endif]-->
 
         <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" class="sm-w-full" style="width:600px; max-width:600px;">
+
+
+          <!-- ============================================================
+               MASTHEAD
+               The official artwork, served from pt.fitazgym.com. Two copies:
+               the black mark for light mode and a reversed one that only
+               appears in dark mode, because a black logo on the near black
+               canvas we deliberately switch to would be invisible. Both carry
+               alt text, so images off still shows the gym's name.
+               ============================================================ -->
+          <tr>
+            <td align="center" class="sm-px-24" style="text-align:center; padding:36px 40px 0 40px;">
+              <a href="https://fitazgym.com" target="_blank" rel="noopener" style="text-decoration:none;">
+                <img src="https://pt.fitazgym.com/brand/fitaz-gym-logo-official.png" width="230" height="30" alt="Fitaz Gym" class="logo-light" style="display:block; width:230px; height:30px; border:0; margin:0 auto;" />
+                <img src="https://pt.fitazgym.com/email/fitaz-gym-logo-white.png" width="230" height="30" alt="Fitaz Gym" class="logo-dark" style="display:none; width:0; max-height:0; overflow:hidden; border:0;" />
+              </a>
+            </td>
+          </tr>
+
+          <!-- Rule under the masthead. -->
+          <tr>
+            <td class="sm-px-24" style="padding:22px 40px 0 40px;">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tr><td class="d-rule" height="1" style="height:1px; line-height:1px; font-size:1px; background-color:#e0e0e5;">&nbsp;</td></tr>
+              </table>
+            </td>
+          </tr>
 
           <!-- ============================================================
                HERO
@@ -257,6 +289,53 @@
             </td>
           </tr>
 
+
+          <!-- ============================================================
+               FOOTER
+               Stays #1d1d1f in dark mode as well as light: the social icons
+               are flattened onto that exact colour, so letting it shift would
+               leave two visible tiles around the glyphs.
+               ============================================================ -->
+          <tr>
+            <td style="padding:44px 0 0 0;">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="#1d1d1f" style="background-color:#1d1d1f; border-radius:0 0 24px 24px;">
+                <tr>
+                  <td align="center" class="sm-px-24" style="text-align:center; padding:38px 40px 34px 40px; border-radius:0 0 24px 24px; color:#ffffff; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+
+                    <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin-left:auto; margin-right:auto;">
+                      <tr>
+                        <td style="padding:0 11px;">
+                          <a href="https://www.facebook.com/FitazfkGym/" style="text-decoration:none;" target="_blank" rel="noopener">
+                            <img src="https://pt.fitazgym.com/email/icon-facebook.png" width="24" height="24" alt="Facebook" style="display:block; width:24px; height:24px; border:0; color:#ffffff; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:13px;" />
+                          </a>
+                        </td>
+                        <td style="padding:0 11px;">
+                          <a href="https://www.instagram.com/fitazfk_gym/" style="text-decoration:none;" target="_blank" rel="noopener">
+                            <img src="https://pt.fitazgym.com/email/icon-instagram.png" width="24" height="24" alt="Instagram" style="display:block; width:24px; height:24px; border:0; color:#ffffff; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:13px;" />
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <p style="margin:20px 0 0 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:16px; line-height:24px; text-align:center; color:#ffffff;">
+                      101 Main St, Kangaroo Point.
+                    </p>
+
+                    <p style="margin:18px 0 0 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:13px; line-height:21px; text-align:center; color:#a1a1a6;">
+                      You are receiving this because you joined Fitaz Gym. We use
+                      your details only to arrange your complimentary session and
+                      we do not share them outside the gym.
+                    </p>
+
+                    <p style="margin:12px 0 0 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:13px; line-height:21px; text-align:center; color:#a1a1a6;">
+                      <a href="{{unsubscribe_url}}" style="color:#a1a1a6; text-decoration:underline;" target="_blank" rel="noopener">Unsubscribe</a>
+                    </p>
+
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
         </table>
 
         <!--[if mso]>

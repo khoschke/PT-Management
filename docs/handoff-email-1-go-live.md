@@ -73,11 +73,13 @@ sender. It is fine for proving the flow internally and nothing else.
 The platform is decided, but three things still have to be **checked inside
 GymMaster** before a real send, because the emails assume them:
 
-- **Unsubscribe and a `List-Unsubscribe` header.** **Raised with GymMaster by
-  Karl, 18 August 2026, and now theirs to answer.** It has to come from the club
-  template, since the templates' own footers were removed. Nothing on our side
-  is waiting on it, so do not treat it as a task for this repo. Chase GymMaster
-  for the answer, and do not send member facing volume until they confirm.
+- **Unsubscribe is ours again.** The club template is not being used as of
+  19 August 2026, so the templates carry their own footer, with the socials, the
+  address, a permission line and an unsubscribe link. **The link is a
+  placeholder**: `{{unsubscribe_url}}` is not GymMaster syntax and will not
+  resolve. Find GymMaster's real unsubscribe token and replace it before any
+  member facing send. A `List-Unsubscribe` header is separate again, because it
+  is a mail header rather than markup, and only GymMaster can set it.
 - **A suppression list that is honoured.** So an unsubscribe on email 1 actually
   stops emails 2 and 3.
 - **Which domain it sends from.** If GymMaster sends from its own infrastructure,
@@ -105,12 +107,11 @@ get skipped:
 - **`Reply-To` must reach a monitored inbox.** The copy says "it comes through
   to a real person at the gym, not a no reply inbox". If that is not true, the
   email is lying to members in writing.
-- **The templates no longer carry a header or footer.** GymMaster's club
-  template supplies both. Its footer needs an unsubscribe link, a
-  `List-Unsubscribe` header, the postal address and a permission line, because
-  ours were removed on the assumption that it has them. **This sits with
-  GymMaster as of 18 August 2026**, so it is not a repo task, but it is still
-  the thing that gates a compliant send. Get their answer in writing.
+- **The templates carry their own header and footer again.** The masthead is
+  the official logo served from `pt.fitazgym.com/brand/`, and the footer holds
+  the socials, the address, the permission line and the unsubscribe. Check the
+  images actually load from that host, and that the unsubscribe placeholder has
+  been replaced with a real token.
 - **Suppression before each send of emails 2 and 3.** See
   `docs/emails/README.md`. Both are written so that reaching the wrong person is
   awkward rather than wrong, but suppression is still the thing that keeps them
