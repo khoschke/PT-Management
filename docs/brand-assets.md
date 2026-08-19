@@ -6,7 +6,6 @@ traced marks that predate it.
 | | |
 |---|---|
 | `public/brand/fitaz-gym-logo-official.png` | **The real logo.** Black lockup, transparent, 1924 x 251. |
-| `public/brand/fitaz-gym-logo-official-white.png` | Same, reversed for dark backgrounds. |
 | `public/brand/source/fitaz-gym-logo-official.pdf` | The file Karl supplied, unmodified. |
 | `public/brand/fitaz-gym-logo*.svg` / `.png` | **Traces.** Superseded, see below. |
 
@@ -99,8 +98,12 @@ the dead space. To get a larger mark the width has to go up as well:
 back into Postcards. Our own email masthead ran at about 30px before it was
 removed, which is the sensible target.
 
-The white reversed variant still comes from the PDF, since the Postcards file
-only carries the black one.
+**There is no reversed variant on purpose.** One was extracted from the PDF and
+then removed on 19 August 2026: it was a second file to keep in sync for
+something that is a colour change on a black-and-transparent PNG. If a dark
+background needs the mark in white, recolour from
+`fitaz-gym-logo-official.png` at the point of use rather than adding a file
+back here.
 
 ## One of the supplied PNGs is empty. Do not use it.
 
