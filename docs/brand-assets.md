@@ -5,7 +5,7 @@ traced marks that predate it.
 
 | | |
 |---|---|
-| `public/brand/fitaz-gym-logo-official.png` | **The real logo.** Black lockup, transparent, 922 x 122. |
+| `public/brand/fitaz-gym-logo-official.png` | **The real logo.** Black lockup, transparent, 1924 x 251. |
 | `public/brand/fitaz-gym-logo-official-white.png` | Same, reversed for dark backgrounds. |
 | `public/brand/source/fitaz-gym-logo-official.pdf` | The file Karl supplied, unmodified. |
 | `public/brand/fitaz-gym-logo*.svg` / `.png` | **Traces.** Superseded, see below. |
@@ -37,7 +37,7 @@ against the FITAZ cap height so they hold at any size.
 
 | | Official | Our trace |
 |---|---|---|
-| Chip corners | **Square**, a plain rectangle | Rounded, radius 0.114 of chip height |
+| Chip corners | Rounded, radius **0.076** of chip height | Rounded, radius 0.114 of chip height |
 | Chip top edge | **Flush with the cap line** | 0.069 of cap height above it |
 | Gap, wordmark to chip | **0.197** of cap height | 0.81 of cap height |
 | Chip height | **0.582** of cap height | 0.283 of the FITAZ size |
@@ -46,11 +46,61 @@ against the FITAZ cap height so they hold at any size.
 The gap is the one that will read as wrong to anyone who knows the mark: ours
 sets the chip four times further out than it belongs.
 
+**Correcting an earlier row in this table.** It said the official chip had
+**square** corners and called that the most obvious mismatch. That was wrong.
+The chip is rounded, at roughly 0.076 of its own height. The error was in how it
+was measured: the first check walked the corner diagonally, and a diagonal exits
+a small radius in a single step, so a rounded corner reads as square. Measuring
+the horizontal inset along the top edge, at the higher resolution below, gives
+11px of inset on a 145px chip. Our trace is still too round, at 0.114, but it is
+wrong by degree rather than in kind.
+
 **Use `fitaz-gym-logo-official.png` from here on.** The traces are kept because
 they are vector and the official is not, so they remain the only option where a
-mark has to scale beyond 922px wide. Anywhere else they are the wrong file.
+mark has to scale beyond 1924px wide. Anywhere else they are the wrong file.
 Nothing in the member emails depends on either, since the email header and
 footer were removed in favour of GymMaster's club template.
+
+## The best copy came from the Postcards email, not the PDF
+
+Karl uploaded the logo file used in the Postcards onboarding email on 19 August
+2026, saved as `public/brand/source/postcards-header-logo.png`. It turns out to
+be **the same lockup at more than twice the resolution** of the version
+extracted from the PDF, so `fitaz-gym-logo-official.png` is now built from it:
+1924 x 251 rather than 922 x 122.
+
+Same mark, confirmed by proportion rather than by eye:
+
+| | Postcards PNG | PDF extraction |
+|---|---|---|
+| FITAZ, share of total width | 0.792 | 0.798 |
+| Gap | 0.035 | 0.026 |
+| Chip | 0.174 | 0.176 |
+| Chip height, share of cap height | 0.578 | 0.582 |
+| Chip top edge | flush | flush |
+
+### It is half empty, and that is why it looks small in the email
+
+The uploaded file is a 2000 x 500 canvas, but the artwork inside it is only
+1924 x 251, sitting in the vertical middle with about 125px of nothing above and
+below. **The ink fills 96% of the width and 50% of the height.**
+
+The Postcards email displays it at 140px wide, so the mark renders about 18px
+tall inside a 35px box. Cropping alone does not make it bigger, it just removes
+the dead space. To get a larger mark the width has to go up as well:
+
+| Wanted height | Set the width to |
+|---|---|
+| 18px (what it does now) | 138px |
+| 24px | 184px |
+| 30px | 230px |
+
+`fitaz-gym-logo-official.png` is already cropped, so it is the file to upload
+back into Postcards. Our own email masthead ran at about 30px before it was
+removed, which is the sensible target.
+
+The white reversed variant still comes from the PDF, since the Postcards file
+only carries the black one.
 
 ## One of the supplied PNGs is empty. Do not use it.
 
