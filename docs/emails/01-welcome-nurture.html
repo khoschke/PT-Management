@@ -21,9 +21,9 @@
   <style type="text/css">
     /* ------------------------------------------------------------------
        Fitaz Gym / Email 1: 24 hour welcome nurture
-       Monochrome by brand. The only images are the two footer social icons,
-       and they carry alt text, so with images blocked (which is how a good
-       share of first sends land) nothing is lost but the two glyphs.
+       Carries its own header and footer: the club template is not being
+       used. The only images are the logo and the two social icons, and all
+       three have alt text, so images off costs the glyphs and nothing else.
        ------------------------------------------------------------------ */
 
     html, body { margin: 0 !important; padding: 0 !important; height: 100% !important; width: 100% !important; }
@@ -37,7 +37,7 @@
        blue underlined text that breaks the monochrome palette.
        .aBn is not ours and will not appear in the markup below: Gmail injects
        it around anything it decides to auto-link, so it has to stay. */
-    a[x-apple-data-detectors], .unstyle-auto-detected-links a, .aBn {
+    a[x-apple-data-detectors], .aBn {
       border-bottom: 0 !important; cursor: default !important; color: inherit !important;
       text-decoration: none !important; font-size: inherit !important; font-family: inherit !important;
       font-weight: inherit !important; line-height: inherit !important;
@@ -58,7 +58,6 @@
         box-sizing: border-box !important;
         padding-left: 0 !important; padding-right: 0 !important;
       }
-      .sm-center { text-align: center !important; }
     }
 
     /* ------------------------- Dark mode -------------------------
@@ -68,6 +67,9 @@
        Still monochrome, still on brand.
        ------------------------------------------------------------- */
     @media (prefers-color-scheme: dark) {
+      /* No reversed logo is hosted anywhere reachable yet, so dark mode gets a
+         white plate behind the black mark rather than a swapped image. */
+      .d-plate { background-color: #ffffff !important; border-radius: 24px 24px 0 0 !important; }
       .d-bg-canvas { background-color: #000000 !important; }
       .d-bg-surface { background-color: #161618 !important; }
       .d-bg-fill { background-color: #232326 !important; }
@@ -82,6 +84,7 @@
     }
 
     /* Outlook.com / Windows Mail dark mode uses these attribute hooks. */
+    [data-ogsc] .d-plate { background-color: #ffffff !important; border-radius: 24px 24px 0 0 !important; }
     [data-ogsc] .d-bg-canvas { background-color: #000000 !important; }
     [data-ogsc] .d-bg-surface { background-color: #161618 !important; }
     [data-ogsc] .d-bg-fill { background-color: #232326 !important; }
@@ -113,28 +116,34 @@
 
         <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" class="sm-w-full" style="width:600px; max-width:600px;">
 
+
           <!-- ============================================================
                MASTHEAD
-               The wordmark is set in live text, not an image, so it survives
-               images-off and never pixelates. It mirrors logo-fitaz.svg:
-               light letter-spaced FITAZ plus a solid GYM chip.
+               TEMPORARY IMAGE HOST. This points at Designmodo's CDN, which is
+               already serving this exact file to members through the Postcards
+               onboarding email, so it resolves today. Our own copy at
+               pt.fitazgym.com/brand/ is the one to use, and it 404s until the
+               email branch is deployed. Swap it back then, and restore the
+               reversed logo for dark mode with it.
+
+               The file on the CDN is a 2000x500 canvas holding a 1924x251
+               mark, so it is half empty. The box is sized 240x60 to make the
+               mark itself land at 30px tall, which is why the height looks
+               generous against the artwork.
+
+               Because there is no reversed copy on that CDN, dark mode gets a
+               white plate behind the logo instead of a swapped image: a black
+               mark on the near black canvas we switch to would vanish.
                ============================================================ -->
           <tr>
-            <td align="center" class="sm-px-24" style="padding:36px 40px 0 40px;">
-              <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center">
-                <tr>
-                  <td style="padding:0 10px 0 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:30px; line-height:34px; font-weight:300; letter-spacing:6px; color:#1d1d1f;" class="d-text">
-                    FITAZ
-                  </td>
-                  <td class="d-bg-invert" style="background-color:#1d1d1f; border-radius:4px; padding:5px 9px; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:13px; line-height:15px; font-weight:700; letter-spacing:1.5px; color:#ffffff;">
-                    <span class="d-text-invert" style="color:#ffffff;">GYM</span>
-                  </td>
-                </tr>
-              </table>
+            <td align="center" class="sm-px-24 d-plate" style="text-align:center; padding:36px 40px 0 40px;">
+              <a href="https://fitazgym.com" target="_blank" rel="noopener" style="text-decoration:none;">
+                <img src="https://s1.designmodo.com/postcards/image-1742259265784-61d271ee.png" width="240" height="60" alt="Fitaz Gym" style="display:block; width:240px; height:60px; border:0; margin:0 auto;" />
+              </a>
             </td>
           </tr>
 
-          <!-- Rule under the masthead, as per the rest of the Fitaz Gym series. -->
+          <!-- Rule under the masthead. -->
           <tr>
             <td class="sm-px-24" style="padding:22px 40px 0 40px;">
               <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
@@ -159,7 +168,7 @@
               </h1>
 
               <p class="sm-lead d-text-secondary" style="margin:22px 0 0 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:18px; line-height:29px; font-weight:400; color:#6e6e73;">
-                Welcome to Fitaz Gym, {{first_name}}. Your PT consultation and starter
+                Welcome to Fitaz Gym, {58:Member First Name}. Your PT consultation and starter
                 session came with your membership, so there is nothing to pay and
                 nothing to sign up for. All that is left is to tell us what you are
                 chasing, so we can put you with the right trainer instead of
@@ -174,7 +183,7 @@
                scent trail from click to landing page is unbroken.
                ============================================================ -->
           <tr>
-            <td align="left" class="sm-px-24 sm-center" style="padding:32px 40px 0 40px;">
+            <td align="center" class="sm-px-24" style="text-align:center; padding:32px 40px 0 40px;">
 
               <!--[if mso]>
               <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="https://pt.fitazgym.com/pt-session" target="_blank" style="height:56px; v-text-anchor:middle; width:260px;" arcsize="50%" stroke="f" fillcolor="#1d1d1f">
@@ -188,7 +197,7 @@
               </a>
               <!--<![endif]-->
 
-              <p class="d-text-secondary" style="margin:14px 0 0 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:14px; line-height:20px; color:#6e6e73;">
+              <p class="d-text-secondary" style="margin:14px 0 0 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:14px; line-height:20px; text-align:center; color:#6e6e73;">
                 Takes about two minutes. No app, no login.
               </p>
             </td>
@@ -218,16 +227,7 @@
 
                 <!-- Step 1 -->
                 <tr>
-                  <td valign="top" width="44" style="width:44px; padding:0 16px 0 0;">
-                    <table role="presentation" cellpadding="0" cellspacing="0" border="0">
-                      <tr>
-                        <td class="d-bg-invert" align="center" width="28" height="28" style="width:28px; height:28px; background-color:#1d1d1f; border-radius:14px; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:13px; line-height:28px; font-weight:700; color:#ffffff;">
-                          <span class="d-text-invert" style="color:#ffffff;">1</span>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                  <td valign="top" style="padding:0 0 24px 0;">
+                  <td valign="top" style="vertical-align:top; padding:0 0 24px 0;">
                     <p class="d-text" style="margin:0 0 5px 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:17px; line-height:24px; font-weight:600; letter-spacing:-0.2px; color:#1d1d1f;">
                       You tell us what you want
                     </p>
@@ -241,16 +241,7 @@
 
                 <!-- Step 2 -->
                 <tr>
-                  <td valign="top" width="44" style="width:44px; padding:0 16px 0 0;">
-                    <table role="presentation" cellpadding="0" cellspacing="0" border="0">
-                      <tr>
-                        <td class="d-bg-invert" align="center" width="28" height="28" style="width:28px; height:28px; background-color:#1d1d1f; border-radius:14px; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:13px; line-height:28px; font-weight:700; color:#ffffff;">
-                          <span class="d-text-invert" style="color:#ffffff;">2</span>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                  <td valign="top" style="padding:0 0 24px 0;">
+                  <td valign="top" style="vertical-align:top; padding:0 0 24px 0;">
                     <p class="d-text" style="margin:0 0 5px 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:17px; line-height:24px; font-weight:600; letter-spacing:-0.2px; color:#1d1d1f;">
                       We match you on purpose
                     </p>
@@ -263,16 +254,7 @@
 
                 <!-- Step 3 -->
                 <tr>
-                  <td valign="top" width="44" style="width:44px; padding:0 16px 0 0;">
-                    <table role="presentation" cellpadding="0" cellspacing="0" border="0">
-                      <tr>
-                        <td class="d-bg-invert" align="center" width="28" height="28" style="width:28px; height:28px; background-color:#1d1d1f; border-radius:14px; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:13px; line-height:28px; font-weight:700; color:#ffffff;">
-                          <span class="d-text-invert" style="color:#ffffff;">3</span>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                  <td valign="top" style="padding:0;">
+                  <td valign="top" style="vertical-align:top; padding:0;">
                     <p class="d-text" style="margin:0 0 5px 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:17px; line-height:24px; font-weight:600; letter-spacing:-0.2px; color:#1d1d1f;">
                       Your trainer gets in touch within 48 hours
                     </p>
@@ -409,11 +391,11 @@
             <td class="sm-px-24" style="padding:40px 40px 0 40px;">
               <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" class="d-bg-surface" style="background-color:#ffffff; border-radius:20px;">
                 <tr>
-                  <td align="center" style="padding:36px 28px 34px 28px; border-radius:20px;">
-                    <p class="d-text" style="margin:0 0 8px 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:24px; line-height:30px; font-weight:600; letter-spacing:-0.6px; color:#1d1d1f;">
+                  <td align="center" style="text-align:center; padding:36px 28px 34px 28px; border-radius:20px;">
+                    <p class="d-text" style="margin:0 0 8px 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:24px; line-height:30px; font-weight:600; letter-spacing:-0.6px; text-align:center; color:#1d1d1f;">
                       Ready when you are.
                     </p>
-                    <p class="d-text-secondary" style="margin:0 0 24px 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:16px; line-height:25px; color:#6e6e73;">
+                    <p class="d-text-secondary" style="margin:0 0 24px 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:16px; line-height:25px; text-align:center; color:#6e6e73;">
                       The session is already yours. This just tells us who to send.
                     </p>
 
@@ -437,7 +419,7 @@
           <!-- Human sign off. Replies are the strongest warm signal there is,
                and they help the sending domain's reputation as a bonus. -->
           <tr>
-            <td class="sm-px-24" style="padding:32px 40px 0 40px;">
+            <td class="sm-px-24" style="padding:32px 40px 44px 40px;">
               <p class="d-text-secondary" style="margin:0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:16px; line-height:26px; color:#6e6e73;">
                 Still weighing it up? Hit reply and tell us what is holding you back.
                 It comes through to a real person at the gym, not a no reply inbox.
@@ -451,27 +433,20 @@
             </td>
           </tr>
 
+
           <!-- ============================================================
                FOOTER
+               Stays #1d1d1f in dark mode as well as light: the social icons
+               are flattened onto that exact colour, so letting it shift would
+               leave two visible tiles around the glyphs.
                ============================================================ -->
           <tr>
             <td style="padding:44px 0 0 0;">
-
-              <!-- The solid block stays #1d1d1f in dark mode as well as light.
-                   The icons are flattened onto that exact colour, so letting it
-                   shift would leave two visible tiles around the glyphs. On the
-                   near black dark canvas it still separates cleanly. -->
-              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color:#1d1d1f; border-radius:0 0 24px 24px;">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="#1d1d1f" style="background-color:#1d1d1f; border-radius:0 0 24px 24px;">
                 <tr>
-                  <!-- color is set on the cell as well as each paragraph, so a
-                       client that strips inline styles from <p> still inherits
-                       white here rather than falling back to black on black. -->
-                  <td align="center" class="sm-px-24" style="padding:38px 40px 34px 40px; border-radius:0 0 24px 24px; color:#ffffff; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+                  <td align="center" class="sm-px-24" style="text-align:center; padding:38px 40px 34px 40px; border-radius:0 0 24px 24px; color:#ffffff; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
 
-                    <!-- Socials. Opaque PNGs on the footer colour rather than
-                         transparent ones, because Outlook composites PNG alpha
-                         badly. Alt text carries the link when images are off. -->
-                    <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center">
+                    <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin-left:auto; margin-right:auto;">
                       <tr>
                         <td style="padding:0 11px;">
                           <a href="https://www.facebook.com/FitazfkGym/" style="text-decoration:none;" target="_blank" rel="noopener">
@@ -486,20 +461,14 @@
                       </tr>
                     </table>
 
-                    <p class="unstyle-auto-detected-links" style="margin:20px 0 0 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:16px; line-height:24px; color:#ffffff;">
+                    <p style="margin:20px 0 0 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:16px; line-height:24px; text-align:center; color:#ffffff;">
                       101 Main St, Kangaroo Point.
                     </p>
 
-                    <p style="margin:18px 0 0 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:13px; line-height:21px; color:#a1a1a6;">
+                    <p style="margin:18px 0 0 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:13px; line-height:21px; text-align:center; color:#a1a1a6;">
                       You are receiving this because you joined Fitaz Gym. We use
                       your details only to arrange your complimentary session and
                       we do not share them outside the gym.
-                    </p>
-
-                    <p style="margin:12px 0 0 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:13px; line-height:21px; color:#a1a1a6;">
-                      <a href="{{unsubscribe_url}}" style="color:#a1a1a6; text-decoration:underline;" target="_blank" rel="noopener">Unsubscribe</a>
-                      &nbsp;&#183;&nbsp;
-                      <a href="{{preferences_url}}" style="color:#a1a1a6; text-decoration:underline;" target="_blank" rel="noopener">Email preferences</a>
                     </p>
 
                   </td>
@@ -507,7 +476,6 @@
               </table>
             </td>
           </tr>
-
         </table>
 
         <!--[if mso]>

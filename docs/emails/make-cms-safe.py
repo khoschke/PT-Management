@@ -51,12 +51,29 @@ def convert(src: str) -> str:
     # 4. Buttons: padded anchor -> table cell with the padding on the cell.
     def button(m):
         start = m.start()
-        # Inherit the alignment of the cell the button sits in.
-        before = h[max(0, start - 600):start]
-        aligns = re.findall(r'<td[^>]*\salign="(left|center|right)"', before)
+        # Inherit the alignment of the cell the button actually sits in.
+        # Walking a <td> depth counter rather than searching a fixed window
+        # back: the closing CTA sits behind two long paragraphs, so a window
+        # wide enough to clear them would also reach past the enclosing cell
+        # on the shorter buttons and pick up the wrong one. Depth is exact at
+        # any distance.
+        depth, stack = 0, []
+        for t in re.finditer(r'<td\b[^>]*>|</td>', h[:start]):
+            if t.group(0) == '</td>':
+                depth -= 1
+            else:
+                depth += 1
+                # Remember this cell at the depth it opens, so the innermost
+                # one still open when we reach the button is the one that wins.
+                if depth > 0:
+                    while len(stack) > depth - 1:
+                        stack.pop()
+                    stack.append(t.group(0))
+        enclosing = stack[-1] if stack else ''
+        a = re.search(r'\salign="(left|center|right)"', enclosing)
         # Only ever set align for centring. align="left" makes the table float,
         # and the caption underneath then wraps up alongside the button.
-        align = ' align="center"' if (aligns and aligns[-1] == 'center') else ''
+        align = ' align="center"' if (a and a.group(1) == 'center') else ''
         href, label = m.group('href'), m.group('label').strip()
         return (
             f'<table role="presentation" border="0" cellpadding="0" cellspacing="0"{align}>\n'
@@ -74,6 +91,41 @@ def convert(src: str) -> str:
     h = re.sub(
         r'<a href="(?P<href>[^"]+)"[^>]*border-radius:999px;[^>]*>\s*(?P<label>[^<]+?)\s*</a>',
         button, h)
+
+    # 4a. Drop anything hidden for dark mode. The dark-mode logo only ever
+    #     appears via a class in the <style> block, which is gone by now, so in
+    #     this variant it is an image that can never be shown and would still
+    #     be fetched.
+    h = re.sub(r'\s*<img[^>]*display:none[^>]*>', '', h)
+
+    # 4b. Centred paragraphs become centred tables.
+    #     GymMaster left three of these hard left on 19 August 2026 even though
+    #     each carried an inline text-align:center, which only a p{...!important}
+    #     rule in the club template can do. So the fix is not a stronger style,
+    #     it is not being a <p>: a rule targeting p cannot reach a <td>, and a
+    #     shrink-to-fit table centred with align="center" is positioned by margin
+    #     auto rather than by text-align, so a text-align rule cannot move it
+    #     either. Three independent mechanisms, and the block survives losing any
+    #     two of them.
+    def centred_text(m):
+        style, inner = m.group('style'), m.group('inner').strip()
+        # A <p>'s margin becomes the cell's padding: margins on table cells are
+        # unreliable, padding is not.
+        margin = re.search(r'margin:\s*([^;]+);', style)
+        pad = f'padding:{margin.group(1).strip()}; ' if margin else ''
+        typo = re.sub(r'margin:[^;]+;\s*', '', style)
+        typo = re.sub(r'text-align:\s*center;\s*', '', typo)
+        return (
+            f'<table role="presentation" border="0" cellpadding="0" cellspacing="0" '
+            f'align="center" style="margin-left:auto; margin-right:auto;">\n'
+            f'                <tr>\n'
+            f'                  <td align="center" style="{pad}{typo} text-align:center;">'
+            f'{inner}</td>\n'
+            f'                </tr>\n'
+            f'              </table>'
+        )
+    h = re.sub(r'<p style="(?P<style>[^"]*text-align:\s*center;[^"]*)">(?P<inner>.*?)</p>',
+               centred_text, h, flags=re.S)
 
     # 5. bgcolor alongside every background-color, on tables and cells.
     def bg(m):

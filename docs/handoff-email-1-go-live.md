@@ -73,9 +73,19 @@ sender. It is fine for proving the flow internally and nothing else.
 The platform is decided, but three things still have to be **checked inside
 GymMaster** before a real send, because the emails assume them:
 
-- **Unsubscribe and a `List-Unsubscribe` header.** Non-negotiable for a member
-  facing send. Both templates have an `{{unsubscribe_url}}` placeholder waiting
-  for whatever GymMaster's equivalent is called.
+- **There is currently no unsubscribe link.** The club template is not being
+  used as of 19 August 2026, so the templates carry their own footer, with the
+  socials, the address and a permission line. The unsubscribe was taken out on
+  the same day because it pointed at a placeholder that could not resolve, and a
+  dead link is worse than none while testing. **It has to go back before a real
+  send**, using GymMaster's own unsubscribe token, which nobody has found yet. A
+  `List-Unsubscribe` header is separate and only GymMaster can set it.
+- **The header logo is on a borrowed host.** It points at Designmodo's CDN,
+  because our own copy at `pt.fitazgym.com/brand/` only exists on the email
+  branch and 404d in GymMaster. Designmodo already serves that file to members
+  through the Postcards onboarding email, so it works today. **Point it back
+  once the branch is deployed**, and restore the reversed logo for dark mode
+  with it. The two social icons predate all this and already resolve.
 - **A suppression list that is honoured.** So an unsubscribe on email 1 actually
   stops emails 2 and 3.
 - **Which domain it sends from.** If GymMaster sends from its own infrastructure,
@@ -85,12 +95,15 @@ GymMaster** before a real send, because the emails assume them:
   which is the same DNS access either way. **Find out which before promising a
   date.**
 
-Also worth an early look: **merge tags**. GymMaster will not use `{{tag}}` syntax.
-`{{first_name}}` will map to something obvious. `{{expiry_date}}` is the one to
-check, because it needs date arithmetic (join date plus 37 days) that not every
-gym CRM can do. If it cannot, say so and the copy can drop to "closes in seven
-days", which is always true given the email fires on day 30 anyway, and costs
-only the specificity of a named date.
+**Merge tags are settled.** Karl and Danny worked through this in GymMaster on
+18 August 2026. The templates now carry GymMaster's own syntax,
+`{58:Member First Name}`, so they import without find and replace.
+
+GymMaster **cannot** do the date arithmetic the old `{{expiry_date}}` tag needed
+(join date plus 37 days), so that tag is gone from all three templates. Email 3
+says "closes in seven days" and email 2 says "will not stay open forever". Both
+stay true because email 3 only ever fires on day 30. **If the send day moves,
+the copy has to move with it.**
 
 ## Then, before the first send
 
@@ -100,9 +113,11 @@ get skipped:
 - **`Reply-To` must reach a monitored inbox.** The copy says "it comes through
   to a real person at the gym, not a no reply inbox". If that is not true, the
   email is lying to members in writing.
-- **The footer icons** load from `pt.fitazgym.com/email/`. That merged on
-  5 August 2026, so they should be live, but confirm on a real send rather than
-  in a preview. If they 404, the Vercel deploy stalled; push again to retrigger.
+- **The templates carry their own header and footer again.** The masthead is
+  the official logo served from `pt.fitazgym.com/brand/`, and the footer holds
+  the socials, the address, the permission line and the unsubscribe. Check the
+  images actually load from that host, and that the unsubscribe placeholder has
+  been replaced with a real token.
 - **Suppression before each send of emails 2 and 3.** See
   `docs/emails/README.md`. Both are written so that reaching the wrong person is
   awkward rather than wrong, but suppression is still the thing that keeps them

@@ -1,10 +1,10 @@
 SEVEN DAYS LEFT
 
-Your first session closes {{expiry_date}}.
+Your first session closes in seven days.
 
-You joined Fitaz Gym a month ago, {{first_name}}. The complimentary PT
+You joined Fitaz Gym a month ago, {58:Member First Name}. The complimentary PT
 consultation and starter session that came with your membership closes
-on {{expiry_date}}, and if you have not used yours yet, this is the week
+in seven days, and if you have not used yours yet, this is the week
 to sort it. Our trainers hold time aside for these, so we cannot leave
 them open forever.
 
@@ -32,21 +32,7 @@ last email you will get about it, and it changes nothing about your
 membership.
 
 If the timing is the only problem, reply and say so. If you tell me
-before {{expiry_date}} that you want it, I will hold it for you.
+within the next seven days that you want it, I will hold it for you.
 
 Karl
 PT Manager, Fitaz Gym
-
---
-FITAZ GYM
-101 Main St, Kangaroo Point.
-
-Facebook: https://www.facebook.com/FitazfkGym/
-Instagram: https://www.instagram.com/fitazfk_gym/
-
-You are receiving this because you joined Fitaz Gym. We use your details
-only to arrange your complimentary session and we do not share them
-outside the gym.
-
-Unsubscribe: {{unsubscribe_url}}
-Email preferences: {{preferences_url}}

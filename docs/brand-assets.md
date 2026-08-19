@@ -1,19 +1,135 @@
 # Brand assets
 
-Traced, self-contained versions of the FITAZ GYM lockup, in `public/brand/`.
+The official Fitaz Gym artwork now lives in this repo, alongside a set of
+traced marks that predate it.
 
-> **These are the primary marks.** An earlier trace of the same wordmark exists
-> on the `claude/apple-design-pass-ymnm14` branch, made before these and not
-> considered good enough. It is superseded. When that branch merges, keep the
-> files here and drop the older trace rather than letting the merge pick.
+| | |
+|---|---|
+| `public/brand/fitaz-gym-logo-official.png` | **The real logo.** Black lockup, transparent, 1924 x 251. |
+| `public/brand/source/fitaz-gym-logo-official.pdf` | The file Karl supplied, unmodified. |
+| `public/brand/fitaz-gym-logo*.svg` / `.png` | **Traces.** Superseded, see below. |
+
+## Where the official artwork came from
+
+Karl supplied it on 18 August 2026 as a Google Drive PDF, "Untitled design.pdf".
+It was extracted here rather than re-drawn: the two pages each hold a 1080 x 1080
+image plus a matching alpha mask, and the PNGs above are those images composited
+and trimmed to the ink. Page one is the black lockup, page two the reversed one.
+
+**Correcting an earlier note in this file.** It previously said the PDF was
+vector and named its own typeface, on the strength of a text extraction that
+returned `FITAZ`, `GYM`, `GYM`. That was wrong. The PDF contains **no fonts at
+all** and no vector paths, only the two raster images. The strings came from the
+document's structure tree, not from live text. Checking Document Properties then
+Fonts, as this file previously advised, will show nothing.
+
+So the typeface is still unidentified, and a raster is all we have. That is
+enough for most uses at the sizes we need, and not enough to regenerate the mark
+at arbitrary size. **The face was set in Canva** (`xmp:CreatorTool`), so the
+quickest route to a name is opening the original Canva design and clicking the
+text, not forensics on the export.
+
+## How the traces differ from the real thing
+
+Measured off the official artwork, not judged by eye. Proportions are given
+against the FITAZ cap height so they hold at any size.
+
+| | Official | Our trace |
+|---|---|---|
+| Chip corners | Rounded, radius **0.076** of chip height | Rounded, radius 0.114 of chip height |
+| Chip top edge | **Flush with the cap line** | 0.069 of cap height above it |
+| Gap, wordmark to chip | **0.197** of cap height | 0.81 of cap height |
+| Chip height | **0.582** of cap height | 0.283 of the FITAZ size |
+| Letterforms | Geometric sans, sharp-apex A | Liberation Sans |
+
+The gap is the one that will read as wrong to anyone who knows the mark: ours
+sets the chip four times further out than it belongs.
+
+**Correcting an earlier row in this table.** It said the official chip had
+**square** corners and called that the most obvious mismatch. That was wrong.
+The chip is rounded, at roughly 0.076 of its own height. The error was in how it
+was measured: the first check walked the corner diagonally, and a diagonal exits
+a small radius in a single step, so a rounded corner reads as square. Measuring
+the horizontal inset along the top edge, at the higher resolution below, gives
+11px of inset on a 145px chip. Our trace is still too round, at 0.114, but it is
+wrong by degree rather than in kind.
+
+**Use `fitaz-gym-logo-official.png` from here on.** The traces are kept because
+they are vector and the official is not, so they remain the only option where a
+mark has to scale beyond 1924px wide. Anywhere else they are the wrong file.
+Nothing in the member emails depends on either, since the email header and
+footer were removed in favour of GymMaster's club template.
+
+## The best copy came from the Postcards email, not the PDF
+
+Karl uploaded the logo file used in the Postcards onboarding email on 19 August
+2026, saved as `public/brand/source/postcards-header-logo.png`. It turns out to
+be **the same lockup at more than twice the resolution** of the version
+extracted from the PDF, so `fitaz-gym-logo-official.png` is now built from it:
+1924 x 251 rather than 922 x 122.
+
+Same mark, confirmed by proportion rather than by eye:
+
+| | Postcards PNG | PDF extraction |
+|---|---|---|
+| FITAZ, share of total width | 0.792 | 0.798 |
+| Gap | 0.035 | 0.026 |
+| Chip | 0.174 | 0.176 |
+| Chip height, share of cap height | 0.578 | 0.582 |
+| Chip top edge | flush | flush |
+
+### It is half empty, and that is why it looks small in the email
+
+The uploaded file is a 2000 x 500 canvas, but the artwork inside it is only
+1924 x 251, sitting in the vertical middle with about 125px of nothing above and
+below. **The ink fills 96% of the width and 50% of the height.**
+
+The Postcards email displays it at 140px wide, so the mark renders about 18px
+tall inside a 35px box. Cropping alone does not make it bigger, it just removes
+the dead space. To get a larger mark the width has to go up as well:
+
+| Wanted height | Set the width to |
+|---|---|
+| 18px (what it does now) | 138px |
+| 24px | 184px |
+| 30px | 230px |
+
+`fitaz-gym-logo-official.png` is already cropped, so it is the file to upload
+back into Postcards. Our own email masthead ran at about 30px before it was
+removed, which is the sensible target.
+
+**There is no reversed variant on purpose.** One was extracted from the PDF and
+then removed on 19 August 2026: it was a second file to keep in sync for
+something that is a colour change on a black-and-transparent PNG. If a dark
+background needs the mark in white, recolour from
+`fitaz-gym-logo-official.png` at the point of use rather than adding a file
+back here.
+
+## One of the supplied PNGs is empty. Do not use it.
+
+The Drive file named **"Fitaz Gym Logo Black Transparent Background.png"**
+(`1NhXJOkNkdNnkOuhR7kWmHXZpv__xKemi`, 1080 x 1080, RGBA, 20,061 bytes) contains
+**no artwork at all**. This is not a guess from looking at it: the file was
+decoded and its pixels inspected directly. Every one of the 1,035 scanlines that
+could be recovered is fully transparent, alpha zero, edge to edge. Its embedded
+XMP title is `GYM - 1`, and its author field says `FitazFK Gym`, so it looks
+like a real export that simply rendered nothing.
+
+The filename is the trap here. It reads like the definitive asset, so it is the
+one anybody would reach for first. **Delete it at source or rename it**, because
+the next person to go looking will pick it for the same reason we did.
 
 ![The two marks](brand-logo-comparison.png)
 
-## Which one to use
+## The traces: which one, if you need one
 
-**Use `fitaz-gym-logo.svg` unless you have a specific reason not to.** It is the
-brand mark, traced from `public/logo-fitaz.svg`: tight 0.066em tracking on
-FITAZ, a small GYM chip hung at the top right rather than centred.
+Everything below describes the traced marks, which the official artwork now
+supersedes. Reach for them only when you need vector, or a size beyond 922px.
+
+**Of the traces, use `fitaz-gym-logo.svg`.** It follows `public/logo-fitaz.svg`:
+tight 0.066em tracking on FITAZ, a small GYM chip hung at the top right rather
+than centred. Note that its chip proportions are the ones the table above marks
+as wrong.
 
 | File | Use |
 |---|---|

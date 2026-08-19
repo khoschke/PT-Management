@@ -1,6 +1,6 @@
 TWO WEEKS IN
 
-{{first_name}}, here is what usually happens. You find three or four
+{58:Member First Name}, here is what usually happens. You find three or four
 machines you know how to use, you cycle them, and somewhere around week
 three it stops feeling like it is going anywhere. That is not you losing
 interest. That is the plan running out.
@@ -35,8 +35,8 @@ Your session is included on exactly the same terms as everyone else.
 
 STILL YOURS TO CLAIM
 
-Your complimentary session is included until {{expiry_date}}. Two
-minutes now and it is booked.
+Your complimentary session will not stay open forever, so it is worth
+sorting before it slips your mind. Two minutes now and it is booked.
 
 Get me booked in: https://pt.fitazgym.com/pt-session
 
@@ -46,17 +46,3 @@ It comes through to a real person at the gym.
 
 Karl
 PT Manager, Fitaz Gym
-
---
-FITAZ GYM
-101 Main St, Kangaroo Point.
-
-Facebook: https://www.facebook.com/FitazfkGym/
-Instagram: https://www.instagram.com/fitazfk_gym/
-
-You are receiving this because you joined Fitaz Gym. We use your details
-only to arrange your complimentary session and we do not share them
-outside the gym.
-
-Unsubscribe: {{unsubscribe_url}}
-Email preferences: {{preferences_url}}

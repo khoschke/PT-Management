@@ -127,9 +127,17 @@ that prefer text.
 - `02-plan-not-motivation.html` / `.txt`
 - `03-last-call.html` / `.txt`
 
-All three share the same masthead, footer, dark mode rules and button code,
-lifted from email 1 rather than rewritten, so the series cannot drift. If you
-change the chrome, change it in all three.
+**These carry their own header and footer.** The club template is not being
+used: it brought a stylesheet that fought the templates at every turn, and
+without it everything renders as designed. The masthead is the official logo
+served from `pt.fitazgym.com`, and the footer carries the socials, the address,
+the permission line and the unsubscribe.
+
+**Superseded paragraph, kept for context:** GymMaster's club template supplies the header
+and footer, so the templates carry no wordmark, no address, no social icons and
+no unsubscribe link. They open on the eyebrow line and close on Karl's sign off.
+All three share the same dark mode rules and button code, lifted from email 1
+rather than rewritten, so the series cannot drift.
 
 ---
 
@@ -146,11 +154,10 @@ trainer as *"filled in the form themselves, so this is a warm lead"*, and the
 
 So this email has exactly one job: **get the click that produces a form
 submission.** Everything in it either drives that click or removes a reason not
-to. There is no secondary ask and no newsletter sign up. The only other links
-are the trainer page and the two social icons, and those sit in the footer
-below the closing call to action, where they cannot pull anyone out of the
-flow before they have had both chances to click. One email, one action, asked
-twice.
+to. There is no secondary ask and no newsletter sign up. The only other link is
+the trainer page, and it sits below the closing call to action where it cannot
+pull anyone out of the flow before they have had both chances to click. One
+email, one action, asked twice.
 
 ## Why 24 hours is the right moment
 
@@ -222,7 +229,7 @@ and two templates means two things to keep in sync.
 
 **Email 1**, using the gym's own words from `/pt-session`:
 
-> **{{first_name}}, your first session is on us**
+> **{58:Member First Name}, your first session is on us**
 
 Test against:
 
@@ -234,17 +241,18 @@ Test against:
 
 > **Most people run out of plan, not motivation**
 
-Test against *{{first_name}}, week two is the tricky one* and *The same three
+Test against *{58:Member First Name}, week two is the tricky one* and *The same three
 machines*. Do not use anything that reads as a reminder about email 1. The whole
 point of this one is that it opens on a different subject.
 
 **Email 3:**
 
-> **Your complimentary session closes {{expiry_date}}**
+> **Your complimentary session closes in seven days**
 
-Test against *Seven days left, {{first_name}}* and *Last call on your first
-session*. Put the date in the subject rather than "closing soon": a specific
-date is harder to defer than a vague one.
+Test against *Seven days left* and *Last call on your first session*. A named
+date would be harder to defer than a relative one, but GymMaster cannot do the
+date arithmetic, so "seven days" is what we have. It is always true, because
+the email only ever fires on day 30.
 
 Send from a person, not a department: `Karl at Fitaz Gym`. Set `Reply-To` to a
 monitored inbox, because the email explicitly invites replies.
@@ -277,28 +285,34 @@ direct, which quietly breaks attribution for the campaign.
 
 ## Merge tags
 
-The file uses `{{tag}}` placeholders. Rename to your platform's syntax on
-import.
+The files carry **GymMaster's own merge syntax**, so they import as-is. There
+is exactly one tag.
 
 | Tag | Value | Notes |
 |-----|-------|-------|
-| `{{first_name}}` | Member's first name | Set a fallback of "there". A blank name renders "Welcome to Fitaz Gym, ." |
-| `{{expiry_date}}` | The day the session closes, day 37 | **Emails 2 and 3 only.** See below. |
+| `{58:Member First Name}` | Member's first name | Set a fallback of "there". A blank name renders "Welcome to Fitaz Gym, ." |
 
-`{{expiry_date}}` is a per-member date, 37 days after they joined. Two ways to
-handle it:
+**There is no expiry date tag, deliberately.** The templates used to carry
+`{{expiry_date}}`, a per-member date 37 days after joining. GymMaster cannot do
+that arithmetic, so the copy states the deadline in relative terms instead:
+"closes in seven days" in email 3, and "will not stay open forever" in email 2.
 
-- **If the platform knows the join date**, compute it and merge it per
-  recipient. Cleanest, and the only option if you ever send daily.
-- **If you send in weekly batches**, everyone in a batch joined within a few
-  days of each other, so hardcode one date per batch and use the **latest**
-  member's expiry. Being a couple of days generous is fine; being a couple of
-  days short means telling someone their session expired when it had not.
+That costs the specificity of a named date, which would have been the stronger
+deadline, and buys back something worth having: nothing to compute, nothing to
+get wrong, and no risk of telling a member their session expired when it had
+not. It stays true because email 3 only ever fires on day 30, exactly seven days
+out. **If you change the send day, change the copy**, in the headline, the lead
+paragraph and the sign off in email 3, and in the closing block of email 2.
 
-Format it the way a person would say it, "12 September", not "2026-09-12". It
-appears in email 3's headline, so it is read aloud in someone's head.
-| `{{unsubscribe_url}}` | ESP unsubscribe link | Required. Also set the `List-Unsubscribe` header. |
-| `{{preferences_url}}` | Preference centre | Point at the unsubscribe link if there is no preference centre yet. |
+**There is no unsubscribe link in the footer at all.** One was there, pointing
+at a `{{unsubscribe_url}}` placeholder, and it was removed on 19 August 2026
+because a visible link that goes nowhere is worse than none while testing.
+
+**It has to come back before a member facing send.** The club template is not
+being used, so nothing else supplies one, and an unsubscribe is not optional on
+marketing mail to members. What is needed is GymMaster's own unsubscribe token,
+in `{58:...}` style, which nobody has found yet. Put it back in the footer of
+all three templates once it is known.
 
 ## The call to action link
 
@@ -327,70 +341,42 @@ return **4 in each HTML and 2 in each text part**, for all three emails. Each
 email asks twice, and each HTML button is written twice (VML plus anchor), so
 the numbers are the same across the series.
 
-## Header and footer
+## No header or footer, on purpose
 
-Both match the rest of the Fitaz Gym series in Postcards, so this email sits
-alongside the New Member Flow emails rather than looking like a one off.
+**The templates carry both again**, as of 19 August 2026, because the club
+template is not being used. What follows describes the arrangement while it
+was, and is kept because the reasoning still applies if anyone turns it back on.
 
-**Header.** Centred FITAZ GYM wordmark with a hairline rule beneath it. The
-wordmark is live text, not an image: light letter-spaced FITAZ next to a solid
-GYM chip, mirroring `public/logo-fitaz.svg`. In dark mode the chip inverts to
-white with dark type, the same flip the logo already implies.
+GymMaster's club template already supplies a
+header and footer to every email it sends, so anything of ours would have
+duplicated it: two wordmarks, two addresses, two unsubscribe links.
 
-**Footer.** A solid `#1d1d1f` block with rounded bottom corners, carrying the
-Facebook and Instagram icons, the gym address, the permission line and the
-unsubscribe links, all centred in white.
+So these files open straight on the eyebrow line and close on the sign off.
+Removed from all three: the FITAZ GYM wordmark and the rule under it, and the
+whole dark footer block with its social icons, gym address, permission line and
+unsubscribe links.
 
-Two deliberate choices in there:
+**Verify these are in GymMaster's footer before sending anything.** They were
+ours and are now not:
 
-- **The footer block does not change colour in dark mode.** The icons are
-  flattened onto `#1d1d1f`, so if the block shifted you would see two lighter
-  tiles floating around the glyphs. Against the near black dark canvas the
-  block still separates cleanly, so there is nothing to gain by moving it.
-- **The compliance text lives inside the black block**, not on the canvas
-  below it, so the block stays the last thing in the email exactly as it is in
-  the other Fitaz Gym emails. `#a1a1a6` on `#1d1d1f` is about 6.5:1, comfortably
-  past AA.
+- **An unsubscribe link, and a `List-Unsubscribe` header.** Not optional on a
+  member facing send. If the club template does not carry one, it has to go back
+  into the templates before a single email goes out.
+- **The gym's postal address.** Required for anti-spam compliance.
+- **A permission line** saying why the member is receiving it.
 
-### The social icons
-
-`public/email/icon-facebook.png` and `public/email/icon-instagram.png`, served
-by the Next.js app from the same domain as the CTA:
-
-```
-https://pt.fitazgym.com/email/icon-facebook.png
-https://pt.fitazgym.com/email/icon-instagram.png
-```
-
-96px assets displayed at 24px, so they stay sharp on retina. They are **opaque,
-drawn on the footer colour rather than on transparency**, because Outlook
-composites PNG alpha badly and would ring them with grey. That does mean the
-footer colour and the icon background have to stay in step: if you ever change
-`#1d1d1f` in the footer, regenerate the icons to match.
-
-Both carry `alt` text, so with images blocked the footer degrades to two
-readable "Facebook" and "Instagram" links rather than to empty boxes.
-
-They point at the live profiles, hardcoded rather than merged in:
-
-```
-https://www.facebook.com/FitazfkGym/
-https://www.instagram.com/fitazfk_gym/
-```
-
-The Instagram address is stored without the `?hl=en` that Instagram appends in
-the browser. That parameter only forces the interface language for the person
-clicking, so leaving it on would pin every member to English regardless of
-their own setting, and it is not part of the profile address.
+`public/email/icon-facebook.png` and `icon-instagram.png` are no longer
+referenced by any template. They are left in place rather than deleted, since
+they are small and may be wanted if these ever have to stand alone again. The
+full-chrome versions are in git history if that day comes.
 
 ## Build notes
 
 Things in the file that are deliberate, so nobody "tidies" them away:
 
-- **The only images are the two social icons.** Everything else, including the
-  wordmark, is live text. A meaningful share of first sends from a new domain
-  render with images blocked, and this email loses nothing but the two glyphs.
-  It also keeps the message small, which helps Gmail clipping.
+- **No images at all.** Everything is live text, so the email renders
+  identically whether or not images are blocked, which is how a good share of
+  first sends land. It also keeps the message small, which helps Gmail clipping.
 - **Deliberate dark mode, not inherited.** The brand is black on white, which
   is exactly what Gmail and Apple Mail invert worst: the black pill button
   turns invisible against an auto-darkened card. The `@media (prefers-color-scheme: dark)`
@@ -455,7 +441,7 @@ block:
 | Goal pills | Tag or badge block, `#e8e8ed` fill, `#1d1d1f` text, 14px weight 500, padding 11px by 16px, radius 999px, 8px gap. |
 | Passport note | Quote block, 3px left rule in `#1d1d1f`, 18px left padding. |
 | Closing panel | White card, 20px radius, centred, heading 24px weight 600, then the same button. |
-| Footer | Solid `#1d1d1f` block, full container width, 24px radius on the bottom two corners only, 38px top and 34px bottom padding. Centred: 24px social icons with 22px between them, address at 16px white, then permission line and unsubscribe at 13px on 21px `#a1a1a6`. |
+| Header and footer | **Ours.** Logo masthead, and a footer with socials, address, permission line and unsubscribe. |
 
 Set the template background to `#f5f5f7`, content width 600px, and the global
 font stack to `'Helvetica Neue', Helvetica, Arial, sans-serif`. Turn dark mode
@@ -463,18 +449,117 @@ on and set the dark palette to canvas `#000000`, surface `#161618`, fill
 `#232326`, text `#f5f5f7`, secondary `#a1a1a6`, and an inverted button of
 `#f5f5f7` with `#1d1d1f` text.
 
+## Why alignment breaks inside GymMaster, and the rule that prevents it
+
+GymMaster pastes our HTML inside its club template, and that template brings
+its own stylesheet. **Any CSS rule it carries beats `align=` and `valign=`**,
+because presentational attributes map to the very bottom of the cascade. So a
+club template with nothing more exotic than
+
+```css
+td { text-align: left; vertical-align: middle; line-height: 1.6; }
+p  { text-align: left; }
+```
+
+is enough to push every digit to the bottom left of its numbered disc, drop the
+discs to the middle of their row instead of level with the heading, and shove
+the line under the first button hard left. That is exactly what Karl
+photographed on 18 August 2026, and it was reproduced here by wrapping the
+template in those four rules.
+
+Inline `style` beats an ordinary rule, so the first fix was:
+
+> Anything whose position matters states it **inline as well as** in the
+> attribute. Keep `align="center"` and `valign="top"` for the old Outlook
+> renderers that only understand attributes, and add `text-align:center` and
+> `vertical-align:top` to the `style` for everything else.
+
+That is still worth doing, and it is **not enough**. On 19 August 2026 GymMaster
+rendered three paragraphs hard left that each carried an inline
+`text-align:center`. Only `!important` in a host stylesheet can do that, so the
+club template has something on the order of `p { text-align: left !important }`.
+
+**The rule that actually holds: centred text must not be a `<p>`.**
+
+A rule targeting `p` cannot reach a `<td>`. So `make-cms-safe.py` rewrites every
+centred paragraph into a shrink-to-fit table, centred with `align="center"` and
+`margin:auto`, with the typography moved onto the cell and the paragraph's
+margin becoming the cell's padding. That gives three independent mechanisms:
+
+1. `align="center"` on the table, an attribute,
+2. `margin-left:auto; margin-right:auto` inline on the table,
+3. `text-align:center` inline on the cell.
+
+The first two position the table by **margin**, not by text alignment, so no
+`text-align` rule at any weight can move them. The block survives losing any two
+of the three.
+
+`host-template-test.py` renders a template inside those hostile rules so this
+shows up here rather than in a member's inbox:
+
+```
+python3 host-template-test.py cms-safe/01-welcome-nurture.html out.png
+```
+
+Check the numbered discs and the line under the first button. If they hold
+under that, they will hold in the club template.
+
+One thing the cascade cannot save: **a table is block level**, so a parent
+cell's `text-align` will never centre it. Button tables need `align="center"`
+on the table itself. `make-cms-safe.py` sets that by walking `<td>` depth to
+find the genuinely enclosing cell.
+
+That same property is what makes the table trick above work. Being immune to
+`text-align` is a problem when you want a table centred and a feature when a
+host stylesheet is forcing everything left.
+
+## Where the images come from, and which host is temporary
+
+| URL | Live? |
+|---|---|
+| `s1.designmodo.com/postcards/image-1742259265784-61d271ee.png` | **Yes.** The masthead logo, temporarily |
+| `pt.fitazgym.com/email/icon-facebook.png` | **Yes.** Already on the deployed branch |
+| `pt.fitazgym.com/email/icon-instagram.png` | **Yes.** Already on the deployed branch |
+
+**The logo is on Designmodo's CDN on purpose, and it is temporary.** It was
+pointed at `pt.fitazgym.com/brand/fitaz-gym-logo-official.png` first, which is
+where it belongs, and that 404s: the file exists only on the email branch, so
+GymMaster rendered a broken image and the alt text. Designmodo is already
+serving that exact file to members through the Postcards onboarding email, so it
+resolves today and needs nothing deployed.
+
+**Swap it back once the email branch ships.** Depending on a Designmodo project
+for an email GymMaster sends is a thread nobody will remember is there: if the
+Postcards project is deleted or reorganised, the logo breaks in every send.
+
+Two things follow from the CDN file being the padded one:
+
+- **The box is 240x60, not 230x30.** That canvas is 2000x500 holding a 1924x251
+  mark, so it is half empty. Sizing the box at 240x60 lands the mark itself at
+  30px tall. The padding is transparent, so the extra height does not show.
+- **Dark mode gets a white plate rather than a reversed logo.** There is no
+  reversed copy on that CDN, and a black mark on the near black canvas we
+  deliberately switch to would vanish. `public/email/fitaz-gym-logo-white.png`
+  is ready for when the swap comes back.
+
 ## Before the first send
 
 - [ ] Render test across Gmail web, Gmail app, Apple Mail, Outlook desktop and
       Outlook.com, in both light and dark mode.
-- [ ] Confirm the two footer icons load from `pt.fitazgym.com/email/`, and that
-      they sit flush on the black block with no grey ring around them.
-- [ ] Check with images blocked. Only the two social icons should change, and
-      they should fall back to readable "Facebook" and "Instagram" text.
+- [ ] **Put the unsubscribe link back**, using GymMaster's real token. It was
+      removed while testing and the footer currently has none at all.
+- [ ] **Point the logo back at `pt.fitazgym.com` once this branch is deployed**,
+      and restore the reversed logo for dark mode with it. See the table above.
+- [ ] **Confirm a `List-Unsubscribe` header is set.** That is a header, not
+      markup, so it cannot come from the template. GymMaster has to add it.
+- [ ] Confirm the logo and the two social icons load from `pt.fitazgym.com`,
+      and that the email still reads correctly with images blocked. All three
+      carry alt text, so it should.
+- [ ] Check with images blocked. Nothing should change, since there are none.
 - [ ] Confirm the total HTML is under 102KB so Gmail does not clip the closing
       CTA.
 - [ ] Send a live seed test to a real inbox and click both buttons.
-- [ ] Confirm `{{first_name}}` has a fallback and test a record with no name.
+- [ ] Confirm `{58:Member First Name}` has a fallback and test a record with no name.
 - [ ] Confirm the unsubscribe link works and writes to the suppression list.
 - [ ] Confirm `Reply-To` reaches a monitored inbox, because the copy invites replies.
 - [ ] Confirm SPF, DKIM and DMARC pass on `fitazgym.com`.

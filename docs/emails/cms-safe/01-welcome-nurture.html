@@ -30,26 +30,31 @@
 
           <!-- ============================================================
                MASTHEAD
-               The wordmark is set in live text, not an image, so it survives
-               images-off and never pixelates. It mirrors logo-fitaz.svg:
-               light letter-spaced FITAZ plus a solid GYM chip.
+               TEMPORARY IMAGE HOST. This points at Designmodo's CDN, which is
+               already serving this exact file to members through the Postcards
+               onboarding email, so it resolves today. Our own copy at
+               pt.fitazgym.com/brand/ is the one to use, and it 404s until the
+               email branch is deployed. Swap it back then, and restore the
+               reversed logo for dark mode with it.
+
+               The file on the CDN is a 2000x500 canvas holding a 1924x251
+               mark, so it is half empty. The box is sized 240x60 to make the
+               mark itself land at 30px tall, which is why the height looks
+               generous against the artwork.
+
+               Because there is no reversed copy on that CDN, dark mode gets a
+               white plate behind the logo instead of a swapped image: a black
+               mark on the near black canvas we switch to would vanish.
                ============================================================ -->
           <tr>
-            <td align="center" style="padding:36px 40px 0 40px;">
-              <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center">
-                <tr>
-                  <td style="padding:0 10px 0 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:30px; line-height:34px; font-weight:300; letter-spacing:6px; color:#1d1d1f;">
-                    FITAZ
-                  </td>
-                  <td style="background-color:#1d1d1f; border-radius:4px; padding:5px 9px; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:13px; line-height:15px; font-weight:700; letter-spacing:1.5px; color:#ffffff;" bgcolor="#1d1d1f">
-                    <span style="color:#ffffff;">GYM</span>
-                  </td>
-                </tr>
-              </table>
+            <td align="center" style="text-align:center; padding:36px 40px 0 40px;">
+              <a href="https://fitazgym.com" target="_blank" rel="noopener" style="text-decoration:none;">
+                <img src="https://s1.designmodo.com/postcards/image-1742259265784-61d271ee.png" width="240" height="60" alt="Fitaz Gym" style="display:block; width:240px; height:60px; border:0; margin:0 auto;" />
+              </a>
             </td>
           </tr>
 
-          <!-- Rule under the masthead, as per the rest of the Fitaz Gym series. -->
+          <!-- Rule under the masthead. -->
           <tr>
             <td style="padding:22px 40px 0 40px;">
               <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
@@ -74,7 +79,7 @@
               </h1>
 
               <p style="margin:22px 0 0 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:18px; line-height:29px; font-weight:400; color:#6e6e73;">
-                Welcome to Fitaz Gym, {{first_name}}. Your PT consultation and starter
+                Welcome to Fitaz Gym, {58:Member First Name}. Your PT consultation and starter
                 session came with your membership, so there is nothing to pay and
                 nothing to sign up for. All that is left is to tell us what you are
                 chasing, so we can put you with the right trainer instead of
@@ -89,10 +94,10 @@
                scent trail from click to landing page is unbroken.
                ============================================================ -->
           <tr>
-            <td align="left" style="padding:32px 40px 0 40px;">
+            <td align="center" style="text-align:center; padding:32px 40px 0 40px;">
 
               
-              <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+              <table role="presentation" border="0" cellpadding="0" cellspacing="0" align="center">
                 <tr>
                   <td align="center" bgcolor="#1d1d1f" style="background-color:#1d1d1f; border-radius:999px; padding:19px 40px;">
                     <a href="https://pt.fitazgym.com/pt-session" target="_blank" rel="noopener" style="color:#ffffff; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:17px; font-weight:600; line-height:17px; letter-spacing:-0.2px; text-decoration:none; display:inline-block;">Get me booked in</a>
@@ -100,9 +105,11 @@
                 </tr>
               </table>
 
-              <p style="margin:14px 0 0 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:14px; line-height:20px; color:#6e6e73;">
-                Takes about two minutes. No app, no login.
-              </p>
+              <table role="presentation" border="0" cellpadding="0" cellspacing="0" align="center" style="margin-left:auto; margin-right:auto;">
+                <tr>
+                  <td align="center" style="padding:14px 0 0 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:14px; line-height:20px; color:#6e6e73; text-align:center;">Takes about two minutes. No app, no login.</td>
+                </tr>
+              </table>
             </td>
           </tr>
 
@@ -130,16 +137,7 @@
 
                 <!-- Step 1 -->
                 <tr>
-                  <td valign="top" width="44" style="width:44px; padding:0 16px 0 0;">
-                    <table role="presentation" cellpadding="0" cellspacing="0" border="0">
-                      <tr>
-                        <td align="center" width="28" height="28" style="width:28px; height:28px; background-color:#1d1d1f; border-radius:14px; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:13px; line-height:28px; font-weight:700; color:#ffffff;" bgcolor="#1d1d1f">
-                          <span style="color:#ffffff;">1</span>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                  <td valign="top" style="padding:0 0 24px 0;">
+                  <td valign="top" style="vertical-align:top; padding:0 0 24px 0;">
                     <p style="margin:0 0 5px 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:17px; line-height:24px; font-weight:600; letter-spacing:-0.2px; color:#1d1d1f;">
                       You tell us what you want
                     </p>
@@ -153,16 +151,7 @@
 
                 <!-- Step 2 -->
                 <tr>
-                  <td valign="top" width="44" style="width:44px; padding:0 16px 0 0;">
-                    <table role="presentation" cellpadding="0" cellspacing="0" border="0">
-                      <tr>
-                        <td align="center" width="28" height="28" style="width:28px; height:28px; background-color:#1d1d1f; border-radius:14px; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:13px; line-height:28px; font-weight:700; color:#ffffff;" bgcolor="#1d1d1f">
-                          <span style="color:#ffffff;">2</span>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                  <td valign="top" style="padding:0 0 24px 0;">
+                  <td valign="top" style="vertical-align:top; padding:0 0 24px 0;">
                     <p style="margin:0 0 5px 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:17px; line-height:24px; font-weight:600; letter-spacing:-0.2px; color:#1d1d1f;">
                       We match you on purpose
                     </p>
@@ -175,16 +164,7 @@
 
                 <!-- Step 3 -->
                 <tr>
-                  <td valign="top" width="44" style="width:44px; padding:0 16px 0 0;">
-                    <table role="presentation" cellpadding="0" cellspacing="0" border="0">
-                      <tr>
-                        <td align="center" width="28" height="28" style="width:28px; height:28px; background-color:#1d1d1f; border-radius:14px; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:13px; line-height:28px; font-weight:700; color:#ffffff;" bgcolor="#1d1d1f">
-                          <span style="color:#ffffff;">3</span>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                  <td valign="top" style="padding:0;">
+                  <td valign="top" style="vertical-align:top; padding:0;">
                     <p style="margin:0 0 5px 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:17px; line-height:24px; font-weight:600; letter-spacing:-0.2px; color:#1d1d1f;">
                       Your trainer gets in touch within 48 hours
                     </p>
@@ -315,16 +295,20 @@
             <td style="padding:40px 40px 0 40px;">
               <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color:#ffffff; border-radius:20px;" bgcolor="#ffffff">
                 <tr>
-                  <td align="center" style="padding:36px 28px 34px 28px; border-radius:20px;">
-                    <p style="margin:0 0 8px 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:24px; line-height:30px; font-weight:600; letter-spacing:-0.6px; color:#1d1d1f;">
-                      Ready when you are.
-                    </p>
-                    <p style="margin:0 0 24px 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:16px; line-height:25px; color:#6e6e73;">
-                      The session is already yours. This just tells us who to send.
-                    </p>
+                  <td align="center" style="text-align:center; padding:36px 28px 34px 28px; border-radius:20px;">
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" align="center" style="margin-left:auto; margin-right:auto;">
+                <tr>
+                  <td align="center" style="padding:0 0 8px 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:24px; line-height:30px; font-weight:600; letter-spacing:-0.6px; color:#1d1d1f; text-align:center;">Ready when you are.</td>
+                </tr>
+              </table>
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" align="center" style="margin-left:auto; margin-right:auto;">
+                <tr>
+                  <td align="center" style="padding:0 0 24px 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:16px; line-height:25px; color:#6e6e73; text-align:center;">The session is already yours. This just tells us who to send.</td>
+                </tr>
+              </table>
 
                     
-                    <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" align="center">
                 <tr>
                   <td align="center" bgcolor="#1d1d1f" style="background-color:#1d1d1f; border-radius:999px; padding:19px 40px;">
                     <a href="https://pt.fitazgym.com/pt-session" target="_blank" rel="noopener" style="color:#ffffff; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:17px; font-weight:600; line-height:17px; letter-spacing:-0.2px; text-decoration:none; display:inline-block;">Get me booked in</a>
@@ -341,7 +325,7 @@
           <!-- Human sign off. Replies are the strongest warm signal there is,
                and they help the sending domain's reputation as a bonus. -->
           <tr>
-            <td style="padding:32px 40px 0 40px;">
+            <td style="padding:32px 40px 44px 40px;">
               <p style="margin:0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:16px; line-height:26px; color:#6e6e73;">
                 Still weighing it up? Hit reply and tell us what is holding you back.
                 It comes through to a real person at the gym, not a no reply inbox.
@@ -357,25 +341,17 @@
 
           <!-- ============================================================
                FOOTER
+               Stays #1d1d1f in dark mode as well as light: the social icons
+               are flattened onto that exact colour, so letting it shift would
+               leave two visible tiles around the glyphs.
                ============================================================ -->
           <tr>
             <td style="padding:44px 0 0 0;">
-
-              <!-- The solid block stays #1d1d1f in dark mode as well as light.
-                   The icons are flattened onto that exact colour, so letting it
-                   shift would leave two visible tiles around the glyphs. On the
-                   near black dark canvas it still separates cleanly. -->
-              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color:#1d1d1f; border-radius:0 0 24px 24px;" bgcolor="#1d1d1f">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="#1d1d1f" style="background-color:#1d1d1f; border-radius:0 0 24px 24px;">
                 <tr>
-                  <!-- color is set on the cell as well as each paragraph, so a
-                       client that strips inline styles from <p> still inherits
-                       white here rather than falling back to black on black. -->
-                  <td align="center" style="padding:38px 40px 34px 40px; border-radius:0 0 24px 24px; color:#ffffff; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+                  <td align="center" style="text-align:center; padding:38px 40px 34px 40px; border-radius:0 0 24px 24px; color:#ffffff; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
 
-                    <!-- Socials. Opaque PNGs on the footer colour rather than
-                         transparent ones, because Outlook composites PNG alpha
-                         badly. Alt text carries the link when images are off. -->
-                    <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center">
+                    <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin-left:auto; margin-right:auto;">
                       <tr>
                         <td style="padding:0 11px;">
                           <a href="https://www.facebook.com/FitazfkGym/" style="text-decoration:none;" target="_blank" rel="noopener">
@@ -390,28 +366,25 @@
                       </tr>
                     </table>
 
-                    <p style="margin:20px 0 0 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:16px; line-height:24px; color:#ffffff;">
-                      101 Main St, Kangaroo Point.
-                    </p>
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" align="center" style="margin-left:auto; margin-right:auto;">
+                <tr>
+                  <td align="center" style="padding:20px 0 0 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:16px; line-height:24px; color:#ffffff; text-align:center;">101 Main St, Kangaroo Point.</td>
+                </tr>
+              </table>
 
-                    <p style="margin:18px 0 0 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:13px; line-height:21px; color:#a1a1a6;">
-                      You are receiving this because you joined Fitaz Gym. We use
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" align="center" style="margin-left:auto; margin-right:auto;">
+                <tr>
+                  <td align="center" style="padding:18px 0 0 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:13px; line-height:21px; color:#a1a1a6; text-align:center;">You are receiving this because you joined Fitaz Gym. We use
                       your details only to arrange your complimentary session and
-                      we do not share them outside the gym.
-                    </p>
-
-                    <p style="margin:12px 0 0 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:13px; line-height:21px; color:#a1a1a6;">
-                      <a href="{{unsubscribe_url}}" style="color:#a1a1a6; text-decoration:underline;" target="_blank" rel="noopener">Unsubscribe</a>
-                      &nbsp;&#183;&nbsp;
-                      <a href="{{preferences_url}}" style="color:#a1a1a6; text-decoration:underline;" target="_blank" rel="noopener">Email preferences</a>
-                    </p>
+                      we do not share them outside the gym.</td>
+                </tr>
+              </table>
 
                   </td>
                 </tr>
               </table>
             </td>
           </tr>
-
         </table>
 
       </td>
