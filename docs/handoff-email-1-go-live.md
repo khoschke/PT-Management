@@ -80,10 +80,12 @@ GymMaster** before a real send, because the emails assume them:
   dead link is worse than none while testing. **It has to go back before a real
   send**, using GymMaster's own unsubscribe token, which nobody has found yet. A
   `List-Unsubscribe` header is separate and only GymMaster can set it.
-- **The header logo is not deployed yet.** It is served from
-  `pt.fitazgym.com/brand/fitaz-gym-logo-official.png`, which only exists on the
-  email branch, so it will 404 in a test send until that branch ships. The two
-  social icons predate it and should already resolve.
+- **The header logo is on a borrowed host.** It points at Designmodo's CDN,
+  because our own copy at `pt.fitazgym.com/brand/` only exists on the email
+  branch and 404d in GymMaster. Designmodo already serves that file to members
+  through the Postcards onboarding email, so it works today. **Point it back
+  once the branch is deployed**, and restore the reversed logo for dark mode
+  with it. The two social icons predate all this and already resolve.
 - **A suppression list that is honoured.** So an unsubscribe on email 1 actually
   stops emails 2 and 3.
 - **Which domain it sends from.** If GymMaster sends from its own infrastructure,

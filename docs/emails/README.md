@@ -513,26 +513,34 @@ That same property is what makes the table trick above work. Being immune to
 `text-align` is a problem when you want a table centred and a feature when a
 host stylesheet is forcing everything left.
 
-## The images have to be live before anyone sends
+## Where the images come from, and which host is temporary
 
-The templates reference three files by absolute URL:
+| URL | Live? |
+|---|---|
+| `s1.designmodo.com/postcards/image-1742259265784-61d271ee.png` | **Yes.** The masthead logo, temporarily |
+| `pt.fitazgym.com/email/icon-facebook.png` | **Yes.** Already on the deployed branch |
+| `pt.fitazgym.com/email/icon-instagram.png` | **Yes.** Already on the deployed branch |
 
-| URL | Where it comes from | Live? |
-|---|---|---|
-| `pt.fitazgym.com/email/icon-facebook.png` | `public/email/` | **Yes**, already on the deployed branch |
-| `pt.fitazgym.com/email/icon-instagram.png` | `public/email/` | **Yes**, already on the deployed branch |
-| `pt.fitazgym.com/brand/fitaz-gym-logo-official.png` | `public/brand/` | **No.** Only on this branch |
+**The logo is on Designmodo's CDN on purpose, and it is temporary.** It was
+pointed at `pt.fitazgym.com/brand/fitaz-gym-logo-official.png` first, which is
+where it belongs, and that 404s: the file exists only on the email branch, so
+GymMaster rendered a broken image and the alt text. Designmodo is already
+serving that exact file to members through the Postcards onboarding email, so it
+resolves today and needs nothing deployed.
 
-**The logo will 404 until this branch is merged and deployed.** The two social
-icons predate it and should already resolve. The dark mode logo,
-`public/email/fitaz-gym-logo-white.png`, is in the same position as the main
-one: on this branch only.
+**Swap it back once the email branch ships.** Depending on a Designmodo project
+for an email GymMaster sends is a thread nobody will remember is there: if the
+Postcards project is deleted or reorganised, the logo breaks in every send.
 
-So a test send made before deploying shows the social icons and a broken logo.
-That is a deploy step, not a template bug, and no amount of editing the HTML
-fixes it. This could not be verified by fetching the URLs, because
-`pt.fitazgym.com` is blocked from the environment these templates were built
-in; it is read off which branch each file is committed to.
+Two things follow from the CDN file being the padded one:
+
+- **The box is 240x60, not 230x30.** That canvas is 2000x500 holding a 1924x251
+  mark, so it is half empty. Sizing the box at 240x60 lands the mark itself at
+  30px tall. The padding is transparent, so the extra height does not show.
+- **Dark mode gets a white plate rather than a reversed logo.** There is no
+  reversed copy on that CDN, and a black mark on the near black canvas we
+  deliberately switch to would vanish. `public/email/fitaz-gym-logo-white.png`
+  is ready for when the swap comes back.
 
 ## Before the first send
 
@@ -540,7 +548,8 @@ in; it is read off which branch each file is committed to.
       Outlook.com, in both light and dark mode.
 - [ ] **Put the unsubscribe link back**, using GymMaster's real token. It was
       removed while testing and the footer currently has none at all.
-- [ ] **Deploy this branch first**, or the header logo 404s. See the table above.
+- [ ] **Point the logo back at `pt.fitazgym.com` once this branch is deployed**,
+      and restore the reversed logo for dark mode with it. See the table above.
 - [ ] **Confirm a `List-Unsubscribe` header is set.** That is a header, not
       markup, so it cannot come from the template. GymMaster has to add it.
 - [ ] Confirm the logo and the two social icons load from `pt.fitazgym.com`,

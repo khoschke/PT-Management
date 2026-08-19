@@ -67,11 +67,9 @@
        Still monochrome, still on brand.
        ------------------------------------------------------------- */
     @media (prefers-color-scheme: dark) {
-      .logo-light { display: none !important; }
-      .logo-dark {
-        display: block !important; width: 230px !important; height: 30px !important;
-        max-height: none !important; overflow: visible !important; margin: 0 auto !important;
-      }
+      /* No reversed logo is hosted anywhere reachable yet, so dark mode gets a
+         white plate behind the black mark rather than a swapped image. */
+      .d-plate { background-color: #ffffff !important; border-radius: 24px 24px 0 0 !important; }
       .d-bg-canvas { background-color: #000000 !important; }
       .d-bg-surface { background-color: #161618 !important; }
       .d-bg-fill { background-color: #232326 !important; }
@@ -86,8 +84,7 @@
     }
 
     /* Outlook.com / Windows Mail dark mode uses these attribute hooks. */
-    [data-ogsc] .logo-light { display: none !important; }
-    [data-ogsc] .logo-dark { display: block !important; width: 230px !important; height: 30px !important; max-height: none !important; overflow: visible !important; margin: 0 auto !important; }
+    [data-ogsc] .d-plate { background-color: #ffffff !important; border-radius: 24px 24px 0 0 !important; }
     [data-ogsc] .d-bg-canvas { background-color: #000000 !important; }
     [data-ogsc] .d-bg-surface { background-color: #161618 !important; }
     [data-ogsc] .d-bg-fill { background-color: #232326 !important; }
@@ -122,17 +119,26 @@
 
           <!-- ============================================================
                MASTHEAD
-               The official artwork, served from pt.fitazgym.com. Two copies:
-               the black mark for light mode and a reversed one that only
-               appears in dark mode, because a black logo on the near black
-               canvas we deliberately switch to would be invisible. Both carry
-               alt text, so images off still shows the gym's name.
+               TEMPORARY IMAGE HOST. This points at Designmodo's CDN, which is
+               already serving this exact file to members through the Postcards
+               onboarding email, so it resolves today. Our own copy at
+               pt.fitazgym.com/brand/ is the one to use, and it 404s until the
+               email branch is deployed. Swap it back then, and restore the
+               reversed logo for dark mode with it.
+
+               The file on the CDN is a 2000x500 canvas holding a 1924x251
+               mark, so it is half empty. The box is sized 240x60 to make the
+               mark itself land at 30px tall, which is why the height looks
+               generous against the artwork.
+
+               Because there is no reversed copy on that CDN, dark mode gets a
+               white plate behind the logo instead of a swapped image: a black
+               mark on the near black canvas we switch to would vanish.
                ============================================================ -->
           <tr>
-            <td align="center" class="sm-px-24" style="text-align:center; padding:36px 40px 0 40px;">
+            <td align="center" class="sm-px-24 d-plate" style="text-align:center; padding:36px 40px 0 40px;">
               <a href="https://fitazgym.com" target="_blank" rel="noopener" style="text-decoration:none;">
-                <img src="https://pt.fitazgym.com/brand/fitaz-gym-logo-official.png" width="230" height="30" alt="Fitaz Gym" class="logo-light" style="display:block; width:230px; height:30px; border:0; margin:0 auto;" />
-                <img src="https://pt.fitazgym.com/email/fitaz-gym-logo-white.png" width="230" height="30" alt="Fitaz Gym" class="logo-dark" style="display:none; width:0; max-height:0; overflow:hidden; border:0;" />
+                <img src="https://s1.designmodo.com/postcards/image-1742259265784-61d271ee.png" width="240" height="60" alt="Fitaz Gym" style="display:block; width:240px; height:60px; border:0; margin:0 auto;" />
               </a>
             </td>
           </tr>
