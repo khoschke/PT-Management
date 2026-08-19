@@ -92,6 +92,35 @@ def convert(src: str) -> str:
         r'<a href="(?P<href>[^"]+)"[^>]*border-radius:999px;[^>]*>\s*(?P<label>[^<]+?)\s*</a>',
         button, h)
 
+    # 4b. Centred paragraphs become centred tables.
+    #     GymMaster left three of these hard left on 19 August 2026 even though
+    #     each carried an inline text-align:center, which only a p{...!important}
+    #     rule in the club template can do. So the fix is not a stronger style,
+    #     it is not being a <p>: a rule targeting p cannot reach a <td>, and a
+    #     shrink-to-fit table centred with align="center" is positioned by margin
+    #     auto rather than by text-align, so a text-align rule cannot move it
+    #     either. Three independent mechanisms, and the block survives losing any
+    #     two of them.
+    def centred_text(m):
+        style, inner = m.group('style'), m.group('inner').strip()
+        # A <p>'s margin becomes the cell's padding: margins on table cells are
+        # unreliable, padding is not.
+        margin = re.search(r'margin:\s*([^;]+);', style)
+        pad = f'padding:{margin.group(1).strip()}; ' if margin else ''
+        typo = re.sub(r'margin:[^;]+;\s*', '', style)
+        typo = re.sub(r'text-align:\s*center;\s*', '', typo)
+        return (
+            f'<table role="presentation" border="0" cellpadding="0" cellspacing="0" '
+            f'align="center" style="margin-left:auto; margin-right:auto;">\n'
+            f'                <tr>\n'
+            f'                  <td align="center" style="{pad}{typo} text-align:center;">'
+            f'{inner}</td>\n'
+            f'                </tr>\n'
+            f'              </table>'
+        )
+    h = re.sub(r'<p style="(?P<style>[^"]*text-align:\s*center;[^"]*)">(?P<inner>.*?)</p>',
+               centred_text, h, flags=re.S)
+
     # 5. bgcolor alongside every background-color, on tables and cells.
     def bg(m):
         tag = m.group(0)

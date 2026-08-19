@@ -451,12 +451,32 @@ the line under the first button hard left. That is exactly what Karl
 photographed on 18 August 2026, and it was reproduced here by wrapping the
 template in those four rules.
 
-**Inline `style` does not lose.** So the rule is:
+Inline `style` beats an ordinary rule, so the first fix was:
 
 > Anything whose position matters states it **inline as well as** in the
 > attribute. Keep `align="center"` and `valign="top"` for the old Outlook
 > renderers that only understand attributes, and add `text-align:center` and
 > `vertical-align:top` to the `style` for everything else.
+
+That is still worth doing, and it is **not enough**. On 19 August 2026 GymMaster
+rendered three paragraphs hard left that each carried an inline
+`text-align:center`. Only `!important` in a host stylesheet can do that, so the
+club template has something on the order of `p { text-align: left !important }`.
+
+**The rule that actually holds: centred text must not be a `<p>`.**
+
+A rule targeting `p` cannot reach a `<td>`. So `make-cms-safe.py` rewrites every
+centred paragraph into a shrink-to-fit table, centred with `align="center"` and
+`margin:auto`, with the typography moved onto the cell and the paragraph's
+margin becoming the cell's padding. That gives three independent mechanisms:
+
+1. `align="center"` on the table, an attribute,
+2. `margin-left:auto; margin-right:auto` inline on the table,
+3. `text-align:center` inline on the cell.
+
+The first two position the table by **margin**, not by text alignment, so no
+`text-align` rule at any weight can move them. The block survives losing any two
+of the three.
 
 `host-template-test.py` renders a template inside those hostile rules so this
 shows up here rather than in a member's inbox:
@@ -472,6 +492,10 @@ One thing the cascade cannot save: **a table is block level**, so a parent
 cell's `text-align` will never centre it. Button tables need `align="center"`
 on the table itself. `make-cms-safe.py` sets that by walking `<td>` depth to
 find the genuinely enclosing cell.
+
+That same property is what makes the table trick above work. Being immune to
+`text-align` is a problem when you want a table centred and a feature when a
+host stylesheet is forcing everything left.
 
 ## Before the first send
 

@@ -19,11 +19,14 @@ import sys
 import tempfile
 import os
 
-# Deliberately plausible, not worst case: a host template that sets its own
-# text alignment, vertical alignment and line height on the common elements.
+# Modelled on what GymMaster actually does, not on what seemed plausible.
+# The !important on p is the important part: on 19 August 2026 GymMaster left
+# three paragraphs left aligned that carried an inline text-align:center, and
+# nothing but !important in a host stylesheet can beat an inline style. Anything
+# that has to be centred must therefore not be a <p> at all.
 HOSTILE = """<style>
   td { text-align: left; vertical-align: middle; line-height: 1.6; }
-  p  { text-align: left; }
+  p  { text-align: left !important; margin: 0 0 10px 0 !important; }
   span { line-height: 1.6; }
 </style>"""
 
