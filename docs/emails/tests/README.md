@@ -11,30 +11,41 @@ python3 ../make-cms-safe.py 01-welcome-nurture-plain-discs.html \
                             01-welcome-nurture-plain-discs.cms-safe.html
 ```
 
-## `01-welcome-nurture-plain-discs`
+## `01-welcome-nurture-no-discs`, `02-plan-not-motivation-no-discs`
 
-Email 1 with the digits taken out of the numbered discs, leaving plain filled
-circles. Asked for on 19 August 2026, after the hardened numbered version still
-came out wrong in GymMaster.
+Emails 1 and 2 with the numbered discs removed altogether: no circles, no
+digits, no indent column. The three steps are now just a heading and a
+paragraph each, at the same left margin as the rest of the email.
 
-**Why this one should hold where the numbered version did not.** The digit was
-the fragile part. Centring it depended on `text-align` and `line-height`
-surviving the club template's stylesheet, and it is now clear that at least one
-of them does not. With no digit there is nothing to centre: the disc is a cell
-with a background, a border radius and fixed dimensions, and its height is held
-by the `height` attribute and the inline `height` together. `line-height:0`
-inline stops a host template's own font size from growing the cell.
+Asked for on 19 August 2026, after two earlier attempts failed in GymMaster.
 
-Confirmed against `../host-template-test.py`: the discs stay round, evenly
-sized and level with their headings under the same rules that reproduced the
-photographed bug.
+### How this got here, so nobody tries the failed routes again
 
-**What it costs.** The steps no longer say they are steps 1, 2 and 3. Reading
-order still carries the sequence, and the headings are written to be read in
-order, so little is lost. If the numbering is wanted back, **do not put it back
-in the disc**. Put it in the heading text instead:
+1. **Numbered discs, hardened.** Inline `text-align`, `vertical-align` and
+   `line-height` added alongside the attributes, so a host stylesheet could not
+   beat them. Still came out wrong in GymMaster.
+2. **Plain discs, no digits.** The digit was the fragile part, so it went, and
+   the disc became a cell with a background and fixed dimensions. It passed
+   `../host-template-test.py`, but was rejected before testing in GymMaster.
+3. **No discs.** What is here now.
+
+Each step removed something that could break. The third removes the last of it:
+there is no cell whose height, alignment or radius has to survive anything,
+only text in paragraphs, which is the one thing every renderer in this project
+has handled correctly all along.
+
+### If the numbering is wanted back
+
+**Not in a disc.** Put it in the heading text:
 
 > **1. You tell us what you want**
 
-That is ordinary body copy in a paragraph that is already left aligned, so no
-host stylesheet can move it, and it survives everything a disc does not.
+Ordinary copy in an already left-aligned paragraph. No host stylesheet can move
+it, and it survives everything a disc does not.
+
+### Before promoting
+
+These are variants, not the series. If GymMaster renders them correctly, they
+replace the disc versions in `../01-welcome-nurture.html` and
+`../02-plan-not-motivation.html`, the CMS-safe files get regenerated, and this
+directory empties. Email 3 has no discs and needs no change.
