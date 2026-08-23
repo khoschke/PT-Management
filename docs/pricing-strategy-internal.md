@@ -1,7 +1,10 @@
 # Kinetic Hustl — Pricing Strategy and Structure
 
-> **Internal only. Never goes to a client, and never into a project that writes to clients.**
-> Rates of record live in **`pricing-rates-and-terms.md`**. Figures quoted here illustrate the rules; if the two ever disagree, the rates file wins.
+> **This is not the price list.** It is the reasoning behind the price list — the rules, the maths, and the positioning.
+>
+> **The price list is `pricing-rates-and-terms.md`.** That file holds every rate, is written to be quoted to clients, and belongs in any project that communicates pricing. Figures quoted here illustrate the rules; if the two ever disagree, the rates file wins.
+>
+> **This file is internal only.** Never send it to a client, and keep it out of client-facing projects — not because pricing is secret, but because revenue-per-slot figures and positioning reasoning have no place in a client email.
 
 **Current as at:** 23 August 2026 · **Next review:** August 2027, or sooner if Fitaz changes membership rates or the shared formats prove mispriced in practice.
 
@@ -88,7 +91,7 @@ Each file is written for one audience. Give a project only the files its audienc
 | File | Contains | Give it to |
 | --- | --- | --- |
 | `pricing-rates-and-terms.md` | Rates, client-facing terms, how to present them | Any project that touches pricing |
-| `pricing-list.md` (this file) | Rules, revenue maths, positioning | Business and strategy projects only |
+| `pricing-strategy-internal.md` (this file) | Rules, revenue maths, positioning | Business and strategy projects only |
 | `terms/terms-and-conditions.md` | Contract clauses, review checklist | Admin and onboarding projects |
 
 **Suggested mapping**

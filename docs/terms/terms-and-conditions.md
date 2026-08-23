@@ -3,7 +3,7 @@
 **Version:** August 2026
 **Status:** Source of truth. The four client-facing `.docx` templates in this folder are generated from it.
 
-Rates below follow `docs/pricing-list.md`. If a rate changes there, it changes here, and the templates are regenerated.
+Rates below follow `docs/pricing-rates-and-terms.md`. If a rate changes there, it changes here, and the templates are regenerated.
 
 ---
 
@@ -156,4 +156,4 @@ Work through this once. Most items are quick; two need a decision and one needs 
 | **Two rates shown per format** | Every format now has a with-app and without-app rate, replacing single-rate schedules. |
 | **3-on-1 rate standardised** | Previously quoted at $50 (Jan 2025), $55 (Oct 2025 template) and $64 (Feb 2026 email). Now $55 with app access, $77 without. |
 | **Ezidebit fees disclosed** | Not previously mentioned, which caused at least one client query about the difference between the agreed amount and the debited amount. |
-| **Cancellation window standardised at 24 hours** | The previous group template used 72 hours. All formats are now 24 hours, matching `docs/pricing-list.md`. |
+| **Cancellation window standardised at 24 hours** | The previous group template used 72 hours. All formats are now 24 hours, matching `docs/pricing-rates-and-terms.md`. |

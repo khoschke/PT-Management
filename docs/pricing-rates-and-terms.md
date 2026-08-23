@@ -8,7 +8,7 @@
 
 ## How to use this file
 
-This is the **rates of record**. Everything here is safe to quote to a client.
+This is the **price list** and the **rates of record**. Everything here is safe to quote to a client, and this is the file to use whenever pricing needs to be communicated — an enquiry, a change of arrangement, a rate update, an invoice question.
 
 **When writing anything a client will read:**
 
