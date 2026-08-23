@@ -33,21 +33,30 @@ Per person, per session. Every format has two rates: a lower one for clients on 
 | --- | --- |
 | $55 | $77 |
 
+For the casual row, "on the app" means an existing **online coaching** client at $44/week — see §2. Weekly and flexi clients are on app access at $22/week.
+
 Shared formats are a **set rate with no weekly/flexi/casual ladder**. There is no fair or workable way to have someone drop in casually on a session another person is committed to, so shared sessions run a fixed roster on a fixed rate. Most people pay by weekly direct debit; clients may also pay 8 sessions upfront (covers four weeks).
 
 Within a shared session, each person is on their own rate — one can be on the app and the other not. They are billed separately, so this is not a problem; the session rate simply reflects each person's own choice.
 
 ---
 
-## 2. App access / online programming
+## 2. App access and online coaching
 
-| Item | Price |
-| --- | --- |
-| App access alongside PT (any format) | **$22 per week** |
-| App access for casual 1-on-1 clients | $44 per week |
-| Online programming only (no PT) | $44 per week |
+| Item | Price | Who it is for |
+| --- | --- | --- |
+| **App access** | $22 per week | Clients training weekly or flexi (fortnightly) |
+| **Online coaching** | $44 per week | Standalone — no session commitment |
 
-App access and online programming are the same thing. Never list them as two items — it reads as two charges.
+Both deliver the same thing: personalised programming in the app. What differs is what sits alongside it.
+
+**$22 is a commitment rate.** It is carried by the session revenue from someone training at least fortnightly. **$44 is the standalone rate** — it has to stand on its own, because there is no session commitment behind it.
+
+So a casual client who wants programming is buying **online coaching at $44/week**, not app access at $22. That distinction is what stops someone booking one session a year and picking up online coaching at half price.
+
+**Online coaching clients get $22 off any casual session they book** — $121 instead of $143. If they start booking fortnightly or more often, move them onto flexi or weekly rates and the $22 app rate.
+
+Never split app access and programming into two line items — they are one thing, and listing them separately reads as two charges.
 
 ---
 
@@ -56,7 +65,7 @@ App access and online programming are the same thing. Never list them as two ite
 Four rules govern every number above. Any new rate should be derived from them, not invented.
 
 1. **Every price is a round ex-GST figure plus 10%.** $110 = $100, $88 = $80, $77 = $70, $66 = $60, $55 = $50, $44 = $40, $22 = $20.
-2. **Not being on the app costs $22 more per session. The app costs $22 per week.** That is the whole mechanism — see §4.
+2. **Not being on the app costs $22 more per session. The app costs $22 per week.** That is the whole mechanism — see §4. The $22 rate requires a weekly or flexi commitment; casual clients take online coaching at $44 instead (§2).
 3. **Format ladder: $22 down from 1-on-1 to 2-on-1, then $11 down to 3-on-1.** Holds in both columns ($88 → $66 → $55, and $110 → $88 → $77). The big drop is going from exclusive attention to shared; adding a third person is incremental.
 4. **Commitment ladder ($16.50 per step) applies to 1-on-1 only.** Weekly → flexi → casual. Less commitment costs more; the rate is never *discounted* for higher frequency.
 
@@ -81,7 +90,7 @@ So at **one session per week the two options cost exactly the same** — the app
 
 The same holds in every format: 2-on-1 is $66 + $22 = $88 against $88, and 3-on-1 is $55 + $22 = $77 against $77.
 
-*Exception:* casual 1-on-1 clients pay $44/week for app access, so their break-even is two sessions per week rather than one. Casual clients are being nudged toward committing anyway.
+**Casual sits outside this, deliberately.** A casual client on programming is an online coaching client at $44/week (§2), not a PT client with app access at $22. They still get $22 off every session they book, but they are buying two services rather than one, so the break-even above does not apply to them and is not meant to. Casual is the least efficient way to buy — that is what makes committing worth something.
 
 ---
 
@@ -154,7 +163,7 @@ Every participant in a shared session needs their own gym access.
 
 1. **Session rate for the format they're asking about**, both columns — on the app and not.
 2. **App access at $22/week**, with the break-even point made plain: at one session a week it costs you nothing, and past that it saves you money.
-3. **Online programming only ($44/week)** — for anyone who wants structure and accountability without sessions.
+3. **Online coaching ($44/week)** — for anyone who wants structure and accountability without a session commitment, including casual clients who want programming between sessions.
 
 Keep app access as its own line item, never split into two charges. When someone asks why the on-app session rate is lower, the answer is that the app fee replaces the difference — they pay the same at one session a week, and less beyond that.
 
