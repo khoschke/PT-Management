@@ -35,7 +35,7 @@ Each row is initialled by the client.
 | **Session cancellation** | 24-hour cancellation policy. Sessions cancelled with 24 hours' notice or more will be rescheduled where possible. Sessions cancelled within 24 hours of the booking are forfeited. | All |
 | **Direct debit cancellation** | 30-day cancellation policy on all direct debit agreements. Notice is required by email. | All |
 | **Attendance of other participants** | Your rate does not change if another participant is unable to attend. The session runs as scheduled for whoever attends, at the rate you have agreed. No adjustment is made in either direction. | 2-on-1, 3-on-1 |
-| **Change to group size** | If a participant leaves permanently, remaining participants continue at their agreed rate for two weeks. After that period, the rate for the new group size applies (3-on-1 becomes the 2-on-1 rate; 2-on-1 becomes the 1-on-1 rate). | 2-on-1, 3-on-1 |
+| **Change to group size** | If a participant leaves permanently, you continue at your agreed rate for two weeks while a replacement is sought. Before that period ends the Trainer confirms in writing the rate that would apply to the new group size (3-on-1 becomes the 2-on-1 rate; 2-on-1 becomes the 1-on-1 rate). **The rate changes only if you agree to it in writing.** If you would prefer not to continue at that rate, you may end the agreement at that point without further notice period or fee. | 2-on-1, 3-on-1 |
 | **Separate agreements** | Each participant holds their own agreement and their own payment arrangement. Participants are not jointly responsible for one another's fees. | 2-on-1, 3-on-1 |
 
 ---
@@ -138,9 +138,11 @@ Work through this once. Most items are quick; two need a decision and one needs 
 
 ### Get advice on this one
 
-- [ ] **The group-size change clause increases a client's price without a new signature.** After the two-week grace period, the rate for the new group size applies automatically. Terms that let one party vary the price unilaterally are specifically called out under the Australian Consumer Law unfair-contract-terms regime for standard-form consumer contracts, and penalties have applied since November 2023. The 12-week minimum term sits in adjacent territory.
+- [ ] **The 12-week minimum term.** Minimum-term clauses in standard-form consumer contracts can attract scrutiny under the Australian Consumer Law unfair-contract-terms regime, where penalties have applied since November 2023. It is common practice in the industry and you have used it for years, so this is a "have it looked at once" item rather than a red flag.
 
-  I am not a lawyer and this is not legal advice. The practical fix, if you want one before advice comes back, is to make the step-up consent-based rather than automatic: notify the client of the new rate and have them confirm it, rather than having the contract change the price on its own. That preserves your intent and removes the unilateral element. Say the word and the clause gets rewritten that way.
+  The group-size clause previously sat here too, because it varied a client's price automatically. It has since been rewritten to be consent-based — the rate changes only if the client agrees in writing, and they can exit at that point without notice or fee — which removes the unilateral element.
+
+  I am not a lawyer and none of this is legal advice.
 
 ---
 
@@ -149,7 +151,7 @@ Work through this once. Most items are quick; two need a decision and one needs 
 | Change | Detail |
 | --- | --- |
 | **Shared-session attendance rule reversed** | The January 2025 2-on-1 template said that if one person cancelled with notice, the other paid the 1:1 rate. That is gone. Nobody's cost changes when another participant is absent. |
-| **Group-size change clause added** | Previously undefined. Remaining participants now step up one tier after a two-week grace period. |
+| **Group-size change clause added** | Previously undefined. Two-week grace period, then a confirmed-in-writing move to the rate for the new group size, with a fee-free exit if the client declines. |
 | **Separate agreements made explicit** | Already the practice; now stated in writing. |
 | **Two rates shown per format** | Every format now has a with-app and without-app rate, replacing single-rate schedules. |
 | **3-on-1 rate standardised** | Previously quoted at $50 (Jan 2025), $55 (Oct 2025 template) and $64 (Feb 2026 email). Now $55 with app access, $77 without. |
