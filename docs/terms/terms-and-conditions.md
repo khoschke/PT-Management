@@ -32,8 +32,7 @@ Each row is initialled by the client.
 
 | Policy | Terms | Applies to |
 | --- | --- | --- |
-| **Session cancellation** | 24-hour cancellation policy. Sessions cancelled with 24 hours' notice or more will be rescheduled where possible. Sessions cancelled within 24 hours of the booking are forfeited. | 1-on-1, Casual |
-| **Session cancellation** | 72-hour cancellation policy. Sessions cancelled with 72 hours' notice or more will be rescheduled where possible. Sessions cancelled within 72 hours of the booking are forfeited. | 2-on-1, 3-on-1 |
+| **Session cancellation** | 24-hour cancellation policy. Sessions cancelled with 24 hours' notice or more will be rescheduled where possible. Sessions cancelled within 24 hours of the booking are forfeited. | All |
 | **Direct debit cancellation** | 30-day cancellation policy on all direct debit agreements. Notice is required by email. | All |
 | **Attendance of other participants** | Your rate does not change if another participant is unable to attend. The session runs as scheduled for whoever attends, at the rate you have agreed. No adjustment is made in either direction. | 2-on-1, 3-on-1 |
 | **Change to group size** | If a participant leaves permanently, remaining participants continue at their agreed rate for two weeks. After that period, the rate for the new group size applies (3-on-1 becomes the 2-on-1 rate; 2-on-1 becomes the 1-on-1 rate). | 2-on-1, 3-on-1 |
@@ -119,6 +118,32 @@ Each row is initialled by the client.
 
 ---
 
+## Before you send one: review checklist
+
+Work through this once. Most items are quick; two need a decision and one needs outside advice.
+
+### Check first
+
+- [ ] **Open each `.docx` in Word.** These were generated in a sandbox where LibreOffice could not render, so the layout has not been seen — only verified structurally. Check table widths, page breaks, and that the ☐ checkbox glyph renders rather than showing as a box or question mark.
+- [ ] **Confirm the consent wording is your current version.** It is reproduced verbatim from `Kinetic Hustl. Terms and Conditions KH App.docx` (July 2026), the most recent of several variants on file. If a different one is authoritative, say so and the templates get regenerated.
+- [ ] **Read the attendance clause as a client would.** It is the one clause that reverses previous practice, and the first shared-format client to lose a partner for a week will read it closely.
+- [ ] **Decide whether to pre-fill the 12-week minimum** in the closing block, or leave it blank per client.
+
+### Decisions
+
+- [ ] **Gym access is not mentioned anywhere in the T&Cs.** Every in-person client needs their own Fitaz membership or 10-visit pass, and that obligation currently lives only in conversation. Consider adding a line so nobody signs thinking the session rate covers entry.
+- [ ] **No photo/media consent, and no privacy or data clause.** Neither was in the previous templates either, so this is not a regression — but the app holds client health and body-composition data, and you post client content to Instagram. Worth deciding whether these belong here or in the welcome letter.
+- [ ] **No business identification block.** No ABN, trading name, or contact details on the document. The welcome letter carries them; the contract does not.
+- [ ] **Signature block is one-sided.** No counter-signature by the trainer. Same as the previous templates, so this is a carry-over rather than a change.
+
+### Get advice on this one
+
+- [ ] **The group-size change clause increases a client's price without a new signature.** After the two-week grace period, the rate for the new group size applies automatically. Terms that let one party vary the price unilaterally are specifically called out under the Australian Consumer Law unfair-contract-terms regime for standard-form consumer contracts, and penalties have applied since November 2023. The 12-week minimum term sits in adjacent territory.
+
+  I am not a lawyer and this is not legal advice. The practical fix, if you want one before advice comes back, is to make the step-up consent-based rather than automatic: notify the client of the new rate and have them confirm it, rather than having the contract change the price on its own. That preserves your intent and removes the unilateral element. Say the word and the clause gets rewritten that way.
+
+---
+
 ## Changes from the previous templates
 
 | Change | Detail |
@@ -129,4 +154,4 @@ Each row is initialled by the client.
 | **Two rates shown per format** | Every format now has a with-app and without-app rate, replacing single-rate schedules. |
 | **3-on-1 rate standardised** | Previously quoted at $50 (Jan 2025), $55 (Oct 2025 template) and $64 (Feb 2026 email). Now $55 with app access, $77 without. |
 | **Ezidebit fees disclosed** | Not previously mentioned, which caused at least one client query about the difference between the agreed amount and the debited amount. |
-| **72-hour window retained for shared formats** | Carried over from the existing group template. 1-on-1 and casual remain at 24 hours. |
+| **Cancellation window standardised at 24 hours** | The previous group template used 72 hours. All formats are now 24 hours, matching `docs/pricing-list.md`. |

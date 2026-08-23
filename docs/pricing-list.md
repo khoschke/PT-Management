@@ -5,7 +5,15 @@
 **Current as at:** 23 August 2026
 **Session length:** 45 minutes, all formats.
 
-> Reference document. Intended as a shared/overarching context file for Claude projects.
+> **Internal reference document.** Intended as an overarching context file for Claude projects.
+
+**Scope and handling**
+
+- **Internal, not client-facing.** Sections 3, 5 and 9 contain revenue-per-slot figures and positioning reasoning. Never paste this document to a client, and check any client-facing copy generated from it before sending.
+- **These are Karl's rates for Kinetic Hustl clients only.** The other trainers at Fitaz set their own pricing independently. This is not a team rate card.
+- **Gym access rates (§6) are set by Fitaz Gym, not Kinetic Hustl** and cannot be varied by Kinetic Hustl.
+- **Single source.** Keep one copy. If this is added to more than one Claude project, update it here and re-upload rather than editing copies, or they will drift apart.
+- **Next review:** August 2027, or sooner if Fitaz changes membership rates or the shared formats prove mispriced in practice.
 
 ---
 
