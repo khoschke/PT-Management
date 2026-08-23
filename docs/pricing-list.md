@@ -11,29 +11,31 @@
 
 ## 1. Session rates
 
-Per person, per session. App access is a separate optional add-on — see §2.
+Per person, per session. Every format has two rates: a lower one for clients on the app, and a higher one for clients who aren't. App access is billed separately at $22/week — see §2.
 
 ### 1-on-1
 
-| Frequency | Per session |
+| Frequency | On the app | Not on the app |
+| --- | --- | --- |
+| Weekly | $88 | $110 |
+| Flexi (fortnightly) | $104.50 | $126.50 |
+| Casual | $121 | $143 |
+
+### 2-on-1 — set rate
+
+| On the app | Not on the app |
 | --- | --- |
-| Weekly | $88 |
-| Flexi (fortnightly) | $104.50 |
-| Casual | $121 |
+| $66 | $88 |
 
-### 2-on-1
+### 3-on-1 (max 3 people) — set rate
 
-| | Per person, per session |
+| On the app | Not on the app |
 | --- | --- |
-| Set rate | $77 |
+| $55 | $77 |
 
-### 3-on-1 (max 3 people)
+Shared formats are a **set rate with no weekly/flexi/casual ladder**. There is no fair or workable way to have someone drop in casually on a session another person is committed to, so shared sessions run a fixed roster on a fixed rate. Most people pay by weekly direct debit; clients may also pay 8 sessions upfront (covers four weeks).
 
-| | Per person, per session |
-| --- | --- |
-| Set rate | $66 |
-
-Shared formats are a **set rate with no weekly/flexi/casual ladder**. There is no fair or workable way to have someone drop in casually on a session that another person is committed to, so shared sessions are a fixed roster on a fixed rate. Most people pay by weekly direct debit; clients may also pay 8 sessions upfront (covers four weeks).
+Within a shared session, each person is on their own rate — one can be on the app and the other not. They are billed separately, so this is not a problem; the session rate simply reflects each person's own choice.
 
 ---
 
@@ -41,13 +43,11 @@ Shared formats are a **set rate with no weekly/flexi/casual ladder**. There is n
 
 | Item | Price |
 | --- | --- |
-| App access alongside PT (any format) | **$22 per week — optional** |
+| App access alongside PT (any format) | **$22 per week** |
 | App access for casual 1-on-1 clients | $44 per week |
 | Online programming only (no PT) | $44 per week |
 
 App access and online programming are the same thing. Never list them as two items — it reads as two charges.
-
-**This is an add-on, not a bundle.** It sits on top of whatever session rate applies, at the same $22 regardless of format. A weekly 1-on-1 client who takes it pays $88 + $22 = $110. A 2-on-1 client pays $77 + $22 = $99.
 
 ---
 
@@ -55,32 +55,61 @@ App access and online programming are the same thing. Never list them as two ite
 
 Four rules govern every number above. Any new rate should be derived from them, not invented.
 
-1. **Every price is a round ex-GST figure plus 10%.** $110 = $100, $88 = $80, $77 = $70, $66 = $60, $44 = $40, $22 = $20.
-2. **App access is a flat, optional $22/week on top of any session rate.** It is never carved out of the session price or discounted by format.
-3. **Format ladder: $11 per step as group size grows.** $88 → $77 → $66. More people in the room, less individual attention, lower rate per head.
-4. **Commitment ladder (1-on-1 only): $16.50 per step.** Weekly $88 → flexi $104.50 → casual $121. Less commitment costs more; the rate is never *discounted* for higher frequency.
-
-### Revenue per 45-minute slot
-
-Weekly clients. The right-hand column assumes every participant takes app access.
-
-| Format | Session only | With app access |
-| --- | --- | --- |
-| 1-on-1 | $88 | $110 |
-| 2-on-1 | $154 | $198 |
-| 3-on-1 | $198 | $264 |
-
-### Client cost per week
-
-| Format | Session only | With app access | Saving vs 1-on-1 |
-| --- | --- | --- | --- |
-| 1-on-1 | $88 | $110 | — |
-| 2-on-1 | $77 | $99 | 10% |
-| 3-on-1 | $66 | $88 | 20% |
+1. **Every price is a round ex-GST figure plus 10%.** $110 = $100, $88 = $80, $77 = $70, $66 = $60, $55 = $50, $44 = $40, $22 = $20.
+2. **Not being on the app costs $22 more per session. The app costs $22 per week.** That is the whole mechanism — see §4.
+3. **Format ladder: $22 down from 1-on-1 to 2-on-1, then $11 down to 3-on-1.** Holds in both columns ($88 → $66 → $55, and $110 → $88 → $77). The big drop is going from exclusive attention to shared; adding a third person is incremental.
+4. **Commitment ladder ($16.50 per step) applies to 1-on-1 only.** Weekly → flexi → casual. Less commitment costs more; the rate is never *discounted* for higher frequency.
 
 ---
 
-## 4. Gym access (Fitaz Gym, required for all in-person clients)
+## 4. Why the app is priced the way it is
+
+The intent is to get people onto the app, because engaged clients get better results and stay longer. The pricing does that without ever penalising anyone:
+
+- The **no-app premium is charged per session**.
+- The **app fee is charged per week**.
+
+So at **one session per week the two options cost exactly the same** — the app is free at the margin, and there is no reason to decline it. From the **second session per week onward, being on the app is strictly cheaper**, and the gap widens with every additional session.
+
+### 1-on-1, weekly tier
+
+| Sessions per week | On the app | Not on the app | Difference |
+| --- | --- | --- | --- |
+| 1 | (1 × $88) + $22 = **$110** | 1 × $110 = **$110** | $0 |
+| 2 | (2 × $88) + $22 = **$198** | 2 × $110 = **$220** | **$22** |
+| 3 | (3 × $88) + $22 = **$286** | 3 × $110 = **$330** | **$44** |
+
+The same holds in every format: 2-on-1 is $66 + $22 = $88 against $88, and 3-on-1 is $55 + $22 = $77 against $77.
+
+*Exception:* casual 1-on-1 clients pay $44/week for app access, so their break-even is two sessions per week rather than one. Casual clients are being nudged toward committing anyway.
+
+---
+
+## 5. What it costs, what it earns
+
+### Client cost per week, at one session per week
+
+| Format | On the app | Not on the app | Saving vs 1-on-1 |
+| --- | --- | --- | --- |
+| 1-on-1 | $110 | $110 | — |
+| 2-on-1 | $88 | $88 | **20%** |
+| 3-on-1 | $77 | $77 | **30%** |
+
+A 20–30% saving is enough to make sharing genuinely attractive to friends and couples without undercutting the 1-on-1 rate.
+
+### Revenue per 45-minute slot
+
+| Format | Session fees | Weekly total, roster on the app |
+| --- | --- | --- |
+| 1-on-1 | $88 | $110 |
+| 2-on-1 | $132 | $176 |
+| 3-on-1 | $165 | $231 |
+
+Two existing 1-on-1 clients who pair up take that slot from $110 to $176 a week. The format is worth encouraging.
+
+---
+
+## 6. Gym access (Fitaz Gym, required for all in-person clients)
 
 | Item | Price |
 | --- | --- |
@@ -93,7 +122,7 @@ Every participant in a shared session needs their own gym access.
 
 ---
 
-## 5. Standard terms
+## 7. Standard terms
 
 ### General
 
@@ -113,7 +142,7 @@ Every participant in a shared session needs their own gym access.
 - **Each person is billed separately, on their own direct debit.** Never one payer covering both. It gets messy the moment one person leaves, and it makes the remaining client feel they have inherited someone else's bill.
 - **If one person can't attend, nobody else's cost changes.** A 2-on-1 that becomes a 1-on-1 for the day, or a 3-on-1 that becomes a 2-on-1, runs at the normal rate for everyone attending. No top-ups, no adjustments.
 
-  *Rationale (for explaining to clients):* charging the difference on the day is awkward and sours the session. The premium a shared slot earns over a 1-on-1 — $198 or $264 against $110 — is the insurance for those occasions. Lost income on the day, absorbed by the format over time.
+  *Rationale (for explaining to clients):* charging the difference on the day is awkward and sours the session. The premium a shared slot earns over a 1-on-1 — $132 or $165 in session fees against $88 — is the insurance for those occasions. Lost income on the day, absorbed by the format over time.
 
 - **If one person leaves permanently,** the remaining client(s) move up one tier after a **two-week grace period** to find a replacement:
   - 3-on-1 → 2-on-1 rate
@@ -121,46 +150,47 @@ Every participant in a shared session needs their own gym access.
 
 ---
 
-## 6. Recommended presentation order
+## 8. Recommended presentation order
 
-1. **Session rate for the format they're asking about** — one number, the thing they came for.
-2. **App access as an optional $22/week add-on** — same price whatever the format.
-3. **Online programming only ($44/week)** — for anyone who just wants structure and accountability, no sessions.
+1. **Session rate for the format they're asking about**, both columns — on the app and not.
+2. **App access at $22/week**, with the break-even point made plain: at one session a week it costs you nothing, and past that it saves you money.
+3. **Online programming only ($44/week)** — for anyone who wants structure and accountability without sessions.
 
-Keep app access visibly separate and visibly optional. The old structure priced PT-only *above* PT-with-programming, which reliably confused people — a client raised it directly in November 2025. That inversion is gone: the session rate is now the session rate, and the app is a straightforward extra.
+Keep app access as its own line item, never split into two charges. When someone asks why the on-app session rate is lower, the answer is that the app fee replaces the difference — they pay the same at one session a week, and less beyond that.
 
 ---
 
-## 7. Positioning and rationale
+## 9. Positioning and rationale
 
 - **Frequency discounts run the opposite way to most PTs.** Don't reduce the per-session rate for higher weekly frequency. Clients who train 3x/week were going to do so largely regardless of price, and discounting devalues the service. Set the base rate at the minimum you'd accept, then add a premium for lower-frequency options.
 - **Legacy rates are hard to undo.** Once a client is on a discounted rate for an open-ended period, it is very difficult to bring them back up. Move clients to current rates at a natural transition point — change of arrangement, new year, change of frequency.
 - **Free app access** is extended only to family and a couple of close friends. A deliberate privilege, not a default.
+- **This structure exists to replace ad-hoc deals.** Historic one-off arrangements were made without a rate card behind them, which made them impossible to reason about or repeat. Everything above is derivable from the four rules in §3, so a new situation has an answer rather than a negotiation.
 - **Market context (Brisbane, 2025 assessment):** non-gym-affiliated PTs average $80–$100 for 45–60 min; gym-affiliated PTs $65–$90 without app-based programming; online coaching ranges $15–$80/wk. Differentiators are tertiary qualifications in exercise science *and* behavioural science, plus habit and behaviour-change coaching rather than sessions alone.
 
 ---
 
-## 8. Price history
+## 10. Price history
 
 ### 1-on-1 and online — weekly / flexi / casual
 
-| Period | Session rate | Separate "PT only" rate | Online only | App access |
+| Period | On the app | Not on the app | Online only | App access |
 | --- | --- | --- | --- | --- |
 | Mid 2025 | $80 / $90 / $100 | $100 / $110 / $120 | $40/wk | $20/wk ($40 casual) |
-| Nov 2025 – Aug 2026 | $88 / $104.50 / $121 | $110 / $126.50 / $143 | $44/wk | $22/wk ($44 casual) |
-| Aug 2026 – current | $88 / $104.50 / $121 | *retired* | $44/wk | $22/wk ($44 casual) |
+| Nov 2025 – current | $88 / $104.50 / $121 | $110 / $126.50 / $143 | $44/wk | $22/wk ($44 casual) |
 
-**August 2026 reframe:** the separate, higher "PT session only" rate was retired. Previously a client declining the app paid $110/week and a client taking it paid $88 + $22 = $110 — identical totals, and the app was effectively free at the margin. Now the session rate stands alone at $88 and the app is a genuine optional $22 on top.
+1-on-1 rates are unchanged since November 2025.
 
 ### Shared formats
 
 | Period | 2-on-1 | 3-on-1 |
 | --- | --- | --- |
-| Jan 2025 | $50/session (+ $20/wk app) | $50/session |
-| Feb 2026 | — | $64/session |
-| Aug 2026 – current | $77/session (+ $22/wk app) | $66/session (+ $22/wk app) |
+| Before Aug 2026 | No standard rate | $64/session flat (quoted Feb 2026) |
+| Aug 2026 – current | $66 on app / $88 not | $55 on app / $77 not |
 
-The 3-on-1 move from $64 to $66 puts it on the round-ex-GST grid ($60 + GST); $64 was the only price in the list that wasn't.
+Shared formats were formalised in August 2026. Before that, 2-on-1 had no rate card at all and was handled case by case; 3-on-1 was a single flat number that sat off the round-ex-GST grid.
+
+**On legacy arrangements:** a long-term 2-on-1 pair were on a bespoke rate from January 2025 ($50/session plus $20/week app). That was a special deal reflecting their tenure and the absence of a defined structure at the time. It is not a precedent and should not be used to derive current pricing.
 
 ---
 
@@ -171,10 +201,9 @@ The 3-on-1 move from $64 to $66 puts it on the round-ex-GST grid ($60 + GST); $6
 | Email to client (Gmail, "Good catching up the other day") | 12 Mar 2026 | Most recent full 1-on-1 price list, as actually sent |
 | Drive: `Email Pricing for Dentist.md` | 12 Mar 2026 | Same list, drafting version |
 | Email to prospect (Gmail, "Great to meet you") | 19 Feb 2026 | 3-on-1 at $64, PT 10-visit pass $99, PT membership $14.95/wk |
-| Drive: `Kinetic Hustl. Terms and Conditions_Natasha Kahn 2on1.pdf` | Jan 2025 | 2-on-1 precedent at $50/session; original cancellation clause |
-| Drive: `Pricing confusion clarification.md` | 15 Nov 2025 | Client confusion over the PT-only inversion |
+| Drive: `Pricing confusion clarification.md` | 15 Nov 2025 | Client confusion over the two-column layout; presentation order |
 | Drive: `TK Pricing decision advice.md` | 5 Dec 2025 | Legacy-rate policy |
 | Drive: `PT Pricing Model Advice.md` | 19 Feb 2026 | Frequency-discount philosophy |
 | Drive: `PT Pricing Structure Feedback.md` | 30 Jun 2025 | Mid-2025 price points and market context |
 | Email thread re: debits | 16 Jan 2026 | Ezidebit fees charged on top of listed prices |
-| Karl, direct | 23 Aug 2026 | Add-on reframe; 2-on-1 and 3-on-1 set rates; shared-session policies; Fitaz membership stability |
+| Karl, direct | 23 Aug 2026 | Shared-format rates and policies; app break-even intent; legacy deals are not precedent |
