@@ -1,13 +1,47 @@
 # Brand assets
 
-The official Fitaz Gym artwork now lives in this repo, alongside a set of
-traced marks that predate it.
+The official Fitaz Gym artwork lives in this repo, and there is now a faithful
+vector of it. An older set of Liberation Sans traces predates both.
 
 | | |
 |---|---|
-| `public/brand/fitaz-gym-logo-official.png` | **The real logo.** Black lockup, transparent, 1924 x 251. |
+| `public/brand/fitaz-gym-logo.svg` | **The mark. Use this.** A faithful vector, traced from the official artwork below. Sharp-apex A, rounded chip, correct proportions. This is what the app now renders. |
+| `public/brand/fitaz-gym-logo-white.svg` | Same mark, reversed for dark backgrounds. |
+| `public/brand/fitaz-gym-logo-official.png` | The real raster logo the vector was traced from. Black lockup, transparent, 1924 x 251. |
 | `public/brand/source/fitaz-gym-logo-official.pdf` | The file Karl supplied, unmodified. |
-| `public/brand/fitaz-gym-logo*.svg` / `.png` | **Traces.** Superseded, see below. |
+| `public/brand/fitaz-gym-logo-email*.svg` / `.png`, and the old `-official`-less `.png` | **Older Liberation Sans traces.** Superseded, see below. |
+
+## The faithful vector (added 27 August 2026)
+
+`fitaz-gym-logo.svg` is a new, accurate vector of the official mark. It replaces
+the Liberation Sans trace that used to carry this filename, and it closes the gap
+this file used to describe: previously the only vector we had was the wrong-font,
+wrong-chip trace, so anything needing scale beyond the raster had no good option.
+
+How it was made, so it can be regenerated if the artwork ever changes:
+
+- **Source.** The higher-resolution `fitaz-gym-logo-official.png` (1924 x 251),
+  not the PDF. The PDF's embedded raster is only 922 x 122 and, tellingly, has
+  the chip corners squared off; the PNG preserves them rounded, so it is the
+  truer master.
+- **FITAZ letters.** The alpha channel was upscaled 3x with a sharp (Lanczos)
+  filter and auto-traced (potrace). FITAZ is entirely straight lines, so the
+  edges come out dead straight and the A keeps its sharp apex. The chip region
+  is masked out of this pass.
+- **The chip.** Not traced. Emitted as a real rounded `<rect>`, with its edges
+  measured to sub-pixel off the PNG and a corner radius of 11px on a 144.5px
+  chip, i.e. **0.076 of chip height**, matching the measurement recorded further
+  down this file. Tracing squared the small radius off, so a primitive is both
+  cleaner and more accurate.
+- **GYM.** The white lettering, traced from the colour channel and laid over the
+  chip.
+- **Ink.** `#0a0a0a`, to match the near-black of the official artwork
+  (`rgb(4,4,4)`), rather than the `#1d1d1f` UI foreground token. The logo is its
+  own asset; matching the original wins over matching the token here.
+
+Verified by overlaying the render on the official PNG: the binarised shapes
+differ by under 1% (essentially anti-aliasing), and the A diagonals and GYM
+letters are indistinguishable at high magnification.
 
 ## Where the official artwork came from
 
@@ -54,11 +88,13 @@ the horizontal inset along the top edge, at the higher resolution below, gives
 11px of inset on a 145px chip. Our trace is still too round, at 0.114, but it is
 wrong by degree rather than in kind.
 
-**Use `fitaz-gym-logo-official.png` from here on.** The traces are kept because
-they are vector and the official is not, so they remain the only option where a
-mark has to scale beyond 1924px wide. Anywhere else they are the wrong file.
-Nothing in the member emails depends on either, since the email header and
-footer were removed in favour of GymMaster's club template.
+**Use `fitaz-gym-logo.svg` from here on** (see the faithful-vector section
+above). It is now both the accurate mark and vector, so it is the right file
+everywhere, including where a mark has to scale beyond 1924px. The
+`fitaz-gym-logo-official.png` remains as the raster master it was traced from.
+The old Liberation Sans traces are kept only for reference. Nothing in the
+member emails depends on any of them, since the email header and footer were
+removed in favour of GymMaster's club template.
 
 ## The best copy came from the Postcards email, not the PDF
 
@@ -123,19 +159,19 @@ the next person to go looking will pick it for the same reason we did.
 
 ## The traces: which one, if you need one
 
-Everything below describes the traced marks, which the official artwork now
-supersedes. Reach for them only when you need vector, or a size beyond 922px.
-
-**Of the traces, use `fitaz-gym-logo.svg`.** It follows `public/logo-fitaz.svg`:
-tight 0.066em tracking on FITAZ, a small GYM chip hung at the top right rather
-than centred. Note that its chip proportions are the ones the table above marks
-as wrong.
+Everything below describes the old Liberation Sans traced marks. The faithful
+vector (`fitaz-gym-logo.svg`, section near the top) now supersedes them for the
+brand mark; the notes here survive because the **email** variants are still these
+traces, and because the history is worth keeping. These sit on
+`public/logo-fitaz.svg`: tight 0.066em tracking on FITAZ, a small GYM chip hung
+at the top right rather than centred. Their chip proportions are the ones the
+table above marks as wrong, which is exactly why the brand mark was re-traced.
 
 | File | Use |
 |---|---|
-| `fitaz-gym-logo.svg` / `.png` | **The brand mark.** Default for everything. |
-| `fitaz-gym-logo-white.svg` / `.png` | Same, reversed for dark backgrounds. |
-| `fitaz-gym-logo-email.svg` / `.png` | **Email headers only.** See below. |
+| `fitaz-gym-logo.svg` | **No longer a trace.** This filename now holds the faithful vector. |
+| `fitaz-gym-logo.png` / `fitaz-gym-logo-white.png` | Old Liberation Sans raster traces. Reference only. |
+| `fitaz-gym-logo-email.svg` / `.png` | **Email headers only.** Still a Liberation Sans trace. See below. |
 | `fitaz-gym-logo-email-white.svg` / `.png` | Same, reversed. |
 
 All have a **transparent background**, so they sit on any colour. The PNGs are

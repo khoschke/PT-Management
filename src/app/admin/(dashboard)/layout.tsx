@@ -40,7 +40,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3.5 sm:px-6">
           <div className="flex items-center gap-8">
             <div className="flex items-center gap-2.5">
-              <Image src="/brand/fitaz-gym-logo-official.png" alt="Fitaz Gym" width={138} height={18} priority />
+              <Image src="/brand/fitaz-gym-logo.svg" alt="Fitaz Gym" width={138} height={18} priority />
               <span className="h-3.5 w-px bg-black/15" aria-hidden />
               <span className="text-[13px] font-medium text-secondary-label">PT leads</span>
             </div>

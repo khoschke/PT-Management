@@ -179,21 +179,22 @@ send checklist in `docs/emails/README.md`.
   `docs/emails/make-cms-safe.py`, never edited by hand.
 
 Brand assets live in `public/brand/`, documented in `docs/brand-assets.md`.
-**Use `fitaz-gym-logo-official.png`**, extracted from the artwork Karl supplied
-on 18 August 2026. Everything else there is an earlier trace and measurably
-wrong, most visibly in the gap between the wordmark and the GYM chip. The
-traces are kept only because they are vector and the official is not.
+**Use `fitaz-gym-logo.svg`**, a faithful vector traced from the official artwork
+Karl supplied on 18 August 2026. It has the sharp-apex A, the rounded GYM chip,
+and the correct wordmark-to-chip gap, and it renders under 1% off the official
+raster. The app now points at it. `fitaz-gym-logo-official.png` is kept as the
+raster master it was traced from.
 
-**These are the primary marks in use**, and the earlier trace on
-`claude/apple-design-pass-ymnm14` is superseded by them: when that branch merges,
-keep the `public/brand/` versions.
+**This is the primary mark in use.** The earlier Liberation Sans trace that once
+carried the `fitaz-gym-logo.svg` filename is gone, replaced by the faithful
+vector on `claude/apple-design-pass-ymnm14`; when that branch merges, keep the
+`public/brand/` versions.
 
-**All of them are traces, though, not the real logo.** Karl supplied the official
-artwork on 18 August 2026 and it differs, most visibly in the GYM chip, which is
-square cornered rather than rounded, and in the letterforms, which are a
-geometric sans rather than the Arial-metric face we traced. The originals still
-need to land in `public/brand/source/`, and the marks should be re-traced from
-vector rather than corrected by eye. See `docs/brand-assets.md`.
+**The re-trace is now done.** The old note here asked for the mark to be
+re-traced from vector rather than corrected by eye, because the Liberation Sans
+traces differed from the real logo in the GYM chip (rounded, not square) and the
+letterforms (a geometric sans, not an Arial-metric face). That work is complete;
+see the faithful-vector section in `docs/brand-assets.md`.
 
 ## Where each workstream lives (branch map)
 
