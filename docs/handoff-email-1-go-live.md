@@ -3,6 +3,26 @@
 **Start a new session with this note.** Read `docs/PROJECT_STATUS.md` first, then
 this, then `docs/emails/README.md` for the emails themselves.
 
+## Status: LIVE, 1 September 2026
+
+**The series is sending.** New members are getting email 1 on day 1, email 2 on
+day 10 and email 3 on day 30, from GymMaster, timed off their own join date.
+
+The last blocker was the unsubscribe, and **GymMaster handles it**. That closes
+the open item in section 2 below and, with it, the send.
+
+Two things follow from going live, and they are the live work now:
+
+- **Tell the PTs**, which is the section at the bottom of this note. The email is
+  drafted in `docs/pt-nurture-flow-briefing-email.md` and should go out now
+  rather than after the first leads land.
+- **Suppression before emails 2 and 3 is now a recurring job**, not a
+  pre-launch check. The lead board is what drives it. See
+  `docs/emails/README.md`, "Who to leave out of emails 2 and 3".
+
+The rest of this note is kept as the record of how it got here, with the
+outstanding items marked.
+
 ## What this is
 
 All three member emails are **built and finished**: the day 1 welcome, the day 10
@@ -14,12 +34,13 @@ The open items are tracked here rather than in a chat thread so they can be
 picked up cold. **If you are reviewing this and any item is still unticked,
 raise it** rather than assuming it was handled elsewhere.
 
-Three things are outstanding, and none of them are code:
+Three things were outstanding, and none of them were code:
 
-1. The sending domain, **with Georgio**.
-2. What GymMaster actually provides, **with Georgio and Danny**.
-3. Telling the PTs how leads reach them now, **with Karl**, once the flow is
-   live.
+1. The sending domain, **with Georgio**. Settled: GymMaster sends.
+2. What GymMaster actually provides, **with Georgio and Danny**. Settled: the
+   unsubscribe is GymMaster's and is in place.
+3. Telling the PTs how leads reach them now, **with Karl**. **This is the one
+   still open.** Draft in `docs/pt-nurture-flow-briefing-email.md`.
 
 ## Confirmed
 
@@ -73,13 +94,16 @@ sender. It is fine for proving the flow internally and nothing else.
 The platform is decided, but three things still have to be **checked inside
 GymMaster** before a real send, because the emails assume them:
 
-- **There is currently no unsubscribe link.** The club template is not being
-  used as of 19 August 2026, so the templates carry their own footer, with the
-  socials, the address and a permission line. The unsubscribe was taken out on
-  the same day because it pointed at a placeholder that could not resolve, and a
-  dead link is worse than none while testing. **It has to go back before a real
-  send**, using GymMaster's own unsubscribe token, which nobody has found yet. A
-  `List-Unsubscribe` header is separate and only GymMaster can set it.
+- ~~**There is currently no unsubscribe link.**~~ **Resolved, 1 September 2026:
+  GymMaster handles the unsubscribe.** The club template stopped being used on
+  19 August 2026, so the templates carry their own footer with the socials, the
+  address and a permission line, and the placeholder unsubscribe was taken out
+  the same day because a dead link is worse than none. The gap is now filled on
+  the GymMaster side rather than in the markup, which is why the files in
+  `docs/emails/` still carry no unsubscribe link and **should not have one added
+  back**: a second one means two, pointing at different places. If these
+  templates are ever sent from anywhere other than GymMaster, the unsubscribe and
+  the `List-Unsubscribe` header have to come from that platform instead.
 - **The header logo is on a borrowed host.** It points at Designmodo's CDN,
   because our own copy at `pt.fitazgym.com/brand/` only exists on the email
   branch and 404d in GymMaster. Designmodo already serves that file to members
@@ -121,7 +145,9 @@ get skipped:
 - **Suppression before each send of emails 2 and 3.** See
   `docs/emails/README.md`. Both are written so that reaching the wrong person is
   awkward rather than wrong, but suppression is still the thing that keeps them
-  sharp.
+  sharp. **Now that the series is live this is an ongoing job**, and it depends
+  on the PTs keeping lead status current, which is why the briefing email asks
+  them for it directly.
 
 ## Once it is live: tell the PTs
 
@@ -151,8 +177,8 @@ the shape of their week.
 **The email itself is drafted**, in `docs/pt-nurture-flow-briefing-email.md`. It
 covers all of the above, adds the status discipline the suppression step depends
 on, and makes each PT confirm they can sign in to the portal, since that is where
-their leads now land. Two dates have to be filled in before it goes, and it
-should not go before the GymMaster items above are closed.
+their leads now land. **The flow is live, so this is the open item**: send it
+before the first leads reach their boards, not after.
 
 ## Definition of done
 
@@ -162,3 +188,7 @@ authentication, with working buttons, a working unsubscribe, and replies landing
 somewhere a human reads them. The PTs get the unverified leads after email 2,
 with the members who already responded stripped out, **and they have been told
 that is how it now works**.
+
+**Met on the sending half as of 1 September 2026.** The one part still open is
+the last clause: the PTs have not been told yet. Send
+`docs/pt-nurture-flow-briefing-email.md` and this note is finished.

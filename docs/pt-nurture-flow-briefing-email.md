@@ -23,8 +23,9 @@ voice as `docs/pt-team-update-email.md`.
 kept the ones sent on 12 August 2026. Templates are `01-welcome-nurture`,
 `02-plan-not-motivation` and `03-last-call` in `docs/emails/`.
 
-**Fill in before sending:** the go-live date in the opening line, and the date
-you want portal access confirmed by. Both are marked `{...}` in the draft.
+**Check before sending:** the copy asks for portal access to be confirmed **by
+Friday**, which assumes it goes out early in the week. If it goes out later,
+move that day.
 
 **No passwords in this email.** It is a group send. Anyone who needs a reset
 gets it individually, per `docs/pt-login-details-email.md`.
@@ -38,8 +39,8 @@ gets it individually, per `docs/pt-login-details-email.md`.
 Hi Dylan, Julie, Shahd and Michael,
 
 In August I said I would walk you through the new lead flow properly once it was
-live. That is what this is. It goes live {DATE}, and it changes the shape of your
-week, so it is worth five minutes.
+live. It is live now, as of this week, and it changes the shape of your week, so
+this is worth five minutes.
 
 The short version: every new member now gets three emails from the gym about
 their complimentary PT session. Most of the people who actually want one will put
@@ -132,9 +133,10 @@ pt.fitazgym.com/onboarding uses the same login.
   as not junk. That is the address your lead notifications come from, and it is
   the one way to miss a lead without knowing you have missed it.
 
-**Reply and tell me you are in by {DATE}.** Once this starts running, leads land
-on the board and in your inbox rather than coming to you through me, so I need to
-know everyone can actually see their own.
+**Reply and tell me you are in by Friday.** The emails are already going out, so
+the first leads under the new flow reach you inside a fortnight, on the board and
+in your inbox rather than through me. I need to know everyone can actually see
+their own before that happens.
 
 **Where this goes next**
 
@@ -152,15 +154,15 @@ Karl
 
 ## Notes on the draft
 
-- **Two placeholders have to be filled in**: the go-live date in the opening
-  line, and the confirm-by date for portal access. Do not send it with either
-  still in braces.
-- **Do not send it before the flow can actually send.** The outstanding items
-  are GymMaster's, not Karl's: the unsubscribe token and `List-Unsubscribe`
-  header, a suppression list that is honoured, and which domain GymMaster sends
-  from. All tracked in `docs/handoff-email-1-go-live.md`. This email announces a
-  live date, so it is the wrong thing to send while that is open. If it goes out
-  ahead of go-live, change the opening line to a fortnight rather than a date.
+- **The flow is live as of 1 September 2026**, and the unsubscribe is handled by
+  GymMaster, which was the last thing holding the send. The copy says so in the
+  present tense. Nothing in it is now conditional on a date being confirmed.
+- **Send it promptly.** Emails are already landing with members, so the window
+  where this email is a briefing rather than an explanation of something the PTs
+  have already noticed is about a fortnight wide, which is when the first leads
+  under the new flow reach their boards.
+- **The only date to check** is the confirm-by day, which reads "by Friday" and
+  assumes an early-week send.
 - **The status discipline ask is the operationally important part**, more than
   the explanation of the emails. Suppression before emails 2 and 3 is driven off
   the lead board, so if the PTs do not keep status current the member emails go
