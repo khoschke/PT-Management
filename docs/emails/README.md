@@ -563,8 +563,11 @@ still unticked is a live risk, not a launch task.
 
 - [ ] Render test across Gmail web, Gmail app, Apple Mail, Outlook desktop and
       Outlook.com, in both light and dark mode.
-- [x] **The unsubscribe.** Handled by GymMaster as of 1 September 2026. Nothing
-      goes back into the templates, see the merge tags section above.
+- [x] **The unsubscribe exists.** Handled by GymMaster as of 1 September 2026,
+      and nothing goes back into the templates, see the merge tags section
+      above. **That it works is a separate, still-unticked item below**: until
+      somebody has unsubscribed on a seed record and watched emails 2 and 3 not
+      arrive, this is a link we believe in rather than one we have tested.
 - [ ] **Point the logo back at `pt.fitazgym.com` once this branch is deployed**,
       and restore the reversed logo for dark mode with it. See the table above.
 - [ ] **Confirm a `List-Unsubscribe` header is set.** That is a header, not

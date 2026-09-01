@@ -19,9 +19,10 @@ voice as `docs/pt-team-update-email.md`.
 `julie@fit365.net.au`, Shahd Herbert `shahdherbert@gmail.com`, Michael Hammett
 `michael@puremomentum.com.au`
 
-**Attach:** rendered previews of the three member emails, if the PTs have not
-kept the ones sent on 12 August 2026. Templates are `01-welcome-nurture`,
-`02-plan-not-motivation` and `03-last-call` in `docs/emails/`.
+**Attach: nothing.** The three member emails went out with the 12 August 2026
+email and the PTs had their window to react to the copy. Karl's call, and it
+keeps this email about how the flow works rather than reopening a review of the
+templates.
 
 **Check before sending:** the copy asks for portal access to be confirmed **by
 Friday**, which assumes it goes out early in the week. If it goes out later,
@@ -92,12 +93,11 @@ part works exactly as it does today.
 The session expires on day 37, a week after the last email. That gives you a
 straight reason to follow up that is not "just checking in".
 
-It only works if it is true. If somebody rings on day 45 and gets the session
-anyway, the deadline is spent for every member they talk to. So if a member gets
-to you before their date, book them in. If they come to you after it, do not
-promise it on the floor, send them to me and I will make the call. The last email
-already offers to hold the session for anyone who replies before the date, so
-most of these sort themselves out.
+Use it while it is running. Somebody who has just been told the offer closes is
+easier to get on the phone this week than next, which is the whole reason the
+deadline exists. It is there to move the member, not to give you a rule to
+enforce. The last email also offers to hold the session for anyone who replies
+before the date, so a few will come to you already asking.
 
 **The one thing I need from you, every week**
 
@@ -126,7 +126,7 @@ pt.fitazgym.com/onboarding uses the same login.
 
 - If you have not signed in yet, or you cannot remember the password, message me
   and I will reset it in a minute. There is still no forgot password link on
-  there, so I am the reset button. No drama and no need to feel daft about it.
+  there, so I am the reset button.
 - If you have not already, click Account once you are in and set a password of
   your own.
 - Check your junk folder for anything from noreply@mail.fitazgym.com and mark it
@@ -163,6 +163,18 @@ Karl
   under the new flow reach their boards.
 - **The only date to check** is the confirm-by day, which reads "by Friday" and
   assumes an early-week send.
+- **The expiry section deliberately does not tell the PTs what to do about a
+  member who comes to them after day 37.** Karl's call, 1 September 2026: the
+  deadline exists to create urgency for the member, and a PT who has a warm
+  prospect in front of them should not be sent back to the manager for
+  permission. Note that this sits against the line in `docs/emails/README.md`
+  that the deadline has to be real to keep working, so what protects it now is
+  that the member-facing copy still states it plainly and nothing in the PT
+  briefing invites the team to advertise an extension. Do not re-add a "come to
+  me first" instruction here.
+- **Nothing is attached**, per the send details above. If a new trainer joins
+  later and needs the context, send them the previews separately rather than
+  padding this email.
 - **The status discipline ask is the operationally important part**, more than
   the explanation of the emails. Suppression before emails 2 and 3 is driven off
   the lead board, so if the PTs do not keep status current the member emails go
