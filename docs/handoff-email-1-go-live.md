@@ -148,6 +148,12 @@ note covering:
 Worth doing as a short conversation rather than only an email, since it changes
 the shape of their week.
 
+**The email itself is drafted**, in `docs/pt-nurture-flow-briefing-email.md`. It
+covers all of the above, adds the status discipline the suppression step depends
+on, and makes each PT confirm they can sign in to the portal, since that is where
+their leads now land. Two dates have to be filled in before it goes, and it
+should not go before the GymMaster items above are closed.
+
 ## Definition of done
 
 A member who joins the gym gets email 1 the next day, email 2 on day 10 and, if
