@@ -152,6 +152,15 @@ strength". Change it in that one file and it flows to both sides.
 - Run `npm run build` + `npx tsc --noEmit` + `npm run lint` before pushing.
 - Verify changes in a real browser with screenshots where it matters
   (thoroughness is preferred over speed here).
+- **Branches merged via PR delete themselves.** "Automatically delete head
+  branches" was turned on 2 Sep 2026, so the branch map should stay honest by
+  itself from here. Two things it does *not* cover: a branch merged directly
+  rather than through a PR, and any branch abandoned without merging — those
+  still have to be deleted by hand, and their rows removed from the map.
+- **A Claude session cannot delete a remote branch.** Every attempt in this repo
+  has been refused by GitHub with a 403, and the GitHub MCP server has no
+  delete-branch tool. Don't burn time retrying it; hand the branch name to Karl,
+  or let the auto-delete above handle it.
 
 ## Member email series
 
