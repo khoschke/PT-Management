@@ -1,5 +1,11 @@
 # Handoff: Self-Service "Forgot Password" on the Login Page
 
+> **SUPERSEDED — use `docs/handoff-auth-self-service.md` instead.** That note
+> combines this forgot-password work with the self-service change-email work
+> (they share the same Supabase Auth email plumbing) and reflects the current
+> reality that Custom SMTP is now set up, so the feature is unblocked. This file
+> is kept for its detail but the combined note is the brief to start from.
+
 **Start a new session with this note.** Read `docs/PROJECT_STATUS.md` first, then this.
 
 ## The goal

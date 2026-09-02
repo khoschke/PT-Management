@@ -330,20 +330,20 @@ now retired rather than reserved: don't fill it.
   Sending from GymMaster on days 1, 10 and 30 off each member's join date, with
   the unsubscribe handled by GymMaster. `docs/handoff-email-1-go-live.md` is now
   a record rather than a task, apart from its last item: telling the PTs.
-- **Change-email on the Account screen** — the `/admin/account` screen currently
-  does self-service password only. Add a "change my email" field there too
-  (`supabase.auth.updateUser({ email })`), so users can update their own login
-  details. **No longer blocked:** email is live, so the Supabase confirmation
-  link will now deliver. Needs Supabase Custom SMTP pointed at Resend.
-  (Note: managers can already change *anyone's* sign-in email immediately from
-  the Staff screen — that path uses the admin client and needs no confirmation
-  email. This item is specifically the self-service version.)
-- **Forgot-password on the login page** — a self-serve "Forgot password?" reset
-  link for locked-out staff/trainers. **No longer blocked by the domain:** the
-  sending domain is verified. Still needs Supabase Custom SMTP configured against
-  Resend before the recovery link will deliver. See
-  `docs/handoff-forgot-password.md`. Build and ship it in one go once auth email
-  works, don't merge a dead reset link before then.
+- **Self-service auth (forgot-password + change-email)** — combined into one
+  build; brief is `docs/handoff-auth-self-service.md`. **Unblocked:** Supabase
+  Custom SMTP (pointed at Resend) was set up ~2 Sep 2026, which was the last
+  dependency. One caveat carried into the handoff: that a Supabase *auth* email
+  actually delivers has not been confirmed end to end yet, so the build session
+  must send a real test first and not merge a dead link.
+  - **Forgot-password** — a self-serve "Forgot password?" reset link on
+    `/admin/login` for locked-out staff/trainers. (Older standalone note
+    `docs/handoff-forgot-password.md` is now superseded by the combined doc.)
+  - **Change-email** — a "change my email" field on `/admin/account`
+    (`supabase.auth.updateUser({ email })`) so users update their own sign-in
+    email. (Managers can already change *anyone's* sign-in email immediately from
+    the Staff screen via the admin client, no confirmation email needed — this
+    item is specifically the self-service version.)
 - **Availability as AM + PM (not "both")** — change trainer availability to
   independent AM/PM selection. See `docs/handoff-availability-am-pm.md`.
 - ~~**Custom web address**~~ — **DONE.** `pt.fitazgym.com` is live over HTTPS. DNS
@@ -380,6 +380,10 @@ Reminders only. Each gets scoped and built in its own session.
 - **Staff development pathway into the PT portal**, with an upgrade of a staff
   member to trainer status. Touches the onboarding workbook, the `manager` /
   `trainer` role in `profiles`, the `trainers` table and `/admin/staff`.
+  **Now scoped** in `docs/handoff-staff-development-pathway.md` — a decisions-first
+  note (how to model a `staff` role, what staff can see, how their onboarding
+  progress is stored, the v1 feature set, and the staff → trainer upgrade). Open
+  it in its own thread and settle the decisions with Karl before building.
 - **PT prospect interview system** in the PT Manager area. STAR method has been
   suggested; approach to be agreed when it is scoped.
 - **Ezidebit connected to the PT Manager dashboard via an MCP, reading live.**
