@@ -92,8 +92,12 @@ and run `supabase/reconcile/02_storage_bucket_fallback.sql`, which is idempotent
 
 ## Note on the branches
 
-`claude/security-merge-pending-parta` and
-`claude/security-hardening-validation-0ry4cz` are both fully contained in what
-was deployed. They can be deleted. `claude/custom-domain-dns-setup-v45oc6`
-remains parked — its DB security findings were re-done fresh as `0009` rather
-than merged.
+`claude/security-merge-pending-parta`,
+`claude/security-hardening-validation-0ry4cz` and the working branch
+`claude/reconcile-database-security-deploy-01sf2h` were all fully contained in
+what was deployed, and were deleted on 2 September 2026. The branch names above
+are kept because they are the record of where the work came from, not because
+the branches still exist.
+
+`claude/custom-domain-dns-setup-v45oc6` remains parked — its DB security findings
+were re-done fresh as `0009` rather than merged.

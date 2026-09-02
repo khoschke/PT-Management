@@ -85,15 +85,18 @@ since been renumbered to `0009` because it rewrites a policy on
 have failed on a fresh setup. GymMaster keeps `0007/0008` untouched. Anything new
 starts at **0010**.
 
-**`0009` must be applied in two parts around the code deploy**, per the banner at
-the top of the file: PART A before the new code is live, PART B after. The code
-in `src/app/pt-session/actions.ts` already calls `submit_form_lead`, so PART A
-has to be in place before that deploy or the public form breaks.
+`0009`'s two-part structure is spent — both parts are on live. It only ever
+mattered because a running form was mid-flight between the old insert path and
+the new RPC; a fresh project runs the file top to bottom in one go. The runbook
+that executed it, `supabase/reconcile/README.md`, is now a record.
 
-The full runbook — audit, apply `0006`, PART A, deploy, PART B, verify — is
-`supabase/reconcile/README.md`. **None of it can be run from a Claude build
-workspace** (no outbound network to Supabase), which is how the drift happened
-in the first place. Someone has to run it in the Supabase SQL editor.
+**What is not spent is the audit query.** `supabase/reconcile/01_audit_live_schema.sql`
+is read-only and takes seconds. Run it before stating what is on the live
+database — including before and after merging GymMaster's `0007`/`0008`, which
+are the next migrations that will sit in `supabase/migrations/` looking applied
+when they are not. **Nothing applies migrations automatically**, and a Claude
+build workspace usually has no outbound network to Supabase, so a human at the
+SQL editor is still the mechanism.
 
 Roles live in `profiles` (`manager` / `trainer`). Managers see/allocate all
 leads; trainers see only their own. RLS enforces this at the database level.
@@ -191,8 +194,9 @@ raster master it was traced from.
 
 **This is the primary mark in use.** The earlier Liberation Sans trace that once
 carried the `fitaz-gym-logo.svg` filename is gone, replaced by the faithful
-vector on `claude/apple-design-pass-ymnm14`; when that branch merges, keep the
-`public/brand/` versions.
+vector. That merged with `claude/apple-design-pass-ymnm14`, which has since been
+deleted — there is no longer a competing trace anywhere, so nothing needs
+guarding on a future merge.
 
 **The re-trace is now done.** The old note here asked for the mark to be
 re-traced from vector rather than corrected by eye, because the Liberation Sans
@@ -224,27 +228,25 @@ Zero means everything on that branch is already on production, whatever the
 table says. If what you find disagrees with the table, **the command is right**:
 fix the table in the same session rather than leaving it to mislead the next one.
 
-### Snapshot, 12 August 2026 (verified with the command above, after the deploy)
+### Snapshot, 2 September 2026 (verified with the command above)
 
-Three branches marked "safe to delete" below were still on the remote when this
-was written — the session that finished the work could push commits but not
-delete refs. Delete them from the GitHub branches page when convenient; their
-rows can then come out of this table.
+The three branches the August reconciliation left behind
+(`reconcile-database-security-deploy-01sf2h`, `security-merge-pending-parta`,
+`security-hardening-validation-0ry4cz`) have been deleted, along with
+`apple-design-pass-ymnm14`. Their rows are removed: a merged branch that no
+longer exists is noise here, and its record is the commit history.
 
 | Branch / thread | Workstream | State |
 |---|---|---|
-| `claude/reconcile-database-security-deploy-01sf2h` | Live-DB reconciliation + security deploy | **Merged and deployed, 12 Aug 2026.** Carried the security hardening merge, the migration renumbered `0005` → `0009`, the `supabase/reconcile/` audit + runbook, and this doc's corrected migration table. Safe to delete. |
-| `claude/security-merge-pending-parta` | Security hardening merge | **Merged** (via the reconcile branch). Its migration number was wrong — corrected there. Safe to delete. |
-| `claude/apple-design-pass-ymnm14` | Apple-grade design pass | **Merged.** Public form, lead board, trainers, staff, login, plus the FITAZ GYM wordmark across app headers. The superseded wordmark trace was discarded in favour of the `public/brand/` marks, as planned. |
 | `claude/docs-reconcile-live-state` | Branch-map reconciliation | **Merged.** Docs only. |
 | `claude/custom-domain-dns-setup-v45oc6` | Custom domain + security hardening | **PARKED — do NOT merge.** 9 unmerged, but its deliverable (pt.fitazgym.com + email) is already live via the dashboards, and it forked ~50 commits back, so a merge would conflict and regress newer work. The CSV/cron/IP-salt fixes were re-done fresh and merged (PR #18); the DB security was re-done fresh as migration `0009`. Ignore or delete this branch. |
 | `claude/security-hardening-csv-ip-cron` | Security hardening (CSV/IP/cron) | **Merged** (PR #18). CSV formula-injection guard, IP-salt production guard, cron fail-closed + constant-time auth. Also added `docs/handoff-security-hardening.md` for the remaining items. |
-| `claude/security-hardening-validation-0ry4cz` | Security hardening (DB / RLS) | **Merged** (via the reconcile branch). Safe to delete. |
 | `claude/gymmaster-phase-1-pull-7yuxuy` | GymMaster integration | **3 unmerged.** Phase 1 pull scaffolding plus migrations `0007` and `0008`, which keep those numbers. |
 | `claude/pt-team-onboarding-rw5awg` | PT team update email | **Merged.** The team update email and the login details email, from `docs/handoff-pt-team-update-email.md`. Both were sent on 12 August 2026; the files are kept as the record of what went out and as the template for the next trainer who joins. |
 | `claude/handoff-email-notifications-9m67a6` | Branded HTML notification emails | **Merged** (PR #4). Replaced the plain-text ops emails with branded HTML plus a dashboard link. |
 | `claude/self-service-password-change-3ydtqu` | Forgot-password | **1 unmerged**, a handoff note only. No implementation; still needs Supabase Custom SMTP. |
-| `claude/gym-nurture-email-design-uw9nvu` | Member email series | **Merged** (PR #13 and #14). Emails 1 to 3, CMS-safe variants, brand assets, this doc. |
+| `claude/gym-nurture-email-design-uw9nvu` | Member email series | **Merged** (PR #13 and #14, plus the August logo and template work). Emails 1 to 3, CMS-safe variants, brand assets, this doc. |
+| `claude/pt-email-nurture-flow-t2e5e7` | Nurture flow go-live + PT briefing | **Merged 2 Sep 2026.** Docs only: recorded the series as live, settled unsubscribe as GymMaster's, and carried the PT briefing email (since sent). Safe to delete. |
 | `claude/pt-document-expiry-feature-ppsy30` | PT compliance documents with expiry reminders | **Merged** (PR #8). |
 | `claude/availability-am-pm-model-yj1dby` | Trainer AM/PM availability | Merged. |
 | `claude/trainer-portal-handoff-doc-o0on8j` | Editable trainer pages | Merged (scoping note only, build not started). |
@@ -351,14 +353,16 @@ now retired rather than reserved: don't fill it.
   12 August 2026, along with the four individual login emails. The record is
   `docs/pt-team-update-email.md` and `docs/pt-login-details-email.md`, kept as
   the template for the next trainer who joins.
-- **Brief the PTs on the live nurture flow** — the follow-up that email
-  promised, now that the series is sending. Explains the three member emails and
-  the day 37 expiry, how leads reach a PT now and why the unverified ones arrive
-  around day 11, asks the team to keep lead status current because suppression
-  depends on it, and makes each PT confirm they can sign in to the portal.
-  **Drafted in `docs/pt-nurture-flow-briefing-email.md`, not yet sent.** Worth
-  sending before the first leads under the new flow reach their boards, which is
-  roughly a fortnight from go-live.
+- ~~**Brief the PTs on the live nurture flow**~~ — **DONE, sent 2 Sep 2026**,
+  ahead of the first leads under the new flow reaching their boards.
+  `docs/pt-nurture-flow-briefing-email.md` is kept as the record of what went
+  out. It explains the three member emails and the day 37 expiry, how leads
+  reach a PT now and why the unverified ones arrive around day 11, asks the team
+  to keep lead status current because suppression depends on it, and makes each
+  PT confirm they can sign in to the portal.
+  **The standing job it creates:** suppression before emails 2 and 3 is now
+  recurring work off the lead board, and it only works if the PTs keep lead
+  status current. Watch whether that actually happens.
 
 ### Newly added, not yet scoped
 
