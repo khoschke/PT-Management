@@ -1,5 +1,12 @@
 # Fitaz Gym member email series
 
+**Status: live since 1 September 2026.** All three are sending from GymMaster off
+the member's own join date, and the unsubscribe is handled by GymMaster rather
+than by anything in these templates. What follows is written as a build note in
+places; read it as the record of how the series was put together and why, with
+the send checklist at the end now a live-send checklist rather than a pre-launch
+one.
+
 Member-facing lifecycle emails, separate from the two internal ops emails in
 `src/lib/email.ts` (trainer allocation, manager daily digest). Those tell staff
 what to do. These talk to members.
@@ -304,15 +311,21 @@ not. It stays true because email 3 only ever fires on day 30, exactly seven days
 out. **If you change the send day, change the copy**, in the headline, the lead
 paragraph and the sign off in email 3, and in the closing block of email 2.
 
-**There is no unsubscribe link in the footer at all.** One was there, pointing
-at a `{{unsubscribe_url}}` placeholder, and it was removed on 19 August 2026
-because a visible link that goes nowhere is worse than none while testing.
+**There is no unsubscribe link in the footer, and that is now correct.** One was
+there, pointing at a `{{unsubscribe_url}}` placeholder, and it was removed on
+19 August 2026 because a visible link that goes nowhere is worse than none while
+testing.
 
-**It has to come back before a member facing send.** The club template is not
-being used, so nothing else supplies one, and an unsubscribe is not optional on
-marketing mail to members. What is needed is GymMaster's own unsubscribe token,
-in `{58:...}` style, which nobody has found yet. Put it back in the footer of
-all three templates once it is known.
+**GymMaster supplies the unsubscribe** as of 1 September 2026, which is what
+unblocked the send. So the templates deliberately carry none: adding one back
+would give a member two unsubscribe links pointing at different places, and the
+one that does not write to GymMaster's suppression list is the one that keeps
+sending them email.
+
+**This is a GymMaster dependency, not a solved problem in the markup.** If these
+templates are ever sent from anywhere else, the unsubscribe and the
+`List-Unsubscribe` header both have to come from that platform, or go back into
+the footer, before a single send.
 
 ## The call to action link
 
@@ -542,12 +555,19 @@ Two things follow from the CDN file being the padded one:
   deliberately switch to would vanish. `public/email/fitaz-gym-logo-white.png`
   is ready for when the swap comes back.
 
-## Before the first send
+## The send checklist
+
+Written before the first send and kept, because most of it applies to every send
+rather than just the first. **The series is live**, so anything here that is
+still unticked is a live risk, not a launch task.
 
 - [ ] Render test across Gmail web, Gmail app, Apple Mail, Outlook desktop and
       Outlook.com, in both light and dark mode.
-- [ ] **Put the unsubscribe link back**, using GymMaster's real token. It was
-      removed while testing and the footer currently has none at all.
+- [x] **The unsubscribe exists.** Handled by GymMaster as of 1 September 2026,
+      and nothing goes back into the templates, see the merge tags section
+      above. **That it works is a separate, still-unticked item below**: until
+      somebody has unsubscribed on a seed record and watched emails 2 and 3 not
+      arrive, this is a link we believe in rather than one we have tested.
 - [ ] **Point the logo back at `pt.fitazgym.com` once this branch is deployed**,
       and restore the reversed logo for dark mode with it. See the table above.
 - [ ] **Confirm a `List-Unsubscribe` header is set.** That is a header, not
@@ -560,7 +580,8 @@ Two things follow from the CDN file being the padded one:
       CTA.
 - [ ] Send a live seed test to a real inbox and click both buttons.
 - [ ] Confirm `{58:Member First Name}` has a fallback and test a record with no name.
-- [ ] Confirm the unsubscribe link works and writes to the suppression list.
+- [ ] Confirm GymMaster's unsubscribe works end to end and writes to the
+      suppression list, so an unsubscribe on email 1 actually stops 2 and 3.
 - [ ] Confirm `Reply-To` reaches a monitored inbox, because the copy invites replies.
 - [ ] Confirm SPF, DKIM and DMARC pass on `fitazgym.com`.
 

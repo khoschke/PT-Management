@@ -189,11 +189,11 @@ Neither is Karl's to fix, both are tracked in
 - ~~**The SPF record is malformed**~~ — **fixed (11 Aug 2026).** The `send.mail`
   TXT record in the CrazyDomains zone now reads `v=spf1 include:amazonses.com ~all`
   and is Active; SPF and DKIM both pass.
-- **GymMaster needs confirming**: whether it has a raw HTML or source import
-  rather than a rich text paste, whether it provides unsubscribe and a
-  `List-Unsubscribe` header, whether its suppression list is honoured, and
-  whether it can do the date arithmetic the day 37 expiry needs. With Danny,
-  ahead of a working session with Karl.
+- ~~**GymMaster needs confirming**~~ — **settled, and the flow went live on
+  1 September 2026.** The unsubscribe is GymMaster's and is in place, the merge
+  tags are GymMaster's own syntax, and the day 37 expiry is worded relatively
+  because GymMaster cannot do the date arithmetic. The follow-up email this note
+  anticipated is drafted in `docs/pt-nurture-flow-briefing-email.md`.
 
 **For the email:** worth one honest line that the flow is built and waiting on
 configuration, with a rough sense of timing. Do not list the technical items.
