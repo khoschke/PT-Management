@@ -233,8 +233,9 @@ fix the table in the same session rather than leaving it to mislead the next one
 The three branches the August reconciliation left behind
 (`reconcile-database-security-deploy-01sf2h`, `security-merge-pending-parta`,
 `security-hardening-validation-0ry4cz`) have been deleted, along with
-`apple-design-pass-ymnm14`. Their rows are removed: a merged branch that no
-longer exists is noise here, and its record is the commit history.
+`apple-design-pass-ymnm14` and `pt-email-nurture-flow-t2e5e7`. Their rows are
+removed: a merged branch that no longer exists is noise here, and its record is
+the commit history.
 
 | Branch / thread | Workstream | State |
 |---|---|---|
@@ -246,7 +247,6 @@ longer exists is noise here, and its record is the commit history.
 | `claude/handoff-email-notifications-9m67a6` | Branded HTML notification emails | **Merged** (PR #4). Replaced the plain-text ops emails with branded HTML plus a dashboard link. |
 | `claude/self-service-password-change-3ydtqu` | Forgot-password | **1 unmerged**, a handoff note only. No implementation; still needs Supabase Custom SMTP. |
 | `claude/gym-nurture-email-design-uw9nvu` | Member email series | **Merged** (PR #13 and #14, plus the August logo and template work). Emails 1 to 3, CMS-safe variants, brand assets, this doc. |
-| `claude/pt-email-nurture-flow-t2e5e7` | Nurture flow go-live + PT briefing | **Merged 2 Sep 2026.** Docs only: recorded the series as live, settled unsubscribe as GymMaster's, and carried the PT briefing email (since sent). Safe to delete. |
 | `claude/pt-document-expiry-feature-ppsy30` | PT compliance documents with expiry reminders | **Merged** (PR #8). |
 | `claude/availability-am-pm-model-yj1dby` | Trainer AM/PM availability | Merged. |
 | `claude/trainer-portal-handoff-doc-o0on8j` | Editable trainer pages | Merged (scoping note only, build not started). |
