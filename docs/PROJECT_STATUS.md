@@ -144,6 +144,16 @@ strength". Change it in that one file and it flows to both sides.
   with the installed `@supabase/*` versions; they map to the anon and
   service-role roles respectively.
 
+## Small shipped touches
+
+- **Password show/hide toggle.** Every password field (login, the Account
+  change-password form, and the Staff add-manager / add-trainer-login temp-password
+  fields) uses a shared `PasswordInput`
+  (`src/app/admin/components/PasswordInput.tsx`) with an eye toggle, so staff and
+  trainers can reveal what they're typing and hide it again. The Staff temp-password
+  fields, which used to be plain visible text, now default to hidden and reveal on
+  the toggle.
+
 ## Working practices in this repo
 
 - Develop on branch `claude/fitaz-gym-pt-leads-76ffhv` (or a dedicated branch
@@ -384,6 +394,12 @@ Reminders only. Each gets scoped and built in its own session.
   note (how to model a `staff` role, what staff can see, how their onboarding
   progress is stored, the v1 feature set, and the staff → trainer upgrade). Open
   it in its own thread and settle the decisions with Karl before building.
+- **PT onboarding checklist, tracked per trainer** — turn the paper operational
+  setup checklist (contract, bond, uniform, systems access, profiles, certs, rent
+  ramp) into a live per-trainer checklist the manager ticks off and the trainer can
+  see. **Now scoped** in `docs/handoff-onboarding-checklist-tracking.md` (decisions
+  first, and note it is separate from the educational `/onboarding` workbook). Open
+  it in its own thread.
 - **PT prospect interview system** in the PT Manager area. STAR method has been
   suggested; approach to be agreed when it is scoped.
 - **Ezidebit connected to the PT Manager dashboard via an MCP, reading live.**

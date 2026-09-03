@@ -5,6 +5,7 @@ import { useFormStatus } from "react-dom";
 import { useSearchParams } from "next/navigation";
 import { login } from "./actions";
 import { initialLoginState } from "./state";
+import PasswordInput from "@/app/admin/components/PasswordInput";
 
 const inputClass =
   "mt-2 w-full rounded-xl border-none bg-fill px-4 py-3.5 text-[17px] text-foreground outline-none ring-1 ring-transparent transition focus:ring-2 focus:ring-foreground";
@@ -56,10 +57,9 @@ export default function LoginForm() {
           <label htmlFor="password" className="block text-[15px] font-semibold text-foreground">
             Password
           </label>
-          <input
+          <PasswordInput
             id="password"
             name="password"
-            type="password"
             required
             autoComplete="current-password"
             className={inputClass}
