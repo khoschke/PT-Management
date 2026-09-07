@@ -387,11 +387,15 @@ Reminders only. Each gets scoped and built in its own session.
   full workbook, no lead board, no roster. Five phases; migration **`0010`** is
   RLS only and **runs in two parts** (`alter type ... add value` cannot be used
   in the transaction that adds it). Phase 5 (development goals and check-ins)
-  is `0011` and droppable. **The one thing that must not be skipped:**
+  is `0011` and droppable: staff set their own goals, the manager guides them
+  in a conversation and is locked out of editing goal text in RLS, and staff
+  **do** appear on the compliance screen because they operate as PTs and carry
+  the same certs and insurances (the expiry cron already covers them, it never
+  filters on `trainers.active`). **The one thing that must not be skipped:**
   `leads_select_trainer`, `leads_update_trainer` and
   `status_history_select_trainer` use `not is_manager()` to mean "is a
-  trainer", which a third role silently breaks. Two questions are still open,
-  both listed in the brief.
+  trainer", which a third role silently breaks. All decisions are settled and
+  nothing blocks a build.
 - **PT prospect interview system** in the PT Manager area. STAR method has been
   suggested; approach to be agreed when it is scoped.
 - **Ezidebit connected to the PT Manager dashboard via an MCP, reading live.**
