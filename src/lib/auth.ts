@@ -4,6 +4,9 @@ import type { Profile } from "@/lib/types";
 export interface CurrentUser {
   id: string;
   email: string | null;
+  // Set while a self-service email change is waiting to be confirmed from the
+  // link Supabase emailed. Null once it's been confirmed (or was never started).
+  newEmail: string | null;
   profile: Profile | null;
 }
 
@@ -25,7 +28,12 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
     .eq("id", user.id)
     .maybeSingle();
 
-  return { id: user.id, email: user.email ?? null, profile: profile ?? null };
+  return {
+    id: user.id,
+    email: user.email ?? null,
+    newEmail: user.new_email ?? null,
+    profile: profile ?? null,
+  };
 }
 
 // Defence in depth for the manager-only server actions. RLS is still the real

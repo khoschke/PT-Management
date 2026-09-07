@@ -33,6 +33,11 @@ Set and working: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 (a new-style `sb_publishable_…` key), `SUPABASE_SERVICE_ROLE_KEY` (a new-style
 `sb_secret_…` key), `IP_HASH_SALT`, `PT_MANAGER_EMAIL`.
 
+**Not set yet: `NEXT_PUBLIC_SITE_URL`.** The self-service auth branch needs it
+set to `https://pt.fitazgym.com` so recovery and email-change links point at the
+custom domain rather than whichever host served the request. Nothing on
+production reads it today, so setting it early is harmless.
+
 `RESEND_API_KEY`, `NOTIFICATIONS_FROM_EMAIL`, and `CRON_SECRET` are all set —
 email is fully live. Both the trainer allocation email and the manager daily
 digest (Vercel cron) are confirmed sending from the branded
@@ -134,6 +139,12 @@ strength". Change it in that one file and it flows to both sides.
 - **This build workspace has no outbound network** to Supabase, Google,
   GymMaster, etc. You cannot test those live from here — build, deploy, and
   verify on the live site (which is not network-restricted).
+  **The MCP servers are the exception, and they are a big one.** The Supabase,
+  Resend and GitHub MCP servers reach the live services from a session that
+  cannot `curl` them. `execute_sql` and `query_logs` against the live project,
+  and Resend's email log, are all available — that combination is what found
+  the broken auth SMTP on 7 Sep 2026 without deploying anything. Reach for the
+  MCP tools before concluding something can't be checked from here.
 - **A migration in `supabase/migrations/` is not proof it ran on live.** Nothing
   applies migrations automatically; a human pastes them into the Supabase SQL
   editor, and that step has been silently skipped before (`0006`, which broke two
@@ -254,7 +265,8 @@ the commit history.
 | `claude/gymmaster-phase-1-pull-7yuxuy` | GymMaster integration | **3 unmerged.** Phase 1 pull scaffolding plus migrations `0007` and `0008`, which keep those numbers. |
 | `claude/pt-team-onboarding-rw5awg` | PT team update email | **Merged.** The team update email and the login details email, from `docs/handoff-pt-team-update-email.md`. Both were sent on 12 August 2026; the files are kept as the record of what went out and as the template for the next trainer who joins. |
 | `claude/handoff-email-notifications-9m67a6` | Branded HTML notification emails | **Merged** (PR #4). Replaced the plain-text ops emails with branded HTML plus a dashboard link. |
-| `claude/self-service-password-change-3ydtqu` | Forgot-password | **1 unmerged**, a handoff note only. No implementation; still needs Supabase Custom SMTP. |
+| `claude/self-service-password-change-3ydtqu` | Forgot-password (superseded) | **1 unmerged**, a handoff note only. Superseded by the branch below; the combined brief is `docs/handoff-auth-self-service.md`. |
+| `claude/forgot-password-change-email-gl4lca` | Self-service auth (forgot-password + change-email) | **Unmerged, and deliberately held.** Both flows built and verified as far as they can be without email. **Do not merge until Supabase Auth SMTP actually sends** — it currently fails with `535 Authentication credentials invalid`. See `docs/handoff-auth-self-service.md`. |
 | `claude/gym-nurture-email-design-uw9nvu` | Member email series | **Merged** (PR #13 and #14, plus the August logo and template work). Emails 1 to 3, CMS-safe variants, brand assets, this doc. |
 | `claude/pt-document-expiry-feature-ppsy30` | PT compliance documents with expiry reminders | **Merged** (PR #8). |
 | `claude/availability-am-pm-model-yj1dby` | Trainer AM/PM availability | Merged. |
@@ -330,20 +342,34 @@ now retired rather than reserved: don't fill it.
   Sending from GymMaster on days 1, 10 and 30 off each member's join date, with
   the unsubscribe handled by GymMaster. `docs/handoff-email-1-go-live.md` is now
   a record rather than a task, apart from its last item: telling the PTs.
-- **Self-service auth (forgot-password + change-email)** — combined into one
-  build; brief is `docs/handoff-auth-self-service.md`. **Unblocked:** Supabase
-  Custom SMTP (pointed at Resend) was set up ~2 Sep 2026, which was the last
-  dependency. One caveat carried into the handoff: that a Supabase *auth* email
-  actually delivers has not been confirmed end to end yet, so the build session
-  must send a real test first and not merge a dead link.
-  - **Forgot-password** — a self-serve "Forgot password?" reset link on
-    `/admin/login` for locked-out staff/trainers. (Older standalone note
-    `docs/handoff-forgot-password.md` is now superseded by the combined doc.)
-  - **Change-email** — a "change my email" field on `/admin/account`
-    (`supabase.auth.updateUser({ email })`) so users update their own sign-in
-    email. (Managers can already change *anyone's* sign-in email immediately from
-    the Staff screen via the admin client, no confirmation email needed — this
-    item is specifically the self-service version.)
+- **Self-service auth (forgot-password + change-email)** — **BUILT, NOT MERGED.**
+  Brief and full status: `docs/handoff-auth-self-service.md`. Both flows are
+  implemented on `claude/forgot-password-change-email-gl4lca`, build/typecheck/lint
+  clean, route wiring smoke-tested.
+  **Blocked on one thing, and it is not code: Supabase Auth cannot send email.**
+  The 2 Sep "Custom SMTP is set up" report was never confirmed by an actual auth
+  email, and it does not work. A real recovery request against the live project on
+  7 Sep 2026 returned `500 unexpected_failure`, with the project's auth log giving
+  `535 "Authentication credentials invalid"` — Resend refusing the SMTP password.
+  `recovery_sent_at` is null for all eight `auth.users` rows: **no auth email has
+  ever left this project.** Note the app's own notification emails are fine — they
+  go through the Resend *API*, a different path that has nothing to do with this.
+  The fix is a fresh Resend API key pasted into Supabase → Authentication → Emails
+  → SMTP (host `smtp.resend.com`, port 465, username the literal `resend`), then
+  the dashboard's "Send test email". Two smaller dashboard items go with it: add
+  `https://pt.fitazgym.com/admin/auth/callback` to the Redirect URLs allowlist (an
+  un-allowlisted redirect fails *silently*), and set `NEXT_PUBLIC_SITE_URL` in
+  Vercel. **Do not merge the branch until a real recovery email has landed** — a
+  "Forgot password?" link that emails nothing is worse than no link at all.
+  - **Forgot-password** — "Forgot password?" on `/admin/login` →
+    `/admin/forgot-password` → emailed link → `/admin/auth/callback` →
+    `/admin/reset-password`. (Older standalone note `docs/handoff-forgot-password.md`
+    remains superseded by the combined doc.)
+  - **Change-email** — a "change my email" form on `/admin/account`, gated on the
+    current password, sending a confirmation link to the new address. (Managers can
+    still change *anyone's* sign-in email immediately from the Staff screen via the
+    admin client, no confirmation email needed. That path is unaffected and remains
+    the fallback while SMTP is down.)
 - **Availability as AM + PM (not "both")** — change trainer availability to
   independent AM/PM selection. See `docs/handoff-availability-am-pm.md`.
 - ~~**Custom web address**~~ — **DONE.** `pt.fitazgym.com` is live over HTTPS. DNS

@@ -5,6 +5,14 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+const PUBLIC_ADMIN_ROUTES = new Set([
+  "/admin/login",
+  "/admin/forgot-password",
+  "/admin/auth/callback",
+]);
+
+const SIGNED_OUT_ONLY_ADMIN_ROUTES = new Set(["/admin/login", "/admin/forgot-password"]);
+
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
 
@@ -44,16 +52,26 @@ export async function proxy(request: NextRequest) {
     user = null;
   }
 
-  const isAdminRoute = request.nextUrl.pathname.startsWith("/admin");
-  const isLoginRoute = request.nextUrl.pathname === "/admin/login";
+  const path = request.nextUrl.pathname;
+  const isAdminRoute = path.startsWith("/admin");
 
-  if (isAdminRoute && !isLoginRoute && !user) {
+  // Signed-out staff have to be able to reach these: the sign-in screen, the
+  // "email me a reset link" screen, and the landing point for the links we
+  // email out. /admin/reset-password is deliberately NOT here — it needs the
+  // session the callback creates, so a bounce to sign-in is the right answer.
+  const isPublicRoute = PUBLIC_ADMIN_ROUTES.has(path);
+
+  // Already signed in? These two screens have nothing to offer — the Account
+  // screen is where a signed-in user changes their own password.
+  const isSignedOutOnlyRoute = SIGNED_OUT_ONLY_ADMIN_ROUTES.has(path);
+
+  if (isAdminRoute && !isPublicRoute && !user) {
     const loginUrl = new URL("/admin/login", request.url);
-    loginUrl.searchParams.set("redirectTo", request.nextUrl.pathname);
+    loginUrl.searchParams.set("redirectTo", path);
     return NextResponse.redirect(loginUrl);
   }
 
-  if (isLoginRoute && user) {
+  if (isSignedOutOnlyRoute && user) {
     return NextResponse.redirect(new URL("/admin", request.url));
   }
 
