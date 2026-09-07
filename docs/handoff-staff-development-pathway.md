@@ -24,6 +24,11 @@ member into a full PT with their own leads.
 3. **v1 is the workbook, manager progress visibility, the promotion action,
    staff document uploads, and development goals plus check-in notes.** The
    last of those is Phase 5 and is the only part that is droppable.
+5. **Staff set their own goals and the manager cannot edit them.** Both write
+   freely in a conversation beneath each goal. See Phase 5.
+6. **Staff appear on the compliance screen.** They operate as PTs and need the
+   same certs and insurances, so the manager's compliance overview covers them
+   too. Their own view of their documents lives in the development section.
 4. **The manager creates the login** with a starting password, exactly as
    `addTrainerLogin` does today. No invite email, so this build takes no
    dependency on Supabase auth email, which is still unconfirmed end to end.
@@ -106,8 +111,14 @@ Screens that list trainers and must now filter:
   the roster is PTs.
 - `/admin/staff` (`staff/page.tsx`) lists trainers for the `addTrainerLogin`
   dropdown. **Exclude staff**, they already have a login.
-- `/admin/compliance` (`compliance/page.tsx`) selects all rows. **See "Still
-  open" below.**
+- `/admin/compliance` (`compliance/page.tsx`) selects all rows. **Keep staff
+  in**, tagged so the manager can see at a glance which people are on the
+  development pathway. Staff operate as PTs and carry the same certs,
+  insurances and first aid, so leaving them off the compliance overview would
+  put a hole in the one screen that answers "is everyone legally clear to train
+  clients". The expiry cron already covers them: `document-expiry/route.ts`
+  iterates `trainer_documents` and never filters on `trainers.active`, so staff
+  reminders fire with no change.
 - `/admin` lead board already filters `active = true`. Safe, no change.
 - `/pt-session` is protected by the anon RLS grant. Safe, no change.
 
@@ -182,26 +193,108 @@ not the file listing.
 Everything above ships without this. Put it in its own migration **`0011`** so
 Phases 1 to 4 are not held hostage to it.
 
-- `development_goals`: `trainer_id`, `title`, `detail`, `target_date`,
-  `status`, `created_by`, timestamps.
-- `development_checkins`: `trainer_id`, `note`, `author`, `occurred_at`.
-- Both key on `trainer_id`, same as everything else, so they work for trainers
-  as well as staff at no extra cost.
-- RLS shape depends on the open question below.
+**The design principle, which drives the schema:** a goal belongs to the person
+who set it. The manager guides and critiques, but **never edits the staff
+member's goal text**. A coach who rewrites your goal has taken it off you. So
+both parties write freely, but never into the same field: the goal is the staff
+member's, the conversation underneath it is shared. That rule is enforced in
+RLS, not just in the UI.
+
+#### Schema
+
+```sql
+create type development_goal_status as enum ('active', 'achieved', 'parked');
+
+create table development_goals (
+  id uuid primary key default gen_random_uuid(),
+  trainer_id uuid not null references trainers (id) on delete cascade,
+  title text not null,
+  detail text not null default '',
+  status development_goal_status not null default 'active',
+  target_date date,                      -- optional, deliberately
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  achieved_at timestamptz
+);
+
+-- One table serves both conversations. goal_id null means a check-in on the
+-- person; goal_id set means a comment on that goal.
+create table development_notes (
+  id uuid primary key default gen_random_uuid(),
+  trainer_id uuid not null references trainers (id) on delete cascade,
+  goal_id uuid references development_goals (id) on delete cascade,
+  body text not null,
+  author_id uuid not null references auth.users (id),
+  created_at timestamptz not null default now()
+);
+```
+
+Both key on `trainer_id`, like everything else, so they work for trainers as
+well as staff at no extra cost.
+
+#### RLS
+
+- `development_goals` select: `trainer_id = my_trainer_id() or is_manager()`.
+- `development_goals` insert, update and delete: **`trainer_id = my_trainer_id()`
+  only.** The manager is deliberately locked out of writing. If a manager wants
+  a goal changed, they say so in the conversation and the staff member changes
+  it. That is the feature, not a limitation.
+- `development_notes` select: `trainer_id = my_trainer_id() or is_manager()`.
+- `development_notes` insert: `author_id = auth.uid()` and
+  (`trainer_id = my_trainer_id() or is_manager()`).
+- `development_notes` update and delete: `author_id = auth.uid()` only. Neither
+  party can edit or delete the other's words. It is a coaching record.
+
+#### Presentation
+
+One `/admin/development` screen, three zones top to bottom:
+
+1. **Workbook progress**, a strip showing the overall percentage with a link
+   into `/onboarding`.
+2. **Goals**, each a card with its conversation underneath.
+3. **Documents**, reusing the `/admin/documents` components.
+
+The manager opens the same screen for a given staff member. Identical layout,
+except goal text is read-only for them and the composer under each goal is not.
+
+#### Three rules the build must not quietly drop
+
+These come from the behaviour-change framework the gym coaches with, applied to
+its own staff. They are design decisions, not decoration.
+
+- **Cap active goals at three.** A staff member doing a full shift, the
+  workbook, and their certs is already pushing a loaded sled. A goals feature
+  that invites a list of twelve adds load and gets abandoned. Wanting a fourth
+  means parking or finishing one first, which is the useful conversation
+  anyway.
+- **Never show a goal as overdue, and never colour one red.** The three states
+  are Active, Achieved and Parked. Parked is legitimate and carries no penalty.
+  A goal that goes red teaches people to stop setting goals. Restart where you
+  are, not where you stopped.
+- **Never open on an empty box.** A blank "add a goal" field asks someone to
+  beat inertia with a blank page. Seed the empty state with two or three
+  prompts drawn from the workbook parts they have already worked through.
+
+**Target dates are optional on purpose.** A date helps some goals and quietly
+harms others.
+
+#### The part that actually makes this work
+
+On the manager's development list, show **when each person was last checked in
+on**. That single column is the highest-value thing in Phase 5, because a
+development pathway does not fail when staff stop writing goals. It fails when
+nobody responds to them. The accountability loop needs to point at the manager,
+not only at the staff member.
 
 ## Still open
 
-1. **Who writes development goals?** Manager sets them and staff mark progress,
-   staff set their own and the manager comments, or both can write freely. This
-   decides the RLS on `development_goals` and is the only thing blocking Phase
-   5. Worth a coaching answer rather than a technical one: a goal someone sets
-   for themselves and a goal set for them behave very differently.
-2. **Do staff appear on `/admin/compliance`?** They can upload documents, so
-   their certs have to be visible somewhere. Either fold them into the
-   compliance screen tagged as staff, or show documents only inside the
-   Development section. Compliance currently means "is this PT legally clear to
-   train clients", which is not what a front desk person's first aid
-   certificate means, so keeping them separate is probably right.
+Nothing blocking. One thing to watch:
+
+- Staff carry full PT compliance (certs, insurance, first aid) because they
+  operate as PTs, but they do **not** get the lead board. That is deliberate:
+  restricted system access is the point, and taking allocated leads is what
+  promotion is for. If that stops being true in practice, revisit it as a
+  decision rather than letting a workaround grow.
 
 ## Constraints and house rules
 
@@ -221,5 +314,8 @@ Phases 1 to 4 are not held hostage to it.
 A staff member gets a portal login, signs in, works through the full PT
 onboarding workbook with progress that saves and persists, uploads their own
 documents, sees no lead board and no roster, and the manager can see how far
-they have got. When they are ready, one manager action promotes them to trainer
-and every answer and document they have accumulated comes with them.
+they have got. They set their own development goals, the manager
+guides and critiques them in a conversation without ever editing them, and
+their compliance sits alongside every other PT's. When they are ready, one
+manager action promotes them to trainer and every answer, document, goal and
+conversation they have accumulated comes with them.
