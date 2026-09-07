@@ -33,6 +33,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   const isManager = user.profile.role === "manager";
   const isTrainer = user.profile.role === "trainer";
+  // Staff on the development pathway: the workbook, their own compliance
+  // documents and their account. No lead board, no roster, no compliance
+  // overview. Hiding a nav link is presentation, not access control, so each
+  // of those screens refuses staff itself as well.
+  const isStaff = user.profile.role === "staff";
 
   return (
     <div className="min-h-screen bg-background">
@@ -46,15 +51,18 @@ export default async function DashboardLayout({ children }: { children: React.Re
             </div>
             <DashboardNav
               items={[
-                { href: "/admin", label: "Lead board" },
+                ...(isStaff ? [] : [{ href: "/admin", label: "Lead board" }]),
                 ...(isManager
                   ? [
                       { href: "/admin/trainers", label: "Trainers" },
                       { href: "/admin/staff", label: "Staff" },
+                      { href: "/admin/development", label: "Development" },
                       { href: "/admin/compliance", label: "Compliance" },
                     ]
                   : []),
-                ...(isTrainer ? [{ href: "/admin/documents", label: "My documents" }] : []),
+                ...(isTrainer || isStaff
+                  ? [{ href: "/admin/documents", label: "My documents" }]
+                  : []),
                 { href: "/onboarding", label: "PT onboarding" },
                 { href: "/admin/account", label: "Account" },
               ]}

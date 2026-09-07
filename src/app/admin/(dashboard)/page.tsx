@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/lib/auth";
 import type { Lead, Trainer } from "@/lib/types";
@@ -16,6 +17,12 @@ const ACTIVE_LOAD_STATUSES = ["New", "Allocated", "Contacted", "Booked"];
 export default async function AdminLeadBoardPage() {
   const user = await getCurrentUser();
   const supabase = await createClient();
+  // Staff have no leads and must not see anyone else's. The nav hides this
+  // link for them; this is the check that actually enforces it.
+  if (user?.profile?.role === "staff") {
+    redirect("/onboarding");
+  }
+
   const isManager = user?.profile?.role === "manager";
 
   const { data: leads } = await supabase

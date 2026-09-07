@@ -14,7 +14,11 @@ export type LeadStatus =
   | "Unreachable";
 export type GenderPreference = "male" | "female" | "no_preference";
 export type TimePreference = "AM" | "PM" | "either";
-export type AppRole = "manager" | "trainer";
+// `staff` are gym staff on the development pathway toward becoming a PT.
+// They carry a `trainer_id` pointing at an inactive `trainers` row, which is
+// how they get onboarding progress and compliance documents for free, and is
+// what makes promotion to trainer two writes rather than a data migration.
+export type AppRole = "manager" | "trainer" | "staff";
 
 export interface Trainer {
   id: string;

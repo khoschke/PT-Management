@@ -2,9 +2,18 @@
 
 **Start a new session with this note.** Read `docs/PROJECT_STATUS.md` first, then this.
 
-> **Scoping is DONE (7 September 2026).** The decisions below were settled with
-> Karl in the scoping session. This is now a build brief. The one item still
-> genuinely open is flagged under "Still open" and only blocks Phase 5.
+> **Phases 1 to 4 are BUILT (7 September 2026). Phase 5 is not.**
+> The decisions below were settled with Karl in the scoping session and the
+> build followed them. What remains is Phase 5 (development goals and
+> check-ins) and, before any of this works on live, **running migration
+> `0010_staff_role.sql` in the Supabase SQL editor, both parts.**
+>
+> **Nothing here works until that migration is applied.** The `staff` value
+> does not exist on the `app_role` enum until PART A runs, so adding a staff
+> member fails until then. The Add staff form detects that specific failure and
+> says so rather than showing a generic error. Confirm with
+> `supabase/reconcile/01_audit_live_schema.sql` afterwards, and believe its
+> output rather than this note.
 
 ## The idea
 
@@ -126,6 +135,8 @@ Screens that list trainers and must now filter:
 
 ### Phase 1: migration `0010_staff_role.sql`, in two parts
 
+**BUILT.** `supabase/migrations/0010_staff_role.sql`. Not yet applied to live.
+
 **This migration runs in two parts, PART A then PART B, the same way `0009`
 did.** `alter type ... add value` cannot be used in the same transaction that
 adds it, and the Supabase SQL editor wraps a run in a transaction. Put the
@@ -145,6 +156,8 @@ Then run `supabase/reconcile/01_audit_live_schema.sql` and believe its output,
 not the file listing.
 
 ### Phase 2: login, access control and the workbook
+
+**BUILT.**
 
 - `addStaffLogin` in `src/app/admin/(dashboard)/staff/actions.ts`, modelled on
   `addTrainerLogin`. It creates the `trainers` row (`active: false`) and the
@@ -166,6 +179,8 @@ not the file listing.
 
 ### Phase 3: manager sees staff progress
 
+**BUILT.** `/admin/development` and `/admin/development/[trainerId]`.
+
 - A **Development** section, listing staff with their overall workbook
   percentage and document status. Put it on `/admin/staff` if it fits cleanly,
   otherwise its own `/admin/development` screen.
@@ -177,6 +192,8 @@ not the file listing.
   `/onboarding` already establishes the pattern.
 
 ### Phase 4: promotion
+
+**BUILT.** `promoteStaffToTrainer` in `staff/actions.ts`.
 
 - `promoteStaffToTrainer(userId)` in `staff/actions.ts`, next to `makeManager`,
   which is the pattern to copy. Manager check, then set `profiles.role` to
@@ -285,6 +302,46 @@ on**. That single column is the highest-value thing in Phase 5, because a
 development pathway does not fail when staff stop writing goals. It fails when
 nobody responds to them. The accountability loop needs to point at the manager,
 not only at the staff member.
+
+## What was actually built
+
+Files added:
+
+- `supabase/migrations/0010_staff_role.sql` — the enum value, `my_role()`, and
+  the three rewritten policies. **Two parts, not yet run on live.**
+- `src/lib/staff.ts` — `getStaffTrainerIds`, `listStaff`, `workbookPercent`.
+  This is where "who is staff" is answered, from `profiles.role` alone.
+- `src/app/admin/(dashboard)/development/page.tsx` and `[trainerId]/page.tsx`.
+
+Files changed:
+
+- `src/lib/types.ts` — `AppRole` gains `"staff"`.
+- `src/lib/auth.ts` — `worksThroughWorkbook()`, the app-side counterpart to the
+  RLS fix. Use it instead of comparing to `"trainer"`.
+- `src/app/onboarding/page.tsx`, `[part]/page.tsx`, `actions.ts` — staff get the
+  progress-saving workbook. The `isTrainer` flag on both pages was renamed
+  `savesProgress`, because a variable named for one role is exactly how staff
+  got locked out in the first place.
+- `src/app/admin/(dashboard)/layout.tsx` — nav per role, plus a Development link
+  for managers.
+- `src/app/admin/(dashboard)/page.tsx` — staff are redirected off the lead board.
+- `staff/actions.ts` — `addStaffLogin`, `promoteStaffToTrainer`.
+- `staff/page.tsx`, `staff/components/StaffManager.tsx` — the staff role, the
+  add form and the promote button.
+- `trainers/page.tsx` — staff filtered out of the PT roster.
+- `compliance/page.tsx` — staff kept in, tagged "Development".
+
+Verified with `npm run build`, `npx tsc --noEmit` and `npm run lint`, all clean.
+**Not verified against a live database**, which this workspace cannot reach.
+
+## Worth a look when you first use it
+
+The onboarding workbook's PT/Manager view toggle is rendered for everyone, so a
+staff member can switch to Manager view and read the coaching notes and worked
+examples. That is pre-existing behaviour that trainers have always had, not
+something this build introduced, and it was left alone rather than quietly
+changed. Staff are a new audience for it though, so it is worth deciding
+whether you want it.
 
 ## Still open
 

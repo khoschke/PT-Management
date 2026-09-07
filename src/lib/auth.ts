@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import type { Profile } from "@/lib/types";
+import type { AppRole, Profile } from "@/lib/types";
 
 export interface CurrentUser {
   id: string;
@@ -26,6 +26,19 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
     .maybeSingle();
 
   return { id: user.id, email: user.email ?? null, profile: profile ?? null };
+}
+
+// Who works through the onboarding workbook and owns their own compliance
+// documents, as opposed to overseeing everyone else's. Both trainers and staff
+// on the development pathway do, and both carry a `trainer_id`, which is what
+// every onboarding and document policy actually keys on. The manager gets the
+// read-only overview instead.
+//
+// Prefer this over comparing to "trainer" directly. That comparison is how the
+// workbook silently locked staff out before this existed, and it is the same
+// mistake the `not is_manager()` RLS shorthand made (see 0010_staff_role.sql).
+export function worksThroughWorkbook(role: AppRole | null | undefined): boolean {
+  return role === "trainer" || role === "staff";
 }
 
 // Defence in depth for the manager-only server actions. RLS is still the real

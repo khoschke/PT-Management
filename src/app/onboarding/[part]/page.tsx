@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentUser, worksThroughWorkbook } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { getPartByNumber, onboardingParts, TOTAL_PARTS } from "@/lib/onboarding/content";
 import { getTrainerOnboardingState, effectivePartStatus } from "@/lib/onboarding/progress";
@@ -26,7 +26,10 @@ export default async function OnboardingPartPage({
   if (!part) notFound();
 
   const user = await getCurrentUser();
-  const isTrainer = user?.profile?.role === "trainer";
+  // Trainers and staff on the development pathway both work through the
+  // workbook and save answers. Only the manager gets the read-only overview,
+  // so this must not be narrowed back to a "trainer" check.
+  const savesProgress = worksThroughWorkbook(user?.profile?.role);
   const supabase = await createClient();
   const state = await getTrainerOnboardingState(supabase, user?.profile?.trainer_id ?? null);
   const status = effectivePartStatus(part.number, state);
@@ -58,7 +61,7 @@ export default async function OnboardingPartPage({
           </div>
         )}
 
-        {isTrainer && !part.pending && (
+        {savesProgress && !part.pending && (
           <div className="mt-6">
             <PartStatusControl partNumber={part.number} initialStatus={status} />
           </div>
@@ -88,7 +91,7 @@ export default async function OnboardingPartPage({
                 placeholder={activity.placeholder}
                 multiline={activity.multiline}
                 initialValue={state.responses[`${part.number}:${activity.key}`] ?? ""}
-                readOnly={!isTrainer}
+                readOnly={!savesProgress}
               />
             ))}
 

@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/lib/auth";
+import { getStaffTrainerIds } from "@/lib/staff";
 import type { Trainer } from "@/lib/types";
 import TrainerRoster from "./components/TrainerRoster";
 
@@ -13,12 +14,20 @@ export default async function TrainersPage() {
   }
 
   const supabase = await createClient();
-  const { data: trainers } = await supabase
-    .from("trainers")
-    .select("*")
-    .order("active", { ascending: false })
-    .order("name")
-    .returns<Trainer[]>();
+  const [{ data: allTrainers }, staffTrainerIds] = await Promise.all([
+    supabase
+      .from("trainers")
+      .select("*")
+      .order("active", { ascending: false })
+      .order("name")
+      .returns<Trainer[]>(),
+    getStaffTrainerIds(supabase),
+  ]);
+
+  // Staff on the development pathway own an inactive trainers row, but this is
+  // the PT roster and the source of the lead allocation list, so they are not
+  // it. They live on /admin/development until they are promoted.
+  const trainers = (allTrainers ?? []).filter((t) => !staffTrainerIds.has(t.id));
 
   return (
     <div>

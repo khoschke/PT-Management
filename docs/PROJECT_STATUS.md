@@ -378,7 +378,11 @@ now retired rather than reserved: don't fill it.
 Reminders only. Each gets scoped and built in its own session.
 
 - **Staff development pathway into the PT portal**, with an upgrade of a staff
-  member to trainer status. **Scoped and decided 7 Sep 2026, not started.**
+  member to trainer status. **Phases 1 to 4 BUILT 7 Sep 2026 on
+  `claude/staff-development-pathway-scope-ac664k`. Migration
+  `0010_staff_role.sql` is NOT yet applied to live, and nothing works until it
+  is** (both parts, in the SQL editor, then re-run the audit query). Phase 5
+  (development goals and check-ins, migration `0011`) is not built.
   `docs/handoff-staff-development-pathway.md` is now a build brief, not a
   scoping note. Decided: staff are an **inactive `trainers` row plus a new
   `staff` value on the `app_role` enum**, which means onboarding progress,
