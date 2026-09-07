@@ -1,16 +1,23 @@
 # Handoff: Editable Trainer Pages (the "trainer portal" idea)
 
 > **BUILT, 7 September 2026 — this note is now a record, not a task.**
-> Delivered on `claude/trainer-profiles-self-editable-jqnn96`, to the scope
-> below: internal only, bio + specialties, no photo, no Shopify feed.
+> Delivered on `claude/trainer-profiles-self-editable-jqnn96`: internal only,
+> bio + specialties + AM/PM availability, no photo, no Shopify feed.
 >
 > - **Screen:** `/admin/profile`, "My profile" in the dashboard nav. Shown to
 >   any login with a linked `trainer_id` — which is what the real data needed,
 >   because Karl's login is `role = trainer`, not `manager`, and the three
 >   `manager` logins have no trainer row of their own.
-> - **Database:** migration `0010_trainer_self_profile.sql`, **applied to live
->   and verified 7 Sep 2026.** Two policies (`trainers_select_self`,
->   `trainers_update_self`) plus a `guard_trainer_self_update` trigger.
+> - **Database:** migrations `0010_trainer_self_profile.sql` and
+>   `0011_trainer_self_availability.sql`, **both applied to live and verified
+>   7 Sep 2026.** Two policies (`trainers_select_self`, `trainers_update_self`)
+>   plus a `guard_trainer_self_update` trigger.
+> - **Scope grew by one field, deliberately.** Karl tested the first cut on the
+>   Vercel preview and asked for AM/PM availability to be editable too, so
+>   `0011` widens the guard from two columns to four. Availability carries a
+>   rule the other fields don't: a trainer with neither slot ticked drops out of
+>   lead allocation entirely, so both the form and the trigger refuse it.
+>   Name, email, gender and `active` remain manager-only.
 > - **The watch-out below was right, and a plain `update` policy was not
 >   enough.** RLS is row-level, so the policy on its own would also have let a
 >   trainer flip their own `active` or repoint their `email` — the address lead
@@ -22,9 +29,10 @@
 >   raise 42501; editing another trainer's row matches zero rows; the manager
 >   still edits every column of everyone; the public form's trainer picker and
 >   the service-role clients are unaffected.
-> - **Still to do:** look at the screen in a browser once it deploys. The build
->   workspace has no outbound network, so it has been compiled and its database
->   half proven, but not eyeballed.
+> - **Confirmed working** by Karl on the Vercel preview deployment, 7 Sep 2026.
+>   The build workspace has no outbound network, so his pass on the preview is
+>   the browser verification. The availability field landed after that pass and
+>   is worth a second look before merge.
 >
 > The rest of this note is kept as the original scoping, unchanged.
 
@@ -142,7 +150,9 @@ routes.
   `id = their profile.trainer_id` — mirroring how `leads` already scopes
   per-trainer. Managers keep the existing roster editor for everyone (that path
   already exists and stays).
-- **Editable fields: `bio` + `specialties` only.** Both columns already exist on
+- **Editable fields: `bio` + `specialties` only.** *(Superseded 7 Sep 2026:
+  AM/PM availability was added at Karl's request after he tested the first cut.
+  See the note at the top.)* Both columns already exist on
   the `trainers` table — no schema change for the fields themselves, just the new
   RLS `update` policy and the self-service UI. No photo, no new columns this pass.
 - **No public view route.** Internal only — the profile is rendered inside the

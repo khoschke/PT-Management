@@ -62,6 +62,7 @@ Migrations live in `supabase/migrations/`. Status column set from an audit run o
 | `0007`, `0008` | GymMaster (`gymmaster_lead_source`, `gymmaster_sync`) | Not applied; unmerged branch |
 | `0009_public_access_hardening.sql` | trainer-email column grants, status_history soft-delete guard, trainer_documents self-verify guard, `submit_form_lead` RPC | Applied 12 Aug 2026 — **both parts, verified** |
 | `0010_trainer_self_profile.sql` | per-trainer self-edit of `bio`/`specialties`: `trainers_select_self` + `trainers_update_self` policies, `guard_trainer_self_update` column-guard trigger | Applied 7 Sep 2026 — verified, incl. the guard exercised both ways against live |
+| `0011_trainer_self_availability.sql` | widens the self-edit guard to `available_am`/`available_pm`, and refuses a trainer leaving both slots off | Applied 7 Sep 2026 — verified both ways against live |
 
 **The drift is closed and the hardening is deployed.** `0006` had never been
 applied despite this doc claiming it was, which left `/admin/compliance` and
@@ -83,8 +84,8 @@ is inert either way.
 `0005` is permanently unused. It was held for the hardening migration, which has
 since been renumbered to `0009` because it rewrites a policy on
 `trainer_documents` and therefore has to run *after* `0006` — as `0005` it would
-have failed on a fresh setup. GymMaster keeps `0007/0008` untouched. `0010` is now taken by the trainer
-self-profile work, so anything new starts at **0011**.
+have failed on a fresh setup. GymMaster keeps `0007/0008` untouched. `0010` and `0011` are taken by the
+trainer self-profile work, so anything new starts at **0012**.
 
 `0009`'s two-part structure is spent — both parts are on live. It only ever
 mattered because a running form was mid-flight between the old insert path and
@@ -300,6 +301,7 @@ anyway because `0004_trainer_am_pm.sql` merged with the availability work.
 | 0007, 0008 | `gymmaster_lead_source`, `gymmaster_sync` | `gymmaster-phase-1-pull-7yuxuy` (already numbered correctly, no renumber needed) |
 | 0009 | `public_access_hardening` | merged into code; **apply in two parts, PART A → deploy → PART B** |
 | 0010 | `trainer_self_profile` | applied to live 7 Sep 2026, verified |
+| 0011 | `trainer_self_availability` | applied to live 7 Sep 2026, verified |
 
 Merge in that order and Supabase stays in step. GymMaster is deliberately in the
 middle rather than last: its numbers were already written and pushed, and moving
@@ -318,12 +320,11 @@ now retired rather than reserved: don't fill it.
 
 ## Outstanding / next up
 
-- **Eyeball the trainer profile screen on the live site.** The `/admin/profile`
-  build is merged-ready and its database half is verified against live, but the
-  build workspace has no outbound network, so nobody has yet *looked* at the
-  screen in a browser. After it deploys: sign in as a trainer, check the "My
-  profile" tab renders, save a bio and a specialty change, and confirm the
-  change shows on the manager's Trainers screen. One five-minute pass.
+- **Merge PR #26 (self-editable trainer profiles).** Karl confirmed the first
+  cut working on the Vercel preview on 7 Sep, and availability editing was added
+  on top of it. Both migrations are already on live and verified, so merging is
+  what turns the screen on. Worth one more look at the preview first, since the
+  availability field landed after his pass.
 
 - **GymMaster integration** — see `docs/handoff-gymmaster-integration.md`.
   **Phase 1 scaffolding already exists unmerged** on
@@ -382,13 +383,15 @@ now retired rather than reserved: don't fill it.
   connected to Shopify but its DNS zone is at CrazyDomains, which is where all
   records were added. `docs/handoff-custom-domain.md` is now history, not a task.
 - ~~**Editable trainer pages**~~ — **BUILT, 7 Sep 2026**, on
-  `claude/trainer-profiles-self-editable-jqnn96`. A trainer edits their own bio
-  and specialties at `/admin/profile` ("My profile" in the nav); the manager's
-  roster editor is untouched and still edits everyone. Migration `0010` is
-  **applied to live and verified** — a trainer can change only their own row,
-  and only those two columns. Internal only, no photo, no Shopify feed, exactly
-  as scoped. **Not yet deployed or eyeballed in a browser** — see the note under
-  Outstanding below. `docs/handoff-trainer-portal.md` is now a record.
+  `claude/trainer-profiles-self-editable-jqnn96`. A trainer edits their own bio,
+  specialties **and AM/PM availability** at `/admin/profile` ("My profile" in
+  the nav); the manager's roster editor is untouched and still edits everyone.
+  Migrations `0010` and `0011` are **applied to live and verified** — a trainer
+  can change only their own row, and only those four columns. Internal only, no
+  photo, no Shopify feed, otherwise as scoped; availability was added at Karl's
+  request on 7 Sep after he tested the first cut on the Vercel preview.
+  **Confirmed working on the preview deployment** by Karl. `PR #26` is open
+  against production. `docs/handoff-trainer-portal.md` is now a record.
 
 - ~~**Email the PT team about everything built so far**~~ — **DONE.** Sent
   12 August 2026, along with the four individual login emails. The record is

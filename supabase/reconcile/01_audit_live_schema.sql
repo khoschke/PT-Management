@@ -187,5 +187,17 @@ from (
   union all select '0010', 'guard_trainer_self_update not callable by anon',
     not has_function_privilege('anon', 'public.guard_trainer_self_update()', 'EXECUTE')
 
+  -- 0011_trainer_self_availability -----------------------------------------
+  -- 0011 only replaces the guard's body, so the observable fact is what that
+  -- body now contains: availability among the self-editable columns, and the
+  -- both-slots-off refusal that stops a trainer dropping out of allocation.
+  union all select '0011', 'guard allows self-edit of availability',
+    (select prosrc from pg_proc
+      where oid = to_regprocedure('public.guard_trainer_self_update()')) like '%available_am%'
+  union all select '0011', 'guard refuses both availability slots off',
+    (select prosrc from pg_proc
+      where oid = to_regprocedure('public.guard_trainer_self_update()'))
+      like '%not (new.available_am or new.available_pm)%'
+
 ) checks
 order by migration, item;

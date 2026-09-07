@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import type { Trainer } from "@/lib/types";
+import AvailabilityPicker from "../../components/AvailabilityPicker";
 import SpecialtyPicker from "../../components/SpecialtyPicker";
 import { focusRing } from "../../components/ui";
 import { updateMyProfile } from "../actions";
@@ -48,6 +49,16 @@ export default function MyProfileForm({ trainer }: { trainer: Trainer }) {
           {state.message}
         </div>
       )}
+
+      <div className="mt-4">
+        <label className="text-sm font-semibold text-foreground">Availability</label>
+        <p className="mt-0.5 text-xs text-secondary-label">
+          The times you take sessions. Leads are matched to this, so keep it honest — if you stop taking evenings,
+          untick Evening and you&rsquo;ll stop being suggested for members who want one.
+        </p>
+        <AvailabilityPicker defaults={trainer} />
+        {errors.availability && <p className="mt-1 text-xs text-red-600">{errors.availability}</p>}
+      </div>
 
       <div className="mt-4">
         <label className="text-sm font-semibold text-foreground">Specialties</label>

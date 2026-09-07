@@ -1,14 +1,14 @@
 "use server";
 
 // A trainer editing their own profile. Three things keep this to the caller's
-// own row and to the two fields they own:
+// own row and to the fields they own:
 //
 //   1. The trainer id comes from the signed-in user's profile, never from the
 //      form, so there is no id for a caller to tamper with.
 //   2. `trainers_update_self` (migration 0010) scopes the UPDATE to the row
 //      matching my_trainer_id() at the database level.
 //   3. The `trainers_guard_self_update` trigger rejects a non-manager update
-//      that touches anything but bio and specialties.
+//      that touches anything but bio, specialties and AM/PM availability.
 //
 // The manager's roster editor (trainers/actions.ts) is untouched and still
 // edits everyone, every field.
@@ -22,10 +22,20 @@ import type { ProfileFormState } from "./state";
 
 const GOAL_CODES = GOAL_OPTIONS.map((g) => g.code) as [string, ...string[]];
 
-const myProfileSchema = z.object({
-  specialties: z.array(z.enum(GOAL_CODES)).max(GOAL_OPTIONS.length).optional().default([]),
-  bio: z.string().trim().max(1000, "Keep this under 1000 characters").optional().or(z.literal("")),
-});
+const myProfileSchema = z
+  .object({
+    specialties: z.array(z.enum(GOAL_CODES)).max(GOAL_OPTIONS.length).optional().default([]),
+    bio: z.string().trim().max(1000, "Keep this under 1000 characters").optional().or(z.literal("")),
+    available_am: z.boolean(),
+    available_pm: z.boolean(),
+  })
+  // Same rule as the manager's roster form, and for a sharper reason here:
+  // a trainer with neither slot ticked drops out of lead allocation entirely.
+  // The 0011 trigger enforces it at the database level too.
+  .refine((data) => data.available_am || data.available_pm, {
+    message: "Choose at least one — morning, evening, or both.",
+    path: ["availability"],
+  });
 
 export async function updateMyProfile(
   _prevState: ProfileFormState,
@@ -44,6 +54,8 @@ export async function updateMyProfile(
   const parsed = myProfileSchema.safeParse({
     specialties: formData.getAll("specialties").map((s) => s.toString()),
     bio: formData.get("bio")?.toString() ?? "",
+    available_am: formData.get("available_am") != null,
+    available_pm: formData.get("available_pm") != null,
   });
 
   if (!parsed.success) {
@@ -64,6 +76,8 @@ export async function updateMyProfile(
     .update({
       specialties: parsed.data.specialties,
       bio: parsed.data.bio || null,
+      available_am: parsed.data.available_am,
+      available_pm: parsed.data.available_pm,
     })
     .eq("id", trainerId)
     .select("id")
@@ -82,7 +96,8 @@ export async function updateMyProfile(
   }
 
   revalidatePath("/admin/profile");
-  // The roster and the lead board both read specialties, so refresh them too.
+  // The roster and the lead board both read specialties and availability, so
+  // refresh them too.
   revalidatePath("/admin/trainers");
   revalidatePath("/admin");
 

@@ -37,16 +37,12 @@ export default async function MyProfilePage() {
     );
   }
 
-  const availability =
-    [trainer.available_am && "Mornings", trainer.available_pm && "Evenings"].filter(Boolean).join(" & ") ||
-    "No availability set";
-
   return (
     <div>
       <h1 className="text-[28px] font-semibold tracking-tight text-foreground">My profile</h1>
       <p className="mt-1 max-w-2xl text-[15px] text-secondary-label">
-        How you&rsquo;re represented inside the PT portal. Your specialties and what you write about yourself are yours
-        to edit any time. This is internal only, it isn&rsquo;t published to members.
+        How you&rsquo;re represented inside the PT portal. Your availability, specialties and what you write about
+        yourself are yours to edit any time. This is internal only, it isn&rsquo;t published to members.
       </p>
 
       <div className="mt-6 max-w-2xl rounded-2xl border border-black/5 bg-surface p-5 shadow-[0_1px_2px_rgba(0,0,0,0.03),0_2px_8px_rgba(0,0,0,0.04)]">
@@ -61,14 +57,12 @@ export default async function MyProfilePage() {
                 </span>
               )}
             </div>
-            <p className="mt-0.5 text-sm text-secondary-label">
-              {trainer.email ?? "No email on file"} &middot; {availability}
-            </p>
+            <p className="mt-0.5 text-sm text-secondary-label">{trainer.email ?? "No email on file"}</p>
           </div>
         </div>
         <p className="mt-3 border-t border-black/5 pt-3 text-xs text-secondary-label">
-          Your name, email and availability are kept by the PT Manager on the Trainers screen, since they drive lead
-          allocation and the notification emails. Ask them if any of it needs changing.
+          Your name and email are kept by the PT Manager on the Trainers screen, since your email is where lead
+          notifications are sent. Ask them if either needs changing.
         </p>
       </div>
 
