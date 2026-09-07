@@ -137,8 +137,9 @@ export const part6: OnboardingPart = {
         "Talk most new PTs out of ads early. They reach for ads to avoid the harder, free work of walking the floor and asking for referrals. Ads on top of a working system are great. Ads instead of one are an expensive way to learn that lesson.",
     },
     {
-      heading: "Promotions and lead magnets: add value, never discount",
+      heading: "Promotions and lead magnets: add value rather than discount",
       body: [
+        "A lead magnet is free value offered in exchange for someone's contact details. A promotion is a reason to act now. One principle worth holding: add value rather than discount.",
         "Discounting trains people to wait for the next sale and quietly tells the market your coaching is worth less. Lead with value instead: a free workshop, a genuinely useful guide, a complimentary consult, or a sign-up bonus (extra check-in, movement screen, program add-on).",
       ],
       activities: [
@@ -147,7 +148,7 @@ export const part6: OnboardingPart = {
       workedExample:
         "Taylor's promotion: a free 45-minute Shift-Proof Your Training workshop at the gym, capped at ten spots, run on a quiet Saturday. Promote it for two weeks on the floor, on socials and to the email list. No discount anywhere. The value is the room, the room is the pitch. Lead magnet: the night-shift guide feeds the same list year round.",
       managerNote:
-        "Hold the line on no discounts. A PT will float a 25% off new-year deal because it feels easy. Redirect them to a value-add that protects their rate and their positioning. This is a brand rule across Fitaz Gym, not a preference.",
+        "A PT will float a 25% off new-year deal because it feels easy. Point them at a value-add that protects their rate and their positioning. It's their business and their pricing, so make the case rather than the ruling: discounting is the quickest way to devalue what they've built.",
     },
     {
       heading: "Referrals and testimonials strategy",

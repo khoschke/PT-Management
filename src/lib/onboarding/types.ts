@@ -16,7 +16,13 @@ export interface OnboardingActivity {
 
 export interface OnboardingSection {
   heading: string;
-  /** Paragraphs of body copy. A line starting with "- " renders as a bullet. */
+  /**
+   * Paragraphs of body copy. A line starting with "- " renders as a bullet.
+   * A line of the form `![alt](/path/to.png "optional caption")` renders as a
+   * figure, so a diagram can sit at its exact spot in the flow the way it does
+   * in the printed workbook. Figures live in `body` rather than in a
+   * manager-only field on purpose: the workbook's diagrams are trainer-facing.
+   */
   body: string[];
   /** Zero or more fill-in activities tied to this section. */
   activities?: OnboardingActivity[];

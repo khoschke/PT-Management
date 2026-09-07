@@ -143,7 +143,7 @@ export const part5: OnboardingPart = {
       heading: "Closing the consult",
       body: [
         "The close isn't a hard sell — it's the natural next step after a conversation where the client felt heard. Three things to land: **the next step**, **the schedule** (a day and time in the diary now, not 'I'll text you'), and **the commitment** (frequency, cost, payment, confirmed out loud).",
-        "If they hesitate, go back to what they told you rather than discounting. Pricing and objection handling get the full treatment in Part 7.",
+        "If they hesitate, don't panic and don't jump to a discount — go back to what they told you. Pricing and objection handling get the full treatment in Part 7.",
       ],
       activities: [
         {
