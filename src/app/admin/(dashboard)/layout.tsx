@@ -33,6 +33,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   const isManager = user.profile.role === "manager";
   const isTrainer = user.profile.role === "trainer";
+  // Keyed off the linked trainer row, not the role: the PT Manager is also one
+  // of the five PTs, so they get a profile of their own to edit alongside the
+  // roster they keep for everyone.
+  const hasOwnProfile = user.profile.trainer_id != null;
 
   return (
     <div className="min-h-screen bg-background">
@@ -55,6 +59,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
                     ]
                   : []),
                 ...(isTrainer ? [{ href: "/admin/documents", label: "My documents" }] : []),
+                ...(hasOwnProfile ? [{ href: "/admin/profile", label: "My profile" }] : []),
                 { href: "/onboarding", label: "PT onboarding" },
                 { href: "/admin/account", label: "Account" },
               ]}

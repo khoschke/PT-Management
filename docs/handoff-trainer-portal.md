@@ -1,11 +1,38 @@
 # Handoff: Editable Trainer Pages (the "trainer portal" idea)
 
-**Start a new session with this note.** Read `docs/PROJECT_STATUS.md` first for the
-full lay of the land, then this. **Nothing here is built yet, but it is now
-scoped** — the deciding questions have been answered (see "Decisions" below), so
-this is a buildable workstream, not just an idea. The note keeps the original
-vision and the architecture correction for context, then states the decisions,
-scope, and definition of done.
+> **BUILT, 7 September 2026 — this note is now a record, not a task.**
+> Delivered on `claude/trainer-profiles-self-editable-jqnn96`, to the scope
+> below: internal only, bio + specialties, no photo, no Shopify feed.
+>
+> - **Screen:** `/admin/profile`, "My profile" in the dashboard nav. Shown to
+>   any login with a linked `trainer_id` — which is what the real data needed,
+>   because Karl's login is `role = trainer`, not `manager`, and the three
+>   `manager` logins have no trainer row of their own.
+> - **Database:** migration `0010_trainer_self_profile.sql`, **applied to live
+>   and verified 7 Sep 2026.** Two policies (`trainers_select_self`,
+>   `trainers_update_self`) plus a `guard_trainer_self_update` trigger.
+> - **The watch-out below was right, and a plain `update` policy was not
+>   enough.** RLS is row-level, so the policy on its own would also have let a
+>   trainer flip their own `active` or repoint their `email` — the address lead
+>   allocation notifications go to. The trigger is what narrows the write to
+>   bio and specialties. It compares the whole row as jsonb minus those two
+>   keys, so a column added to `trainers` later is protected by default.
+> - **Verified against live**, as a real signed-in trainer, in rolled-back
+>   transactions: own edit saves; changing own name, email, `active` or `id` all
+>   raise 42501; editing another trainer's row matches zero rows; the manager
+>   still edits every column of everyone; the public form's trainer picker and
+>   the service-role clients are unaffected.
+> - **Still to do:** look at the screen in a browser once it deploys. The build
+>   workspace has no outbound network, so it has been compiled and its database
+>   half proven, but not eyeballed.
+>
+> The rest of this note is kept as the original scoping, unchanged.
+
+---
+
+Read `docs/PROJECT_STATUS.md` first for the full lay of the land, then this.
+The note keeps the original vision and the architecture correction for context,
+then states the decisions, scope, and definition of done.
 
 ## The vision (captured faithfully)
 

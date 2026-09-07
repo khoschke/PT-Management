@@ -1,5 +1,5 @@
-import { GOAL_OPTIONS } from "@/lib/goals";
 import type { Trainer } from "@/lib/types";
+import SpecialtyPicker from "../../components/SpecialtyPicker";
 import { focusRingWithin } from "../../components/ui";
 
 const inputClass =
@@ -61,23 +61,7 @@ export default function TrainerFields({
 
       <div className="mt-3">
         <label className="text-sm font-semibold text-foreground">Specialties</label>
-        <div className="mt-1.5 flex flex-wrap gap-1.5">
-          {GOAL_OPTIONS.filter((g) => g.code !== "other").map((goal) => (
-            <label
-              key={goal.code}
-              className={`press cursor-pointer rounded-full bg-fill px-3 py-1.5 text-xs font-medium text-foreground transition has-[:checked]:bg-foreground has-[:checked]:text-white ${focusRingWithin}`}
-            >
-              <input
-                type="checkbox"
-                name="specialties"
-                value={goal.code}
-                defaultChecked={defaults?.specialties?.includes(goal.code)}
-                className="sr-only"
-              />
-              {goal.label}
-            </label>
-          ))}
-        </div>
+        <SpecialtyPicker selected={defaults?.specialties} />
       </div>
 
       <div className="mt-3">
