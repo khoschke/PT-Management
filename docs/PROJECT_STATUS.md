@@ -378,12 +378,20 @@ now retired rather than reserved: don't fill it.
 Reminders only. Each gets scoped and built in its own session.
 
 - **Staff development pathway into the PT portal**, with an upgrade of a staff
-  member to trainer status. Touches the onboarding workbook, the `manager` /
-  `trainer` role in `profiles`, the `trainers` table and `/admin/staff`.
-  **Now scoped** in `docs/handoff-staff-development-pathway.md` — a decisions-first
-  note (how to model a `staff` role, what staff can see, how their onboarding
-  progress is stored, the v1 feature set, and the staff → trainer upgrade). Open
-  it in its own thread and settle the decisions with Karl before building.
+  member to trainer status. **Scoped and decided 7 Sep 2026, not started.**
+  `docs/handoff-staff-development-pathway.md` is now a build brief, not a
+  scoping note. Decided: staff are an **inactive `trainers` row plus a new
+  `staff` value on the `app_role` enum**, which means onboarding progress,
+  document uploads and Storage all work with no schema change (they key on
+  `my_trainer_id()`, not on role) and promotion is two writes. Staff get the
+  full workbook, no lead board, no roster. Five phases; migration **`0010`** is
+  RLS only and **runs in two parts** (`alter type ... add value` cannot be used
+  in the transaction that adds it). Phase 5 (development goals and check-ins)
+  is `0011` and droppable. **The one thing that must not be skipped:**
+  `leads_select_trainer`, `leads_update_trainer` and
+  `status_history_select_trainer` use `not is_manager()` to mean "is a
+  trainer", which a third role silently breaks. Two questions are still open,
+  both listed in the brief.
 - **PT prospect interview system** in the PT Manager area. STAR method has been
   suggested; approach to be agreed when it is scoped.
 - **Ezidebit connected to the PT Manager dashboard via an MCP, reading live.**
