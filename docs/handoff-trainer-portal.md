@@ -41,6 +41,15 @@
 >   hiding a trainer from the public form's picker. The build workspace has no
 >   outbound network, so his passes on the preview are the browser
 >   verification.
+> - **Two safeguards on the pause**, because its consequence is invisible once
+>   set. Both forms warn live, as the second chip comes off and before anything
+>   is saved. And a paused trainer gets a standing banner on every page of the
+>   authed app, with a one-click way back, for as long as they stay paused —
+>   the likelier failure is not a mis-click but pausing in a flat-out week and
+>   forgetting for a month, and only the standing reminder catches that. A
+>   confirm() dialog was considered and rejected: this repo reserves those for
+>   irreversible actions (permanent delete, revoking access), and a modal fires
+>   only at the moment someone already intends to pause.
 > - **One thing to know when testing:** the Vercel preview points at the LIVE
 >   Supabase project. A lead submitted from the preview form is a real row on
 >   the real board, and allocating it sends a real email to a real PT. The

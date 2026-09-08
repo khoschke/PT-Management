@@ -39,7 +39,10 @@ export default function TrainerFields({
         </div>
         <div>
           <label className="text-sm font-semibold text-foreground">Availability</label>
-          <AvailabilityPicker defaults={defaults} />
+          <AvailabilityPicker
+            defaults={defaults}
+            pauseWarning="With neither ticked this trainer is paused: no new lead suggestions, and members won't see them on the booking form."
+          />
         </div>
       </div>
 

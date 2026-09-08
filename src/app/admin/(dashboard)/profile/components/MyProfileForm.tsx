@@ -59,7 +59,10 @@ export default function MyProfileForm({ trainer }: { trainer: Trainer }) {
           one to use when your book is full. Your existing leads stay with you, and the PT Manager can still allocate
           to you by hand. Tick a slot again whenever you have room.
         </p>
-        <AvailabilityPicker defaults={trainer} />
+        <AvailabilityPicker
+          defaults={trainer}
+          pauseWarning="Heads up: with neither ticked you're paused. You won't be offered new leads, and members won't see you on the booking form, until you tick one again."
+        />
       </div>
 
       <div className="mt-4">
