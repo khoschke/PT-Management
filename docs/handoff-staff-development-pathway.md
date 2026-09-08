@@ -7,11 +7,14 @@
 >
 > **Nothing works on live until two migrations are applied by hand**, in order:
 >
-> 1. `0010_staff_role.sql` — **two parts**, PART A alone, then PART B.
-> 2. `0011_development_goals.sql` — safe to run in one go.
+> 1. `0010_staff_role.sql` — run it whole.
+> 2. `0011_development_goals.sql` — run it whole.
 >
-> The `staff` value does not exist on the `app_role` enum until 0010 PART A
-> runs, so adding a staff member fails until then. The Add staff form detects
+> An earlier version of this note said `0010` needed a two-part run. It does
+> not; see the file's own header for why the enum rule does not apply to it.
+>
+> The `staff` value does not exist on the `app_role` enum until 0010 runs, so
+> adding a staff member fails until then. The Add staff form detects
 > that specific failure and names the migration rather than showing a generic
 > error. Confirm with `supabase/reconcile/01_audit_live_schema.sql` afterwards,
 > and believe its output rather than this note.
@@ -134,17 +137,19 @@ Screens that list trainers and must now filter:
 
 ## Build plan
 
-### Phase 1: migration `0010_staff_role.sql`, in two parts
+### Phase 1: migration `0010_staff_role.sql`
 
 **BUILT.** `supabase/migrations/0010_staff_role.sql`. Not yet applied to live.
+Runs in one part, not two: see its header.
 
-**This migration runs in two parts, PART A then PART B, the same way `0009`
-did.** `alter type ... add value` cannot be used in the same transaction that
-adds it, and the Supabase SQL editor wraps a run in a transaction. Put the
-warning at the top of the file the way `0009` does.
+**Runs whole, in one go.** The plan originally called for a two-part run by
+analogy with `0009`, on the grounds that `alter type ... add value` cannot be
+used in the same transaction that adds it. That rule is real but does not apply
+here: nothing after the `alter type` references the new `'staff'` value, so the
+file commits in a single transaction. Confirmed by executing it.
 
-- **PART A**, run alone and committed: `alter type app_role add value 'staff';`
-- **PART B**:
+- `alter type app_role add value 'staff';`
+- then:
   - `my_role()` security-definer helper returning `app_role`.
   - Drop and recreate `leads_select_trainer`, `leads_update_trainer` and
     `status_history_select_trainer` with `my_role() = 'trainer'` in place of

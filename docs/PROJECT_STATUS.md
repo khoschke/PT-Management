@@ -292,7 +292,7 @@ anyway because `0004_trainer_am_pm.sql` merged with the availability work.
 | 0006 | `trainer_documents` | merged; **applied to live 12 Aug 2026, verified** |
 | 0007, 0008 | `gymmaster_lead_source`, `gymmaster_sync` | `gymmaster-phase-1-pull-7yuxuy` (already numbered correctly, no renumber needed) |
 | 0009 | `public_access_hardening` | merged; **applied to live 12 Aug 2026, both parts, verified** |
-| 0010 | `staff_role` | staff pathway, PR #28; **NOT on live. Two parts, PART A alone → PART B**, no deploy in between |
+| 0010 | `staff_role` | staff pathway, PR #28; **NOT on live.** One part, run it whole |
 | 0011 | `development_goals` | development goals, PR #28; **NOT on live.** One part |
 
 Merge in that order and Supabase stays in step. GymMaster is deliberately in the
@@ -310,12 +310,12 @@ now retired rather than reserved: don't fill it.
 (PART A → deploy → PART B). Both are on live; the runbook that executed it,
 `supabase/reconcile/README.md`, is now a record rather than a task.
 
-**`0010` and `0011` are the two that are not on live.** `0010` also runs in two
-parts, but for an unrelated reason and with no deploy in between: Postgres will
-not let a newly added enum value be used in the transaction that adds it, and
-the Supabase SQL editor wraps a run in one, so `alter type app_role add value
-'staff'` has to commit before anything can reference it. Run PART A alone, then
-PART B, then `0011` whole.
+**`0010` and `0011` are the two that are not on live.** Both run whole, in one
+go each. An earlier note here claimed `0010` needed a two-part run because
+Postgres will not let a new enum value be used in the transaction that adds it.
+That rule is real but does not apply: nothing in `0010` references `'staff'`
+after adding it, so the file commits in a single transaction. Confirmed by
+executing the whole migration chain against a local Postgres 16.
 
 ## Outstanding / next up
 
@@ -326,12 +326,12 @@ PART B, then `0011` whole.
   their own compliance documents, self-authored development goals with a
   coaching conversation, and no leads. The manager sees their progress and can
   promote them to trainer in one action.
-  - **The action still outstanding:** apply `0010_staff_role.sql` (PART A
-    alone, let it commit, then PART B) and then `0011_development_goals.sql`
-    (one part) in the Supabase SQL editor, then re-run
+  - **The action still outstanding:** apply `0010_staff_role.sql` and then
+    `0011_development_goals.sql` in the Supabase SQL editor, each run whole,
+    then re-run
     `supabase/reconcile/01_audit_live_schema.sql`. **Merging and deploying the
     PR is not enough** — the `staff` role does not exist on the enum until
-    `0010` PART A runs, and adding a staff member fails until it does.
+    `0010` runs, and adding a staff member fails until it does.
   - A staff member is a `profiles` row with the new `staff` role pointing at an
     **inactive `trainers` row**. Onboarding progress, documents and Storage all
     key on `my_trainer_id()` rather than on the role, so they work for staff

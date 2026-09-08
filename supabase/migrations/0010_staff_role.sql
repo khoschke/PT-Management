@@ -46,27 +46,29 @@
 -- matching `trainer_id = my_trainer_id()` there is the feature.
 --
 -- ---------------------------------------------------------------------------
--- RUN THIS FILE IN TWO PARTS. THE ORDER MATTERS.
+-- Run this file in one go.
 -- ---------------------------------------------------------------------------
 --
---   1. Run PART A on its own and let it commit.
---   2. Then run PART B.
+-- An earlier draft of this header told you to run it in two parts, on the
+-- grounds that Postgres will not let a newly added enum value be USED in the
+-- same transaction that ADDS it. That rule is real, but it does not apply
+-- here, and the instruction was wrong.
 --
--- Postgres will not let a newly added enum value be USED in the same
--- transaction that ADDS it, and the Supabase SQL editor wraps a run in one.
--- Running the whole file at once fails on PART B with "unsafe use of new value
--- of enum type". Splitting the run is the entire reason for the two parts;
--- unlike 0009 there is no deploy step in between, so run them back to back.
-
--- ===========================================================================
--- PART A — run this alone, then run PART B
--- ===========================================================================
+-- The rule bites only when the NEW value is referenced. Nothing below
+-- references 'staff'. The policies compare against 'trainer', which already
+-- existed, and the my_role() function names the TYPE rather than any value.
+-- So the whole file commits happily in a single transaction.
+--
+-- Verified by executing it: applied against a local Postgres 16 with the full
+-- migration chain, as one transaction, and it succeeds. The same harness does
+-- raise "unsafe use of new value" for a transaction that adds a value and then
+-- selects it, so the check was capable of catching a genuine violation.
+--
+-- **If you extend this file, do not reference 'staff' below.** Doing so
+-- reintroduces the two-part requirement for real. Put anything that needs the
+-- new value in a later migration instead.
 
 alter type app_role add value if not exists 'staff';
-
--- ===========================================================================
--- PART B — run after PART A has committed
--- ===========================================================================
 
 -- ---------------------------------------------------------------------------
 -- 1. An explicit role lookup, to replace `not is_manager()`

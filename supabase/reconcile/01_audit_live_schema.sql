@@ -176,30 +176,27 @@ from (
   union all select '0009-B', 'anon cannot insert leads rows',
     not has_table_privilege('anon', 'public.leads', 'INSERT')
 
-  -- 0010_staff_role, PART A ------------------------------------------------
-  -- The enum value has to exist and be committed before PART B can reference
-  -- it. If this row reads MISSING, nothing in PART B will have run either.
-  union all select '0010-A', 'app_role has value staff',
+  -- 0010_staff_role ---------------------------------------------------------
+  union all select '0010', 'app_role has value staff',
     exists (select 1 from pg_enum e
             join pg_type t on t.oid = e.enumtypid
             where t.typname = 'app_role' and e.enumlabel = 'staff')
 
-  -- 0010_staff_role, PART B ------------------------------------------------
   -- The three policies that used `not is_manager()` to mean "is a trainer",
   -- which a third role silently breaks. Each must now name my_role().
-  union all select '0010-B', 'function my_role()',
+  union all select '0010', 'function my_role()',
     to_regprocedure('public.my_role()') is not null
-  union all select '0010-B', 'leads_select_trainer checks my_role',
+  union all select '0010', 'leads_select_trainer checks my_role',
     exists (select 1 from pg_policy
             where polrelid = to_regclass('public.leads')
               and polname = 'leads_select_trainer'
               and pg_get_expr(polqual, polrelid) like '%my_role%')
-  union all select '0010-B', 'leads_update_trainer checks my_role',
+  union all select '0010', 'leads_update_trainer checks my_role',
     exists (select 1 from pg_policy
             where polrelid = to_regclass('public.leads')
               and polname = 'leads_update_trainer'
               and pg_get_expr(polqual, polrelid) like '%my_role%')
-  union all select '0010-B', 'status_history_select_trainer checks my_role',
+  union all select '0010', 'status_history_select_trainer checks my_role',
     exists (select 1 from pg_policy
             where polrelid = to_regclass('public.status_history')
               and polname = 'status_history_select_trainer'
