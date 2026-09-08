@@ -132,13 +132,31 @@ strength". Change it in that one file and it flows to both sides.
 - **Vercel auto-deploy can silently stall.** If a push doesn't appear in
   Deployments, push again (an empty commit works) to re-trigger.
 - **This build workspace has no outbound network** to Supabase, Google,
-  GymMaster, etc. You cannot test those live from here — build, deploy, and
-  verify on the live site (which is not network-restricted). **That includes
+  GymMaster, etc. You cannot reach *those services* from here — build, deploy,
+  and verify on the live site (which is not network-restricted). **This does
+  not mean nothing can be tested**: see the Postgres entry below, which covers
+  migrations and RLS without any network at all. **That includes
   the Vercel preview URL**: curling a preview deployment from a build session
   fails with `CONNECT tunnel failed, response 403` at the proxy, so a green
   Vercel status is proof the app *built and deployed*, never proof a page
   renders or a query works. Somebody has to open it in a browser. Confirmed
   8 Sep 2026 while watching PR #28.
+- **Postgres 16 IS available in the build workspace, so migrations CAN be
+  tested here.** `psql` and `initdb` are installed at
+  `/usr/lib/postgresql/16/bin`. No network is needed: `initdb` a throwaway
+  cluster in `/tmp`, stub the handful of Supabase objects the migrations assume
+  (`auth.users`, `auth.uid()`, the `anon` / `authenticated` / `service_role`
+  roles, `storage.buckets`, `storage.objects`, `storage.foldername()`), then
+  apply `supabase/migrations/*.sql` in order. **Run it as the `postgres` OS
+  user** — `initdb` refuses to run as root, which is the one thing that makes
+  this look impossible at first.
+  This is worth doing for every migration, and it is not just a syntax check:
+  you can `set role authenticated`, `set_config('request.jwt.claim.sub', …)`
+  and exercise the RLS policies as a real signed-in user. Doing exactly that on
+  8 Sep 2026 caught a wrong two-part instruction in `0010`, proved the
+  `not is_manager()` hole was genuinely exploitable, and confirmed the
+  development-goals ownership rule refuses a manager's UPDATE. **Reasoning
+  about a policy is not the same as running it.**
 - **A migration in `supabase/migrations/` is not proof it ran on live.** Nothing
   applies migrations automatically; a human pastes them into the Supabase SQL
   editor, and that step has been silently skipped before (`0006`, which broke two
