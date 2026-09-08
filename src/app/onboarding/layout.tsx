@@ -31,9 +31,11 @@ export default async function OnboardingLayout({ children }: { children: React.R
   }
 
   const isManager = user.profile.role === "manager";
-  // Staff have nothing to switch to: the coaching notes and worked examples
-  // are stripped server side for them in [part]/page.tsx, so the toggle would
-  // flip between an identical pair of views.
+  // Only the manager has anything to switch between. For everyone else the
+  // coaching notes and worked examples are stripped server side in
+  // [part]/page.tsx, so the toggle would flip between an identical pair of
+  // views. It stays for the manager, who uses PT view to see what the trainer
+  // sees.
   const showViewToggle = canSeeCoachingNotes(user.profile.role);
   const supabase = await createClient();
   const state = await getTrainerOnboardingState(supabase, user.profile.trainer_id);

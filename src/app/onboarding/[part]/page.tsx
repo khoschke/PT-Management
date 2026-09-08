@@ -43,7 +43,7 @@ export default async function OnboardingPartPage({
   // passed here reaches the browser in the RSC payload whether or not the
   // component renders it. Hiding the view toggle alone would leave the notes
   // one devtools poke (or one look at the network tab) away. Withholding the
-  // text on the server is what actually keeps it from staff.
+  // text on the server is what actually keeps it from everyone but the manager.
   const showCoachingNotes = canSeeCoachingNotes(user?.profile?.role);
   const hasAnyManagerNotes =
     showCoachingNotes && part.sections.some((s) => s.managerNote || s.workedExample);
