@@ -366,8 +366,44 @@ undoing:
 The manager's list shows **when they last wrote to each person**, which is the
 number the screen was built around.
 
-Verified with `npm run build`, `npx tsc --noEmit` and `npm run lint`, all clean.
-**Not verified against a live database**, which this workspace cannot reach.
+## What has actually been executed
+
+`npm run build`, `npx tsc --noEmit` and `npm run lint` all clean.
+
+**The schema and every RLS policy were run, not reasoned about.** Postgres 16
+is installed in the build workspace (see the gotcha in `PROJECT_STATUS.md`), so
+the whole chain `0001` to `0011` was applied to a throwaway local cluster and
+the policies exercised as real signed-in users via `set role authenticated` and
+`request.jwt.claim.sub`. Confirmed there:
+
+| What | Result |
+|---|---|
+| Full chain `0001`-`0011` from scratch, each file one transaction | applies clean |
+| `0010` run whole rather than in two parts | succeeds (the two-part instruction was wrong) |
+| Staff member with a lead allocated to their trainer row | sees **0 leads** |
+| Same, with the policy reverted to `not is_manager()` | **sees the lead** — the hole was real |
+| Trainer sees their own leads | 1, the right one |
+| Staff saves a workbook answer and a part status | both save |
+| Staff uploads a document | saves, lands as `pending` |
+| Staff uploads into someone else's folder | refused by RLS |
+| Manager reads staff answers and documents | both visible |
+| Staff sets their own goal | saves |
+| Manager `UPDATE` on that goal | **0 rows changed** |
+| Manager posts a note | saves |
+| Note filed against another person's goal | refused by the composite FK |
+| Promotion: flip `role` and `active` | goals, notes and answers all survive; leads become visible |
+| Audit query | runs, 42 rows |
+| Audit's `manager cannot write development_goals` row | flips to MISSING when a manager write policy is added, back on removal |
+
+That last row matters: it means the assertion is a real check rather than one
+that always passes.
+
+**Still not verified: the app itself against a real Supabase project.** The
+build workspace cannot reach one, and cannot reach the Vercel preview either
+(the proxy returns 403), so a green Vercel status proves the app built and
+deployed and nothing more. The server actions in particular are unexercised,
+including the three-goal cap, which lives in `addGoal` rather than in the
+database. Walk it through in a browser once the migrations are applied.
 
 ## Coaching notes are gated for staff
 
