@@ -4,9 +4,14 @@
 -- Numbering: this file depends on 0006_trainer_documents.sql
 -- ---------------------------------------------------------------------------
 -- It inserts into `document_types`, which does not exist until 0006 has run.
--- 0007/0008 are reserved by the GymMaster pair on
--- `claude/gymmaster-phase-1-pull-7yuxuy`, and 0009 is the public access
--- hardening pass, so this lands at 0010.
+-- Originally written as 0010. The trainer self-profile work landed 0010 to
+-- 0014 on the default branch while this was in review, so it was renumbered
+-- to 0015 on merge rather than colliding. 0007/0008 remain reserved by the
+-- GymMaster pair on `claude/gymmaster-phase-1-pull-7yuxuy`, and 0005 is
+-- permanently unused.
+--
+-- Already applied to the live project under its old number. Re-running is
+-- harmless, see the note at the bottom.
 --
 -- Why this type exists
 -- --------------------

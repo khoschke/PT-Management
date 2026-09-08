@@ -151,8 +151,9 @@ Confirm or change all of that with Karl, then write the real build plan.
 
 ## Constraints / house rules
 
-- Next free migration number is **0011** (0007/0008 reserved for GymMaster,
-  0010 taken by the PT Contract document type). A migration in the folder is NOT
+- Next free migration number is **0016** (0007/0008 reserved for GymMaster,
+  0010 to 0014 taken by the trainer self-profile and staff pathway work, 0015
+  by the PT Contract document type). A migration in the folder is NOT
   proof it ran on live — a human applies it in the Supabase SQL editor, and
   `PROJECT_STATUS.md`'s audit query confirms. Check it first with
   `./supabase/reconcile/local_migration_check.sh`.

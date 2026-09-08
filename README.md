@@ -52,7 +52,12 @@ database size, point in time recovery) at that point, not before.
    | 4 | `supabase/migrations/0004_trainer_am_pm.sql` | AM/PM availability booleans |
    | 5 | `supabase/migrations/0006_trainer_documents.sql` | Compliance documents, types, reminders, Storage bucket |
    | 6 | `supabase/migrations/0009_public_access_hardening.sql` | Locks down what the public anon key can reach. **PART A only** at this stage, see below |
-   | 7 | `supabase/migrations/0010_contract_document_type.sql` | Adds the "PT Contract" document type |
+   | 7 | `supabase/migrations/0010_trainer_self_profile.sql` | Trainers can edit their own bio and specialties |
+   | 8 | `supabase/migrations/0011_trainer_self_availability.sql` | Trainers can set their own AM/PM availability |
+   | 9 | `supabase/migrations/0012_trainer_pause_leads.sql` | Both slots off means "not taking new leads" |
+   | 10 | `supabase/migrations/0013_staff_role.sql` | Adds the third role, staff |
+   | 11 | `supabase/migrations/0014_development_goals.sql` | Development goals and the coaching conversation |
+   | 12 | `supabase/migrations/0015_contract_document_type.sql` | Adds the "PT Contract" document type |
 
    `0005`, `0007` and `0008` are deliberately absent. `0005` was renumbered to
    `0009` and is permanently unused; `0007` and `0008` are reserved by the
@@ -299,7 +304,12 @@ supabase/
   migrations/0006_trainer_documents.sql  compliance documents, types,
                                        reminders, private Storage bucket
   migrations/0009_public_access_hardening.sql  anon key lockdown (two parts)
-  migrations/0010_contract_document_type.sql   "PT Contract" document type
+  migrations/0010_trainer_self_profile.sql     self-editable trainer profiles
+  migrations/0011_trainer_self_availability.sql  trainer-set AM/PM availability
+  migrations/0012_trainer_pause_leads.sql      both slots off = pause new leads
+  migrations/0013_staff_role.sql               the third role, staff
+  migrations/0014_development_goals.sql        development goals
+  migrations/0015_contract_document_type.sql   "PT Contract" document type
   reconcile/                  audit the live schema, and run the whole
                               migration chain against a throwaway Postgres
   seed.sql                    five placeholder trainers

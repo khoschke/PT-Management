@@ -1,6 +1,6 @@
-import { GOAL_OPTIONS } from "@/lib/goals";
 import type { Trainer } from "@/lib/types";
-import { focusRingWithin } from "../../components/ui";
+import AvailabilityPicker from "../../components/AvailabilityPicker";
+import SpecialtyPicker from "../../components/SpecialtyPicker";
 
 const inputClass =
   "mt-1.5 w-full rounded-xl border-none bg-fill px-3.5 py-2.5 text-sm text-foreground outline-none ring-1 ring-transparent transition focus:ring-2 focus:ring-foreground";
@@ -39,45 +39,16 @@ export default function TrainerFields({
         </div>
         <div>
           <label className="text-sm font-semibold text-foreground">Availability</label>
-          <div className="mt-1.5 flex flex-wrap gap-1.5">
-            {(
-              [
-                { name: "available_am", label: "Morning", checked: defaults ? defaults.available_am : true },
-                { name: "available_pm", label: "Evening", checked: defaults ? defaults.available_pm : true },
-              ] as const
-            ).map((slot) => (
-              <label
-                key={slot.name}
-                className={`press cursor-pointer rounded-full bg-fill px-3 py-1.5 text-xs font-medium text-foreground transition has-[:checked]:bg-foreground has-[:checked]:text-white ${focusRingWithin}`}
-              >
-                <input type="checkbox" name={slot.name} defaultChecked={slot.checked} className="sr-only" />
-                {slot.label}
-              </label>
-            ))}
-          </div>
-          {errors.availability && <p className="mt-1 text-xs text-red-600">{errors.availability}</p>}
+          <AvailabilityPicker
+            defaults={defaults}
+            pauseWarning="With neither ticked this trainer is paused: no new lead suggestions, and members won't see them on the booking form."
+          />
         </div>
       </div>
 
       <div className="mt-3">
         <label className="text-sm font-semibold text-foreground">Specialties</label>
-        <div className="mt-1.5 flex flex-wrap gap-1.5">
-          {GOAL_OPTIONS.filter((g) => g.code !== "other").map((goal) => (
-            <label
-              key={goal.code}
-              className={`press cursor-pointer rounded-full bg-fill px-3 py-1.5 text-xs font-medium text-foreground transition has-[:checked]:bg-foreground has-[:checked]:text-white ${focusRingWithin}`}
-            >
-              <input
-                type="checkbox"
-                name="specialties"
-                value={goal.code}
-                defaultChecked={defaults?.specialties?.includes(goal.code)}
-                className="sr-only"
-              />
-              {goal.label}
-            </label>
-          ))}
-        </div>
+        <SpecialtyPicker selected={defaults?.specialties} />
       </div>
 
       <div className="mt-3">

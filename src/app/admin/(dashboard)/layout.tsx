@@ -1,5 +1,7 @@
 import Image from "next/image";
+import Link from "next/link";
 import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/lib/auth";
 import { signOut } from "../actions";
 import DashboardNav from "./components/DashboardNav";
@@ -33,6 +35,38 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   const isManager = user.profile.role === "manager";
   const isTrainer = user.profile.role === "trainer";
+  // Staff on the development pathway: the workbook, their own compliance
+  // documents and their account. No lead board, no roster, no compliance
+  // overview. Hiding a nav link is presentation, not access control, so each
+  // of those screens refuses staff itself as well.
+  const isStaff = user.profile.role === "staff";
+
+  // Keyed off the linked trainer row, not the role: the PT Manager is also one
+  // of the five PTs, so they get a profile of their own to edit alongside the
+  // roster they keep for everyone. Staff have a trainer row too, so they get
+  // one as well, which is deliberate: the bio and specialties they write while
+  // on the pathway are already in place the day they are promoted.
+  const hasOwnProfile = user.profile.trainer_id != null;
+
+  // A paused trainer isn't being offered new leads, and nothing else on the
+  // screen would tell them. The risk isn't mis-clicking the toggle, it's
+  // pausing in a flat-out week and forgetting for a month, so the reminder is
+  // shown on every page for as long as it's true rather than once at the point
+  // of change.
+  //
+  // Never shown to staff. Their roster row is inactive, so they are not being
+  // offered leads whatever their AM/PM flags say, and telling them they had
+  // paused something they never had would be worse than saying nothing.
+  let isPaused = false;
+  if (user.profile.trainer_id && !isStaff) {
+    const supabase = await createClient();
+    const { data: ownRow } = await supabase
+      .from("trainers")
+      .select("available_am, available_pm")
+      .eq("id", user.profile.trainer_id)
+      .maybeSingle<{ available_am: boolean; available_pm: boolean }>();
+    isPaused = ownRow != null && !ownRow.available_am && !ownRow.available_pm;
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -46,15 +80,25 @@ export default async function DashboardLayout({ children }: { children: React.Re
             </div>
             <DashboardNav
               items={[
-                { href: "/admin", label: "Lead board" },
+                ...(isStaff ? [] : [{ href: "/admin", label: "Lead board" }]),
                 ...(isManager
                   ? [
                       { href: "/admin/trainers", label: "Trainers" },
                       { href: "/admin/staff", label: "Staff" },
+                      { href: "/admin/development", label: "Development" },
                       { href: "/admin/compliance", label: "Compliance" },
                     ]
                   : []),
-                ...(isTrainer ? [{ href: "/admin/documents", label: "My documents" }] : []),
+                ...(isTrainer || isStaff
+                  ? [
+                      // Trainers get this too: a promoted staff member keeps
+                      // every goal and note they wrote, and would otherwise
+                      // lose sight of them the day they are promoted.
+                      { href: "/admin/development", label: "My development" },
+                      { href: "/admin/documents", label: "My documents" },
+                    ]
+                  : []),
+                ...(hasOwnProfile ? [{ href: "/admin/profile", label: "My profile" }] : []),
                 { href: "/onboarding", label: "PT onboarding" },
                 { href: "/admin/account", label: "Account" },
               ]}
@@ -75,6 +119,20 @@ export default async function DashboardLayout({ children }: { children: React.Re
           </div>
         </div>
       </header>
+      {isPaused && (
+        <div className="bg-foreground text-white">
+          <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-3 gap-y-1 px-5 py-2.5 text-sm sm:px-6">
+            <span className="font-semibold">You&rsquo;re paused.</span>
+            <span className="text-white/80">
+              You won&rsquo;t be offered new leads and members can&rsquo;t pick you on the booking form. Your existing
+              leads are unaffected.
+            </span>
+            <Link href="/admin/profile" className="font-semibold underline underline-offset-2">
+              Start taking leads again
+            </Link>
+          </div>
+        </div>
+      )}
       <div className="mx-auto max-w-7xl px-5 py-8 sm:px-6">{children}</div>
     </div>
   );

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/lib/auth";
+import { getStaffTrainerIds } from "@/lib/staff";
 import { getExpiryBand, supersededDocumentIds } from "@/lib/documents";
 import type { Trainer, TrainerDocument } from "@/lib/types";
 
@@ -9,6 +10,8 @@ export const dynamic = "force-dynamic";
 
 interface TrainerSummary {
   trainer: Pick<Trainer, "id" | "name" | "active">;
+  /** On the staff development pathway rather than on the PT roster. */
+  isStaff: boolean;
   total: number;
   pending: number;
   rejected: number;
@@ -35,7 +38,12 @@ export default async function CompliancePage() {
   const supabase = await createClient();
   const now = new Date();
 
-  const [{ data: trainers }, { data: documents }] = await Promise.all([
+  // Staff are deliberately included. They operate as PTs and carry the same
+  // certs, insurances and first aid, so leaving them off the one screen that
+  // answers "is everyone clear to train clients" would put a hole in it. The
+  // expiry reminder cron already covers them for the same reason: it reads
+  // trainer_documents and never filters on trainers.active.
+  const [{ data: trainers }, { data: documents }, staffTrainerIds] = await Promise.all([
     supabase
       .from("trainers")
       .select("id, name, active")
@@ -43,6 +51,7 @@ export default async function CompliancePage() {
       .order("name")
       .returns<Pick<Trainer, "id" | "name" | "active">[]>(),
     supabase.from("trainer_documents").select("*").returns<TrainerDocument[]>(),
+    getStaffTrainerIds(supabase),
   ]);
 
   const byTrainer = new Map<string, TrainerDocument[]>();
@@ -68,7 +77,15 @@ export default async function CompliancePage() {
       if (band === "expired") expired += 1;
       else if (band === "soon") soon += 1;
     }
-    return { trainer, total: docs.length, pending, rejected, expired, soon };
+    return {
+      trainer,
+      isStaff: staffTrainerIds.has(trainer.id),
+      total: docs.length,
+      pending,
+      rejected,
+      expired,
+      soon,
+    };
   });
 
   const attention = summaries.filter((s) => s.expired > 0 || s.rejected > 0 || s.pending > 0 || s.soon > 0).length;
@@ -79,7 +96,8 @@ export default async function CompliancePage() {
         <div>
           <h1 className="text-[28px] font-semibold tracking-tight text-foreground">Compliance</h1>
           <p className="mt-1 max-w-2xl text-[15px] text-secondary-label">
-            Every trainer&rsquo;s documents at a glance. {attention === 0 ? "Everyone is current." : `${attention} trainer${attention === 1 ? "" : "s"} need attention.`}
+            Every trainer&rsquo;s documents at a glance, including staff on the development pathway.{" "}
+            {attention === 0 ? "Everyone is current." : `${attention} ${attention === 1 ? "person needs" : "people need"} attention.`}
           </p>
         </div>
         <Link
@@ -102,10 +120,16 @@ export default async function CompliancePage() {
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div className="flex items-center gap-2">
                     <span className="font-semibold tracking-tight text-foreground">{s.trainer.name}</span>
-                    {!s.trainer.active && (
-                      <span className="rounded-full bg-fill px-2 py-0.5 text-xs font-semibold text-secondary-label">
-                        Inactive
+                    {s.isStaff ? (
+                      <span className="rounded-full bg-fill px-2 py-0.5 text-xs font-semibold text-secondary-label ring-1 ring-inset ring-black/10">
+                        Development
                       </span>
+                    ) : (
+                      !s.trainer.active && (
+                        <span className="rounded-full bg-fill px-2 py-0.5 text-xs font-semibold text-secondary-label">
+                          Inactive
+                        </span>
+                      )
                     )}
                   </div>
                   <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${headline.className}`}>
