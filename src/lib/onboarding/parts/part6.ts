@@ -153,7 +153,7 @@ export const part6: OnboardingPart = {
     {
       heading: "Referrals and testimonials strategy",
       body: [
-        "Referrals are the warmest leads you'll ever get — trust comes pre-loaded. Ask at the right moment (just after a win), make it easy, and say thank you with value, never a discount. Testimonials are the public version of the same trust: ask happy clients, then put them on your Google profile, socials and the gym noticeboard.",
+        "Referrals are the warmest leads you'll ever get — trust comes pre-loaded. Ask at the right moment (just after a win), make it easy, and thank them with value rather than a discount: an extra session for them and a complimentary consult for their friend. Testimonials are the public version of the same trust: ask happy clients, then put them on your Google profile, socials and the gym noticeboard.",
       ],
       activities: [
         { key: "referral-message-draft", prompt: "Draft a short referral message you would actually send to a happy client.", multiline: true },
@@ -183,6 +183,7 @@ export const part6: OnboardingPart = {
       heading: "The client journey map",
       body: [
         "Everything in this part feeds the first step of a bigger journey — the spine of the whole workbook. It runs in four phases: **Attract** (the marketing above), **Convert** (the consult, trial and sales chat), **Deliver** (onboarding and training that earns trust), **Retain** (check-ins, loyalty, referrals).",
+        "![The Client Journey, a twelve-step map in four phases. Attract: 1 Client Interest. Convert: 2 Initial Contact, 3 PT Waiver Form, 4 Consultation and Trial Session, 5 The Sales Chat, 6 Follow-Up, 7 Agreement and Payment. Deliver: 8 Onboarding and First Program, 9 Regular Training and Tracking. Retain: 10 Check-Ins and Adjustments, 11 Retention and Referrals, 12 Loyal Client.](/onboarding/client-journey-map.png)",
         "In full, it's 12 steps: Client Interest → Initial Contact → PT Waiver Form → Consultation & Trial Session → The Sales Chat → Follow-Up → Agreement & Payment → Onboarding & First Program → Regular Training & Tracking → Check-Ins & Adjustments → Retention & Referrals → Loyal Client. The Client Journey Tracker above tracks every lead through these exact stages.",
       ],
       activities: [

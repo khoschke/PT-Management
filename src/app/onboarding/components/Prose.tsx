@@ -28,7 +28,9 @@ type Block =
 function Figure({ src, alt, caption }: { src: string; alt: string; caption?: string }) {
   return (
     <figure className="my-1 flex flex-col items-center gap-2.5">
-      <div className="w-full max-w-[440px] rounded-2xl bg-white p-4" style={{ border: "1px solid var(--ob-border)" }}>
+      {/* 520px keeps the tall client-journey map legible without upscaling the
+          smallest source diagram (the blank Ikigai, 509px square) past 1:1. */}
+      <div className="w-full max-w-[520px] rounded-2xl bg-white p-4" style={{ border: "1px solid var(--ob-border)" }}>
         {/* Not next/image: these are fixed-size local diagrams, and the plain tag
             keeps them working in the static export the onboarding pages use. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}

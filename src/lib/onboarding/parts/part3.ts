@@ -186,6 +186,12 @@ export const part3: OnboardingPart = {
       activities: [
         { key: "weekly-gym-fee", prompt: "Write your weekly Fitaz Gym fee here (see your contract)." },
       ],
+      links: [
+        {
+          label: "PT On-boarding Checklist",
+          url: "https://drive.google.com/file/d/1mUElvNI8Oh1EwGkrqRJzx89BqVFBABK2/view",
+        },
+      ],
       managerNote:
         "Tick this off in week one. Anything missing becomes a blocker on the PT taking their first paying session at Fitaz Gym. Diarise certification renewal dates the same day they're checked in.",
     },
