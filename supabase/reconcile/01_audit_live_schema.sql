@@ -18,6 +18,15 @@
 -- 0009-B are the post-hardening cleanup and are EXPECTED to read MISSING until
 -- PART B of 0009 has been run.
 --
+-- **0007 and 0008 are EXPECTED to read MISSING.** They belong to the GymMaster
+-- branch, which is unmerged. That is not drift.
+--
+-- **Keep this file in step with supabase/migrations/.** A migration with no
+-- rows here is invisible to the audit, and the audit then reports a clean bill
+-- of health for a database it did not fully check, which is precisely the
+-- failure that let 0006 sit unapplied while the docs claimed otherwise. When
+-- you add a migration, add its rows here in the same change.
+--
 -- ---------------------------------------------------------------------------
 -- Why this avoids information_schema and the word "table"
 -- ---------------------------------------------------------------------------
@@ -166,6 +175,64 @@ from (
                   and polname = 'leads_insert_public_form')
   union all select '0009-B', 'anon cannot insert leads rows',
     not has_table_privilege('anon', 'public.leads', 'INSERT')
+
+  -- 0010_staff_role, PART A ------------------------------------------------
+  -- The enum value has to exist and be committed before PART B can reference
+  -- it. If this row reads MISSING, nothing in PART B will have run either.
+  union all select '0010-A', 'app_role has value staff',
+    exists (select 1 from pg_enum e
+            join pg_type t on t.oid = e.enumtypid
+            where t.typname = 'app_role' and e.enumlabel = 'staff')
+
+  -- 0010_staff_role, PART B ------------------------------------------------
+  -- The three policies that used `not is_manager()` to mean "is a trainer",
+  -- which a third role silently breaks. Each must now name my_role().
+  union all select '0010-B', 'function my_role()',
+    to_regprocedure('public.my_role()') is not null
+  union all select '0010-B', 'leads_select_trainer checks my_role',
+    exists (select 1 from pg_policy
+            where polrelid = to_regclass('public.leads')
+              and polname = 'leads_select_trainer'
+              and pg_get_expr(polqual, polrelid) like '%my_role%')
+  union all select '0010-B', 'leads_update_trainer checks my_role',
+    exists (select 1 from pg_policy
+            where polrelid = to_regclass('public.leads')
+              and polname = 'leads_update_trainer'
+              and pg_get_expr(polqual, polrelid) like '%my_role%')
+  union all select '0010-B', 'status_history_select_trainer checks my_role',
+    exists (select 1 from pg_policy
+            where polrelid = to_regclass('public.status_history')
+              and polname = 'status_history_select_trainer'
+              and pg_get_expr(polqual, polrelid) like '%my_role%')
+
+  -- 0011_development_goals -------------------------------------------------
+  union all select '0011', 'enum development_goal_status',
+    exists (select 1 from pg_type where typname = 'development_goal_status')
+  union all select '0011', 'relation development_goals',
+    to_regclass('public.development_goals') is not null
+  union all select '0011', 'relation development_notes',
+    to_regclass('public.development_notes') is not null
+
+  -- The ownership rule, asserted rather than assumed. A goal belongs to
+  -- whoever set it, so NO write policy on development_goals may mention
+  -- is_manager(). Inverted: PRESENT means the manager is correctly locked out
+  -- of writing. The relation check in front matters, because "no policy
+  -- mentions is_manager" is trivially true of a relation that does not exist.
+  union all select '0011', 'manager cannot write development_goals',
+    to_regclass('public.development_goals') is not null
+    and not exists (
+      select 1 from pg_policy
+      where polrelid = to_regclass('public.development_goals')
+        and polcmd in ('*', 'a', 'w', 'd')
+        and coalesce(pg_get_expr(polqual, polrelid), '')
+            || coalesce(pg_get_expr(polwithcheck, polrelid), '') like '%is_manager%')
+
+  -- The composite foreign key, which is what stops a goal comment being filed
+  -- against a goal belonging to somebody else.
+  union all select '0011', 'development_notes goal FK ties comment to owner',
+    exists (select 1 from pg_constraint
+            where conrelid = to_regclass('public.development_notes')
+              and conname = 'development_notes_goal_fk')
 
 ) checks
 order by migration, item;
