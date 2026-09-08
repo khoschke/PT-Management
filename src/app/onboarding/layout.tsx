@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { getCurrentUser } from "@/lib/auth";
+import { canSeeCoachingNotes, getCurrentUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { onboardingParts } from "@/lib/onboarding/content";
 import { getTrainerOnboardingState, effectivePartStatus, partCompletionFraction } from "@/lib/onboarding/progress";
@@ -31,6 +31,10 @@ export default async function OnboardingLayout({ children }: { children: React.R
   }
 
   const isManager = user.profile.role === "manager";
+  // Staff have nothing to switch to: the coaching notes and worked examples
+  // are stripped server side for them in [part]/page.tsx, so the toggle would
+  // flip between an identical pair of views.
+  const showViewToggle = canSeeCoachingNotes(user.profile.role);
   const supabase = await createClient();
   const state = await getTrainerOnboardingState(supabase, user.profile.trainer_id);
 
@@ -62,7 +66,7 @@ export default async function OnboardingLayout({ children }: { children: React.R
               </Link>
             </div>
             <div className="flex items-center gap-3">
-              <ViewToggle />
+              {showViewToggle && <ViewToggle />}
               <Link
                 href="/admin"
                 className="hidden text-[13px] font-medium sm:block"

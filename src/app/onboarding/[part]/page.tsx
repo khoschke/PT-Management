@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getCurrentUser, worksThroughWorkbook } from "@/lib/auth";
+import { canSeeCoachingNotes, getCurrentUser, worksThroughWorkbook } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { getPartByNumber, onboardingParts, TOTAL_PARTS } from "@/lib/onboarding/content";
 import { getTrainerOnboardingState, effectivePartStatus } from "@/lib/onboarding/progress";
@@ -36,7 +36,17 @@ export default async function OnboardingPartPage({
 
   const prev = part.number > 1 ? getPartByNumber(part.number - 1) : undefined;
   const next = part.number < TOTAL_PARTS ? getPartByNumber(part.number + 1) : undefined;
-  const hasAnyManagerNotes = part.sections.some((s) => s.managerNote || s.workedExample);
+
+  // The real gate on the coaching notes, and the only one that counts.
+  //
+  // ManagerNote and WorkedExample take their text as props, so whatever is
+  // passed here reaches the browser in the RSC payload whether or not the
+  // component renders it. Hiding the view toggle alone would leave the notes
+  // one devtools poke (or one look at the network tab) away. Withholding the
+  // text on the server is what actually keeps it from staff.
+  const showCoachingNotes = canSeeCoachingNotes(user?.profile?.role);
+  const hasAnyManagerNotes =
+    showCoachingNotes && part.sections.some((s) => s.managerNote || s.workedExample);
 
   return (
     <article className="flex flex-col gap-6">
@@ -67,7 +77,7 @@ export default async function OnboardingPartPage({
           </div>
         )}
 
-        <ManagerNotesPendingBanner hasAnyNotes={hasAnyManagerNotes} />
+        {showCoachingNotes && <ManagerNotesPendingBanner hasAnyNotes={hasAnyManagerNotes} />}
       </header>
 
       <div className="flex flex-col gap-4">
@@ -112,8 +122,8 @@ export default async function OnboardingPartPage({
               </div>
             )}
 
-            <WorkedExample example={section.workedExample} />
-            <ManagerNote note={section.managerNote} />
+            <WorkedExample example={showCoachingNotes ? section.workedExample : undefined} />
+            <ManagerNote note={showCoachingNotes ? section.managerNote : undefined} />
           </section>
         ))}
       </div>

@@ -41,6 +41,19 @@ export function worksThroughWorkbook(role: AppRole | null | undefined): boolean 
   return role === "trainer" || role === "staff";
 }
 
+// Who may read the workbook's coaching notes and worked examples, the two
+// things Manager view reveals. Managers use them to run a 1:1; trainers have
+// always been able to flip to them and keep that. Staff on the development
+// pathway do not: they are meant to work the questions, and a model answer
+// sitting one click away is a different exercise.
+//
+// Written as an allow list on purpose. A role added later sees nothing until
+// somebody decides it should, which is the safe direction to fail in and the
+// opposite of the `not is_manager()` mistake this codebase already made once.
+export function canSeeCoachingNotes(role: AppRole | null | undefined): boolean {
+  return role === "manager" || role === "trainer";
+}
+
 // Defence in depth for the manager-only server actions. RLS is still the real
 // gate — these actions run as the signed-in user, so the database refuses a
 // trainer's write regardless — but an explicit role check means a future change

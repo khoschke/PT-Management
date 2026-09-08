@@ -364,14 +364,35 @@ number the screen was built around.
 Verified with `npm run build`, `npx tsc --noEmit` and `npm run lint`, all clean.
 **Not verified against a live database**, which this workspace cannot reach.
 
-## Worth a look when you first use it
+## Coaching notes are gated for staff
 
-The onboarding workbook's PT/Manager view toggle is rendered for everyone, so a
-staff member can switch to Manager view and read the coaching notes and worked
-examples. That is pre-existing behaviour that trainers have always had, not
-something this build introduced, and it was left alone rather than quietly
-changed. Staff are a new audience for it though, so it is worth deciding
-whether you want it.
+Manager view reveals two things the workbook otherwise hides: the coaching
+notes (`managerNote`) and the worked examples (`workedExample`). Managers use
+them to run a 1:1, and **trainers keep the access they have always had**.
+**Staff do not get either.** They are meant to work the questions, and a model
+answer one click away is a different exercise.
+
+Two halves, and only one of them matters:
+
+- `canSeeCoachingNotes()` in `src/lib/auth.ts` hides the PT/Manager toggle in
+  `onboarding/layout.tsx`. This is the visible half and, on its own, is
+  cosmetic.
+- **`onboarding/[part]/page.tsx` withholds the text itself.** `ManagerNote` and
+  `WorkedExample` take their content as props, so anything passed to them
+  reaches the browser in the RSC payload whether the component renders it or
+  not. Hiding the toggle alone would leave the notes one devtools poke away.
+  The page now passes `undefined` for both when the viewer is staff.
+
+Verified against the build output: `src/lib/onboarding/content.ts` compiles
+into the server bundle only. The two client components that touch the
+onboarding lib (`PartsNav`, `PartStatusControl`) use `import type`, which is
+erased, so the workbook never lands in a client chunk. That means the
+server-side withholding is the whole gate rather than one layer of it.
+
+`canSeeCoachingNotes()` is written as an allow list (`manager` or `trainer`)
+rather than a deny list (`!== "staff"`). A role added later sees nothing until
+somebody decides it should, which is the safe direction to fail in and the
+opposite of the `not is_manager()` mistake this codebase already made once.
 
 ## Still open
 
