@@ -338,7 +338,7 @@ anyway because `0004_trainer_am_pm.sql` merged with the availability work.
 | 0012 | `trainer_pause_leads` | applied to live 8 Sep 2026, verified |
 | 0013 | `staff_role` | staff pathway (PR #28). **Applied to live 8 Sep 2026.** Run it whole; safe to re-run |
 | 0014 | `development_goals` | development goals (PR #28). **Applied to live 8 Sep 2026 — verified** (enum, both relations, RLS on both, all 6 policies, composite FK). Safe to re-run |
-| 0015 | `contract_document_type` | "PT Contract" document type (PR #27). The file says it was applied to live under its old number; **confirm with the audit rather than taking the file's word**. Safe to re-run |
+| 0015 | `contract_document_type` | "PT Contract" document type (PR #27). **Applied to live and verified by audit 8 Sep 2026** — `document_types row "contract"` reads PRESENT. It went on under its original number `0010`, before the self-profile work took that slot; the renumber is file ordering, not state, so there is nothing to re-run. Safe to re-run anyway |
 
 Merge in that order and Supabase stays in step. GymMaster is deliberately in the
 middle rather than last: its numbers were already written and pushed, and moving
