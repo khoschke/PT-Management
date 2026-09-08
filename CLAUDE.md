@@ -3,21 +3,44 @@
 Read `docs/PROJECT_STATUS.md` for where the project is up to. This file is the
 short list of things that are easy to get wrong here.
 
-## Never publish commercial terms into trainer-facing content
+## The figure rule
 
 **This is the rule that matters most in this repo. It has already been broken
 once.**
 
-Never publish commercial terms, prices, rates, fees or contract clauses into
-trainer-facing content. Trainers are self-employed and set their own pricing.
-Anything presented as an option, price or model is an example of what has
-worked for other trainers, not a requirement and not Fitaz Gym policy. Where
-something genuinely is a requirement (insurance, certifications, the PT
-contract), say so and point at the contract rather than restating its terms.
+Trainers here are self-employed and set their own pricing. Anything presented
+as an option, price or model is an example of what has worked for other
+trainers, not a requirement and not Fitaz Gym policy. Where something genuinely
+is a requirement (insurance, certifications, the PT contract), say so and point
+at the contract rather than restating its terms.
 
-That covers rent, bond, the Business Pack, rent ramps, loyalty reductions,
-minimum terms, notice periods and restraint of trade clauses, and it covers
-session rates and package pricing.
+The settled rule, from ADDENDUM 3 of the Portal Update Spec. This wording
+supersedes anything narrower elsewhere:
+
+> A figure is safe when the reader can tell **whose number it is**. Any one of
+> these is enough:
+>
+> 1. **Framed in words as an example.** "One example of what some trainers here
+>    use is a split rate: $80 per 45-minute session..."
+> 2. **Inside a worked example attributed to a named persona.** Taylor's revenue
+>    walkthrough, her price rise.
+> 3. **Inside a script with an attributed speaker.** Taylor saying it to a
+>    client.
+>
+> It fails when a figure sits in body prose with none of these, because then it
+> reads as *the* rate rather than *a* rate.
+>
+> Separately, and with no exceptions: **a list of standard commercial terms**
+> (rent, bond, business pack, fees, minimum term, notice period, restraints)
+> never appears in trainer-facing content, however it is framed. Point at the
+> contract instead.
+
+### How to check it
+
+Sweep for the **figure**, not for the sentence you already know about: `$80`,
+`$20 a week`, `$275`. Four instances of the same fault were missed in the first
+pass because it was swept by phrasing. Every hit then needs one of the three
+framings above, or it comes out.
 
 ### Why the rule exists
 
@@ -37,10 +60,10 @@ not to use it. The rule is written down here so that does not repeat.
 - Link to `/admin/documents`, which serves each trainer only their own files
   under RLS, including their signed agreement. Never link the master contract
   template.
-- A worked example may use a real number as an input (Taylor's revenue
-  walkthrough uses $275 gym rent alongside a $1,500 income target), because
-  that reads as one trainer's arithmetic, not as a rate card. Framing is the
-  whole difference.
+- The no-exceptions half of the rule is about a *list of standard terms*, not
+  about every number. An individual figure is governed by the three framings
+  above: Taylor's revenue walkthrough uses $275 gym rent alongside a $1,500
+  income target, and passes, because it reads as one trainer's arithmetic.
 
 ## The onboarding workbook content
 

@@ -119,7 +119,7 @@ export const part7: OnboardingPart = {
     {
       heading: "Explaining pricing with confidence",
       body: [
-        "Price is where new PTs flinch — don't. If you believe in the value, say the price plainly and let the silence sit.",
+        "Price is where new PTs flinch — don't. If you believe in the value, say the price plainly and let the silence sit. Here's how Taylor does it, using her own rate:",
         "“I run it in two parts. Training is $80 for a 45-minute session. On top of that there's a flat $20 a week for your program and coaching app, which covers your personalised program, weekly check-ins, and progress tracking. That weekly fee means you're supported every week, even the ones we don't train.”",
         "- **Be direct.** No apologising, no “it's a bit pricey but...”",
         "- **Lead with value, not cost.** They're investing in the outcome, not buying a slot.",
