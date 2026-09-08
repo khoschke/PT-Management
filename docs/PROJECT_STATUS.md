@@ -319,7 +319,7 @@ the commit history.
 | `claude/pt-onboarding-dashboard-9wwl17` | PT onboarding workbook | Merged and live. |
 | `claude/handoff-trainer-profiles-link-buudia` | Trainer profile links | Merged. |
 | `claude/project-pause-prevention-083n5y` | Supabase keep-alive cron | Merged and live. |
-| `claude/staff-development-pathway-scope-ac664k` | Staff development pathway | **Merged** (PR #28, 8 Sep 2026). Scoping note plus all five build phases. **Merged is not done: migrations `0013` and `0014` are still NOT on the live database, and the feature does nothing until they are.** |
+| `claude/staff-development-pathway-scope-ac664k` | Staff development pathway | **Merged** (PR #28, 8 Sep 2026). Scoping note plus all five build phases. Migrations `0013` and `0014` applied to live 8 Sep 2026. Remaining: a browser walkthrough of the server actions. |
 
 ### Migration order, already sorted
 
@@ -337,8 +337,8 @@ anyway because `0004_trainer_am_pm.sql` merged with the availability work.
 | 0010 | `trainer_self_profile` | applied to live 7 Sep 2026, verified |
 | 0011 | `trainer_self_availability` | applied to live 7 Sep 2026, verified |
 | 0012 | `trainer_pause_leads` | applied to live 8 Sep 2026, verified |
-| 0013 | `staff_role` | staff pathway, merged in PR #28; **NOT on live.** One part, run it whole |
-| 0014 | `development_goals` | development goals, merged in PR #28; **NOT on live.** One part |
+| 0013 | `staff_role` | staff pathway (PR #28). **Applied to live 8 Sep 2026.** Run it whole; safe to re-run |
+| 0014 | `development_goals` | development goals (PR #28). **Applied to live 8 Sep 2026 — verified** (enum, both relations, RLS on both, all 6 policies, composite FK). Safe to re-run |
 
 Merge in that order and Supabase stays in step. GymMaster is deliberately in the
 middle rather than last: its numbers were already written and pushed, and moving
@@ -355,29 +355,36 @@ now retired rather than reserved: don't fill it.
 (PART A → deploy → PART B). Both are on live; the runbook that executed it,
 `supabase/reconcile/README.md`, is now a record rather than a task.
 
-**`0013` and `0014` are the two that are not on live.** Both run whole, in one
-go each. An earlier note here claimed the staff-role migration needed a
-two-part run because Postgres will not let a new enum value be used in the
-transaction that adds it. That rule is real but does not apply: nothing in
-`0013` references `'staff'` after adding it, so the file commits in a single
-transaction. Confirmed by executing the whole migration chain against a local
-Postgres 16.
+**`0013` and `0014` went on to live on 8 September 2026.** Both run whole, in
+one go each, and both are now safe to run twice: `0014` is idempotent
+throughout and `0013`'s policy drops are guarded with `if exists`. That was
+added after applying `0014` raised `type "development_goal_status" already
+exists`, which is a useless error precisely because the failing statement is
+the first in the file whether the previous run finished or died immediately
+after it. The database turned out to be fine; the migration was the problem.
+
+An earlier note here claimed `0013` needed a two-part run because Postgres will
+not let a new enum value be used in the transaction that adds it. That rule is
+real but does not apply: nothing in `0013` references `'staff'` after adding
+it, so the file commits in a single transaction. Confirmed by executing the
+whole migration chain against a local Postgres 16.
 
 ## Outstanding / next up
 
-- **Staff development pathway** — **MERGED (PR #28, 8 Sep 2026) and deployed,
-  but NOT usable until two migrations are applied by hand.** Gym staff working
-  towards
+- **Staff development pathway** — **MERGED (PR #28), deployed, and both
+  migrations applied to live on 8 Sep 2026.** The only thing left is a browser
+  walkthrough to exercise the server actions, which nothing so far has run.
+  Gym staff working towards
   becoming a PT get a login, the full onboarding workbook with saving progress,
   their own compliance documents, self-authored development goals with a
   coaching conversation, and no leads. The manager sees their progress and can
   promote them to trainer in one action.
-  - **The action still outstanding:** apply `0013_staff_role.sql` and then
-    `0014_development_goals.sql` in the Supabase SQL editor, each run whole,
-    then re-run
-    `supabase/reconcile/01_audit_live_schema.sql`. **Merging and deploying the
-    PR is not enough** — the `staff` role does not exist on the enum until
-    `0013` runs, and adding a staff member fails until it does.
+  - **The action still outstanding:** a walkthrough on the live site. Every
+    RLS policy has been exercised, against a local Postgres and now on live,
+    but the **server actions have never been run**: the three-goal cap in
+    `addGoal`, `promoteStaffToTrainer`, and `addStaffLogin`. Adding a staff
+    member and promoting them is the test.
+  - The `staff` role is on the live enum, so `/admin/staff` can create one.
   - A staff member is a `profiles` row with the new `staff` role pointing at an
     **inactive `trainers` row**. Onboarding progress, documents and Storage all
     key on `my_trainer_id()` rather than on the role, so they work for staff
