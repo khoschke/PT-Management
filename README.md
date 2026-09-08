@@ -44,7 +44,8 @@ database size, point in time recovery) at that point, not before.
    `supabase/migrations/0001_init.sql`, then
    `supabase/migrations/0002_onboarding.sql`, then
    `supabase/migrations/0003_trainer_bio.sql`, then
-   `supabase/migrations/0006_trainer_documents.sql`. Optionally run
+   `supabase/migrations/0006_trainer_documents.sql`, then
+   `supabase/migrations/0010_contract_document_type.sql`. Optionally run
    `supabase/seed.sql` to add five placeholder trainers.
 3. The documents feature stores files in a **private** Storage bucket called
    `trainer-documents`. The `0006` migration creates it and its access
@@ -275,6 +276,7 @@ supabase/
   migrations/0003_trainer_bio.sql     trainer free-text bio field
   migrations/0006_trainer_documents.sql  compliance documents, types,
                                        reminders, private Storage bucket
+  migrations/0010_contract_document_type.sql  "PT Contract" document type
   seed.sql                    five placeholder trainers
 ```
 

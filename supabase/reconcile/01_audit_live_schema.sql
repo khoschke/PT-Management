@@ -167,5 +167,10 @@ from (
   union all select '0009-B', 'anon cannot insert leads rows',
     not has_table_privilege('anon', 'public.leads', 'INSERT')
 
+  -- 0010_contract_document_type ---------------------------------------------
+  union all select '0010', 'document_types row "contract"',
+    exists (select 1 from public.document_types
+            where key = 'contract' and expiry_rule = 'none')
+
 ) checks
 order by migration, item;
