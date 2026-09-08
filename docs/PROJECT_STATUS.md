@@ -330,11 +330,12 @@ now retired rather than reserved: don't fill it.
 
 ## Outstanding / next up
 
-- **Merge PR #26 (self-editable trainer profiles).** Karl confirmed the first
-  cut working on the Vercel preview on 7 Sep, and availability editing was added
-  on top of it. Both migrations are already on live and verified, so merging is
-  what turns the screen on. Worth one more look at the preview first, since the
-  availability field landed after his pass.
+- **Merge PR #26 (self-editable trainer profiles + "pause my leads").** Karl has
+  confirmed the whole thing working on the Vercel preview, 7-8 Sep: profile
+  fields, specialties, availability, and a paused trainer disappearing from the
+  public form's trainer picker. All three migrations (`0010`-`0012`) are already
+  applied to live and verified, so merging the code is the only step left, and
+  it deploys to production. Nothing is blocking it.
 
 - **GymMaster integration** — see `docs/handoff-gymmaster-integration.md`.
   **Phase 1 scaffolding already exists unmerged** on

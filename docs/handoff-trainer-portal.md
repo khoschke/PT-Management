@@ -36,10 +36,16 @@
 >   raise 42501; editing another trainer's row matches zero rows; the manager
 >   still edits every column of everyone; the public form's trainer picker and
 >   the service-role clients are unaffected.
-> - **Confirmed working** by Karl on the Vercel preview deployment, 7 Sep 2026,
->   profile fields and availability both. The build workspace has no outbound
->   network, so his passes on the preview are the browser verification. The
->   pause behaviour (`0012`) landed after that and wants one more look.
+> - **Confirmed working end to end** by Karl on the Vercel preview deployment,
+>   7-8 Sep 2026: profile fields, specialties, availability, and the pause
+>   hiding a trainer from the public form's picker. The build workspace has no
+>   outbound network, so his passes on the preview are the browser
+>   verification.
+> - **One thing to know when testing:** the Vercel preview points at the LIVE
+>   Supabase project. A lead submitted from the preview form is a real row on
+>   the real board, and allocating it sends a real email to a real PT. The
+>   allocation suggestion renders before you allocate, so the manager-side
+>   pause can be checked without triggering anything.
 >
 > The rest of this note is kept as the original scoping, unchanged.
 
