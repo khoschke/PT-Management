@@ -371,20 +371,27 @@ whole migration chain against a local Postgres 16.
 
 ## Outstanding / next up
 
-- **Staff development pathway** — **MERGED (PR #28), deployed, and both
-  migrations applied to live on 8 Sep 2026.** The only thing left is a browser
-  walkthrough to exercise the server actions, which nothing so far has run.
-  Gym staff working towards
+- ~~**Staff development pathway**~~ — **DONE, 8 Sep 2026.** Merged (PR #28),
+  migrations `0013` and `0014` applied to live, and walked through end to end
+  on the live site. Gym staff working towards
   becoming a PT get a login, the full onboarding workbook with saving progress,
   their own compliance documents, self-authored development goals with a
   coaching conversation, and no leads. The manager sees their progress and can
   promote them to trainer in one action.
-  - **The action still outstanding:** a walkthrough on the live site. Every
-    RLS policy has been exercised, against a local Postgres and now on live,
-    but the **server actions have never been run**: the three-goal cap in
-    `addGoal`, `promoteStaffToTrainer`, and `addStaffLogin`. Adding a staff
-    member and promoting them is the test.
-  - The `staff` role is on the live enum, so `/admin/staff` can create one.
+  - **Walked through on the live site 8 Sep 2026 and confirmed working.** That
+    was the last outstanding step: the RLS had been exercised locally and on
+    live, but the server actions had never run. They have now.
+  - The walkthrough found two things, both fixed the same day:
+    - **A redirect loop that trapped staff in the workbook.** `/admin` sent
+      them to `/onboarding`, whose "Back to dashboard" link points at `/admin`,
+      which sent them back. The workbook is a separate visual layer with none
+      of the dashboard nav, so it dropped them out of the shell holding their
+      links. Staff now land on `/admin/development`, inside the shell. **If you
+      ever redirect a role somewhere, check the destination carries the nav
+      that role needs to get anywhere else.**
+    - **"My profile" removed for staff.** The screen drives the public form's
+      picker and lead matching, and an inactive roster row is in neither, so
+      nothing set there took effect. They get one on promotion.
   - A staff member is a `profiles` row with the new `staff` role pointing at an
     **inactive `trainers` row**. Onboarding progress, documents and Storage all
     key on `my_trainer_id()` rather than on the role, so they work for staff

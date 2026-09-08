@@ -398,7 +398,23 @@ the policies exercised as real signed-in users via `set role authenticated` and
 That last row matters: it means the assertion is a real check rather than one
 that always passes.
 
-**Still not verified: the app itself against a real Supabase project.** The
+**Now verified on live too.** Walked through end to end on 8 September 2026:
+a staff member added, signed in as, the workbook and documents used, goals set,
+and the manager side checked. Two defects came out of it and were fixed the
+same day: a redirect loop that trapped staff in the workbook (they now land on
+`/admin/development`, inside the admin shell, rather than on `/onboarding`
+which carries none of the dashboard nav), and the "My profile" screen removed
+for staff since an inactive roster row is in neither the public picker nor
+lead matching.
+
+The lesson worth keeping from the loop: **when you redirect a role somewhere,
+check the destination carries the navigation that role needs to get anywhere
+else.** The redirect was right; the destination was a dead end.
+
+The note below was written before that walkthrough and is kept as the record
+of what was and was not proven at the point the code was merged.
+
+**At merge, not verified: the app itself against a real Supabase project.** The
 build workspace cannot reach one, and cannot reach the Vercel preview either
 (the proxy returns 403), so a green Vercel status proves the app built and
 deployed and nothing more. The server actions in particular are unexercised,
