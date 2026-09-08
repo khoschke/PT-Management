@@ -85,8 +85,9 @@ is inert either way.
 `0005` is permanently unused. It was held for the hardening migration, which has
 since been renumbered to `0009` because it rewrites a policy on
 `trainer_documents` and therefore has to run *after* `0006` — as `0005` it would
-have failed on a fresh setup. GymMaster keeps `0007/0008` untouched. `0010`, `0011` and `0012` are taken by
-the trainer self-profile work, so anything new starts at **0013**.
+have failed on a fresh setup. GymMaster keeps `0007/0008` untouched. `0010`, `0011`
+and `0012` are the trainer self-profile work; `0013` and `0014` are the staff
+development pathway. Anything new starts at **0015**.
 
 `0009`'s two-part structure is spent — both parts are on live. It only ever
 mattered because a running form was mid-flight between the old insert path and
@@ -154,8 +155,31 @@ strength". Change it in that one file and it flows to both sides.
 - **Vercel auto-deploy can silently stall.** If a push doesn't appear in
   Deployments, push again (an empty commit works) to re-trigger.
 - **This build workspace has no outbound network** to Supabase, Google,
-  GymMaster, etc. You cannot test those live from here — build, deploy, and
-  verify on the live site (which is not network-restricted).
+  GymMaster, etc. You cannot reach *those services* from here — build, deploy,
+  and verify on the live site (which is not network-restricted). **This does
+  not mean nothing can be tested**: see the Postgres entry below, which covers
+  migrations and RLS without any network at all. **That includes
+  the Vercel preview URL**: curling a preview deployment from a build session
+  fails with `CONNECT tunnel failed, response 403` at the proxy, so a green
+  Vercel status is proof the app *built and deployed*, never proof a page
+  renders or a query works. Somebody has to open it in a browser. Confirmed
+  8 Sep 2026 while watching PR #28.
+- **Postgres 16 IS available in the build workspace, so migrations CAN be
+  tested here.** `psql` and `initdb` are installed at
+  `/usr/lib/postgresql/16/bin`. No network is needed: `initdb` a throwaway
+  cluster in `/tmp`, stub the handful of Supabase objects the migrations assume
+  (`auth.users`, `auth.uid()`, the `anon` / `authenticated` / `service_role`
+  roles, `storage.buckets`, `storage.objects`, `storage.foldername()`), then
+  apply `supabase/migrations/*.sql` in order. **Run it as the `postgres` OS
+  user** — `initdb` refuses to run as root, which is the one thing that makes
+  this look impossible at first.
+  This is worth doing for every migration, and it is not just a syntax check:
+  you can `set role authenticated`, `set_config('request.jwt.claim.sub', …)`
+  and exercise the RLS policies as a real signed-in user. Doing exactly that on
+  8 Sep 2026 caught a wrong two-part instruction in `0010`, proved the
+  `not is_manager()` hole was genuinely exploitable, and confirmed the
+  development-goals ownership rule refuses a manager's UPDATE. **Reasoning
+  about a policy is not the same as running it.**
 - **A migration in `supabase/migrations/` is not proof it ran on live.** Nothing
   applies migrations automatically; a human pastes them into the Supabase SQL
   editor, and that step has been silently skipped before (`0006`, which broke two
@@ -295,6 +319,7 @@ the commit history.
 | `claude/pt-onboarding-dashboard-9wwl17` | PT onboarding workbook | Merged and live. |
 | `claude/handoff-trainer-profiles-link-buudia` | Trainer profile links | Merged. |
 | `claude/project-pause-prevention-083n5y` | Supabase keep-alive cron | Merged and live. |
+| `claude/staff-development-pathway-scope-ac664k` | Staff development pathway | **Open PR #28**, 6 commits. Scoping note plus all five build phases. **Do not treat as done on merge: migrations `0013` and `0014` still have to be applied by hand.** |
 
 ### Migration order, already sorted
 
@@ -306,12 +331,14 @@ anyway because `0004_trainer_am_pm.sql` merged with the availability work.
 |---|---|---|
 | 0004 | `trainer_am_pm` | merged, on production |
 | 0005 | — | permanently unused (see below) |
-| 0006 | `trainer_documents` | merged to production, **not yet on the live DB** |
+| 0006 | `trainer_documents` | merged; **applied to live 12 Aug 2026, verified** |
 | 0007, 0008 | `gymmaster_lead_source`, `gymmaster_sync` | `gymmaster-phase-1-pull-7yuxuy` (already numbered correctly, no renumber needed) |
-| 0009 | `public_access_hardening` | merged into code; **apply in two parts, PART A → deploy → PART B** |
+| 0009 | `public_access_hardening` | merged; **applied to live 12 Aug 2026, both parts, verified** |
 | 0010 | `trainer_self_profile` | applied to live 7 Sep 2026, verified |
 | 0011 | `trainer_self_availability` | applied to live 7 Sep 2026, verified |
 | 0012 | `trainer_pause_leads` | applied to live 8 Sep 2026, verified |
+| 0013 | `staff_role` | staff pathway, PR #28; **NOT on live.** One part, run it whole |
+| 0014 | `development_goals` | development goals, PR #28; **NOT on live.** One part |
 
 Merge in that order and Supabase stays in step. GymMaster is deliberately in the
 middle rather than last: its numbers were already written and pushed, and moving
@@ -324,12 +351,44 @@ is precisely how the live-DB drift surfaced. It has to sit after `0006`, and
 `0009` was the first free slot that left GymMaster's `0007/0008` alone. `0005` is
 now retired rather than reserved: don't fill it.
 
-`0009_public_access_hardening.sql` **runs in two parts around the code deploy**
-(PART A → deploy → PART B). The file says so at the top; the runbook is
-`supabase/reconcile/README.md`.
+`0009_public_access_hardening.sql` ran in two parts around the code deploy
+(PART A → deploy → PART B). Both are on live; the runbook that executed it,
+`supabase/reconcile/README.md`, is now a record rather than a task.
+
+**`0013` and `0014` are the two that are not on live.** Both run whole, in one
+go each. An earlier note here claimed the staff-role migration needed a
+two-part run because Postgres will not let a new enum value be used in the
+transaction that adds it. That rule is real but does not apply: nothing in
+`0013` references `'staff'` after adding it, so the file commits in a single
+transaction. Confirmed by executing the whole migration chain against a local
+Postgres 16.
 
 ## Outstanding / next up
 
+- **Staff development pathway** — **BUILT, PR #28 open, and NOT usable until
+  two migrations are applied by hand.** Branch
+  `claude/staff-development-pathway-scope-ac664k`. Gym staff working towards
+  becoming a PT get a login, the full onboarding workbook with saving progress,
+  their own compliance documents, self-authored development goals with a
+  coaching conversation, and no leads. The manager sees their progress and can
+  promote them to trainer in one action.
+  - **The action still outstanding:** apply `0013_staff_role.sql` and then
+    `0014_development_goals.sql` in the Supabase SQL editor, each run whole,
+    then re-run
+    `supabase/reconcile/01_audit_live_schema.sql`. **Merging and deploying the
+    PR is not enough** — the `staff` role does not exist on the enum until
+    `0013` runs, and adding a staff member fails until it does.
+  - A staff member is a `profiles` row with the new `staff` role pointing at an
+    **inactive `trainers` row**. Onboarding progress, documents and Storage all
+    key on `my_trainer_id()` rather than on the role, so they work for staff
+    with no schema change, and promotion is two writes that carry everything
+    across.
+  - `0013` also fixed a real latent problem: `leads_select_trainer`,
+    `leads_update_trainer` and `status_history_select_trainer` used
+    `not is_manager()` to mean "is a trainer", which a third role silently
+    breaks. All three now check `my_role() = 'trainer'`.
+  - Full detail, including the two decisions Karl made and why, in
+    `docs/handoff-staff-development-pathway.md`.
 - **Tell the PT team about the trainer portal and the pause.** The feature is
   live and none of them know it exists — a control nobody knows about is a
   control nobody uses. **Karl is deliberately holding this until Friday
@@ -433,13 +492,6 @@ now retired rather than reserved: don't fill it.
 
 Reminders only. Each gets scoped and built in its own session.
 
-- **Staff development pathway into the PT portal**, with an upgrade of a staff
-  member to trainer status. Touches the onboarding workbook, the `manager` /
-  `trainer` role in `profiles`, the `trainers` table and `/admin/staff`.
-  **Now scoped** in `docs/handoff-staff-development-pathway.md` — a decisions-first
-  note (how to model a `staff` role, what staff can see, how their onboarding
-  progress is stored, the v1 feature set, and the staff → trainer upgrade). Open
-  it in its own thread and settle the decisions with Karl before building.
 - **PT onboarding checklist, tracked per trainer** — turn the paper operational
   setup checklist (contract, bond, uniform, systems access, profiles, certs, rent
   ramp) into a live per-trainer checklist the manager ticks off and the trainer can

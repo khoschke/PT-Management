@@ -2,9 +2,18 @@
 
 import { useActionState, useState, useTransition } from "react";
 import { useFormStatus } from "react-dom";
-import { addManager, addTrainerLogin, changeStaffEmail, makeManager, removeStaffAccess } from "../actions";
+import {
+  addManager,
+  addStaffLogin,
+  addTrainerLogin,
+  changeStaffEmail,
+  makeManager,
+  promoteStaffToTrainer,
+  removeStaffAccess,
+} from "../actions";
 import { initialStaffFormState } from "../state";
 import type { StaffMember } from "../page";
+import type { AppRole } from "@/lib/types";
 import Avatar from "../../components/Avatar";
 import { focusRing } from "../../components/ui";
 import PasswordInput from "@/app/admin/components/PasswordInput";
@@ -25,12 +34,16 @@ function SubmitButton({ label }: { label: string }) {
   );
 }
 
-function RoleBadge({ role }: { role: "manager" | "trainer" }) {
+const ROLE_BADGE_CLASS: Record<AppRole, string> = {
+  manager: "bg-foreground text-white",
+  trainer: "bg-fill text-secondary-label",
+  staff: "bg-fill text-secondary-label ring-1 ring-inset ring-black/10",
+};
+
+function RoleBadge({ role }: { role: AppRole }) {
   return (
     <span
-      className={`rounded-full px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide ${
-        role === "manager" ? "bg-foreground text-white" : "bg-fill text-secondary-label"
-      }`}
+      className={`rounded-full px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide ${ROLE_BADGE_CLASS[role]}`}
     >
       {role}
     </span>
@@ -65,7 +78,7 @@ function StaffRow({ member, isSelf }: { member: StaffMember; isSelf: boolean }) 
     <li className="rounded-2xl border border-black/5 bg-surface p-4 shadow-[0_1px_2px_rgba(0,0,0,0.03),0_2px_8px_rgba(0,0,0,0.04)]">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex min-w-0 items-start gap-3">
-          <Avatar name={member.fullName ?? member.email ?? "?"} size="md" muted={member.role === "trainer"} />
+          <Avatar name={member.fullName ?? member.email ?? "?"} size="md" muted={member.role !== "manager"} />
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
               <span className="font-semibold tracking-tight text-foreground">
@@ -103,6 +116,24 @@ function StaffRow({ member, isSelf }: { member: StaffMember; isSelf: boolean }) 
               className={`press rounded-full bg-fill px-3 py-1.5 text-xs font-semibold text-foreground transition hover:bg-fill/70 disabled:opacity-50 ${focusRing}`}
             >
               Make manager
+            </button>
+          )}
+          {member.role === "staff" && (
+            <button
+              type="button"
+              disabled={isPending}
+              onClick={() => {
+                if (
+                  confirm(
+                    `Promote ${member.fullName ?? member.email} to trainer?\n\nThey keep everything they have written in the onboarding workbook and every document they have uploaded. They join the roster and start receiving leads.\n\nThis is not reversible from here.`,
+                  )
+                ) {
+                  run(() => promoteStaffToTrainer(member.id));
+                }
+              }}
+              className={`press rounded-full bg-foreground px-3 py-1.5 text-xs font-semibold text-white transition hover:opacity-90 disabled:opacity-50 ${focusRing}`}
+            >
+              Promote to trainer
             </button>
           )}
           <button
@@ -310,6 +341,90 @@ function AddTrainerLoginForm({ trainers }: { trainers: { id: string; name: strin
   );
 }
 
+function AddStaffLoginForm() {
+  const [state, formAction] = useActionState(addStaffLogin, initialStaffFormState);
+  const [open, setOpen] = useState(false);
+  const errors = state.fieldErrors ?? {};
+
+  const [handled, setHandled] = useState(state);
+  if (state !== handled) {
+    setHandled(state);
+    if (state.status === "success" && open) setOpen(false);
+  }
+
+  if (!open) {
+    return (
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className={`press self-start rounded-full bg-fill px-4 py-2 text-sm font-semibold text-foreground transition hover:bg-fill/70 ${focusRing}`}
+      >
+        Add staff member
+      </button>
+    );
+  }
+
+  return (
+    <form
+      action={formAction}
+      className="rounded-2xl border border-black/5 bg-surface p-4 shadow-[0_1px_2px_rgba(0,0,0,0.03),0_2px_8px_rgba(0,0,0,0.04)]"
+    >
+      <h2 className="text-sm font-semibold text-foreground">New staff member</h2>
+      <p className="mt-0.5 text-xs text-secondary-label">
+        For gym staff working towards becoming a PT. They get the onboarding workbook and their own compliance
+        documents, and no access to leads. Promote them to trainer later and they keep all of it.
+      </p>
+      {state.status === "error" && state.message && (
+        <div className="mt-3 rounded-xl bg-red-50 px-3.5 py-2.5 text-sm text-red-700">{state.message}</div>
+      )}
+      <div className="mt-3 grid gap-3 sm:grid-cols-2">
+        <div>
+          <label className="text-sm font-semibold text-foreground">Name</label>
+          <input name="fullName" type="text" required className={inputClass} />
+          {errors.fullName && <p className="mt-1 text-xs text-red-600">{errors.fullName}</p>}
+        </div>
+        <div>
+          <label className="text-sm font-semibold text-foreground">Email</label>
+          <input name="email" type="email" required className={inputClass} />
+          {errors.email && <p className="mt-1 text-xs text-red-600">{errors.email}</p>}
+        </div>
+      </div>
+      <div className="mt-3 grid gap-3 sm:grid-cols-2">
+        <div>
+          <label className="text-sm font-semibold text-foreground">Gender</label>
+          <select name="gender" required defaultValue="" className={inputClass}>
+            <option value="" disabled>
+              Choose one
+            </option>
+            <option value="female">Female</option>
+            <option value="male">Male</option>
+          </select>
+          <p className="mt-1 text-xs text-secondary-label">
+            Used for member gender preferences once they become a trainer.
+          </p>
+          {errors.gender && <p className="mt-1 text-xs text-red-600">{errors.gender}</p>}
+        </div>
+        <div>
+          <label className="text-sm font-semibold text-foreground">Temporary password</label>
+          <PasswordInput name="password" required minLength={8} className={inputClass} />
+          <p className="mt-1 text-xs text-secondary-label">At least 8 characters. Share it with them.</p>
+          {errors.password && <p className="mt-1 text-xs text-red-600">{errors.password}</p>}
+        </div>
+      </div>
+      <div className="mt-3 flex gap-2">
+        <SubmitButton label="Add staff member" />
+        <button
+          type="button"
+          onClick={() => setOpen(false)}
+          className={`press rounded-full bg-fill px-4 py-2 text-sm font-semibold text-foreground transition hover:bg-fill/70 ${focusRing}`}
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
+  );
+}
+
 export default function StaffManager({
   staff,
   trainersWithoutLogin,
@@ -324,6 +439,7 @@ export default function StaffManager({
       <div className="flex flex-wrap gap-2">
         <AddManagerForm />
         {trainersWithoutLogin.length > 0 && <AddTrainerLoginForm trainers={trainersWithoutLogin} />}
+        <AddStaffLoginForm />
       </div>
 
       {trainersWithoutLogin.length === 0 && (
