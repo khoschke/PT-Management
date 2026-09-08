@@ -16,6 +16,7 @@ import type { StaffMember } from "../page";
 import type { AppRole } from "@/lib/types";
 import Avatar from "../../components/Avatar";
 import { focusRing } from "../../components/ui";
+import PasswordInput from "@/app/admin/components/PasswordInput";
 
 const inputClass =
   "mt-1.5 w-full rounded-xl border-none bg-fill px-3.5 py-2.5 text-sm text-foreground outline-none ring-1 ring-transparent transition focus:ring-2 focus:ring-foreground";
@@ -244,7 +245,7 @@ function AddManagerForm() {
       </div>
       <div className="mt-3">
         <label className="text-sm font-semibold text-foreground">Temporary password</label>
-        <input name="password" type="text" required minLength={8} className={inputClass} />
+        <PasswordInput name="password" required minLength={8} className={inputClass} />
         <p className="mt-1 text-xs text-secondary-label">
           At least 8 characters. Share it with them, they can use it to sign in. (Only used for a brand-new login.)
         </p>
@@ -322,7 +323,7 @@ function AddTrainerLoginForm({ trainers }: { trainers: { id: string; name: strin
         </div>
         <div>
           <label className="text-sm font-semibold text-foreground">Temporary password</label>
-          <input name="password" type="text" required minLength={8} className={inputClass} />
+          <PasswordInput name="password" required minLength={8} className={inputClass} />
           {errors.password && <p className="mt-1 text-xs text-red-600">{errors.password}</p>}
         </div>
       </div>
@@ -405,7 +406,7 @@ function AddStaffLoginForm() {
         </div>
         <div>
           <label className="text-sm font-semibold text-foreground">Temporary password</label>
-          <input name="password" type="text" required minLength={8} className={inputClass} />
+          <PasswordInput name="password" required minLength={8} className={inputClass} />
           <p className="mt-1 text-xs text-secondary-label">At least 8 characters. Share it with them.</p>
           {errors.password && <p className="mt-1 text-xs text-red-600">{errors.password}</p>}
         </div>
