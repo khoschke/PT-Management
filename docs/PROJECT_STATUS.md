@@ -61,6 +61,9 @@ Migrations live in `supabase/migrations/`. Status column set from an audit run o
 | `0006_trainer_documents.sql` | PT compliance documents, expiry reminders, `trainer-documents` Storage bucket | Applied 12 Aug 2026 — verified, incl. bucket + storage policies. Upload/view/delete exercised end to end on the live site. |
 | `0007`, `0008` | GymMaster (`gymmaster_lead_source`, `gymmaster_sync`) | Not applied; unmerged branch |
 | `0009_public_access_hardening.sql` | trainer-email column grants, status_history soft-delete guard, trainer_documents self-verify guard, `submit_form_lead` RPC | Applied 12 Aug 2026 — **both parts, verified** |
+| `0010_trainer_self_profile.sql` | per-trainer self-edit of `bio`/`specialties`: `trainers_select_self` + `trainers_update_self` policies, `guard_trainer_self_update` column-guard trigger | Applied 7 Sep 2026 — verified, incl. the guard exercised both ways against live |
+| `0011_trainer_self_availability.sql` | widens the self-edit guard to `available_am`/`available_pm` | Applied 7 Sep 2026 — verified both ways against live |
+| `0012_trainer_pause_leads.sql` | lifts 0011's both-slots-off block so it means "not taking new leads"; grants anon read on the two availability columns so the public picker can hide paused PTs | Applied 8 Sep 2026 — verified against live, incl. anon still blocked from `email` |
 
 **The drift is closed and the hardening is deployed.** `0006` had never been
 applied despite this doc claiming it was, which left `/admin/compliance` and
@@ -82,8 +85,8 @@ is inert either way.
 `0005` is permanently unused. It was held for the hardening migration, which has
 since been renumbered to `0009` because it rewrites a policy on
 `trainer_documents` and therefore has to run *after* `0006` — as `0005` it would
-have failed on a fresh setup. GymMaster keeps `0007/0008` untouched. Anything new
-starts at **0010**.
+have failed on a fresh setup. GymMaster keeps `0007/0008` untouched. `0010`, `0011` and `0012` are taken by
+the trainer self-profile work, so anything new starts at **0013**.
 
 `0009`'s two-part structure is spent — both parts are on live. It only ever
 mattered because a running form was mid-flight between the old insert path and
@@ -94,9 +97,20 @@ that executed it, `supabase/reconcile/README.md`, is now a record.
 is read-only and takes seconds. Run it before stating what is on the live
 database — including before and after merging GymMaster's `0007`/`0008`, which
 are the next migrations that will sit in `supabase/migrations/` looking applied
-when they are not. **Nothing applies migrations automatically**, and a Claude
-build workspace usually has no outbound network to Supabase, so a human at the
-SQL editor is still the mechanism.
+when they are not. **Nothing applies migrations automatically.**
+
+**A session with the Supabase MCP connected can now do this itself** (new,
+7 Sep 2026 — this is how `0010` was applied and verified). The MCP reaches the
+live project over its own channel, so `apply_migration` and `execute_sql` work
+even though the workspace still has no outbound network to Supabase (the
+`curl`-fails-to-supabase.co gotcha below is unchanged and still true of the app
+itself). That means a build session can apply a migration, run the audit query,
+and test RLS as a real signed-in user without waiting on a human at the SQL
+editor. **Test RLS inside `begin; … rollback;`** — set
+`request.jwt.claims` to a real `profiles.id` and `set local role authenticated`
+to become that user, then roll the whole thing back. That is what caught the
+`PUBLIC`-grant bug in `0010`'s revoke. If the MCP is not connected, a human at
+the SQL editor is still the mechanism.
 
 Roles live in `profiles` (`manager` / `trainer`). Managers see/allocate all
 leads; trainers see only their own. RLS enforces this at the database level.
@@ -123,6 +137,14 @@ strength". Change it in that one file and it flows to both sides.
   light/dark theme — intentionally distinct from the ops tool.
 
 ## Hard-won gotchas (don't relearn these)
+
+- **Trainer availability was never a filter on allocation, until 0012.** Until
+  then `suggestTrainer` scored AM/PM as `+5` and nothing more: the pool was every
+  active trainer and ties broke on lowest lead load, so a trainer with no
+  availability ticked still received leads — and an empty book made them *more*
+  likely to win a tie. Both slots off now means "not taking new leads" and is
+  filtered before any rule runs. Don't reason about availability from the field
+  name; read `src/lib/allocation.ts`.
 
 - **"use server" files may only export async functions.** Form-state objects
   and their types live in sibling `state.ts` files, never in `actions.ts`.
@@ -268,7 +290,8 @@ the commit history.
 | `claude/gym-nurture-email-design-uw9nvu` | Member email series | **Merged** (PR #13 and #14, plus the August logo and template work). Emails 1 to 3, CMS-safe variants, brand assets, this doc. |
 | `claude/pt-document-expiry-feature-ppsy30` | PT compliance documents with expiry reminders | **Merged** (PR #8). |
 | `claude/availability-am-pm-model-yj1dby` | Trainer AM/PM availability | Merged. |
-| `claude/trainer-portal-handoff-doc-o0on8j` | Editable trainer pages | Merged (scoping note only, build not started). |
+| `claude/trainer-portal-handoff-doc-o0on8j` | Editable trainer pages (scoping) | Merged. Scoping note only; the build is the branch below. |
+| `claude/trainer-profiles-self-editable-jqnn96` | Self-editable trainer profiles | **Built, unmerged.** `/admin/profile` + migration `0010`, which is already applied to live and verified. Merging the code is what turns the screen on. |
 | `claude/pt-onboarding-dashboard-9wwl17` | PT onboarding workbook | Merged and live. |
 | `claude/handoff-trainer-profiles-link-buudia` | Trainer profile links | Merged. |
 | `claude/project-pause-prevention-083n5y` | Supabase keep-alive cron | Merged and live. |
@@ -286,6 +309,9 @@ anyway because `0004_trainer_am_pm.sql` merged with the availability work.
 | 0006 | `trainer_documents` | merged to production, **not yet on the live DB** |
 | 0007, 0008 | `gymmaster_lead_source`, `gymmaster_sync` | `gymmaster-phase-1-pull-7yuxuy` (already numbered correctly, no renumber needed) |
 | 0009 | `public_access_hardening` | merged into code; **apply in two parts, PART A → deploy → PART B** |
+| 0010 | `trainer_self_profile` | applied to live 7 Sep 2026, verified |
+| 0011 | `trainer_self_availability` | applied to live 7 Sep 2026, verified |
+| 0012 | `trainer_pause_leads` | applied to live 8 Sep 2026, verified |
 
 Merge in that order and Supabase stays in step. GymMaster is deliberately in the
 middle rather than last: its numbers were already written and pushed, and moving
@@ -303,6 +329,13 @@ now retired rather than reserved: don't fill it.
 `supabase/reconcile/README.md`.
 
 ## Outstanding / next up
+
+- **Merge PR #26 (self-editable trainer profiles + "pause my leads").** Karl has
+  confirmed the whole thing working on the Vercel preview, 7-8 Sep: profile
+  fields, specialties, availability, and a paused trainer disappearing from the
+  public form's trainer picker. All three migrations (`0010`-`0012`) are already
+  applied to live and verified, so merging the code is the only step left, and
+  it deploys to production. Nothing is blocking it.
 
 - **GymMaster integration** — see `docs/handoff-gymmaster-integration.md`.
   **Phase 1 scaffolding already exists unmerged** on
@@ -360,13 +393,16 @@ now retired rather than reserved: don't fill it.
   records live at **CrazyDomains (Dreamscape), not Shopify** — fitazgym.com is
   connected to Shopify but its DNS zone is at CrazyDomains, which is where all
   records were added. `docs/handoff-custom-domain.md` is now history, not a task.
-- **Editable trainer pages** — give each PT a self-editable profile. **Scoped,
-  not started.** Decided: **internal only** (not public — the public reach
-  trainers via the gym website already), trainer edits their own row *and*
-  manager keeps the roster override, **bio + specialties only** for now (no
-  photo). Small build: reuses the existing `bio`/`specialties` columns, needs a
-  per-trainer RLS `update` policy + a self-service screen in `/admin`. See
-  `docs/handoff-trainer-portal.md`.
+- ~~**Editable trainer pages**~~ — **BUILT, 7 Sep 2026**, on
+  `claude/trainer-profiles-self-editable-jqnn96`. A trainer edits their own bio,
+  specialties **and AM/PM availability** at `/admin/profile` ("My profile" in
+  the nav); the manager's roster editor is untouched and still edits everyone.
+  Migrations `0010` and `0011` are **applied to live and verified** — a trainer
+  can change only their own row, and only those four columns. Internal only, no
+  photo, no Shopify feed, otherwise as scoped; availability was added at Karl's
+  request on 7 Sep after he tested the first cut on the Vercel preview.
+  **Confirmed working on the preview deployment** by Karl. `PR #26` is open
+  against production. `docs/handoff-trainer-portal.md` is now a record.
 
 - ~~**Email the PT team about everything built so far**~~ — **DONE.** Sent
   12 August 2026, along with the four individual login emails. The record is

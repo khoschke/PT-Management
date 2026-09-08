@@ -167,5 +167,47 @@ from (
   union all select '0009-B', 'anon cannot insert leads rows',
     not has_table_privilege('anon', 'public.leads', 'INSERT')
 
+  -- 0010_trainer_self_profile ----------------------------------------------
+  union all select '0010', 'policy trainers_select_self',
+    exists (select 1 from pg_policy
+            where polrelid = to_regclass('public.trainers')
+              and polname = 'trainers_select_self')
+  union all select '0010', 'policy trainers_update_self',
+    exists (select 1 from pg_policy
+            where polrelid = to_regclass('public.trainers')
+              and polname = 'trainers_update_self')
+  union all select '0010', 'function guard_trainer_self_update()',
+    to_regprocedure('public.guard_trainer_self_update()') is not null
+  union all select '0010', 'trigger trainers_guard_self_update',
+    exists (select 1 from pg_trigger
+            where tgrelid = to_regclass('public.trainers')
+              and tgname = 'trainers_guard_self_update'
+              and not tgisinternal)
+  -- Inverted: PRESENT means the trigger function is not exposed over PostgREST.
+  union all select '0010', 'guard_trainer_self_update not callable by anon',
+    not has_function_privilege('anon', 'public.guard_trainer_self_update()', 'EXECUTE')
+
+  -- 0011_trainer_self_availability -----------------------------------------
+  -- 0011 only replaces the guard's body, so the observable fact is what that
+  -- body contains: availability among the self-editable columns.
+  union all select '0011', 'guard allows self-edit of availability',
+    (select prosrc from pg_proc
+      where oid = to_regprocedure('public.guard_trainer_self_update()')) like '%available_am%'
+
+  -- 0012_trainer_pause_leads -----------------------------------------------
+  -- 0012 REMOVES the both-slots-off refusal 0011 added, because both-off is
+  -- now the "not taking new leads" pause. This row is inverted: PRESENT means
+  -- the refusal is gone, which is the post-0012 state.
+  union all select '0012', 'guard no longer blocks both slots off',
+    (select prosrc from pg_proc
+      where oid = to_regprocedure('public.guard_trainer_self_update()'))
+      not like '%not (new.available_am or new.available_pm)%'
+  -- The public form's picker filters on these, so anon must be able to read
+  -- them. Email and the rest stay revoked (see the 0009-A rows above).
+  union all select '0012', 'anon can read trainers.available_am',
+    has_column_privilege('anon', 'public.trainers', 'available_am', 'SELECT')
+  union all select '0012', 'anon can read trainers.available_pm',
+    has_column_privilege('anon', 'public.trainers', 'available_pm', 'SELECT')
+
 ) checks
 order by migration, item;

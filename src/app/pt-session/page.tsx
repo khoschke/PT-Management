@@ -12,10 +12,13 @@ export const metadata = {
 export default async function PtSessionPage() {
   const supabase = await createClient();
 
+  // Paused trainers (neither AM nor PM) aren't taking new leads, so they're
+  // kept off the picker — a member can't request someone whose book is full.
   const { data: trainers } = await supabase
     .from("trainers")
     .select("id, name")
     .eq("active", true)
+    .or("available_am.eq.true,available_pm.eq.true")
     .order("name");
 
   return (

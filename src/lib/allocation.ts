@@ -5,10 +5,19 @@
 // never a black box.
 //
 // Priority order, per the brief:
+//   0. A paused trainer is out of the running entirely.
 //   1. A trainer named by the member in the form wins outright, if active.
 //   2. Gender preference is a hard filter, if the member stated one.
 //   3. Goal match against trainer specialties, and availability match.
 //   4. Lowest current lead load breaks any remaining tie.
+//
+// "Paused" is a trainer with neither AM nor PM ticked, set by the trainer
+// themselves on /admin/profile when their book is full. It has to be applied
+// before rule 1, not as a score: availability is only worth +5 in rule 3, so
+// scoring it would leave a paused trainer in the running and — because rule 4
+// favours the lightest book — actually make an empty-booked one MORE likely to
+// win. The manager can still allocate to them by hand; this only stops the
+// system suggesting them.
 
 import { goalLabel } from "./goals";
 import type { Lead, Trainer } from "./types";
@@ -22,15 +31,24 @@ export interface AllocationSuggestion {
   reason: string;
 }
 
+// A trainer with neither slot ticked is not taking new leads.
+export function isAcceptingLeads(trainer: Pick<Trainer, "available_am" | "available_pm">): boolean {
+  return trainer.available_am || trainer.available_pm;
+}
+
 export function suggestTrainer(
   lead: Pick<Lead, "preferred_trainer_id" | "gender_preference" | "time_preference" | "goals">,
   activeTrainers: TrainerWithLoad[],
 ): AllocationSuggestion | null {
-  if (activeTrainers.length === 0) return null;
+  // Rule 0: paused trainers are out before anything else is considered. If
+  // everyone is paused there is no suggestion to make, and the manager
+  // allocates by hand.
+  const available = activeTrainers.filter(isAcceptingLeads);
+  if (available.length === 0) return null;
 
   // Rule 1: named trainer wins outright.
   if (lead.preferred_trainer_id) {
-    const requested = activeTrainers.find((t) => t.id === lead.preferred_trainer_id);
+    const requested = available.find((t) => t.id === lead.preferred_trainer_id);
     if (requested) {
       return {
         trainer: requested,
@@ -40,10 +58,10 @@ export function suggestTrainer(
   }
 
   // Rule 2: gender preference as a hard filter, when it narrows the pool.
-  let pool = activeTrainers;
+  let pool = available;
   let genderFiltered = false;
   if (lead.gender_preference && lead.gender_preference !== "no_preference") {
-    const filtered = activeTrainers.filter((t) => t.gender === lead.gender_preference);
+    const filtered = available.filter((t) => t.gender === lead.gender_preference);
     if (filtered.length > 0) {
       pool = filtered;
       genderFiltered = true;
