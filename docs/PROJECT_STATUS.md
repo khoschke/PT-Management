@@ -64,6 +64,9 @@ Migrations live in `supabase/migrations/`. Status column set from an audit run o
 | `0010_trainer_self_profile.sql` | per-trainer self-edit of `bio`/`specialties`: `trainers_select_self` + `trainers_update_self` policies, `guard_trainer_self_update` column-guard trigger | Applied 7 Sep 2026 — verified, incl. the guard exercised both ways against live |
 | `0011_trainer_self_availability.sql` | widens the self-edit guard to `available_am`/`available_pm` | Applied 7 Sep 2026 — verified both ways against live |
 | `0012_trainer_pause_leads.sql` | lifts 0011's both-slots-off block so it means "not taking new leads"; grants anon read on the two availability columns so the public picker can hide paused PTs | Applied 8 Sep 2026 — verified against live, incl. anon still blocked from `email` |
+| `0013_staff_role.sql` | `staff` on the `app_role` enum, the `my_role()` helper, and the three lead/history policies rewritten off `not is_manager()` | Applied 8 Sep 2026 — verified against live |
+| `0014_development_goals.sql` | `development_goals` and `development_notes`, with no manager write policy on goals | Applied 8 Sep 2026 — verified against live, incl. the ownership rule |
+| `0015_contract_document_type.sql` | "PT Contract" built-in compliance document type | Applied 8 Sep 2026 — verified against live (`contract` row present) |
 
 **The drift is closed and the hardening is deployed.** `0006` had never been
 applied despite this doc claiming it was, which left `/admin/compliance` and
@@ -316,9 +319,11 @@ the commit history.
 | `claude/docs-reconcile-live-state` | Branch-map reconciliation | **Merged.** Docs only. |
 | `claude/security-hardening-csv-ip-cron` | Security hardening (CSV/IP/cron) | **Merged** (PR #18). CSV formula-injection guard, IP-salt production guard, cron fail-closed + constant-time auth. Also added `docs/handoff-security-hardening.md` for the remaining items. |
 | `claude/forgot-password-change-email-gl4lca` | Self-service forgot-password + change-email | **1 unmerged, and it is the actual build**, roughly 990 added lines: `/admin/reset-password`, `src/lib/recovery-session.ts`, `src/lib/site-url.ts`, proxy changes. Not the handoff-note-only branch below. |
+| `claude/pt-onboarding-workbook-updates-xmrtqs` | PT onboarding workbook content | **4 unmerged, pushed after PR #27 merged.** Restores detail that Parts 2, 3, 4, 7 and 9 had condensed away, and extends the coaching-notes gate to withhold `managerNote`/`workedExample` from trainers as well as staff. |
 | `claude/gymmaster-phase-1-pull-7yuxuy` | GymMaster integration | **3 unmerged.** Phase 1 pull scaffolding plus migrations `0007` and `0008`, which keep those numbers. |
 | `claude/pt-team-onboarding-rw5awg` | PT team update email | **Merged.** The team update email and the login details email, from `docs/handoff-pt-team-update-email.md`. Both were sent on 12 August 2026; the files are kept as the record of what went out and as the template for the next trainer who joins. |
 | `claude/handoff-email-notifications-9m67a6` | Branded HTML notification emails | **Merged** (PR #4). Replaced the plain-text ops emails with branded HTML plus a dashboard link. |
+| `claude/staff-development-pathway-scope-ac664k` | Staff development pathway | **Merged, 0 unmerged.** Still on the remote because the follow-ups went in as direct merges rather than PRs, so auto-delete never fired. Safe to delete. |
 | `claude/self-service-password-change-3ydtqu` | Forgot-password | **1 unmerged**, a handoff note only. No implementation; still needs Supabase Custom SMTP. |
 | `claude/gym-nurture-email-design-uw9nvu` | Member email series | **Merged** (PR #13 and #14, plus the August logo and template work). Emails 1 to 3, CMS-safe variants, brand assets, this doc. |
 | `claude/pt-document-expiry-feature-ppsy30` | PT compliance documents with expiry reminders | **Merged** (PR #8). |
