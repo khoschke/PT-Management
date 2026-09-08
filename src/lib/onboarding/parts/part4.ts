@@ -49,11 +49,11 @@ export const part4: OnboardingPart = {
       heading: "Active listening",
       body: [
         "Listening isn't waiting for your turn to talk. Active listening means the client walks away feeling understood.",
-        "- **Paraphrase.** Say back what you heard in your own words.",
-        "- **Ask clarifying questions.** Dig for the real issue — the first answer is rarely the whole story.",
-        "- **Summarise.** Pull the threads together, give the conversation shape.",
-        "- **Use empathetic statements.** Name the feeling. Validation isn't agreement, it's acknowledgement.",
-        "- **Mind your non-verbals.** Eye contact, open posture, a nod. Phone away.",
+        "- **Paraphrase.** Say back what you heard in your own words. “So meal prep feels impossible with your current shifts.” It proves you were listening and lets them correct you if you got it wrong.",
+        "- **Ask clarifying questions.** Dig for the real issue. “Can you tell me more about what makes mornings hard?” The first answer is rarely the whole story.",
+        "- **Summarise.** Pull the threads together. “So the two big things are time and energy. Let's work with those.” It gives the conversation shape and shows you're tracking.",
+        "- **Use empathetic statements.** Name the feeling. “It makes sense you'd be frustrated when the scales aren't moving.” Validation isn't agreement, it's acknowledgement.",
+        "- **Mind your non-verbals.** Eye contact, an open posture, a nod. Put the phone away. Your body says whether you're really there.",
       ],
       activities: [
         {
@@ -69,6 +69,7 @@ export const part4: OnboardingPart = {
       heading: "Motivational interviewing",
       body: [
         "Motivational Interviewing (MI) draws motivation out of the client rather than pushing it onto them. The trap new coaches fall into is the righting reflex: a client names a problem and you immediately hand them the fix. MI says do the opposite — help them talk themselves into it. People believe their own reasons far more than yours.",
+        "It's not just an intake tool. The client who's plateaued at week 8, the one whose attendance is slipping, the one second-guessing whether to renew, that's all MI territory.",
         "**The four principles:** express empathy (meet them where they are), develop discrepancy (hold up the gap between what they want and what they're doing, gently), roll with resistance (don't argue), support self-efficacy (remind them they've done hard things before).",
         "**OARS, the toolkit:** Open-ended questions, Affirmations, Reflections, Summaries. What you're listening for underneath all of it is *change talk* — any sentence where the client argues for change themselves. When you hear it, slow down and draw more of it out. That's the gold.",
       ],
@@ -131,10 +132,13 @@ export const part4: OnboardingPart = {
       body: [
         "Avoiding hard conversations is the most expensive habit in this business. Address it early, plainly and kindly, and most are far less painful than the dread suggests.",
         "The shape of any hard conversation is the same: be direct, be warm, lead with the facts, own your part where there is one, and come with a path forward.",
-        "**Raising your rates** — give plenty of warning, tell them properly rather than burying it in an app, don't over-apologise.",
-        "**Missed and late-cancelled sessions** — enforce the policy the first time, kindly, or you've taught them it doesn't apply.",
-        "**A client returning after a break** — no lecture, welcome them back, ease the program back in.",
-        "**Ending the relationship cleanly** — be honest but kind about the why, give notice, help them transition, don't ghost.",
+        "**Raising your rates.** Existing clients will accept a rise if it's framed with notice and respect. Give plenty of warning (a month or more), tell them in person or in a proper message rather than burying it in a booking app, and don't over-apologise. You're running a business, not asking a favour. There's a ready-to-use price-increase email in Part 3.",
+        "**Missed and late-cancelled sessions.** Your cancellation policy only works if you enforce it the first time, kindly. Let it slide once and you've taught the client it doesn't apply.",
+        "> “Hey, just a heads up that today falls inside the 24-hour window, so it's charged as a session. All good this time, just flagging so you're not caught out next time.”",
+        "Firm on the policy, warm on the delivery.",
+        "**A client returning after a break.** People who've fallen off often feel guilt or shame, and that's exactly what keeps them away longer. Make the return easy. No lecture, no “where have you been.” Ease the program back in rather than picking up where they crashed.",
+        "> “Good to have you back. Let's start lighter this week and build.”",
+        "**Ending the relationship cleanly.** Sometimes you're not the right coach for someone, or the fit has soured. Be honest but kind about the why, give notice, help them transition (a referral to a better-suited coach, a wind-down plan), and resist the urge to ghost. People remember how you ended things.",
       ],
       activities: [
         {
@@ -155,7 +159,13 @@ export const part4: OnboardingPart = {
         "- **Call** — anything sensitive or layered. Tone carries on a call and dies in text.",
         "- **Email** — anything needing a record or detail: programs, policies, rate-rise notices, invoices.",
         "- **In person** — the real relationship work.",
-        "Set hours and say them out loud: “I answer messages between 7am and 7pm and I'll always get back to you within a day.” Don't reply instantly at all hours even when you can — every late-night reply sets the expectation for the next one.",
+        "**Boundaries around availability:**",
+        "- Set hours and say them out loud. “I answer messages between 7am and 7pm and I'll always get back to you within a day.” Clients don't expect you on call 24/7 unless you've trained them to.",
+        "- Don't reply instantly at all hours even when you can. Every late-night reply sets the expectation for the next one.",
+        "- Keep it on one channel where you can. Clients texting, DMing on Instagram and emailing the same question is how things get missed.",
+        "- Use auto-replies and scheduling tools so the boundary holds itself, rather than relying on your willpower at 9pm.",
+        "- Separate work and personal where you can. A dedicated work number or app keeps your own life out of the client inbox.",
+        "The goal isn't to be less available in a way clients feel. It's to be reliably available inside boundaries you can actually sustain. A coach who burns out and goes quiet is worse for clients than one with clear hours.",
       ],
       activities: [
         {
@@ -186,7 +196,12 @@ export const part4: OnboardingPart = {
     {
       heading: "Roleplay activities",
       body: [
-        "Communication skills don't improve by reading about them — they improve by doing them badly in a safe room until they're not bad anymore. Grab a colleague or your PT Manager, swap roles between coach and client, run each for 3-5 minutes, then debrief.",
+        "Communication skills don't improve by reading about them — they improve by doing them badly in a safe room until they're not bad anymore. Grab a colleague, a fellow PT or your PT Manager and run these. Swap roles so you play both coach and client, because feeling it from the client's chair teaches you more than any checklist.",
+        "**How to run a roleplay:**",
+        "- One person is the coach, one is the client. The client picks a realistic scenario and commits to it. No making it easy.",
+        "- Run it for three to five minutes. Don't stop to explain, play it out.",
+        "- Debrief after: what landed, what felt forced, what the client actually felt versus what the coach intended.",
+        "- Swap and repeat.",
         "**Scenarios to run:** the fading client (missed three sessions, hinting they might stop); the plateau (eight weeks in, frustrated); the rate rise (stay warm, stay firm); the correction (a repeated movement fault); the first impression (a floor introduction to a stranger).",
       ],
       activities: [

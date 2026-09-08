@@ -63,25 +63,31 @@ function Script({ lines }: { lines: string[] }) {
 }
 
 // Wide tables scroll inside their own container rather than pushing the page
-// sideways. The first column is a row label, so it carries the same weight as
-// the header.
+// sideways. In a labelled table the first column is a row label, so it carries
+// the same weight as the header.
 function Table({ head, rows }: { head: string[]; rows: string[][] }) {
+  // A table of choices rather than of data — the 64-value list in Part 2 — has
+  // no column names, so an all-empty header row is written as `| | | | |` and
+  // the header is dropped rather than rendered as an empty band.
+  const labelled = head.some((cell) => cell.length > 0);
   return (
     <div className="-mx-1 overflow-x-auto px-1">
       <table className="w-full min-w-[420px] border-collapse text-[14px]">
-        <thead>
-          <tr>
-            {head.map((cell, i) => (
-              <th
-                key={i}
-                className="border-b px-3 py-2 text-left align-bottom font-semibold"
-                style={{ borderColor: "var(--ob-border)", color: "var(--ob-text)" }}
-              >
-                {renderInline(cell, i)}
-              </th>
-            ))}
-          </tr>
-        </thead>
+        {labelled && (
+          <thead>
+            <tr>
+              {head.map((cell, i) => (
+                <th
+                  key={i}
+                  className="border-b px-3 py-2 text-left align-bottom font-semibold"
+                  style={{ borderColor: "var(--ob-border)", color: "var(--ob-text)" }}
+                >
+                  {renderInline(cell, i)}
+                </th>
+              ))}
+            </tr>
+          </thead>
+        )}
         <tbody>
           {rows.map((row, i) => (
             <tr key={i}>
@@ -91,8 +97,8 @@ function Table({ head, rows }: { head: string[]; rows: string[][] }) {
                   className="border-b px-3 py-2 align-top"
                   style={{
                     borderColor: "var(--ob-border)",
-                    color: j === 0 ? "var(--ob-text)" : undefined,
-                    fontWeight: j === 0 ? 600 : undefined,
+                    color: labelled && j === 0 ? "var(--ob-text)" : undefined,
+                    fontWeight: labelled && j === 0 ? 600 : undefined,
                   }}
                 >
                   {renderInline(cell, j)}
