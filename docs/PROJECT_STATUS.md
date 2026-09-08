@@ -319,7 +319,7 @@ the commit history.
 | `claude/pt-onboarding-dashboard-9wwl17` | PT onboarding workbook | Merged and live. |
 | `claude/handoff-trainer-profiles-link-buudia` | Trainer profile links | Merged. |
 | `claude/project-pause-prevention-083n5y` | Supabase keep-alive cron | Merged and live. |
-| `claude/staff-development-pathway-scope-ac664k` | Staff development pathway | **Open PR #28**, 6 commits. Scoping note plus all five build phases. **Do not treat as done on merge: migrations `0013` and `0014` still have to be applied by hand.** |
+| `claude/staff-development-pathway-scope-ac664k` | Staff development pathway | **Merged** (PR #28, 8 Sep 2026). Scoping note plus all five build phases. **Merged is not done: migrations `0013` and `0014` are still NOT on the live database, and the feature does nothing until they are.** |
 
 ### Migration order, already sorted
 
@@ -337,8 +337,8 @@ anyway because `0004_trainer_am_pm.sql` merged with the availability work.
 | 0010 | `trainer_self_profile` | applied to live 7 Sep 2026, verified |
 | 0011 | `trainer_self_availability` | applied to live 7 Sep 2026, verified |
 | 0012 | `trainer_pause_leads` | applied to live 8 Sep 2026, verified |
-| 0013 | `staff_role` | staff pathway, PR #28; **NOT on live.** One part, run it whole |
-| 0014 | `development_goals` | development goals, PR #28; **NOT on live.** One part |
+| 0013 | `staff_role` | staff pathway, merged in PR #28; **NOT on live.** One part, run it whole |
+| 0014 | `development_goals` | development goals, merged in PR #28; **NOT on live.** One part |
 
 Merge in that order and Supabase stays in step. GymMaster is deliberately in the
 middle rather than last: its numbers were already written and pushed, and moving
@@ -365,9 +365,9 @@ Postgres 16.
 
 ## Outstanding / next up
 
-- **Staff development pathway** — **BUILT, PR #28 open, and NOT usable until
-  two migrations are applied by hand.** Branch
-  `claude/staff-development-pathway-scope-ac664k`. Gym staff working towards
+- **Staff development pathway** — **MERGED (PR #28, 8 Sep 2026) and deployed,
+  but NOT usable until two migrations are applied by hand.** Gym staff working
+  towards
   becoming a PT get a login, the full onboarding workbook with saving progress,
   their own compliance documents, self-authored development goals with a
   coaching conversation, and no leads. The manager sees their progress and can
