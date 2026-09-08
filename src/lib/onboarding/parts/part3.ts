@@ -188,8 +188,8 @@ export const part3: OnboardingPart = {
       ],
       links: [
         {
-          label: "PT On-boarding Checklist",
-          url: "https://drive.google.com/file/d/1mUElvNI8Oh1EwGkrqRJzx89BqVFBABK2/view",
+          label: "Your documents — your signed agreement, insurance and certificates",
+          url: "/admin/documents",
         },
       ],
       managerNote:
