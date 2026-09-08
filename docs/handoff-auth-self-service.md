@@ -35,80 +35,58 @@ A signed-in user changes their own **sign-in email** from `/admin/account`:
   the fallback and stays. These two new features are the *self-service* versions
   for when no manager is in the loop.
 
-## STATUS, 7 September 2026: built, NOT merged — Supabase SMTP is broken
+## STATUS, 8 September 2026: email works. One dashboard item left before merge.
 
-Both features are **built and on `claude/forgot-password-change-email-gl4lca`**.
-They are **not merged and must not be merged** until the one item below is fixed,
-because Supabase Auth currently cannot send a single email.
+### Supabase Auth email is now sending — verified end to end
 
-### What the delivery test found
-
-The handoff said to send a real auth email first and not to trust the "Custom
-SMTP is set up" report. That was the right call. A real recovery request for
-`khoschke+trainer@gmail.com`, made against the live project, came back:
+The 7 Sep SMTP failure is fixed. Verified against the live project, not reported:
 
 ```
-POST /auth/v1/recover
-500 {"code":500,"error_code":"unexpected_failure","msg":"Error sending recovery email"}
+POST /auth/v1/recover  →  200
+auth.users.recovery_sent_at  →  2026-09-08 05:59:52+00   (first time ever non-null)
+Resend log  →  "Reset your password" to khoschke+trainer@gmail.com, delivered
+Gmail       →  in the INBOX, not spam, from noreply@mail.fitazgym.com
 ```
 
-and the project's own auth log gives the cause:
+What had been wrong: the password in Supabase's SMTP settings was not a valid
+Resend API key. A Resend key's value can't be read back after creation, so the
+only fix was a fresh key. Host, port and username had been right all along —
+`535` is authentication, and it fails before anything else is evaluated.
 
-```
-error: 535 "Authentication credentials invalid"
-```
+### The redirect allowlist: what it actually matches
 
-Corroborating evidence:
+Worth writing down, because it cost a round trip and it fails **silently**.
 
-- `recovery_sent_at` is **null for all eight rows in `auth.users`** — no auth
-  email has ever successfully left this project.
-- Resend's sent-email log contains only the app's own API-sent notifications
-  (allocation emails, daily digest). No SMTP-originated message has ever
-  appeared.
-- `535` with that exact wording is **Resend's** SMTP rejection, so host and port
-  are right and Supabase *is* reaching `smtp.resend.com`. The credential is what
-  it refuses.
-- A Resend API key named `supabase-smtp` does exist (created 12 Aug 2026). Its
-  value can't be read back after creation, so whether the string pasted into
-  Supabase matches it is exactly the thing that can't be checked from outside.
+Two recovery emails were sent a minute apart, differing only in `redirect_to`:
 
-### The fix (5 minutes, needs a human — it is dashboard config, not code)
+| `redirect_to` sent | What arrived in the email |
+|---|---|
+| `https://pt.fitazgym.com/admin/auth/callback?next=/admin/reset-password` | `redirect_to=http://localhost:3000` |
+| `https://pt.fitazgym.com/admin/auth/callback` | `redirect_to=https://pt.fitazgym.com/admin/auth/callback` |
 
-1. In **Resend → API Keys**, create a fresh key with **Sending access**, and
-   copy it. Don't try to reuse the existing `supabase-smtp` key — its value
-   isn't recoverable, and it's the prime suspect for having been mistyped or
-   truncated on the way into Supabase.
-2. In **Supabase → Authentication → Emails → SMTP Settings**, confirm:
-   - Host `smtp.resend.com`
-   - Port `465`
-   - Username `resend` (literally that word, not an email address)
-   - Password: **paste the new key**, whole, no surrounding spaces
-   - Sender email on the verified domain, e.g. `noreply@mail.fitazgym.com`
-3. Save, then use **Send test email**. It must arrive.
-4. Re-check by hitting "Forgot password?" on the deployed branch and confirming a
-   real recovery email lands.
+**Supabase matches `redirectTo` against the allowlist as a whole string,
+query string included.** An allowlist entry of `.../admin/auth/callback` does
+not match a URL with `?next=...` appended. And a miss is not an error: Supabase
+discards the redirect, falls back to the project's Site URL, and sends the email
+anyway — with a link pointing somewhere else entirely. The email looks perfect.
+The link is dead.
 
-Nothing in this repo can fix that — Supabase's SMTP settings are dashboard
-config, not code, and the Supabase MCP has no tool that writes auth config.
+The code originally appended `?next=`, so it was hitting exactly this. **Fixed**:
+both `redirectTo` values are now bare URLs, and what the callback needs to know
+(which flow is in flight) travels in a short-lived httpOnly cookie set when the
+email is sent. See `src/lib/recovery-session.ts`. No wildcard allowlist entry is
+needed, and the single entry already added is correct as it stands.
 
-### Two other dashboard steps, still outstanding
+### ⚠️ Still to do: the Site URL is `http://localhost:3000`
 
-- **Redirect URL allowlist.** Authentication → URL Configuration → Redirect URLs
-  must include `https://pt.fitazgym.com/admin/auth/callback`. An un-allowlisted
-  `redirectTo` fails **silently** — the email arrives, the link just doesn't come
-  back to the app. Add the Vercel preview host too if the branch is to be tested
-  before merge.
-- **`NEXT_PUBLIC_SITE_URL`** must be set to `https://pt.fitazgym.com` in Vercel.
-  Without it the code falls back to the request's own host, which on a preview
-  deployment means emailing links that point at that preview.
+Visible in the first email above. **Authentication → URL Configuration → Site URL**
+was never changed from the Supabase default. It needs to be
+`https://pt.fitazgym.com`.
 
-### Why the code was built anyway
-
-The handoff's rule was "do not ship a dead link", not "do not write the code".
-The branch is not Vercel's production branch, so nothing here is deployed and
-nothing user-facing has changed on the live site. Merging is the step that ships
-it, and merging is what is being held. The "Forgot password?" link and the
-Account email field go live together, after a real email has been seen to land.
+This is not cosmetic and it is not limited to this feature. Site URL is the
+fallback for *every* auth email, so any redirect that misses the allowlist for
+any reason emails a link to localhost. It is also the last thing standing
+between "the link works" and "the link works reliably".
 
 ## What was built
 
@@ -121,7 +99,8 @@ Account email field go live together, after a real email has been seen to land.
   email templates produce) and the `token_hash` + `type` shape (what templates
   rewritten to `{{ .TokenHash }}` produce, which also works cross-device).
 - `src/app/admin/reset-password/` — the set-a-new-password screen.
-- `src/lib/recovery-session.ts` — the marker cookie described below.
+- `src/lib/recovery-session.ts` — the two cookies: the flow marker that
+  survives the round trip through the inbox, and the recovery marker below.
 - `src/app/admin/(dashboard)/account/components/ChangeEmailForm.tsx` and
   `changeEmail` in that folder's `actions.ts` — the self-service email change.
 - `src/proxy.ts` — `/admin/forgot-password` and `/admin/auth/callback` are now
@@ -226,20 +205,33 @@ Vercel — this has bitten the project before).
    the confirmation link, clicks it, and can then sign in with the new email.
 3. Both verified against a real inbox on the live site; neither link is a dead end.
 
-### Where that stands, 7 September 2026
+### Where that stands, 8 September 2026
 
 | | State |
 |---|---|
 | Code for both flows | **Done**, on `claude/forgot-password-change-email-gl4lca` |
 | `npm run build`, `npx tsc --noEmit`, `npm run lint` | **All clean** |
-| Route wiring smoke-tested (public routes reachable signed out, `/admin/reset-password` and `/admin/account` bounce to sign-in, dead callback links land on sign-in with a friendly notice) | **Done**, against a local production build |
-| Supabase SMTP actually sending | **FAILING — `535 Authentication credentials invalid`.** See the fix above |
-| Redirect URL allowlist includes `https://pt.fitazgym.com/admin/auth/callback` | **Not confirmed** — not readable from outside the dashboard |
-| `NEXT_PUBLIC_SITE_URL` set in Vercel | **Not set** |
-| End-to-end against a real inbox | **Blocked** on the three rows above |
-| Merge to production | **Held** until the end-to-end test passes |
+| Route wiring smoke-tested against a local production build | **Done** |
+| Supabase SMTP sending | **WORKING.** 200 from `/recover`, `recovery_sent_at` set, Resend shows delivered |
+| Recovery email reaches a real inbox | **CONFIRMED.** Landed in the Gmail inbox, not spam, from `noreply@mail.fitazgym.com` |
+| Redirect allowlist entry for `https://pt.fitazgym.com/admin/auth/callback` | **CONFIRMED WORKING** — proven by the two-email comparison above |
+| Supabase **Site URL** | **STILL `http://localhost:3000`.** Set it to `https://pt.fitazgym.com` |
+| `NEXT_PUBLIC_SITE_URL` in Vercel | Reported set; not verifiable from a build workspace, and it only takes effect on the next deploy |
+| Clicking the link in a real browser (PKCE exchange → reset → sign in) | **Not yet run.** Needs the branch deployed — the route doesn't exist on production until merge |
+| Merge to production | Ready once Site URL is fixed |
 
-The next session's job is short: fix SMTP, add the redirect URL and the env var,
-deploy the branch, run one real reset and one real email change against a real
-inbox, then merge. No further code is expected to be needed — but if the
-end-to-end run finds something, fix it before merging rather than after.
+### The last mile
+
+Everything that can be tested without a browser has been. What remains needs the
+code to actually be running at `pt.fitazgym.com`, because the reset link points
+there and the route only exists on this branch. The email round trip has been
+exercised with raw HTTP, which does not use PKCE; the app does, so the final
+click is the one thing raw HTTP cannot stand in for.
+
+So: fix the Site URL, merge, then on the live site run
+1. "Forgot password?" → email → set a new password → sign in with it, and
+2. Account → change sign-in email → confirm from the link → sign in on the new address.
+
+Use `khoschke+trainer@gmail.com` for both. It is a real trainer-role login that
+delivers to Karl's inbox, and it is what every test so far has used.
+

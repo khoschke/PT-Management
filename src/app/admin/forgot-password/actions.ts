@@ -4,9 +4,15 @@
 // server client so the PKCE code verifier lands in this browser's cookies —
 // the emailed link is then exchanged for a session in /admin/auth/callback.
 
+import { cookies } from "next/headers";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { getSiteUrl } from "@/lib/site-url";
+import {
+  AUTH_FLOW_COOKIE,
+  AUTH_FLOW_COOKIE_MAX_AGE,
+  authCookieOptions,
+} from "@/lib/recovery-session";
 import type { ForgotPasswordState } from "./state";
 
 const schema = z.object({
@@ -31,7 +37,10 @@ export async function requestPasswordReset(
   const siteUrl = await getSiteUrl();
 
   const { error } = await supabase.auth.resetPasswordForEmail(parsed.data.email, {
-    redirectTo: `${siteUrl}/admin/auth/callback?next=/admin/reset-password`,
+    // Bare URL, no query string: Supabase matches this against the Redirect
+    // URLs allowlist as a whole string and silently falls back to the Site URL
+    // on a near miss. Where to land afterwards rides in the cookie below.
+    redirectTo: `${siteUrl}/admin/auth/callback`,
   });
 
   // Supabase answers 200 for an address with no account and sends nothing, so
@@ -55,6 +64,11 @@ export async function requestPasswordReset(
         "We couldn't send that reset email. Please try again shortly, or ask a manager to reset your password on the Staff screen.",
     };
   }
+
+  (await cookies()).set(AUTH_FLOW_COOKIE, "recovery", {
+    ...authCookieOptions,
+    maxAge: AUTH_FLOW_COOKIE_MAX_AGE,
+  });
 
   return { status: "sent", message: GENERIC_SENT };
 }

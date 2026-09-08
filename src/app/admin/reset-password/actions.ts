@@ -10,7 +10,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
-import { RECOVERY_COOKIE, recoveryCookieOptions } from "@/lib/recovery-session";
+import { RECOVERY_COOKIE, authCookieOptions } from "@/lib/recovery-session";
 import type { ResetPasswordState } from "./state";
 
 const schema = z
@@ -66,7 +66,7 @@ export async function resetPassword(
 
   // Spend the marker as soon as it's been used, so a shared or reopened browser
   // can't come back to this screen on the same recovery.
-  cookieStore.set(RECOVERY_COOKIE, "", { ...recoveryCookieOptions, maxAge: 0 });
+  cookieStore.set(RECOVERY_COOKIE, "", { ...authCookieOptions, maxAge: 0 });
 
   redirect("/admin");
 }

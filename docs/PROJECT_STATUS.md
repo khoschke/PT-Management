@@ -266,7 +266,7 @@ the commit history.
 | `claude/pt-team-onboarding-rw5awg` | PT team update email | **Merged.** The team update email and the login details email, from `docs/handoff-pt-team-update-email.md`. Both were sent on 12 August 2026; the files are kept as the record of what went out and as the template for the next trainer who joins. |
 | `claude/handoff-email-notifications-9m67a6` | Branded HTML notification emails | **Merged** (PR #4). Replaced the plain-text ops emails with branded HTML plus a dashboard link. |
 | `claude/self-service-password-change-3ydtqu` | Forgot-password (superseded) | **1 unmerged**, a handoff note only. Superseded by the branch below; the combined brief is `docs/handoff-auth-self-service.md`. |
-| `claude/forgot-password-change-email-gl4lca` | Self-service auth (forgot-password + change-email) | **Unmerged, and deliberately held.** Both flows built and verified as far as they can be without email. **Do not merge until Supabase Auth SMTP actually sends** — it currently fails with `535 Authentication credentials invalid`. See `docs/handoff-auth-self-service.md`. |
+| `claude/forgot-password-change-email-gl4lca` | Self-service auth (forgot-password + change-email) | **Unmerged.** Both flows built; auth email now confirmed sending and landing in a real inbox. One dashboard item outstanding (Site URL is still `http://localhost:3000`), then merge and run the two flows on the live site. See `docs/handoff-auth-self-service.md`. |
 | `claude/gym-nurture-email-design-uw9nvu` | Member email series | **Merged** (PR #13 and #14, plus the August logo and template work). Emails 1 to 3, CMS-safe variants, brand assets, this doc. |
 | `claude/pt-document-expiry-feature-ppsy30` | PT compliance documents with expiry reminders | **Merged** (PR #8). |
 | `claude/availability-am-pm-model-yj1dby` | Trainer AM/PM availability | Merged. |
@@ -342,34 +342,31 @@ now retired rather than reserved: don't fill it.
   Sending from GymMaster on days 1, 10 and 30 off each member's join date, with
   the unsubscribe handled by GymMaster. `docs/handoff-email-1-go-live.md` is now
   a record rather than a task, apart from its last item: telling the PTs.
-- **Self-service auth (forgot-password + change-email)** — **BUILT, NOT MERGED.**
-  Brief and full status: `docs/handoff-auth-self-service.md`. Both flows are
-  implemented on `claude/forgot-password-change-email-gl4lca`, build/typecheck/lint
-  clean, route wiring smoke-tested.
-  **Blocked on one thing, and it is not code: Supabase Auth cannot send email.**
-  The 2 Sep "Custom SMTP is set up" report was never confirmed by an actual auth
-  email, and it does not work. A real recovery request against the live project on
-  7 Sep 2026 returned `500 unexpected_failure`, with the project's auth log giving
-  `535 "Authentication credentials invalid"` — Resend refusing the SMTP password.
-  `recovery_sent_at` is null for all eight `auth.users` rows: **no auth email has
-  ever left this project.** Note the app's own notification emails are fine — they
-  go through the Resend *API*, a different path that has nothing to do with this.
-  The fix is a fresh Resend API key pasted into Supabase → Authentication → Emails
-  → SMTP (host `smtp.resend.com`, port 465, username the literal `resend`), then
-  the dashboard's "Send test email". Two smaller dashboard items go with it: add
-  `https://pt.fitazgym.com/admin/auth/callback` to the Redirect URLs allowlist (an
-  un-allowlisted redirect fails *silently*), and set `NEXT_PUBLIC_SITE_URL` in
-  Vercel. **Do not merge the branch until a real recovery email has landed** — a
-  "Forgot password?" link that emails nothing is worse than no link at all.
+- **Self-service auth (forgot-password + change-email)** — **BUILT; one dashboard
+  item from merge.** Full status: `docs/handoff-auth-self-service.md`.
+  **Supabase Auth email now works.** As of 8 Sep 2026 a real recovery email has
+  been sent, delivered, and landed in the inbox from `noreply@mail.fitazgym.com`.
+  The old blocker was the SMTP password: not a valid Resend key, and a Resend
+  key's value can't be read back after creation, so it took a fresh one.
+  `recovery_sent_at` is now non-null for the first time in this project's life.
+  **Remaining: Authentication → URL Configuration → Site URL is still the
+  Supabase default `http://localhost:3000`** and must become
+  `https://pt.fitazgym.com`. It is the fallback for every auth email, so it
+  matters beyond this feature.
+  **Hard-won, worth not relearning:** Supabase matches `redirectTo` against the
+  Redirect URLs allowlist **as a whole string, query string included**, and a
+  miss is *silent* — it drops the redirect, falls back to Site URL, and sends the
+  email anyway with a link to the wrong place. Two otherwise-identical test
+  emails proved it: with `?next=...` appended the link came back pointing at
+  `localhost:3000`; bare, it came back correct. The code now sends bare URLs and
+  carries its state in a cookie instead.
   - **Forgot-password** — "Forgot password?" on `/admin/login` →
     `/admin/forgot-password` → emailed link → `/admin/auth/callback` →
-    `/admin/reset-password`. (Older standalone note `docs/handoff-forgot-password.md`
-    remains superseded by the combined doc.)
+    `/admin/reset-password`. (`docs/handoff-forgot-password.md` remains superseded.)
   - **Change-email** — a "change my email" form on `/admin/account`, gated on the
-    current password, sending a confirmation link to the new address. (Managers can
-    still change *anyone's* sign-in email immediately from the Staff screen via the
-    admin client, no confirmation email needed. That path is unaffected and remains
-    the fallback while SMTP is down.)
+    current password, sending a confirmation link to the new address. (Managers
+    can still change anyone's sign-in email immediately from the Staff screen via
+    the admin client. That path is unaffected and stays as the fallback.)
 - **Availability as AM + PM (not "both")** — change trainer availability to
   independent AM/PM selection. See `docs/handoff-availability-am-pm.md`.
 - ~~**Custom web address**~~ — **DONE.** `pt.fitazgym.com` is live over HTTPS. DNS

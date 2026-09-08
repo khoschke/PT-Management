@@ -4,10 +4,16 @@
 // (NOT the admin/service-role client), so it can only ever change the password
 // of the user who is currently signed in — never anyone else's.
 
+import { cookies } from "next/headers";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { getSiteUrl } from "@/lib/site-url";
+import {
+  AUTH_FLOW_COOKIE,
+  AUTH_FLOW_COOKIE_MAX_AGE,
+  authCookieOptions,
+} from "@/lib/recovery-session";
 import type { AccountFormState } from "./state";
 
 const changePasswordSchema = z
@@ -154,7 +160,9 @@ export async function changeEmail(
   const siteUrl = await getSiteUrl();
   const { error } = await supabase.auth.updateUser(
     { email: newEmail },
-    { emailRedirectTo: `${siteUrl}/admin/auth/callback?next=/admin/account` },
+    // Bare URL — see the note in the forgot-password action. A query string
+    // here fails the Redirect URLs allowlist match, silently.
+    { emailRedirectTo: `${siteUrl}/admin/auth/callback` },
   );
 
   if (error) {
@@ -178,6 +186,11 @@ export async function changeEmail(
         "We couldn't send the confirmation email. Please try again shortly, or ask a manager to change it for you on the Staff screen.",
     };
   }
+
+  (await cookies()).set(AUTH_FLOW_COOKIE, "email_change", {
+    ...authCookieOptions,
+    maxAge: AUTH_FLOW_COOKIE_MAX_AGE,
+  });
 
   return {
     status: "success",
