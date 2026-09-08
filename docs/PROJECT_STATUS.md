@@ -133,7 +133,12 @@ strength". Change it in that one file and it flows to both sides.
   Deployments, push again (an empty commit works) to re-trigger.
 - **This build workspace has no outbound network** to Supabase, Google,
   GymMaster, etc. You cannot test those live from here — build, deploy, and
-  verify on the live site (which is not network-restricted).
+  verify on the live site (which is not network-restricted). **That includes
+  the Vercel preview URL**: curling a preview deployment from a build session
+  fails with `CONNECT tunnel failed, response 403` at the proxy, so a green
+  Vercel status is proof the app *built and deployed*, never proof a page
+  renders or a query works. Somebody has to open it in a browser. Confirmed
+  8 Sep 2026 while watching PR #28.
 - **A migration in `supabase/migrations/` is not proof it ran on live.** Nothing
   applies migrations automatically; a human pastes them into the Supabase SQL
   editor, and that step has been silently skipped before (`0006`, which broke two
