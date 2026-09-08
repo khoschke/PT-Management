@@ -2,18 +2,19 @@
 
 **Start a new session with this note.** Read `docs/PROJECT_STATUS.md` first, then this.
 
-> **Phases 1 to 4 are BUILT (7 September 2026). Phase 5 is not.**
-> The decisions below were settled with Karl in the scoping session and the
-> build followed them. What remains is Phase 5 (development goals and
-> check-ins) and, before any of this works on live, **running migration
-> `0010_staff_role.sql` in the Supabase SQL editor, both parts.**
+> **All five phases are BUILT (8 September 2026).** The decisions below were
+> settled with Karl in the scoping session and the build followed them.
 >
-> **Nothing here works until that migration is applied.** The `staff` value
-> does not exist on the `app_role` enum until PART A runs, so adding a staff
-> member fails until then. The Add staff form detects that specific failure and
-> says so rather than showing a generic error. Confirm with
-> `supabase/reconcile/01_audit_live_schema.sql` afterwards, and believe its
-> output rather than this note.
+> **Nothing works on live until two migrations are applied by hand**, in order:
+>
+> 1. `0010_staff_role.sql` — **two parts**, PART A alone, then PART B.
+> 2. `0011_development_goals.sql` — safe to run in one go.
+>
+> The `staff` value does not exist on the `app_role` enum until 0010 PART A
+> runs, so adding a staff member fails until then. The Add staff form detects
+> that specific failure and names the migration rather than showing a generic
+> error. Confirm with `supabase/reconcile/01_audit_live_schema.sql` afterwards,
+> and believe its output rather than this note.
 
 ## The idea
 
@@ -207,6 +208,9 @@ not the file listing.
 
 ### Phase 5: development goals and check-ins (droppable)
 
+**BUILT.** `supabase/migrations/0011_development_goals.sql`, plus the goals
+and conversation UI. Not yet applied to live.
+
 Everything above ships without this. Put it in its own migration **`0011`** so
 Phases 1 to 4 are not held hostage to it.
 
@@ -309,6 +313,12 @@ Files added:
 
 - `supabase/migrations/0010_staff_role.sql` — the enum value, `my_role()`, and
   the three rewritten policies. **Two parts, not yet run on live.**
+- `supabase/migrations/0011_development_goals.sql` — `development_goals` and
+  `development_notes` with the ownership RLS. One part, not yet run on live.
+- `src/lib/development.ts` — `MAX_ACTIVE_GOALS`, the status labels and classes,
+  and the empty-state prompts.
+- `src/app/admin/(dashboard)/development/actions.ts`, `state.ts` and
+  `components/DevelopmentProfile.tsx`.
 - `src/lib/staff.ts` — `getStaffTrainerIds`, `listStaff`, `workbookPercent`.
   This is where "who is staff" is answered, from `profiles.role` alone.
 - `src/app/admin/(dashboard)/development/page.tsx` and `[trainerId]/page.tsx`.
@@ -330,6 +340,26 @@ Files changed:
   add form and the promote button.
 - `trainers/page.tsx` — staff filtered out of the PT roster.
 - `compliance/page.tsx` — staff kept in, tagged "Development".
+
+`/admin/development` serves two screens off one route: a manager gets the list
+of everyone on the pathway, anyone else gets their own profile. **Trainers get
+it too**, not only staff. A promoted staff member keeps every goal and note
+they wrote, and would otherwise lose sight of all of it the day they were
+promoted. That is why "My development" is in the nav for both roles.
+
+The three rules from the design survived into the build and are worth not
+undoing:
+
+- The cap of three active goals lives in `MAX_ACTIVE_GOALS` and is enforced in
+  the server action, including on re-activating a parked goal, so parking and
+  un-parking cannot be used to sidestep it. It is a coaching guardrail, not a
+  permission, which is why it is not a database trigger.
+- There is no red and no "overdue" anywhere. Active, Achieved, Parked.
+- The empty state offers prompts, drawn from the workbook parts the person has
+  actually worked through, falling back to three general ones.
+
+The manager's list shows **when they last wrote to each person**, which is the
+number the screen was built around.
 
 Verified with `npm run build`, `npx tsc --noEmit` and `npm run lint`, all clean.
 **Not verified against a live database**, which this workspace cannot reach.

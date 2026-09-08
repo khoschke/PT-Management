@@ -116,3 +116,33 @@ export const LEAD_STATUSES: LeadStatus[] = [
   "Not interested",
   "Unreachable",
 ];
+
+// ---------------------------------------------------------------------------
+// Development pathway (0011_development_goals.sql)
+// ---------------------------------------------------------------------------
+
+// Three states, with no "overdue" and no failure state. See the migration.
+export type DevelopmentGoalStatus = "active" | "achieved" | "parked";
+
+export interface DevelopmentGoal {
+  id: string;
+  trainer_id: string;
+  title: string;
+  detail: string;
+  status: DevelopmentGoalStatus;
+  target_date: string | null;
+  created_at: string;
+  updated_at: string;
+  achieved_at: string | null;
+}
+
+// One row serves both conversations: `goal_id` null is a check-in on the
+// person, `goal_id` set is a comment on that goal.
+export interface DevelopmentNote {
+  id: string;
+  trainer_id: string;
+  goal_id: string | null;
+  body: string;
+  author_id: string;
+  created_at: string;
+}

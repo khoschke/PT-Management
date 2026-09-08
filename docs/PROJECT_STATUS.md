@@ -82,8 +82,8 @@ is inert either way.
 `0005` is permanently unused. It was held for the hardening migration, which has
 since been renumbered to `0009` because it rewrites a policy on
 `trainer_documents` and therefore has to run *after* `0006` — as `0005` it would
-have failed on a fresh setup. GymMaster keeps `0007/0008` untouched. Anything new
-starts at **0010**.
+have failed on a fresh setup. GymMaster keeps `0007/0008` untouched. `0010` and `0011`
+are the staff development pathway. Anything new starts at **0012**.
 
 `0009`'s two-part structure is spent — both parts are on live. It only ever
 mattered because a running form was mid-flight between the old insert path and
@@ -276,6 +276,8 @@ anyway because `0004_trainer_am_pm.sql` merged with the availability work.
 | 0006 | `trainer_documents` | merged to production, **not yet on the live DB** |
 | 0007, 0008 | `gymmaster_lead_source`, `gymmaster_sync` | `gymmaster-phase-1-pull-7yuxuy` (already numbered correctly, no renumber needed) |
 | 0009 | `public_access_hardening` | merged into code; **apply in two parts, PART A → deploy → PART B** |
+| 0010 | `staff_role` | staff development pathway; **apply in two parts, PART A alone → PART B**, no deploy in between |
+| 0011 | `development_goals` | development goals and check-ins; one part |
 
 Merge in that order and Supabase stays in step. GymMaster is deliberately in the
 middle rather than last: its numbers were already written and pushed, and moving
@@ -378,11 +380,12 @@ now retired rather than reserved: don't fill it.
 Reminders only. Each gets scoped and built in its own session.
 
 - **Staff development pathway into the PT portal**, with an upgrade of a staff
-  member to trainer status. **Phases 1 to 4 BUILT 7 Sep 2026 on
-  `claude/staff-development-pathway-scope-ac664k`. Migration
-  `0010_staff_role.sql` is NOT yet applied to live, and nothing works until it
-  is** (both parts, in the SQL editor, then re-run the audit query). Phase 5
-  (development goals and check-ins, migration `0011`) is not built.
+  member to trainer status. **All five phases BUILT 8 Sep 2026 on
+  `claude/staff-development-pathway-scope-ac664k`. Two migrations are NOT yet
+  applied to live, and nothing works until they are:** `0010_staff_role.sql`
+  (**two parts**, PART A alone then PART B) and `0011_development_goals.sql`
+  (one part). Apply in the SQL editor in that order, then re-run the audit
+  query and believe its output.
   `docs/handoff-staff-development-pathway.md` is now a build brief, not a
   scoping note. Decided: staff are an **inactive `trainers` row plus a new
   `staff` value on the `app_role` enum**, which means onboarding progress,
@@ -391,7 +394,7 @@ Reminders only. Each gets scoped and built in its own session.
   full workbook, no lead board, no roster. Five phases; migration **`0010`** is
   RLS only and **runs in two parts** (`alter type ... add value` cannot be used
   in the transaction that adds it). Phase 5 (development goals and check-ins)
-  is `0011` and droppable: staff set their own goals, the manager guides them
+  is `0011`: staff set their own goals, the manager guides them
   in a conversation and is locked out of editing goal text in RLS, and staff
   **do** appear on the compliance screen because they operate as PTs and carry
   the same certs and insurances (the expiry cron already covers them, it never

@@ -61,7 +61,13 @@ export default async function DashboardLayout({ children }: { children: React.Re
                     ]
                   : []),
                 ...(isTrainer || isStaff
-                  ? [{ href: "/admin/documents", label: "My documents" }]
+                  ? [
+                      // Trainers get this too: a promoted staff member keeps
+                      // every goal and note they wrote, and would otherwise
+                      // lose sight of them the day they are promoted.
+                      { href: "/admin/development", label: "My development" },
+                      { href: "/admin/documents", label: "My documents" },
+                    ]
                   : []),
                 { href: "/onboarding", label: "PT onboarding" },
                 { href: "/admin/account", label: "Account" },

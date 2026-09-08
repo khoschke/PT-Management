@@ -2,7 +2,9 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/lib/auth";
-import { listStaff, workbookPercent } from "@/lib/staff";
+import { getAuthorNames, getDevelopmentProfile, listStaff, workbookPercent } from "@/lib/staff";
+import { promptsFor } from "@/lib/development";
+import DevelopmentProfile from "../components/DevelopmentProfile";
 import { onboardingParts, totalActivityCount } from "@/lib/onboarding/content";
 import {
   getTrainerOnboardingState,
@@ -41,10 +43,18 @@ export default async function StaffDevelopmentDetailPage({
   const person = staff.find((p) => p.trainerId === trainerId);
   if (!person) notFound();
 
-  const [state, percent] = await Promise.all([
+  const [state, percent, profile] = await Promise.all([
     getTrainerOnboardingState(supabase, trainerId),
     workbookPercent(supabase, trainerId),
+    getDevelopmentProfile(supabase, trainerId),
   ]);
+
+  // A manager can read every profile row, so the ordinary client is enough
+  // here (unlike the staff member's own view, which needs the admin client).
+  const authorNames = await getAuthorNames(
+    supabase,
+    profile.notes.map((n) => n.author_id),
+  );
 
   return (
     <div>
@@ -72,7 +82,20 @@ export default async function StaffDevelopmentDetailPage({
         <span className="text-sm font-semibold tabular-nums text-foreground">{percent}%</span>
       </div>
 
-      <p className="mt-5 text-[15px] text-secondary-label">
+      <div className="mt-8">
+        <DevelopmentProfile
+          trainerId={trainerId}
+          personName={person.name}
+          goals={profile.goals}
+          notes={profile.notes}
+          prompts={promptsFor(profile.touchedParts)}
+          authorNames={authorNames}
+          viewer={{ userId: user.id, isManager: true, isOwner: false }}
+        />
+      </div>
+
+      <h2 className="mt-10 text-lg font-semibold tracking-tight text-foreground">The workbook</h2>
+      <p className="mt-1 text-[15px] text-secondary-label">
         What they have written, as they wrote it. This is read only: their answers are theirs to change.
       </p>
 
