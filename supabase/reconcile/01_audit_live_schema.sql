@@ -189,15 +189,25 @@ from (
 
   -- 0011_trainer_self_availability -----------------------------------------
   -- 0011 only replaces the guard's body, so the observable fact is what that
-  -- body now contains: availability among the self-editable columns, and the
-  -- both-slots-off refusal that stops a trainer dropping out of allocation.
+  -- body contains: availability among the self-editable columns.
   union all select '0011', 'guard allows self-edit of availability',
     (select prosrc from pg_proc
       where oid = to_regprocedure('public.guard_trainer_self_update()')) like '%available_am%'
-  union all select '0011', 'guard refuses both availability slots off',
+
+  -- 0012_trainer_pause_leads -----------------------------------------------
+  -- 0012 REMOVES the both-slots-off refusal 0011 added, because both-off is
+  -- now the "not taking new leads" pause. This row is inverted: PRESENT means
+  -- the refusal is gone, which is the post-0012 state.
+  union all select '0012', 'guard no longer blocks both slots off',
     (select prosrc from pg_proc
       where oid = to_regprocedure('public.guard_trainer_self_update()'))
-      like '%not (new.available_am or new.available_pm)%'
+      not like '%not (new.available_am or new.available_pm)%'
+  -- The public form's picker filters on these, so anon must be able to read
+  -- them. Email and the rest stay revoked (see the 0009-A rows above).
+  union all select '0012', 'anon can read trainers.available_am',
+    has_column_privilege('anon', 'public.trainers', 'available_am', 'SELECT')
+  union all select '0012', 'anon can read trainers.available_pm',
+    has_column_privilege('anon', 'public.trainers', 'available_pm', 'SELECT')
 
 ) checks
 order by migration, item;

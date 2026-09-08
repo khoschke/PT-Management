@@ -12,12 +12,19 @@
 >   `0011_trainer_self_availability.sql`, **both applied to live and verified
 >   7 Sep 2026.** Two policies (`trainers_select_self`, `trainers_update_self`)
 >   plus a `guard_trainer_self_update` trigger.
-> - **Scope grew by one field, deliberately.** Karl tested the first cut on the
->   Vercel preview and asked for AM/PM availability to be editable too, so
->   `0011` widens the guard from two columns to four. Availability carries a
->   rule the other fields don't: a trainer with neither slot ticked drops out of
->   lead allocation entirely, so both the form and the trigger refuse it.
->   Name, email, gender and `active` remain manager-only.
+> - **Scope grew twice, deliberately.** Karl tested the first cut on the Vercel
+>   preview and asked for AM/PM availability to be editable (`0011`), then for
+>   both-slots-off to become a real "my book is full, pause my leads" control
+>   (`0012`). Name, email, gender and `active` remain manager-only.
+> - **A correction worth keeping.** `0011` blocked both-off on the stated
+>   grounds that it would drop a trainer out of allocation. That was wrong:
+>   availability was never a filter, only a `+5` score in `suggestTrainer`, and
+>   because ties break on lowest lead load an empty-booked trainer would have
+>   won *more* often. `0012` lifts the block and makes the pause real —
+>   `suggestTrainer` filters paused trainers out before rule 1, and the public
+>   form's picker hides them so a member can't request someone whose book is
+>   full. The manager can still allocate to a paused trainer by hand, and the
+>   roster labels them "Paused, not taking new leads".
 > - **The watch-out below was right, and a plain `update` policy was not
 >   enough.** RLS is row-level, so the policy on its own would also have let a
 >   trainer flip their own `active` or repoint their `email` — the address lead
@@ -29,10 +36,10 @@
 >   raise 42501; editing another trainer's row matches zero rows; the manager
 >   still edits every column of everyone; the public form's trainer picker and
 >   the service-role clients are unaffected.
-> - **Confirmed working** by Karl on the Vercel preview deployment, 7 Sep 2026.
->   The build workspace has no outbound network, so his pass on the preview is
->   the browser verification. The availability field landed after that pass and
->   is worth a second look before merge.
+> - **Confirmed working** by Karl on the Vercel preview deployment, 7 Sep 2026,
+>   profile fields and availability both. The build workspace has no outbound
+>   network, so his passes on the preview are the browser verification. The
+>   pause behaviour (`0012`) landed after that and wants one more look.
 >
 > The rest of this note is kept as the original scoping, unchanged.
 

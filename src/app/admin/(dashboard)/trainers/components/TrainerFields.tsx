@@ -40,7 +40,6 @@ export default function TrainerFields({
         <div>
           <label className="text-sm font-semibold text-foreground">Availability</label>
           <AvailabilityPicker defaults={defaults} />
-          {errors.availability && <p className="mt-1 text-xs text-red-600">{errors.availability}</p>}
         </div>
       </div>
 

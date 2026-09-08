@@ -62,7 +62,8 @@ Migrations live in `supabase/migrations/`. Status column set from an audit run o
 | `0007`, `0008` | GymMaster (`gymmaster_lead_source`, `gymmaster_sync`) | Not applied; unmerged branch |
 | `0009_public_access_hardening.sql` | trainer-email column grants, status_history soft-delete guard, trainer_documents self-verify guard, `submit_form_lead` RPC | Applied 12 Aug 2026 — **both parts, verified** |
 | `0010_trainer_self_profile.sql` | per-trainer self-edit of `bio`/`specialties`: `trainers_select_self` + `trainers_update_self` policies, `guard_trainer_self_update` column-guard trigger | Applied 7 Sep 2026 — verified, incl. the guard exercised both ways against live |
-| `0011_trainer_self_availability.sql` | widens the self-edit guard to `available_am`/`available_pm`, and refuses a trainer leaving both slots off | Applied 7 Sep 2026 — verified both ways against live |
+| `0011_trainer_self_availability.sql` | widens the self-edit guard to `available_am`/`available_pm` | Applied 7 Sep 2026 — verified both ways against live |
+| `0012_trainer_pause_leads.sql` | lifts 0011's both-slots-off block so it means "not taking new leads"; grants anon read on the two availability columns so the public picker can hide paused PTs | Applied 8 Sep 2026 — verified against live, incl. anon still blocked from `email` |
 
 **The drift is closed and the hardening is deployed.** `0006` had never been
 applied despite this doc claiming it was, which left `/admin/compliance` and
@@ -84,8 +85,8 @@ is inert either way.
 `0005` is permanently unused. It was held for the hardening migration, which has
 since been renumbered to `0009` because it rewrites a policy on
 `trainer_documents` and therefore has to run *after* `0006` — as `0005` it would
-have failed on a fresh setup. GymMaster keeps `0007/0008` untouched. `0010` and `0011` are taken by the
-trainer self-profile work, so anything new starts at **0012**.
+have failed on a fresh setup. GymMaster keeps `0007/0008` untouched. `0010`, `0011` and `0012` are taken by
+the trainer self-profile work, so anything new starts at **0013**.
 
 `0009`'s two-part structure is spent — both parts are on live. It only ever
 mattered because a running form was mid-flight between the old insert path and
@@ -136,6 +137,14 @@ strength". Change it in that one file and it flows to both sides.
   light/dark theme — intentionally distinct from the ops tool.
 
 ## Hard-won gotchas (don't relearn these)
+
+- **Trainer availability was never a filter on allocation, until 0012.** Until
+  then `suggestTrainer` scored AM/PM as `+5` and nothing more: the pool was every
+  active trainer and ties broke on lowest lead load, so a trainer with no
+  availability ticked still received leads — and an empty book made them *more*
+  likely to win a tie. Both slots off now means "not taking new leads" and is
+  filtered before any rule runs. Don't reason about availability from the field
+  name; read `src/lib/allocation.ts`.
 
 - **"use server" files may only export async functions.** Form-state objects
   and their types live in sibling `state.ts` files, never in `actions.ts`.
@@ -302,6 +311,7 @@ anyway because `0004_trainer_am_pm.sql` merged with the availability work.
 | 0009 | `public_access_hardening` | merged into code; **apply in two parts, PART A → deploy → PART B** |
 | 0010 | `trainer_self_profile` | applied to live 7 Sep 2026, verified |
 | 0011 | `trainer_self_availability` | applied to live 7 Sep 2026, verified |
+| 0012 | `trainer_pause_leads` | applied to live 8 Sep 2026, verified |
 
 Merge in that order and Supabase stays in step. GymMaster is deliberately in the
 middle rather than last: its numbers were already written and pushed, and moving

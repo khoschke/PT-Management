@@ -11,7 +11,9 @@ import { focusRing } from "../../components/ui";
 
 function availabilityLabel(trainer: Trainer): string {
   const slots = [trainer.available_am && "AM", trainer.available_pm && "PM"].filter(Boolean);
-  return slots.length > 0 ? slots.join(" & ") : "No availability set";
+  // Neither slot ticked is a deliberate "my book is full" state a trainer can
+  // set on their own profile, so name it rather than leaving it looking unset.
+  return slots.length > 0 ? slots.join(" & ") : "Paused, not taking new leads";
 }
 
 function SaveButton({ label }: { label: string }) {

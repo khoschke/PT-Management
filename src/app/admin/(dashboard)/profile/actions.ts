@@ -28,14 +28,12 @@ const myProfileSchema = z
     bio: z.string().trim().max(1000, "Keep this under 1000 characters").optional().or(z.literal("")),
     available_am: z.boolean(),
     available_pm: z.boolean(),
-  })
-  // Same rule as the manager's roster form, and for a sharper reason here:
-  // a trainer with neither slot ticked drops out of lead allocation entirely.
-  // The 0011 trigger enforces it at the database level too.
-  .refine((data) => data.available_am || data.available_pm, {
-    message: "Choose at least one — morning, evening, or both.",
-    path: ["availability"],
   });
+
+// Both slots off is deliberately allowed: it's how a trainer says "my book is
+// full, don't send me new leads". suggestTrainer drops them from the pool and
+// the public form hides them, so it does what it says. The manager can still
+// allocate to them by hand.
 
 export async function updateMyProfile(
   _prevState: ProfileFormState,
