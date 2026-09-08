@@ -291,7 +291,7 @@ the commit history.
 | `claude/pt-document-expiry-feature-ppsy30` | PT compliance documents with expiry reminders | **Merged** (PR #8). |
 | `claude/availability-am-pm-model-yj1dby` | Trainer AM/PM availability | Merged. |
 | `claude/trainer-portal-handoff-doc-o0on8j` | Editable trainer pages (scoping) | Merged. Scoping note only; the build is the branch below. |
-| `claude/trainer-profiles-self-editable-jqnn96` | Self-editable trainer profiles | **Built, unmerged.** `/admin/profile` + migration `0010`, which is already applied to live and verified. Merging the code is what turns the screen on. |
+| `claude/trainer-profiles-self-editable-jqnn96` | Self-editable trainer profiles + "pause my leads" | **Merged** (PR #26, 8 Sep 2026) and live. `/admin/profile`, migrations `0010`-`0012`. |
 | `claude/pt-onboarding-dashboard-9wwl17` | PT onboarding workbook | Merged and live. |
 | `claude/handoff-trainer-profiles-link-buudia` | Trainer profile links | Merged. |
 | `claude/project-pause-prevention-083n5y` | Supabase keep-alive cron | Merged and live. |
@@ -330,12 +330,18 @@ now retired rather than reserved: don't fill it.
 
 ## Outstanding / next up
 
-- **Merge PR #26 (self-editable trainer profiles + "pause my leads").** Karl has
-  confirmed the whole thing working on the Vercel preview, 7-8 Sep: profile
-  fields, specialties, availability, and a paused trainer disappearing from the
-  public form's trainer picker. All three migrations (`0010`-`0012`) are already
-  applied to live and verified, so merging the code is the only step left, and
-  it deploys to production. Nothing is blocking it.
+- **Tell the PT team about the trainer portal and the pause.** The feature is
+  live and none of them know it exists — a control nobody knows about is a
+  control nobody uses. **Karl is deliberately holding this until Friday
+  11 September 2026** so any further updates from this week go out in one email
+  rather than three. Cover: they can now edit their own bio, specialties and
+  AM/PM availability at `/admin/profile`; specialties drive who gets suggested
+  for a lead, so tag what they are genuinely best at rather than everything they
+  can do; unticking both availability slots pauses them (no new lead
+  suggestions, hidden from the public booking form, existing leads untouched);
+  and that pausing when full is expected and welcome, whereas letting a lead go
+  cold is not. `docs/pt-team-update-email.md` is the template from the last
+  round.
 
 - **GymMaster integration** — see `docs/handoff-gymmaster-integration.md`.
   **Phase 1 scaffolding already exists unmerged** on
@@ -393,16 +399,20 @@ now retired rather than reserved: don't fill it.
   records live at **CrazyDomains (Dreamscape), not Shopify** — fitazgym.com is
   connected to Shopify but its DNS zone is at CrazyDomains, which is where all
   records were added. `docs/handoff-custom-domain.md` is now history, not a task.
-- ~~**Editable trainer pages**~~ — **BUILT, 7 Sep 2026**, on
-  `claude/trainer-profiles-self-editable-jqnn96`. A trainer edits their own bio,
-  specialties **and AM/PM availability** at `/admin/profile` ("My profile" in
-  the nav); the manager's roster editor is untouched and still edits everyone.
-  Migrations `0010` and `0011` are **applied to live and verified** — a trainer
-  can change only their own row, and only those four columns. Internal only, no
-  photo, no Shopify feed, otherwise as scoped; availability was added at Karl's
-  request on 7 Sep after he tested the first cut on the Vercel preview.
-  **Confirmed working on the preview deployment** by Karl. `PR #26` is open
-  against production. `docs/handoff-trainer-portal.md` is now a record.
+- ~~**Editable trainer pages**~~ — **DONE and live, merged 8 Sep 2026** (PR #26),
+  from `claude/trainer-profiles-self-editable-jqnn96`. A trainer edits their own
+  bio, specialties **and AM/PM availability** at `/admin/profile` ("My profile"
+  in the nav); the manager's roster editor is untouched and still edits
+  everyone. Migrations `0010`-`0012` are **applied to live and verified** — a
+  trainer can change only their own row, and only those four columns. Internal
+  only, no photo, no Shopify feed, otherwise as scoped. Scope grew twice at
+  Karl's request after he tested on the Vercel preview: AM/PM availability
+  (`0011`), then **both slots off as a "my book is full" pause** (`0012`) which
+  drops them from allocation suggestions and hides them from the public booking
+  form, with the manager still able to allocate by hand. Two safeguards on that
+  pause: both forms warn live before saving, and a paused trainer carries a
+  standing banner on every page until they undo it.
+  `docs/handoff-trainer-portal.md` is now a record.
 
 - ~~**Email the PT team about everything built so far**~~ — **DONE.** Sent
   12 August 2026, along with the four individual login emails. The record is
