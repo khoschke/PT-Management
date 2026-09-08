@@ -87,9 +87,8 @@ since been renumbered to `0009` because it rewrites a policy on
 `trainer_documents` and therefore has to run *after* `0006` — as `0005` it would
 have failed on a fresh setup. GymMaster keeps `0007/0008` untouched. `0010`, `0011`
 and `0012` are the trainer self-profile work; `0013` and `0014` are the staff
-development pathway. **`0015` is claimed** by
-`0015_contract_document_type.sql` on `claude/pt-onboarding-workbook-updates-xmrtqs`,
-which is unmerged, so anything new starts at **0016**.
+development pathway, and `0015` is `contract_document_type`, merged via
+PR #27. Anything new starts at **0016**.
 
 `0009`'s two-part structure is spent — both parts are on live. It only ever
 mattered because a running form was mid-flight between the old insert path and
@@ -308,7 +307,6 @@ the commit history.
 |---|---|---|
 | `claude/docs-reconcile-live-state` | Branch-map reconciliation | **Merged.** Docs only. |
 | `claude/security-hardening-csv-ip-cron` | Security hardening (CSV/IP/cron) | **Merged** (PR #18). CSV formula-injection guard, IP-salt production guard, cron fail-closed + constant-time auth. Also added `docs/handoff-security-hardening.md` for the remaining items. |
-| `claude/pt-onboarding-workbook-updates-xmrtqs` | PT onboarding workbook content updates | **10 unmerged.** The 7 Sep workbook update spec, a "PT Contract" compliance document type, and migration **`0015_contract_document_type.sql`**. Already carries two merges of the default branch, so it is current with `0013`/`0014`. |
 | `claude/forgot-password-change-email-gl4lca` | Self-service forgot-password + change-email | **1 unmerged, and it is the actual build**, roughly 990 added lines: `/admin/reset-password`, `src/lib/recovery-session.ts`, `src/lib/site-url.ts`, proxy changes. Not the handoff-note-only branch below. |
 | `claude/gymmaster-phase-1-pull-7yuxuy` | GymMaster integration | **3 unmerged.** Phase 1 pull scaffolding plus migrations `0007` and `0008`, which keep those numbers. |
 | `claude/pt-team-onboarding-rw5awg` | PT team update email | **Merged.** The team update email and the login details email, from `docs/handoff-pt-team-update-email.md`. Both were sent on 12 August 2026; the files are kept as the record of what went out and as the template for the next trainer who joins. |
@@ -340,6 +338,7 @@ anyway because `0004_trainer_am_pm.sql` merged with the availability work.
 | 0012 | `trainer_pause_leads` | applied to live 8 Sep 2026, verified |
 | 0013 | `staff_role` | staff pathway (PR #28). **Applied to live 8 Sep 2026.** Run it whole; safe to re-run |
 | 0014 | `development_goals` | development goals (PR #28). **Applied to live 8 Sep 2026 — verified** (enum, both relations, RLS on both, all 6 policies, composite FK). Safe to re-run |
+| 0015 | `contract_document_type` | "PT Contract" document type (PR #27). The file says it was applied to live under its old number; **confirm with the audit rather than taking the file's word**. Safe to re-run |
 
 Merge in that order and Supabase stays in step. GymMaster is deliberately in the
 middle rather than last: its numbers were already written and pushed, and moving
