@@ -62,11 +62,14 @@ export const part3: OnboardingPart = {
     {
       heading: "Client payment systems",
       body: [
+        "Getting paid should be the easy part. Pick a system that fits how your clients want to pay and how you want to manage cashflow.",
         "- **Stripe or Square** — card payments, fees around 1.7-2.9% per transaction.",
         "- **Ezidebit (direct debit)** — great for ongoing weekly/fortnightly clients, reduces no-pays.",
         "- **PayPal** — flexible backup, fees can stack.",
+        "- **Newie** — Australian app built for service businesses. Subscriptions, one-off payments, tap to pay on your phone, and client comms in one place. Suits the weekly subscription model.",
         "- **Direct bank transfer** — zero fees, but you chase manually.",
-        "Recurring clients should be on direct debit. Build processing fees into your pricing.",
+        "These are what other trainers use, not a list you have to pick from. Your payment system is your call.",
+        "Recurring clients are usually best on direct debit — it removes the awkward 'have you paid this week?' conversation. Build processing fees into your pricing.",
       ],
     },
     {
@@ -77,14 +80,14 @@ export const part3: OnboardingPart = {
         "2. Set your personal income target from that.",
         "3. Add your business expenses (weekly rent, insurance, software, education, phone, marketing).",
         "4. Set aside tax (25-30%) and super (5-10%).",
-        "5. Divide by your rate: $80 per 45-minute session for training, plus a flat $20 a week per client for their program and coaching app. Divide your weekly target by 80 for the session count, then treat app fees as recurring income on top.",
+        "5. Divide by your rate: this is where your own rate goes in. If your income has two parts, as in the example below (a session rate plus a flat weekly fee for the program and coaching app), sessions do the heavy lifting. Divide your weekly target by your session rate for the session count, then treat the weekly fees as recurring income on top.",
         "6. Add a 10-15% cancellation buffer.",
       ],
       activities: [
         {
           key: "revenue-walkthrough",
           prompt:
-            "Run the 6-step walkthrough for yourself: weekly personal income target, weekly business expenses, total weekly revenue target, session count required at $80/session, and your buffered booking target.",
+            "Run the 6-step walkthrough for yourself: weekly personal income target, weekly business expenses, total weekly revenue target, session count required at your own session rate, and your buffered booking target.",
           multiline: true,
         },
       ],
@@ -97,7 +100,8 @@ export const part3: OnboardingPart = {
       heading: "Your pricing foundation",
       body: [
         "Pricing is a value decision, not a confidence test. Your minimum viable rate is whatever covers your lifestyle, expenses, tax, super and buffer — anything below that is volunteering, not business.",
-        "At Fitaz Gym the working model is a split rate: $80 per 45-minute session for training, plus a flat $20 a week per client for their program and coaching app (personalised program, weekly check-ins, progress tracking). The split means you're still paid for the programming and check-ins in any week a session doesn't happen. Coaching here runs as an ongoing subscription, not fixed blocks clients renew.",
+        "Everything below is an example, not a rate card. What you charge and how you package it is your call.",
+        "One example of what some trainers here use is a split rate: $80 per 45-minute session for the training, plus a flat $20 a week per client for their program and coaching app (their personalised program, weekly check-ins, and progress tracking). The split matters. It means you're still paid for the programming and check-ins you do in any week a session doesn't happen, whether you or the client is away, sick, or slammed. Coaching here runs as an ongoing subscription rather than fixed blocks clients renew, so the income is recurring and predictable. Where you sit on rate is your call, and it depends on your experience, your specialty, and the value clients get from working with you. Part 7 covers how to explain a split like this to a client with confidence.",
         "**Signs you're underpriced:** almost every prospect says yes without hesitating, retention and referrals are constant, you're delivering above and beyond and resentment is creeping in, or you can't afford the lifestyle you mapped out.",
         "**When to raise your rates:** books full with a waitlist, retention and results justify it, you've added a meaningful skill since your last increase, or it's been 12 months since your last raise. You don't renegotiate client by client — set the new rate, notify existing clients by email with plenty of notice, new clients start at the new price.",
       ],
@@ -110,9 +114,9 @@ export const part3: OnboardingPart = {
         },
       ],
       workedExample:
-        "Taylor started at $70 per 45-minute session out of nerves. After 4 months with 95% retention and a small waitlist, she ran the numbers: minimum viable rate was $78, market rate at Fitaz Gym was $80. She raised to $80, gave existing clients four weeks' notice by email, and started new clients at the new rate. Zero churn.",
+        "Taylor started at $70 per 45-minute session out of nerves. After 4 months with 95% retention and a small waitlist, she ran the numbers: minimum viable rate was $78, and most trainers around her were charging about $80. She raised to $80, gave existing clients four weeks' notice by email, and started new clients at the new rate. Zero churn.",
       managerNote:
-        "Newer PTs almost always underprice — they confuse ‘a price I'm comfortable saying’ with ‘the right price’. Use the Step 5 number from Revenue Targets as the anchor; if their comfort price is below their minimum viable rate, they're choosing to subsidise their clients. (The ready-to-use price-increase email template is in the full workbook — point them to it rather than having them draft one cold.)",
+        "Newer PTs almost always underprice — they confuse ‘a price I'm comfortable saying’ with ‘the right price’. Use the Step 5 number from Revenue Targets as the anchor; if their comfort price is below their minimum viable rate, they're choosing to subsidise their clients.",
     },
     {
       heading: "Your terms and conditions",
@@ -124,7 +128,7 @@ export const part3: OnboardingPart = {
         "**Trial session terms** — free, discounted or full price; how many per prospect; what happens at the end.",
         "**Client code of conduct** — punctuality, communication, attire, respect, honesty about injuries/medications, behaviour that ends the relationship.",
         "**Privacy and data handling** — the Australian Privacy Principles cover most of it: collect only what you need, store it securely, get consent before sharing anything, let clients access or delete their data.",
-        "A recommended one-page Coaching Agreement template (sessions, payment, cancellations, cancelling coaching with 28 days notice, trial sessions, client conduct, health and safety, privacy, communication, price changes) is in the full workbook — use it as your starting structure.",
+        "Aim for a one-page Coaching Agreement in plain language, signed at signup, covering: sessions, payment, cancellations and reschedules, cancelling coaching (28 days notice is a sensible default), trial sessions, client conduct, health and safety, privacy, communication hours, and price changes.",
       ],
       activities: [
         {
@@ -140,7 +144,7 @@ export const part3: OnboardingPart = {
         },
       ],
       managerNote:
-        "Most new PTs don't have written T&Cs, and they get caught out the first time a client no-shows and refuses to pay. The template above is a clean starting point, not a Fitaz Gym mandate — walk through it together and have them adapt it to their business in the first 1:1.",
+        "Most new PTs don't have written T&Cs, and they get caught out the first time a client no-shows and refuses to pay. The structure above is a clean starting point, not a Fitaz Gym mandate — walk through the full template in the workbook with them and have them adapt it to their business in the first 1:1.",
     },
     {
       heading: "Scope of practice",
@@ -174,12 +178,19 @@ export const part3: OnboardingPart = {
     {
       heading: "The Fitaz Gym setup hook",
       body: [
-        "A few things you specifically need sorted before you start training clients at Fitaz Gym. The actual numbers live in your PT contract.",
+        "A few things you specifically need sorted before you start training clients at Fitaz Gym. The actual numbers live in your PT contract. This section is the prompt to make sure you've actioned them.",
+        "**Your weekly gym fee** — your weekly gym fee is in your contract. Plug the actual figure in below so it lives next to your numbers.",
         "**Certifications** — CPR renews every 12 months, First Aid every 3 years, both required by your contract. Insurance certificate uploaded to your folder in the shared drive.",
         "**Pre-start checklist:** signed PT contract on file, ABN confirmed, insurance certificate uploaded, CPR and First Aid current and uploaded, bank details provided for internal lead payments, walk-through of the gym/PT spaces/equipment booking system.",
       ],
       activities: [
         { key: "weekly-gym-fee", prompt: "Write your weekly Fitaz Gym fee here (see your contract)." },
+      ],
+      links: [
+        {
+          label: "Your documents — your signed agreement, insurance and certificates",
+          url: "/admin/documents",
+        },
       ],
       managerNote:
         "Tick this off in week one. Anything missing becomes a blocker on the PT taking their first paying session at Fitaz Gym. Diarise certification renewal dates the same day they're checked in.",

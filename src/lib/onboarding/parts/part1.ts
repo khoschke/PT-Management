@@ -13,6 +13,7 @@ export const part1: OnboardingPart = {
         "The workbook is broken into 10 parts. Each one tackles a different piece of the PT craft, from the role itself through to building and running your business.",
         "Throughout you'll find short activities. They're self-driven — the more you put in, the more you get out.",
         "Across the 12 weeks you've got four one-hour sessions with the PT Manager. Book them when you need them: working through an activity together, feedback on a consult, troubleshooting a client situation, or planning the next phase of your business. You're self-employed, so you set the agenda.",
+        "One thing to be clear on from the start. You're self-employed. Every option, price, tool and business model in this workbook is an example of what has worked for other trainers, not a requirement and not Fitaz Gym policy. Take what fits, leave what doesn't, and build the business you want. Where something genuinely is a requirement, like your insurance, your certifications, or anything in your contract, we say so plainly.",
       ],
       managerNote:
         "Walk the PT through this section in person on day one — it's the only section you typically read together. Use it to gauge their excitement and surface first-week nerves. Re-emphasise that the four one-hour sessions are bookable on the PT's timing, not a fixed cadence. Push them to book the first within their first week; if they haven't booked by day 10, reach out yourself.",
@@ -76,7 +77,7 @@ export const part1: OnboardingPart = {
         "4. **Professional communication** — your voice, your writing, your body language. Members form opinions of you in seconds.",
         "5. **Time and schedule management** — you run your own calendar. Leave room for sessions, admin, planning, recovery, and growth work.",
         "6. **Revenue and business development** — know your numbers: sessions needed each week, your pricing, and how you articulate the value of what you do.",
-        "7. **Self-reflection and growth** — block time weekly to review what's working. Ask for feedback. Set development goals and track them.",
+        "7. **Self-reflection and growth** — once a week, take ten minutes to review what worked and what didn't. Once a month, go deeper: ask senior trainers and clients for feedback, and check your development goals are still the right ones and still moving. The gap between good and great is almost always a feedback loop.",
       ],
       managerNote:
         "These seven expectations get revisited in the Part 10 wrap-up. Refer back to them in 1:1s if a PT seems off track on one — they're also handy as a self-rating exercise midway through the 12 weeks.",
@@ -107,7 +108,7 @@ export const part1: OnboardingPart = {
     {
       heading: "Safety and emergency protocols",
       body: [
-        "Read this before your first session, and don't just skim it. Fitaz Gym has a full Safety and Emergency Protocols document you'll sign before you start on the floor. What follows is the working version: things you need to know cold, because in an emergency you won't have time to look them up.",
+        "Read this before your first session, and don't just skim it. This is the protocol. These are the things you need to know cold, because in an emergency you won't have time to look them up.",
         "**Emergency contacts — save these in your phone before your first shift:**",
         "- Emergency services (police, fire, ambulance): 000",
         "- Poison Information Centre: 13 11 26",
@@ -128,15 +129,15 @@ export const part1: OnboardingPart = {
         "- 7. Call one of the directors as soon as you can.",
         "- 8. Complete an incident report.",
         "**If a member is injured on the floor:** stop the session and remove further risk, assess the injury (call 000 if any doubt), don't move them if spinal/neck injury is possible, apply first aid as trained, note it if they decline an ambulance, tell management and complete an incident report.",
-        "**Fire and evacuation.** If you discover a fire: set off the nearest alarm, call 000, don't fight it unless it's tiny/you're trained/you have a clear exit, and start moving people out. Evacuating: direct everyone to the nearest exit (front entrance, northern side; rear entrance, southern side), check change rooms and private areas, send everyone to the assembly point at **Captain Burke Park**, don't re-enter until emergency services say it's safe, account for everyone and notify management on 0400 714 960 or team@fitazgym.com, then complete an incident report. Fire extinguishers are near reception and near the hack squat — same rule: only use one if trained with a clear exit behind you.",
+        "**Fire and evacuation.** If you discover a fire: call 000 and report it, don't fight it unless it's tiny/you're trained/you have a clear exit, and start moving members and staff out. Evacuating: direct everyone to the nearest exit (front entrance, northern side; rear entrance, southern side), check change rooms and private areas, send everyone to the assembly point at **Captain Burke Park**, don't re-enter until emergency services say it's safe, account for everyone and notify management on 0400 714 960 or team@fitazgym.com, then complete an incident report. Fire extinguishers are near reception and near the hack squat — same rule: only use one if trained with a clear exit behind you.",
         "**Other situations:** aggressive or disruptive behaviour (stay calm, low steady voice, don't get cornered, call 000 if it escalates, 131 444 for non-urgent, tell management once things settle); faulty or damaged equipment (stop the client using it, tag it out of service, report and log an incident report); spills and slip hazards (wet floor signage immediately, PPE and biohazard steps for chemical/bodily-fluid spills, report if a member was involved or at risk).",
         "**Reporting an incident.** Report any injury, medical emergency or 000 call, fire or evacuation, aggressive behaviour, faulty equipment in use, or near-miss — anything that could have hurt someone but didn't. No blame in a good-faith near-miss report. Fill in the form as soon as you can, always within 24 hours, or email team@fitazgym.com if you can't do it online.",
         "**Training clients in unstaffed hours.** During 24/7 unstaffed access, members train at their own risk under their membership agreement. If you're running a session in those hours, you hold full duty of care for your client — know where the AED and exits are before you train anyone outside staffed times.",
         "CPR and First Aid certification requirements are covered in your PT contract. Keep them current, and get AED-trained if you aren't already.",
-        "This is the short version. Read the full Safety and Emergency Protocols document, and sign the acknowledgement, before your first session. If you spot a gap in it, tell management.",
+        "Know all of this before your first session. If you spot a gap in it, tell management.",
       ],
       managerNote:
-        "Don't leave this as a paper exercise. Walk the PT physically through every emergency location in week one: defib, first aid kits, fire exits, assembly point. The workbook entry is reference only. And confirm the signed Safety and Emergency Protocols acknowledgement is on file before their first floor session.",
+        "Don't leave this as a paper exercise. Walk the PT physically through every emergency location in week one: defib, first aid kits, fire exits, assembly point. The workbook entry is the reference, not a substitute for showing them.",
     },
     {
       heading: "Reporting an incident — the form",

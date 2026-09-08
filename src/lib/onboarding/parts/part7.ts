@@ -119,15 +119,18 @@ export const part7: OnboardingPart = {
     {
       heading: "Explaining pricing with confidence",
       body: [
-        "Price is where new PTs flinch — don't. If you believe in the value, say the price plainly and let the silence sit.",
+        "Price is where new PTs flinch — don't. If you believe in the value, say the price plainly and let the silence sit. Here's how Taylor does it, using her own rate:",
         "“I run it in two parts. Training is $80 for a 45-minute session. On top of that there's a flat $20 a week for your program and coaching app, which covers your personalised program, weekly check-ins, and progress tracking. That weekly fee means you're supported every week, even the ones we don't train.”",
-        "Be direct, lead with value not cost, say the number and pause, and never discount the rate — if you want to add value, add value (an extra check-in), don't cut the price.",
+        "- **Be direct.** No apologising, no “it's a bit pricey but...”",
+        "- **Lead with value, not cost.** They're investing in the outcome, not buying a slot.",
+        "- **Say the number and pause.** Don't talk yourself into a discount nobody asked for.",
+        "- **Think hard before discounting.** Discounting trains clients to wait for a sale and quietly tells them your normal rate is negotiable. If you want to move someone, add value instead: an extra check-in, a program tweak. Same goodwill, no damage to your rate.",
       ],
       activities: [
         { key: "pricing-line", prompt: "Write your pricing line. Say it out loud until you can deliver the number without flinching or padding it.", multiline: true },
       ],
       managerNote:
-        "We teach a clean split: $80 per 45-minute session for training, plus a flat $20 a week for the program and coaching app, and no discounting, in line with the gym's no-discount rule. The weekly fee is what keeps a PT getting paid for programming and check-ins in weeks a session doesn't happen. If a PT's instinct is to drop the price to close, that's a confidence problem, not a pricing problem. Fix the value conversation, not the number.",
+        "The split in the example, $80 per 45-minute session plus a flat $20 a week for the program and coaching app, is one model that works well here, not a rate the gym sets. The PT prices their own business. What is worth teaching is the logic of the weekly fee: it keeps them paid for programming and check-ins in weeks a session doesn't happen. If a PT's instinct is to drop the price to close, that's a confidence problem, not a pricing problem. Fix the value conversation, not the number.",
     },
     {
       heading: "Handling hesitations",

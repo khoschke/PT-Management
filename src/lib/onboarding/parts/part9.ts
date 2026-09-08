@@ -118,31 +118,5 @@ export const part9: OnboardingPart = {
       managerNote:
         "The most common issue by a mile is undercharging, not overwork. PTs are terrified a rate rise will empty their book. Reassure them: in a subscription model continuation is the default, so a well-communicated rise loses very few clients and the ones who stay are worth more. Coach them through the email rather than letting them avoid it.",
     },
-    {
-      heading: "Your Fitaz Gym commercial terms, at a glance",
-      body: [
-        "The actual, current numbers from your PT contract — plug your own figures into Part 3's setup snapshot, this is the reference copy.",
-        "- **Weekly rent:** $275.00 incl. GST, capped regardless of session volume, paid weekly in advance by direct debit.",
-        "- **Bond:** 2 weeks' rent, non-refundable, paid on execution.",
-        "- **Business Pack:** $550 incl. GST — uniform, professional photos, 1000 flyers, profile + website listing, 4× 1-on-1 with Georgio (marketing/Xero setup), 4× 1-on-1 with your PT Manager during onboarding.",
-        "- **Onboarding rent ramp:** weeks 1-3 rent-free, weeks 4-6 at 25%, weeks 7-9 at 50%, weeks 10-12 at 75%, full rent from week 13.",
-        "- **Loyalty rent reduction:** $275/wk in years 0-2, $250/wk in years 2-5, $225/wk at 5+ years.",
-        "- **Minimum term:** 12 months from commencement. **Notice to terminate** after that: 90 days written notice.",
-        "- **Restraint:** 6-month non-compete within 5km of 101 Main St, Kangaroo Point; 12-month non-solicitation of clients, suppliers and staff.",
-        "This is a plain-English summary for quick reference — your signed contract is always the source of truth if the two ever seem to differ.",
-      ],
-      links: [
-        {
-          label: "Your PT contract (master template)",
-          url: "https://drive.google.com/file/d/1OzqRh_POJ734aRpcYSflh0eo286GCKcP/view",
-        },
-        {
-          label: "PT On-boarding Checklist",
-          url: "https://drive.google.com/file/d/1mUElvNI8Oh1EwGkrqRJzx89BqVFBABK2/view",
-        },
-      ],
-      managerNote:
-        "This summary is drawn from the March 2026 master contract template. If a specific trainer signed an earlier or amended version, their signed schedule overrides this reference card — check their actual Schedule A before relying on figures here in a live conversation with them.",
-    },
   ],
 };

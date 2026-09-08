@@ -272,5 +272,10 @@ from (
             where conrelid = to_regclass('public.development_notes')
               and conname = 'development_notes_goal_fk')
 
+  -- 0015_contract_document_type ---------------------------------------------
+  union all select '0015', 'document_types row "contract"',
+    exists (select 1 from public.document_types
+            where key = 'contract' and expiry_rule = 'none')
+
 ) checks
 order by migration, item;

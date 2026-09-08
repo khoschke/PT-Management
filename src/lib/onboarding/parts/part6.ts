@@ -137,8 +137,9 @@ export const part6: OnboardingPart = {
         "Talk most new PTs out of ads early. They reach for ads to avoid the harder, free work of walking the floor and asking for referrals. Ads on top of a working system are great. Ads instead of one are an expensive way to learn that lesson.",
     },
     {
-      heading: "Promotions and lead magnets: add value, never discount",
+      heading: "Promotions and lead magnets: add value rather than discount",
       body: [
+        "A lead magnet is free value offered in exchange for someone's contact details. A promotion is a reason to act now. One principle worth holding: add value rather than discount.",
         "Discounting trains people to wait for the next sale and quietly tells the market your coaching is worth less. Lead with value instead: a free workshop, a genuinely useful guide, a complimentary consult, or a sign-up bonus (extra check-in, movement screen, program add-on).",
       ],
       activities: [
@@ -147,12 +148,12 @@ export const part6: OnboardingPart = {
       workedExample:
         "Taylor's promotion: a free 45-minute Shift-Proof Your Training workshop at the gym, capped at ten spots, run on a quiet Saturday. Promote it for two weeks on the floor, on socials and to the email list. No discount anywhere. The value is the room, the room is the pitch. Lead magnet: the night-shift guide feeds the same list year round.",
       managerNote:
-        "Hold the line on no discounts. A PT will float a 25% off new-year deal because it feels easy. Redirect them to a value-add that protects their rate and their positioning. This is a brand rule across Fitaz Gym, not a preference.",
+        "A PT will float a 25% off new-year deal because it feels easy. Point them at a value-add that protects their rate and their positioning. It's their business and their pricing, so make the case rather than the ruling: discounting is the quickest way to devalue what they've built.",
     },
     {
       heading: "Referrals and testimonials strategy",
       body: [
-        "Referrals are the warmest leads you'll ever get — trust comes pre-loaded. Ask at the right moment (just after a win), make it easy, and say thank you with value, never a discount. Testimonials are the public version of the same trust: ask happy clients, then put them on your Google profile, socials and the gym noticeboard.",
+        "Referrals are the warmest leads you'll ever get — trust comes pre-loaded. Ask at the right moment (just after a win), make it easy, and thank them with value rather than a discount: an extra session for them and a complimentary consult for their friend. Testimonials are the public version of the same trust: ask happy clients, then put them on your Google profile, socials and the gym noticeboard.",
       ],
       activities: [
         { key: "referral-message-draft", prompt: "Draft a short referral message you would actually send to a happy client.", multiline: true },
@@ -182,6 +183,7 @@ export const part6: OnboardingPart = {
       heading: "The client journey map",
       body: [
         "Everything in this part feeds the first step of a bigger journey — the spine of the whole workbook. It runs in four phases: **Attract** (the marketing above), **Convert** (the consult, trial and sales chat), **Deliver** (onboarding and training that earns trust), **Retain** (check-ins, loyalty, referrals).",
+        "![The Client Journey, a twelve-step map in four phases. Attract: 1 Client Interest. Convert: 2 Initial Contact, 3 PT Waiver Form, 4 Consultation and Trial Session, 5 The Sales Chat, 6 Follow-Up, 7 Agreement and Payment. Deliver: 8 Onboarding and First Program, 9 Regular Training and Tracking. Retain: 10 Check-Ins and Adjustments, 11 Retention and Referrals, 12 Loyal Client.](/onboarding/client-journey-map.png)",
         "In full, it's 12 steps: Client Interest → Initial Contact → PT Waiver Form → Consultation & Trial Session → The Sales Chat → Follow-Up → Agreement & Payment → Onboarding & First Program → Regular Training & Tracking → Check-Ins & Adjustments → Retention & Referrals → Loyal Client. The Client Journey Tracker above tracks every lead through these exact stages.",
       ],
       activities: [

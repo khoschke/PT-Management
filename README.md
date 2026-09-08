@@ -40,12 +40,39 @@ database size, point in time recovery) at that point, not before.
 ### 1. Create the Supabase project
 
 1. Create a new project at [supabase.com](https://supabase.com).
-2. In the SQL editor, run the migrations in order:
-   `supabase/migrations/0001_init.sql`, then
-   `supabase/migrations/0002_onboarding.sql`, then
-   `supabase/migrations/0003_trainer_bio.sql`, then
-   `supabase/migrations/0006_trainer_documents.sql`. Optionally run
-   `supabase/seed.sql` to add five placeholder trainers.
+2. In the SQL editor, open each migration file, copy its **contents**, and run
+   them in this order. Pasting the file path will not work: the editor takes
+   SQL, not a filename.
+
+   | # | File | What it does |
+   |---|------|--------------|
+   | 1 | `supabase/migrations/0001_init.sql` | Schema, RLS policies, triggers |
+   | 2 | `supabase/migrations/0002_onboarding.sql` | Onboarding responses and part progress |
+   | 3 | `supabase/migrations/0003_trainer_bio.sql` | Trainer free-text bio field |
+   | 4 | `supabase/migrations/0004_trainer_am_pm.sql` | AM/PM availability booleans |
+   | 5 | `supabase/migrations/0006_trainer_documents.sql` | Compliance documents, types, reminders, Storage bucket |
+   | 6 | `supabase/migrations/0009_public_access_hardening.sql` | Locks down what the public anon key can reach. **PART A only** at this stage, see below |
+   | 7 | `supabase/migrations/0010_trainer_self_profile.sql` | Trainers can edit their own bio and specialties |
+   | 8 | `supabase/migrations/0011_trainer_self_availability.sql` | Trainers can set their own AM/PM availability |
+   | 9 | `supabase/migrations/0012_trainer_pause_leads.sql` | Both slots off means "not taking new leads" |
+   | 10 | `supabase/migrations/0013_staff_role.sql` | Adds the third role, staff |
+   | 11 | `supabase/migrations/0014_development_goals.sql` | Development goals and the coaching conversation |
+   | 12 | `supabase/migrations/0015_contract_document_type.sql` | Adds the "PT Contract" document type |
+
+   `0005`, `0007` and `0008` are deliberately absent. `0005` was renumbered to
+   `0009` and is permanently unused; `0007` and `0008` are reserved by the
+   GymMaster work on an unmerged branch.
+
+   `0009` is split into two parts by a banner comment partway down the file.
+   Run **PART A** now. Run **PART B** only after the app code calling
+   `submit_form_lead()` is deployed, because it removes the direct insert path
+   the old code still uses. The file's own header explains the sequencing.
+
+   Optionally run `supabase/seed.sql` to add five placeholder trainers.
+
+   To check what actually landed, run `supabase/reconcile/01_audit_live_schema.sql`
+   against the project: every row should read PRESENT except the `0007`/`0008`
+   GymMaster rows, and the `0009-B` rows until PART B has been run.
 3. The documents feature stores files in a **private** Storage bucket called
    `trainer-documents`. The `0006` migration creates it and its access
    policies automatically. If your project blocks writes to the `storage`
@@ -273,8 +300,18 @@ supabase/
   migrations/0001_init.sql            schema, RLS policies, triggers
   migrations/0002_onboarding.sql      onboarding responses and part progress
   migrations/0003_trainer_bio.sql     trainer free-text bio field
+  migrations/0004_trainer_am_pm.sql   AM/PM availability booleans
   migrations/0006_trainer_documents.sql  compliance documents, types,
                                        reminders, private Storage bucket
+  migrations/0009_public_access_hardening.sql  anon key lockdown (two parts)
+  migrations/0010_trainer_self_profile.sql     self-editable trainer profiles
+  migrations/0011_trainer_self_availability.sql  trainer-set AM/PM availability
+  migrations/0012_trainer_pause_leads.sql      both slots off = pause new leads
+  migrations/0013_staff_role.sql               the third role, staff
+  migrations/0014_development_goals.sql        development goals
+  migrations/0015_contract_document_type.sql   "PT Contract" document type
+  reconcile/                  audit the live schema, and run the whole
+                              migration chain against a throwaway Postgres
   seed.sql                    five placeholder trainers
 ```
 

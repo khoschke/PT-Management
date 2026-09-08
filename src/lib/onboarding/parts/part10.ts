@@ -18,6 +18,12 @@ export const part10: OnboardingPart = {
         "- Continuing education: required to hold your AUSactive registration and any other industry memberships.",
         "Your PT contract spells out the full certification and insurance requirements for working at Fitaz Gym. Keep your renewal dates somewhere you'll actually see them, because letting one lapse can put you off the floor.",
       ],
+      links: [
+        {
+          label: "Your documents — your signed agreement, insurance and certificates",
+          url: "/admin/documents",
+        },
+      ],
       managerNote:
         "Check each PT's CPR and First Aid are current at induction and diarise the expiry dates yourself. A lapsed cert is an insurance problem, not just a paperwork one. The contract holds the full requirement, so point them there rather than relying on memory.",
     },

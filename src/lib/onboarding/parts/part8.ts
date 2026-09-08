@@ -58,12 +58,12 @@ export const part8: OnboardingPart = {
       workedExample:
         "Taylor runs a four-week challenge timed to the start of daylight saving, when her shift-worker clients are most motivated. Teams of three, points for sessions and a weekly step target, a Saturday-morning coffee catch-up to close it out. Two clients who'd never spoken now train together on purpose.",
       managerNote:
-        "The cash-or-voucher prize is the most common move, and the one to talk PTs out of for retention events. Value-add only is the rule. Cash has its place for one-off acquisition spikes, but it works against you when the whole point is to build a habit that outlasts the prize.",
+        "The cash-or-voucher prize is the most common move, and the one to talk PTs out of for retention events. Steer them to a value-add. Cash has its place for one-off acquisition spikes, but it works against you when the whole point is to build a habit that outlasts the prize.",
     },
     {
       heading: "Reward loyalty",
       body: [
-        "Keep every reward value-add, never a discount — you want loyalty to feel like getting more, not paying less. Milestone ideas: 3 months (branded water bottle/towel), 6 months (bonus session or small-group class), 12 months (personalised program-review session, apparel, or a recovery workshop). Recognition costs nothing: a client spotlight (with permission) or a handwritten note.",
+        "Keep rewards value-add rather than discounts where you can — you want loyalty to feel like getting more, not paying less. Milestone ideas: 3 months (branded water bottle/towel), 6 months (bonus session or small-group class), 12 months (personalised program-review session, apparel, or a recovery workshop). Recognition costs nothing: a client spotlight (with permission) or a handwritten note.",
       ],
       activities: [
         { key: "loyalty-rewards-design", prompt: "Design your own loyalty rewards. List the milestones and the value-add reward at each.", multiline: true },
@@ -71,7 +71,7 @@ export const part8: OnboardingPart = {
       workedExample:
         "Taylor marks six months with a free recovery session: foam rolling, mobility, and a wind-down routine her shift workers can use on rough sleep weeks. It costs her an hour, deepens the relationship, and gives the client something they actually wanted but wouldn't have booked.",
       managerNote:
-        "If a PT proposes a percentage off or a free month, redirect immediately. The rule across the whole workbook is value-add only. The reasoning is worth saying out loud: a discount cuts your margin and your perceived worth at the same time, on the clients least likely to leave anyway.",
+        "If a PT proposes a percentage off or a free month, make the case for a value-add instead. It's their pricing to set, so persuade rather than rule. The reasoning is worth saying out loud: a discount cuts your margin and your perceived worth at the same time, on the clients least likely to leave anyway.",
     },
     {
       heading: "Provide added value",
@@ -130,14 +130,14 @@ export const part8: OnboardingPart = {
     {
       heading: "Referrals as a retention tool",
       body: [
-        "A referral isn't only new business — it's a retention signal. A client who refers has publicly committed to you, which deepens their own loyalty. Ask right after a win, and keep the thank-you value-add, never a discount.",
+        "A referral isn't only new business — it's a retention signal. A client who refers has publicly committed to you, which deepens their own loyalty. Ask right after a win, and lean towards a value-add rather than a discount.",
         "“Hi Mel, I've loved watching your progress. If you know someone who'd get something out of training, I'd be glad to look after them. As a thank you, I'll add a bonus mobility session to your next block.”",
       ],
       activities: [
         { key: "referral-ask-draft", prompt: "Draft a referral ask you'd send a happy client. Keep the thank-you value-add.", multiline: true },
       ],
       managerNote:
-        "Referral thank-yous are where PTs reach for a discount on reflex. Keep it value-add: a bonus session or a workshop keeps the reward on brand and inside the relationship. Same rule as loyalty — value-add, not dollars off.",
+        "Referral thank-yous are where PTs reach for a discount on reflex. Keep it value-add: a bonus session or a workshop keeps the reward on brand and inside the relationship. Same thinking as loyalty: value-add beats dollars off.",
     },
     {
       heading: "Ending a client relationship cleanly",

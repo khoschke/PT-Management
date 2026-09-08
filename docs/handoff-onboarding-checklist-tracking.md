@@ -91,6 +91,24 @@ this checklist *links to* them or just records a tick:
 - **"Fitaz Gym Website PT Profile" / "Profile" / "Profile Pics"** → relate to the
   editable trainer pages backlog (`docs/handoff-trainer-portal.md`).
 
+## Decisions already settled (Karl, 8 Sep 2026)
+
+These came up during the workbook update pass and are answered. Do not re-open
+them without asking.
+
+- **v1 is manager-only.** The checklist is a tool for the PT Manager, in its own
+  tab, to make sure each trainer has been properly onboarded. What it needs to
+  become is an editable, tick-off form.
+- **No trainer-facing view in v1.** This is a deliberate narrowing of the
+  original scope below, not a correction of it. The original ask (and decision 2)
+  scoped a read-only view for each trainer. Karl's position: a trainer view might
+  make sense later, but nobody has asked for it, so it is out of scope now.
+  Decide it properly in this thread rather than letting it arrive by default.
+- **The checklist is not workbook content and never links from it.** A link to
+  the checklist document was briefly added to Part 3 of the onboarding workbook
+  during the September pass and removed again. There is nothing in it for a
+  trainer to action. See the warning section above.
+
 ## Decisions to make (answer these before building)
 
 1. **Who ticks each item?** Most are manager/admin actions (bond, business pack,
@@ -98,8 +116,10 @@ this checklist *links to* them or just records a tick:
    profile pics). Decide, per item, whether it is **manager-only**, **trainer can
    tick**, or **auto-derived** from another feature. Simplest v1: manager ticks
    everything; trainer has read-only visibility.
+   **Settled:** manager ticks everything in v1.
 2. **What does the trainer see?** Read-only view of their own checklist and
    progress, or can they action some items? (Ties to RLS.)
+   **Settled:** nothing in v1. See "Decisions already settled" above.
 3. **Is the item list fixed or editable?** A fixed seeded list is simplest.
    Editable-by-manager (add/remove/reorder) is more work — decide if v1 needs it.
    (The compliance `document_types` table is a precedent for an editable list.)
@@ -131,9 +151,17 @@ Confirm or change all of that with Karl, then write the real build plan.
 
 ## Constraints / house rules
 
-- Next free migration number is **0010** (0007/0008 reserved for GymMaster). A
-  migration in the folder is NOT proof it ran on live — a human applies it in the
-  Supabase SQL editor, and `PROJECT_STATUS.md`'s audit query confirms.
+- Next free migration number is **0016** (0007/0008 reserved for GymMaster,
+  0010 to 0014 taken by the trainer self-profile and staff pathway work, 0015
+  by the PT Contract document type). A migration in the folder is NOT
+  proof it ran on live — a human applies it in the Supabase SQL editor, and
+  `PROJECT_STATUS.md`'s audit query confirms. Check it first with
+  `./supabase/reconcile/local_migration_check.sh`.
+- This checklist holds commercial terms (bond, Business Pack, rent ramp). That
+  is fine while it is manager-only. If a trainer-facing view is ever added, read
+  the "Never publish commercial terms into trainer-facing content" rule in
+  `CLAUDE.md` first: a trainer's own figures are theirs to see, but the gym's
+  standard terms are not workbook or portal material.
 - New role/policy work must respect existing RLS (`is_manager()` / `my_trainer_id()`).
 - `"use server"` files export only async functions; form-state in sibling `state.ts`.
 - Australian English, no em dashes in user-facing copy.

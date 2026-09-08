@@ -65,7 +65,10 @@ export const part2: OnboardingPart = {
       heading: "Discovering your Ikigai",
       body: [
         "Ikigai is a Japanese concept translating roughly as “a reason for being.” It's the overlap between four questions: what you love, what you're good at, what the world needs, and what you can be paid for. Where the four overlap is the work that's energising, valuable, and pays the bills.",
+        "![The Ikigai diagram: four overlapping circles labelled what you love, what you are good at, what the world needs, and what you can be paid for, with Passion, Mission, Profession and Vocation where they overlap in pairs and ikigai at the centre.](/onboarding/ikigai-blank.png)",
         "Use it to guide your mission and purpose statements, clarify who your ideal clients are, refine your services and marketing, and stay aligned when business decisions get tricky.",
+        "Here's what a finished one looks like. This is Taylor, an ex-paramedic who now coaches shift workers, so you can see the level of detail before you have a go at your own.",
+        "![Taylor's completed Ikigai diagram. What she loves: rebuild phases, programming, quiet 1:1 work. What she is good at: rapport with time-poor clients, spotting burnout. What the world needs: shift workers and frontline staff on rotating rosters. What she can be paid for: 1:1 PT, small groups at 5am and 8pm, online for night shift.](/onboarding/ikigai-taylor.png \"Taylor's overlap, written out: “Coaching shift workers and high-stress professionals to rebuild strength and energy through programs that actually fit their life.”\")",
       ],
       activities: [
         { key: "ikigai-love", prompt: "What you love — what energises you about coaching and training?", multiline: true },
@@ -78,8 +81,6 @@ export const part2: OnboardingPart = {
           multiline: true,
         },
       ],
-      workedExample:
-        "Taylor's Ikigai:\n\nLove: coaching people through long rebuild phases. Programming. The quiet 1:1 work, not big group classes.\n\nGood at: building rapport with high-stress, time-poor clients. Pacing programs. Reading when someone's burning out before they say so.\n\nWorld needs: better support for shift workers and frontline staff. Most gym programming assumes office hours.\n\nPaid for: 1:1 PT, small group sessions for shift workers (5am, 8pm), online programming for night-shift clients.\n\nOverlap: “Coaching shift workers and high-stress professionals to rebuild strength and energy through programs that actually fit their life.”",
       managerNote:
         "Most PTs find “what you love” and “what you're good at” easy. “What the world needs” and “what you can be paid for” are where they get stuck. If a PT is vague on “what the world needs,” point them at the gym floor: who's struggling, who's not being served well by the current PT offering in Brisbane? That's the real-world version of the question.",
     },
