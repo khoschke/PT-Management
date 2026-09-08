@@ -181,6 +181,14 @@ strength". Change it in that one file and it flows to both sides.
   `not is_manager()` hole was genuinely exploitable, and confirmed the
   development-goals ownership rule refuses a manager's UPDATE. **Reasoning
   about a policy is not the same as running it.**
+- **The Supabase MCP server reaches the LIVE project from here.** `execute_sql`
+  against project `fbzearypwpjcyrmdivsz` answers "is this actually on live?"
+  in one call, with no deploy and no asking anyone to paste output. Used on
+  8 Sep 2026 to confirm `0013`, `0014` and `0015`, and to establish that
+  `auth.users` has never sent a recovery email. The Resend and GitHub MCP
+  servers reach their live services the same way. **Check with these before
+  concluding something cannot be verified from a build session** — the
+  no-outbound-network note above is about `curl`, not about the MCP tools.
 - **A migration in `supabase/migrations/` is not proof it ran on live.** Nothing
   applies migrations automatically; a human pastes them into the Supabase SQL
   editor, and that step has been silently skipped before (`0006`, which broke two
@@ -338,7 +346,7 @@ anyway because `0004_trainer_am_pm.sql` merged with the availability work.
 | 0012 | `trainer_pause_leads` | applied to live 8 Sep 2026, verified |
 | 0013 | `staff_role` | staff pathway (PR #28). **Applied to live 8 Sep 2026.** Run it whole; safe to re-run |
 | 0014 | `development_goals` | development goals (PR #28). **Applied to live 8 Sep 2026 — verified** (enum, both relations, RLS on both, all 6 policies, composite FK). Safe to re-run |
-| 0015 | `contract_document_type` | "PT Contract" document type (PR #27). The file says it was applied to live under its old number; **confirm with the audit rather than taking the file's word**. Safe to re-run |
+| 0015 | `contract_document_type` | "PT Contract" document type (PR #27). **Applied to live — verified 8 Sep 2026** (the `contract` row is in `document_types`). Safe to re-run |
 
 Merge in that order and Supabase stays in step. GymMaster is deliberately in the
 middle rather than last: its numbers were already written and pushed, and moving
