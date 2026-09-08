@@ -87,7 +87,9 @@ since been renumbered to `0009` because it rewrites a policy on
 `trainer_documents` and therefore has to run *after* `0006` — as `0005` it would
 have failed on a fresh setup. GymMaster keeps `0007/0008` untouched. `0010`, `0011`
 and `0012` are the trainer self-profile work; `0013` and `0014` are the staff
-development pathway. Anything new starts at **0015**.
+development pathway. **`0015` is claimed** by
+`0015_contract_document_type.sql` on `claude/pt-onboarding-workbook-updates-xmrtqs`,
+which is unmerged, so anything new starts at **0016**.
 
 `0009`'s two-part structure is spent — both parts are on live. It only ever
 mattered because a running form was mid-flight between the old insert path and
@@ -293,7 +295,7 @@ Zero means everything on that branch is already on production, whatever the
 table says. If what you find disagrees with the table, **the command is right**:
 fix the table in the same session rather than leaving it to mislead the next one.
 
-### Snapshot, 2 September 2026 (verified with the command above)
+### Snapshot, 8 September 2026 (verified with the command above)
 
 The three branches the August reconciliation left behind
 (`reconcile-database-security-deploy-01sf2h`, `security-merge-pending-parta`,
@@ -305,8 +307,9 @@ the commit history.
 | Branch / thread | Workstream | State |
 |---|---|---|
 | `claude/docs-reconcile-live-state` | Branch-map reconciliation | **Merged.** Docs only. |
-| `claude/custom-domain-dns-setup-v45oc6` | Custom domain + security hardening | **PARKED — do NOT merge.** 9 unmerged, but its deliverable (pt.fitazgym.com + email) is already live via the dashboards, and it forked ~50 commits back, so a merge would conflict and regress newer work. The CSV/cron/IP-salt fixes were re-done fresh and merged (PR #18); the DB security was re-done fresh as migration `0009`. Ignore or delete this branch. |
 | `claude/security-hardening-csv-ip-cron` | Security hardening (CSV/IP/cron) | **Merged** (PR #18). CSV formula-injection guard, IP-salt production guard, cron fail-closed + constant-time auth. Also added `docs/handoff-security-hardening.md` for the remaining items. |
+| `claude/pt-onboarding-workbook-updates-xmrtqs` | PT onboarding workbook content updates | **10 unmerged.** The 7 Sep workbook update spec, a "PT Contract" compliance document type, and migration **`0015_contract_document_type.sql`**. Already carries two merges of the default branch, so it is current with `0013`/`0014`. |
+| `claude/forgot-password-change-email-gl4lca` | Self-service forgot-password + change-email | **1 unmerged, and it is the actual build**, roughly 990 added lines: `/admin/reset-password`, `src/lib/recovery-session.ts`, `src/lib/site-url.ts`, proxy changes. Not the handoff-note-only branch below. |
 | `claude/gymmaster-phase-1-pull-7yuxuy` | GymMaster integration | **3 unmerged.** Phase 1 pull scaffolding plus migrations `0007` and `0008`, which keep those numbers. |
 | `claude/pt-team-onboarding-rw5awg` | PT team update email | **Merged.** The team update email and the login details email, from `docs/handoff-pt-team-update-email.md`. Both were sent on 12 August 2026; the files are kept as the record of what went out and as the template for the next trainer who joins. |
 | `claude/handoff-email-notifications-9m67a6` | Branded HTML notification emails | **Merged** (PR #4). Replaced the plain-text ops emails with branded HTML plus a dashboard link. |
@@ -315,11 +318,9 @@ the commit history.
 | `claude/pt-document-expiry-feature-ppsy30` | PT compliance documents with expiry reminders | **Merged** (PR #8). |
 | `claude/availability-am-pm-model-yj1dby` | Trainer AM/PM availability | Merged. |
 | `claude/trainer-portal-handoff-doc-o0on8j` | Editable trainer pages (scoping) | Merged. Scoping note only; the build is the branch below. |
-| `claude/trainer-profiles-self-editable-jqnn96` | Self-editable trainer profiles + "pause my leads" | **Merged** (PR #26, 8 Sep 2026) and live. `/admin/profile`, migrations `0010`-`0012`. |
 | `claude/pt-onboarding-dashboard-9wwl17` | PT onboarding workbook | Merged and live. |
 | `claude/handoff-trainer-profiles-link-buudia` | Trainer profile links | Merged. |
 | `claude/project-pause-prevention-083n5y` | Supabase keep-alive cron | Merged and live. |
-| `claude/staff-development-pathway-scope-ac664k` | Staff development pathway | **Merged** (PR #28, 8 Sep 2026). Scoping note plus all five build phases. Migrations `0013` and `0014` applied to live 8 Sep 2026. Remaining: a browser walkthrough of the server actions. |
 
 ### Migration order, already sorted
 
@@ -445,8 +446,13 @@ whole migration chain against a local Postgres 16.
   Sending from GymMaster on days 1, 10 and 30 off each member's join date, with
   the unsubscribe handled by GymMaster. `docs/handoff-email-1-go-live.md` is now
   a record rather than a task, apart from its last item: telling the PTs.
-- **Self-service auth (forgot-password + change-email)** — combined into one
-  build; brief is `docs/handoff-auth-self-service.md`. **Unblocked:** Supabase
+- **Self-service auth (forgot-password + change-email)** — **BUILT AND
+  UNMERGED** on `claude/forgot-password-change-email-gl4lca`, about 990 added
+  lines. Read that branch before starting anything here: the thing already
+  exists. The row further up for `claude/self-service-password-change-3ydtqu`
+  is a different branch carrying only a handoff note, and confusing the two
+  would mean rebuilding work that is already done.
+  Brief is `docs/handoff-auth-self-service.md`. **Unblocked:** Supabase
   Custom SMTP (pointed at Resend) was set up ~2 Sep 2026, which was the last
   dependency. One caveat carried into the handoff: that a Supabase *auth* email
   actually delivers has not been confirmed end to end yet, so the build session
