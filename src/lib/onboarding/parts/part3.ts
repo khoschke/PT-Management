@@ -80,14 +80,14 @@ export const part3: OnboardingPart = {
         "2. Set your personal income target from that.",
         "3. Add your business expenses (weekly rent, insurance, software, education, phone, marketing).",
         "4. Set aside tax (25-30%) and super (5-10%).",
-        "5. Divide by your rate: $80 per 45-minute session for training, plus a flat $20 a week per client for their program and coaching app. Divide your weekly target by 80 for the session count, then treat app fees as recurring income on top.",
+        "5. Divide by your rate: this is where your own rate goes in. If your income has two parts, as in the example below (a session rate plus a flat weekly fee for the program and coaching app), sessions do the heavy lifting. Divide your weekly target by your session rate for the session count, then treat the weekly fees as recurring income on top.",
         "6. Add a 10-15% cancellation buffer.",
       ],
       activities: [
         {
           key: "revenue-walkthrough",
           prompt:
-            "Run the 6-step walkthrough for yourself: weekly personal income target, weekly business expenses, total weekly revenue target, session count required at $80/session, and your buffered booking target.",
+            "Run the 6-step walkthrough for yourself: weekly personal income target, weekly business expenses, total weekly revenue target, session count required at your own session rate, and your buffered booking target.",
           multiline: true,
         },
       ],
@@ -114,7 +114,7 @@ export const part3: OnboardingPart = {
         },
       ],
       workedExample:
-        "Taylor started at $70 per 45-minute session out of nerves. After 4 months with 95% retention and a small waitlist, she ran the numbers: minimum viable rate was $78, market rate at Fitaz Gym was $80. She raised to $80, gave existing clients four weeks' notice by email, and started new clients at the new rate. Zero churn.",
+        "Taylor started at $70 per 45-minute session out of nerves. After 4 months with 95% retention and a small waitlist, she ran the numbers: minimum viable rate was $78, and most trainers around her were charging about $80. She raised to $80, gave existing clients four weeks' notice by email, and started new clients at the new rate. Zero churn.",
       managerNote:
         "Newer PTs almost always underprice — they confuse ‘a price I'm comfortable saying’ with ‘the right price’. Use the Step 5 number from Revenue Targets as the anchor; if their comfort price is below their minimum viable rate, they're choosing to subsidise their clients.",
     },
