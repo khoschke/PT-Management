@@ -64,6 +64,11 @@
 -- raise "unsafe use of new value" for a transaction that adds a value and then
 -- selects it, so the check was capable of catching a genuine violation.
 --
+-- Safe to run twice. `alter type ... add value if not exists` is a no-op the
+-- second time, `create or replace function` replaces, and each policy is
+-- dropped with `if exists` before being recreated, so a run that died halfway
+-- through can simply be run again.
+--
 -- **If you extend this file, do not reference 'staff' below.** Doing so
 -- reintroduces the two-part requirement for real. Put anything that needs the
 -- new value in a later migration instead.
@@ -98,7 +103,7 @@ comment on function my_role() is
 -- ---------------------------------------------------------------------------
 -- Every other condition is carried over byte for byte from 0001_init.sql.
 
-drop policy leads_select_trainer on leads;
+drop policy if exists leads_select_trainer on leads;
 
 create policy leads_select_trainer on leads
   for select to authenticated
@@ -108,7 +113,7 @@ create policy leads_select_trainer on leads
     and deleted_at is null
   );
 
-drop policy leads_update_trainer on leads;
+drop policy if exists leads_update_trainer on leads;
 
 create policy leads_update_trainer on leads
   for update to authenticated
@@ -129,7 +134,7 @@ create policy leads_update_trainer on leads
 -- This policy was last rewritten by 0009_public_access_hardening.sql, which
 -- added the `leads.deleted_at is null` check. Keep it.
 
-drop policy status_history_select_trainer on status_history;
+drop policy if exists status_history_select_trainer on status_history;
 
 create policy status_history_select_trainer on status_history
   for select to authenticated
