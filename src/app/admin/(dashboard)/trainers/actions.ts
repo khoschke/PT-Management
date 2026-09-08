@@ -22,11 +22,11 @@ const trainerSchema = z
     available_pm: z.boolean(),
     specialties: z.array(z.enum(GOAL_CODES)).optional().default([]),
     bio: z.string().trim().max(1000).optional().or(z.literal("")),
-  })
-  .refine((data) => data.available_am || data.available_pm, {
-    message: "Choose at least one — AM, PM, or both.",
-    path: ["availability"],
   });
+
+// Neither AM nor PM is allowed and means "not taking new leads" — the same
+// pause a trainer can set on their own profile, so a manager can park someone
+// who's away or full without deactivating them and losing their history.
 
 function parseTrainerForm(formData: FormData) {
   return trainerSchema.safeParse({

@@ -1,7 +1,7 @@
 -- Development goals and the coaching conversation around them.
 --
 -- ---------------------------------------------------------------------------
--- Numbering: depends on 0010_staff_role.sql
+-- Numbering: depends on 0013_staff_role.sql
 -- ---------------------------------------------------------------------------
 -- Nothing here references the `staff` role directly, but the feature is only
 -- reachable by staff and their manager, and both tables key on `trainer_id`
@@ -24,7 +24,7 @@
 -- The notes are a coaching record, so neither side can edit or delete the
 -- other's words either.
 --
--- Safe to run in one go; unlike 0010 there is no enum value being added and
+-- Safe to run in one go; unlike 0013 there is no enum value being added and
 -- used in the same transaction.
 
 -- ---------------------------------------------------------------------------

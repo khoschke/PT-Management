@@ -7,13 +7,13 @@
 >
 > **Nothing works on live until two migrations are applied by hand**, in order:
 >
-> 1. `0010_staff_role.sql` — run it whole.
-> 2. `0011_development_goals.sql` — run it whole.
+> 1. `0013_staff_role.sql` — run it whole.
+> 2. `0014_development_goals.sql` — run it whole.
 >
-> An earlier version of this note said `0010` needed a two-part run. It does
+> An earlier version of this note said `0013` needed a two-part run. It does
 > not; see the file's own header for why the enum rule does not apply to it.
 >
-> The `staff` value does not exist on the `app_role` enum until 0010 runs, so
+> The `staff` value does not exist on the `app_role` enum until 0013 runs, so
 > adding a staff member fails until then. The Add staff form detects
 > that specific failure and names the migration rather than showing a generic
 > error. Confirm with `supabase/reconcile/01_audit_live_schema.sql` afterwards,
@@ -91,7 +91,7 @@ Nothing leaks on day one, because a lead is only ever allocated from the
 dashboard's trainer list, which filters `active = true`, and staff rows are
 inactive. That is a UI filter standing in for a database guarantee, which is
 exactly the kind of thing this project has been burned by before. **Migration
-0010 rewrites all three to check the role explicitly.**
+0013 rewrites all three to check the role explicitly.**
 
 Add a `my_role()` security-definer helper next to `is_manager()` and
 `my_trainer_id()`, and use `my_role() = 'trainer'` in those three policies.
@@ -137,9 +137,9 @@ Screens that list trainers and must now filter:
 
 ## Build plan
 
-### Phase 1: migration `0010_staff_role.sql`
+### Phase 1: migration `0013_staff_role.sql`
 
-**BUILT.** `supabase/migrations/0010_staff_role.sql`. Not yet applied to live.
+**BUILT.** `supabase/migrations/0013_staff_role.sql`. Not yet applied to live.
 Runs in one part, not two: see its header.
 
 **Runs whole, in one go.** The plan originally called for a two-part run by
@@ -213,10 +213,10 @@ not the file listing.
 
 ### Phase 5: development goals and check-ins (droppable)
 
-**BUILT.** `supabase/migrations/0011_development_goals.sql`, plus the goals
+**BUILT.** `supabase/migrations/0014_development_goals.sql`, plus the goals
 and conversation UI. Not yet applied to live.
 
-Everything above ships without this. Put it in its own migration **`0011`** so
+Everything above ships without this. Put it in its own migration **`0014`** so
 Phases 1 to 4 are not held hostage to it.
 
 **The design principle, which drives the schema:** a goal belongs to the person
@@ -316,9 +316,9 @@ not only at the staff member.
 
 Files added:
 
-- `supabase/migrations/0010_staff_role.sql` — the enum value, `my_role()`, and
+- `supabase/migrations/0013_staff_role.sql` — the enum value, `my_role()`, and
   the three rewritten policies. **Two parts, not yet run on live.**
-- `supabase/migrations/0011_development_goals.sql` — `development_goals` and
+- `supabase/migrations/0014_development_goals.sql` — `development_goals` and
   `development_notes` with the ownership RLS. One part, not yet run on live.
 - `src/lib/development.ts` — `MAX_ACTIVE_GOALS`, the status labels and classes,
   and the empty-state prompts.
@@ -372,14 +372,14 @@ number the screen was built around.
 
 **The schema and every RLS policy were run, not reasoned about.** Postgres 16
 is installed in the build workspace (see the gotcha in `PROJECT_STATUS.md`), so
-the whole chain `0001` to `0011` was applied to a throwaway local cluster and
+the whole chain `0001` to `0014` was applied to a throwaway local cluster and
 the policies exercised as real signed-in users via `set role authenticated` and
 `request.jwt.claim.sub`. Confirmed there:
 
 | What | Result |
 |---|---|
-| Full chain `0001`-`0011` from scratch, each file one transaction | applies clean |
-| `0010` run whole rather than in two parts | succeeds (the two-part instruction was wrong) |
+| Full chain `0001`-`0014` from scratch, each file one transaction | applies clean |
+| `0013` run whole rather than in two parts | succeeds (the two-part instruction was wrong) |
 | Staff member with a lead allocated to their trainer row | sees **0 leads** |
 | Same, with the policy reverted to `not is_manager()` | **sees the lead** — the hole was real |
 | Trainer sees their own leads | 1, the right one |
@@ -447,7 +447,7 @@ Nothing blocking. One thing to watch:
 
 ## Constraints and house rules
 
-- Migrations: `0010` is next free, `0011` after it. `0007`/`0008` stay reserved
+- Migrations: this work took `0013` and `0014`. `0007`/`0008` stay reserved
   for GymMaster. A migration in the folder is **not** proof it ran on live. A
   human applies it in the Supabase SQL editor, and
   `supabase/reconcile/01_audit_live_schema.sql` is how you confirm.

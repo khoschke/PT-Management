@@ -146,7 +146,7 @@ export async function addTrainerLogin(
 // storage bucket all key on trainer_id rather than on the role, so they work
 // for staff with no schema change. `active: false` keeps them off the public
 // form's trainer picker and out of the lead board's allocation list, so they
-// cannot be given leads. See 0010_staff_role.sql.
+// cannot be given leads. See 0013_staff_role.sql.
 //
 // `gender` is required because trainers.gender is not null with no default.
 const addStaffLoginSchema = z.object({
@@ -224,7 +224,7 @@ export async function addStaffLogin(
     await admin.from("trainers").delete().eq("id", trainerRow.id);
     console.error("Add staff: profile insert failed", profileError);
 
-    // The likeliest cause by far is that 0010_staff_role.sql has not been run
+    // The likeliest cause by far is that 0013_staff_role.sql has not been run
     // on the live database, so the `staff` value does not exist on the enum
     // yet. This project has shipped code ahead of a migration before and lost
     // days to a generic error message, so name the cause instead of hiding it.
@@ -233,7 +233,7 @@ export async function addStaffLogin(
     return {
       status: "error",
       message: missingEnumValue
-        ? "The database doesn't know about the staff role yet. Run migration 0010_staff_role.sql (both parts) in the Supabase SQL editor, then try again."
+        ? "The database doesn't know about the staff role yet. Run migration 0013_staff_role.sql (both parts) in the Supabase SQL editor, then try again."
         : "Couldn't set up that staff member. Please try again.",
     };
   }

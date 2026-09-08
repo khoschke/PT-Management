@@ -176,38 +176,79 @@ from (
   union all select '0009-B', 'anon cannot insert leads rows',
     not has_table_privilege('anon', 'public.leads', 'INSERT')
 
-  -- 0010_staff_role ---------------------------------------------------------
-  union all select '0010', 'app_role has value staff',
+  -- 0010_trainer_self_profile ----------------------------------------------
+  union all select '0010', 'policy trainers_select_self',
+    exists (select 1 from pg_policy
+            where polrelid = to_regclass('public.trainers')
+              and polname = 'trainers_select_self')
+  union all select '0010', 'policy trainers_update_self',
+    exists (select 1 from pg_policy
+            where polrelid = to_regclass('public.trainers')
+              and polname = 'trainers_update_self')
+  union all select '0010', 'function guard_trainer_self_update()',
+    to_regprocedure('public.guard_trainer_self_update()') is not null
+  union all select '0010', 'trigger trainers_guard_self_update',
+    exists (select 1 from pg_trigger
+            where tgrelid = to_regclass('public.trainers')
+              and tgname = 'trainers_guard_self_update'
+              and not tgisinternal)
+  -- Inverted: PRESENT means the trigger function is not exposed over PostgREST.
+  union all select '0010', 'guard_trainer_self_update not callable by anon',
+    not has_function_privilege('anon', 'public.guard_trainer_self_update()', 'EXECUTE')
+
+  -- 0011_trainer_self_availability -----------------------------------------
+  -- 0011 only replaces the guard's body, so the observable fact is what that
+  -- body contains: availability among the self-editable columns.
+  union all select '0011', 'guard allows self-edit of availability',
+    (select prosrc from pg_proc
+      where oid = to_regprocedure('public.guard_trainer_self_update()')) like '%available_am%'
+
+  -- 0012_trainer_pause_leads -----------------------------------------------
+  -- 0012 REMOVES the both-slots-off refusal 0011 added, because both-off is
+  -- now the "not taking new leads" pause. This row is inverted: PRESENT means
+  -- the refusal is gone, which is the post-0012 state.
+  union all select '0012', 'guard no longer blocks both slots off',
+    (select prosrc from pg_proc
+      where oid = to_regprocedure('public.guard_trainer_self_update()'))
+      not like '%not (new.available_am or new.available_pm)%'
+  -- The public form's picker filters on these, so anon must be able to read
+  -- them. Email and the rest stay revoked (see the 0009-A rows above).
+  union all select '0012', 'anon can read trainers.available_am',
+    has_column_privilege('anon', 'public.trainers', 'available_am', 'SELECT')
+  union all select '0012', 'anon can read trainers.available_pm',
+    has_column_privilege('anon', 'public.trainers', 'available_pm', 'SELECT')
+  -- 0013_staff_role ---------------------------------------------------------
+  union all select '0013', 'app_role has value staff',
     exists (select 1 from pg_enum e
             join pg_type t on t.oid = e.enumtypid
             where t.typname = 'app_role' and e.enumlabel = 'staff')
 
   -- The three policies that used `not is_manager()` to mean "is a trainer",
   -- which a third role silently breaks. Each must now name my_role().
-  union all select '0010', 'function my_role()',
+  union all select '0013', 'function my_role()',
     to_regprocedure('public.my_role()') is not null
-  union all select '0010', 'leads_select_trainer checks my_role',
+  union all select '0013', 'leads_select_trainer checks my_role',
     exists (select 1 from pg_policy
             where polrelid = to_regclass('public.leads')
               and polname = 'leads_select_trainer'
               and pg_get_expr(polqual, polrelid) like '%my_role%')
-  union all select '0010', 'leads_update_trainer checks my_role',
+  union all select '0013', 'leads_update_trainer checks my_role',
     exists (select 1 from pg_policy
             where polrelid = to_regclass('public.leads')
               and polname = 'leads_update_trainer'
               and pg_get_expr(polqual, polrelid) like '%my_role%')
-  union all select '0010', 'status_history_select_trainer checks my_role',
+  union all select '0013', 'status_history_select_trainer checks my_role',
     exists (select 1 from pg_policy
             where polrelid = to_regclass('public.status_history')
               and polname = 'status_history_select_trainer'
               and pg_get_expr(polqual, polrelid) like '%my_role%')
 
-  -- 0011_development_goals -------------------------------------------------
-  union all select '0011', 'enum development_goal_status',
+  -- 0014_development_goals -------------------------------------------------
+  union all select '0014', 'enum development_goal_status',
     exists (select 1 from pg_type where typname = 'development_goal_status')
-  union all select '0011', 'relation development_goals',
+  union all select '0014', 'relation development_goals',
     to_regclass('public.development_goals') is not null
-  union all select '0011', 'relation development_notes',
+  union all select '0014', 'relation development_notes',
     to_regclass('public.development_notes') is not null
 
   -- The ownership rule, asserted rather than assumed. A goal belongs to
@@ -215,7 +256,7 @@ from (
   -- is_manager(). Inverted: PRESENT means the manager is correctly locked out
   -- of writing. The relation check in front matters, because "no policy
   -- mentions is_manager" is trivially true of a relation that does not exist.
-  union all select '0011', 'manager cannot write development_goals',
+  union all select '0014', 'manager cannot write development_goals',
     to_regclass('public.development_goals') is not null
     and not exists (
       select 1 from pg_policy
@@ -226,7 +267,7 @@ from (
 
   -- The composite foreign key, which is what stops a goal comment being filed
   -- against a goal belonging to somebody else.
-  union all select '0011', 'development_notes goal FK ties comment to owner',
+  union all select '0014', 'development_notes goal FK ties comment to owner',
     exists (select 1 from pg_constraint
             where conrelid = to_regclass('public.development_notes')
               and conname = 'development_notes_goal_fk')

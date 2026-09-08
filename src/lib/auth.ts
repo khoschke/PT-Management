@@ -36,7 +36,7 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
 //
 // Prefer this over comparing to "trainer" directly. That comparison is how the
 // workbook silently locked staff out before this existed, and it is the same
-// mistake the `not is_manager()` RLS shorthand made (see 0010_staff_role.sql).
+// mistake the `not is_manager()` RLS shorthand made (see 0013_staff_role.sql).
 export function worksThroughWorkbook(role: AppRole | null | undefined): boolean {
   return role === "trainer" || role === "staff";
 }
