@@ -18,6 +18,13 @@ export default async function MyProfilePage() {
     redirect(user.profile.role === "manager" ? "/admin/trainers" : "/admin");
   }
 
+  // Staff have a trainer row but no use for this screen: an inactive row is in
+  // neither the public form's picker nor lead matching, so nothing they set
+  // here would take effect. The nav hides it; this is what enforces it.
+  if (user.profile.role === "staff") {
+    redirect("/admin/development");
+  }
+
   const supabase = await createClient();
   const { data: trainer } = await supabase
     .from("trainers")

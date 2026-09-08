@@ -43,10 +43,13 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   // Keyed off the linked trainer row, not the role: the PT Manager is also one
   // of the five PTs, so they get a profile of their own to edit alongside the
-  // roster they keep for everyone. Staff have a trainer row too, so they get
-  // one as well, which is deliberate: the bio and specialties they write while
-  // on the pathway are already in place the day they are promoted.
-  const hasOwnProfile = user.profile.trainer_id != null;
+  // roster they keep for everyone.
+  //
+  // Staff are excluded even though they have a trainer row. The profile exists
+  // to drive the public form's picker and lead matching, and an inactive
+  // roster row appears in neither, so for staff it is a screen that changes
+  // nothing. They get one when they are promoted.
+  const hasOwnProfile = user.profile.trainer_id != null && !isStaff;
 
   // A paused trainer isn't being offered new leads, and nothing else on the
   // screen would tell them. The risk isn't mis-clicking the toggle, it's
