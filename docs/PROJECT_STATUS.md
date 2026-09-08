@@ -262,6 +262,7 @@ the commit history.
 | `claude/pt-onboarding-dashboard-9wwl17` | PT onboarding workbook | Merged and live. |
 | `claude/handoff-trainer-profiles-link-buudia` | Trainer profile links | Merged. |
 | `claude/project-pause-prevention-083n5y` | Supabase keep-alive cron | Merged and live. |
+| `claude/staff-development-pathway-scope-ac664k` | Staff development pathway | **Open PR #28**, 6 commits. Scoping note plus all five build phases. **Do not treat as done on merge: migrations `0010` and `0011` still have to be applied by hand.** |
 
 ### Migration order, already sorted
 
@@ -273,11 +274,11 @@ anyway because `0004_trainer_am_pm.sql` merged with the availability work.
 |---|---|---|
 | 0004 | `trainer_am_pm` | merged, on production |
 | 0005 | — | permanently unused (see below) |
-| 0006 | `trainer_documents` | merged to production, **not yet on the live DB** |
+| 0006 | `trainer_documents` | merged; **applied to live 12 Aug 2026, verified** |
 | 0007, 0008 | `gymmaster_lead_source`, `gymmaster_sync` | `gymmaster-phase-1-pull-7yuxuy` (already numbered correctly, no renumber needed) |
-| 0009 | `public_access_hardening` | merged into code; **apply in two parts, PART A → deploy → PART B** |
-| 0010 | `staff_role` | staff development pathway; **apply in two parts, PART A alone → PART B**, no deploy in between |
-| 0011 | `development_goals` | development goals and check-ins; one part |
+| 0009 | `public_access_hardening` | merged; **applied to live 12 Aug 2026, both parts, verified** |
+| 0010 | `staff_role` | staff pathway, PR #28; **NOT on live. Two parts, PART A alone → PART B**, no deploy in between |
+| 0011 | `development_goals` | development goals, PR #28; **NOT on live.** One part |
 
 Merge in that order and Supabase stays in step. GymMaster is deliberately in the
 middle rather than last: its numbers were already written and pushed, and moving
@@ -290,12 +291,43 @@ is precisely how the live-DB drift surfaced. It has to sit after `0006`, and
 `0009` was the first free slot that left GymMaster's `0007/0008` alone. `0005` is
 now retired rather than reserved: don't fill it.
 
-`0009_public_access_hardening.sql` **runs in two parts around the code deploy**
-(PART A → deploy → PART B). The file says so at the top; the runbook is
-`supabase/reconcile/README.md`.
+`0009_public_access_hardening.sql` ran in two parts around the code deploy
+(PART A → deploy → PART B). Both are on live; the runbook that executed it,
+`supabase/reconcile/README.md`, is now a record rather than a task.
+
+**`0010` and `0011` are the two that are not on live.** `0010` also runs in two
+parts, but for an unrelated reason and with no deploy in between: Postgres will
+not let a newly added enum value be used in the transaction that adds it, and
+the Supabase SQL editor wraps a run in one, so `alter type app_role add value
+'staff'` has to commit before anything can reference it. Run PART A alone, then
+PART B, then `0011` whole.
 
 ## Outstanding / next up
 
+- **Staff development pathway** — **BUILT, PR #28 open, and NOT usable until
+  two migrations are applied by hand.** Branch
+  `claude/staff-development-pathway-scope-ac664k`. Gym staff working towards
+  becoming a PT get a login, the full onboarding workbook with saving progress,
+  their own compliance documents, self-authored development goals with a
+  coaching conversation, and no leads. The manager sees their progress and can
+  promote them to trainer in one action.
+  - **The action still outstanding:** apply `0010_staff_role.sql` (PART A
+    alone, let it commit, then PART B) and then `0011_development_goals.sql`
+    (one part) in the Supabase SQL editor, then re-run
+    `supabase/reconcile/01_audit_live_schema.sql`. **Merging and deploying the
+    PR is not enough** — the `staff` role does not exist on the enum until
+    `0010` PART A runs, and adding a staff member fails until it does.
+  - A staff member is a `profiles` row with the new `staff` role pointing at an
+    **inactive `trainers` row**. Onboarding progress, documents and Storage all
+    key on `my_trainer_id()` rather than on the role, so they work for staff
+    with no schema change, and promotion is two writes that carry everything
+    across.
+  - `0010` also fixed a real latent problem: `leads_select_trainer`,
+    `leads_update_trainer` and `status_history_select_trainer` used
+    `not is_manager()` to mean "is a trainer", which a third role silently
+    breaks. All three now check `my_role() = 'trainer'`.
+  - Full detail, including the two decisions Karl made and why, in
+    `docs/handoff-staff-development-pathway.md`.
 - **GymMaster integration** — see `docs/handoff-gymmaster-integration.md`.
   **Phase 1 scaffolding already exists unmerged** on
   `claude/gymmaster-phase-1-pull-7yuxuy`.
@@ -379,30 +411,6 @@ now retired rather than reserved: don't fill it.
 
 Reminders only. Each gets scoped and built in its own session.
 
-- **Staff development pathway into the PT portal**, with an upgrade of a staff
-  member to trainer status. **All five phases BUILT 8 Sep 2026 on
-  `claude/staff-development-pathway-scope-ac664k`. Two migrations are NOT yet
-  applied to live, and nothing works until they are:** `0010_staff_role.sql`
-  (**two parts**, PART A alone then PART B) and `0011_development_goals.sql`
-  (one part). Apply in the SQL editor in that order, then re-run the audit
-  query and believe its output.
-  `docs/handoff-staff-development-pathway.md` is now a build brief, not a
-  scoping note. Decided: staff are an **inactive `trainers` row plus a new
-  `staff` value on the `app_role` enum**, which means onboarding progress,
-  document uploads and Storage all work with no schema change (they key on
-  `my_trainer_id()`, not on role) and promotion is two writes. Staff get the
-  full workbook, no lead board, no roster. Five phases; migration **`0010`** is
-  RLS only and **runs in two parts** (`alter type ... add value` cannot be used
-  in the transaction that adds it). Phase 5 (development goals and check-ins)
-  is `0011`: staff set their own goals, the manager guides them
-  in a conversation and is locked out of editing goal text in RLS, and staff
-  **do** appear on the compliance screen because they operate as PTs and carry
-  the same certs and insurances (the expiry cron already covers them, it never
-  filters on `trainers.active`). **The one thing that must not be skipped:**
-  `leads_select_trainer`, `leads_update_trainer` and
-  `status_history_select_trainer` use `not is_manager()` to mean "is a
-  trainer", which a third role silently breaks. All decisions are settled and
-  nothing blocks a build.
 - **PT prospect interview system** in the PT Manager area. STAR method has been
   suggested; approach to be agreed when it is scoped.
 - **Ezidebit connected to the PT Manager dashboard via an MCP, reading live.**
