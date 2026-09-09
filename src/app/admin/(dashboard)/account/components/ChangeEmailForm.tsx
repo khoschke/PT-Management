@@ -4,6 +4,7 @@ import { useActionState, useEffect, useRef } from "react";
 import { useFormStatus } from "react-dom";
 import { changeEmail } from "../actions";
 import { initialAccountFormState } from "../state";
+import PasswordInput from "@/app/admin/components/PasswordInput";
 
 const inputClass =
   "mt-1.5 w-full rounded-xl border-none bg-fill px-3.5 py-2.5 text-sm text-foreground outline-none ring-1 ring-transparent transition focus:ring-2 focus:ring-foreground";
@@ -79,10 +80,9 @@ export default function ChangeEmailForm({ pendingEmail }: { pendingEmail: string
         <label htmlFor="emailCurrentPassword" className="text-sm font-semibold text-foreground">
           Current password
         </label>
-        <input
+        <PasswordInput
           id="emailCurrentPassword"
           name="currentPassword"
-          type="password"
           required
           autoComplete="current-password"
           className={inputClass}

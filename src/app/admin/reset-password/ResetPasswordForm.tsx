@@ -5,6 +5,7 @@ import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { resetPassword } from "./actions";
 import { initialResetPasswordState } from "./state";
+import PasswordInput from "@/app/admin/components/PasswordInput";
 
 const inputClass =
   "mt-2 w-full rounded-xl border-none bg-fill px-4 py-3.5 text-[17px] text-foreground outline-none ring-1 ring-transparent transition focus:ring-2 focus:ring-foreground";
@@ -50,10 +51,9 @@ export default function ResetPasswordForm({ email }: { email: string | null }) {
           <label htmlFor="password" className="block text-[15px] font-semibold text-foreground">
             New password
           </label>
-          <input
+          <PasswordInput
             id="password"
             name="password"
-            type="password"
             required
             minLength={8}
             autoFocus
@@ -67,10 +67,9 @@ export default function ResetPasswordForm({ email }: { email: string | null }) {
           <label htmlFor="confirm" className="block text-[15px] font-semibold text-foreground">
             Confirm new password
           </label>
-          <input
+          <PasswordInput
             id="confirm"
             name="confirm"
-            type="password"
             required
             autoComplete="new-password"
             className={inputClass}

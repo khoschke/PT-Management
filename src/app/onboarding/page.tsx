@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentUser, worksThroughWorkbook } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { onboardingParts, totalActivityCount } from "@/lib/onboarding/content";
 import {
@@ -12,7 +12,10 @@ export default async function OnboardingOverviewPage() {
   const user = await getCurrentUser();
   const supabase = await createClient();
   const state = await getTrainerOnboardingState(supabase, user?.profile?.trainer_id ?? null);
-  const isTrainer = user?.profile?.role === "trainer";
+  // Trainers and staff on the development pathway both work through the
+  // workbook and save answers. Only the manager gets the read-only overview,
+  // so this must not be narrowed back to a "trainer" check.
+  const savesProgress = worksThroughWorkbook(user?.profile?.role);
 
   const activeParts = onboardingParts.filter((p) => !p.pending);
   const totalActivities = activeParts.reduce((sum, p) => sum + totalActivityCount(p), 0);
@@ -32,7 +35,7 @@ export default async function OnboardingOverviewPage() {
           Fitaz Gym · Personal Trainer Onboarding
         </p>
         <h1 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
-          {isTrainer ? "Your 12-week onboarding journey" : "PT onboarding, at a glance"}
+          {savesProgress ? "Your 12-week onboarding journey" : "PT onboarding, at a glance"}
         </h1>
         <p className="mt-3 max-w-2xl text-[15px] leading-relaxed" style={{ color: "var(--ob-text-secondary)" }}>
           Ten parts, from the role itself through to building and running your business. Work through
@@ -40,7 +43,7 @@ export default async function OnboardingOverviewPage() {
           sessions with the PT Manager are yours to book whenever they&rsquo;re most useful.
         </p>
 
-        {isTrainer && (
+        {savesProgress && (
           <div className="mt-7 flex items-center gap-4">
             <div
               className="h-2.5 flex-1 overflow-hidden rounded-full"
@@ -108,7 +111,7 @@ export default async function OnboardingOverviewPage() {
                 </p>
               </div>
 
-              {isTrainer && !part.pending && totalActivityCount(part) > 0 && (
+              {savesProgress && !part.pending && totalActivityCount(part) > 0 && (
                 <div className="mt-5 flex items-center gap-3">
                   <div className="h-1.5 flex-1 overflow-hidden rounded-full" style={{ background: "var(--ob-border)" }}>
                     <div

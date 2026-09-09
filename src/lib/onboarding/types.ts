@@ -2,6 +2,11 @@
 // both the PT view and Manager view render from, so the two can never say
 // different things: only the *lens* changes (manager notes shown or hidden),
 // never the underlying material.
+//
+// Before editing any part file, read the "Never publish commercial terms into
+// trainer-facing content" rule in CLAUDE.md. Everything below is read by
+// self-employed trainers: prices, rates and business models are examples of
+// what has worked for others, never requirements or Fitaz Gym policy.
 
 export interface OnboardingActivity {
   /** Stable slug, unique within a part. Persisted as onboarding_responses.activity_key. */
@@ -16,7 +21,13 @@ export interface OnboardingActivity {
 
 export interface OnboardingSection {
   heading: string;
-  /** Paragraphs of body copy. A line starting with "- " renders as a bullet. */
+  /**
+   * Paragraphs of body copy. A line starting with "- " renders as a bullet.
+   * A line of the form `![alt](/path/to.png "optional caption")` renders as a
+   * figure, so a diagram can sit at its exact spot in the flow the way it does
+   * in the printed workbook. Figures live in `body` rather than in a
+   * manager-only field on purpose: the workbook's diagrams are trainer-facing.
+   */
   body: string[];
   /** Zero or more fill-in activities tied to this section. */
   activities?: OnboardingActivity[];

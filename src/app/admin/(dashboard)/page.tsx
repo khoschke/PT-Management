@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/lib/auth";
 import type { Lead, Trainer } from "@/lib/types";
@@ -16,6 +17,19 @@ const ACTIVE_LOAD_STATUSES = ["New", "Allocated", "Contacted", "Booked"];
 export default async function AdminLeadBoardPage() {
   const user = await getCurrentUser();
   const supabase = await createClient();
+  // Staff have no leads and must not see anyone else's. The nav hides this
+  // link for them; this is the check that actually enforces it.
+  //
+  // They go to their own development page rather than to /onboarding. The
+  // workbook is a separate visual layer with its own header and no dashboard
+  // nav, so sending them there dropped them out of the admin shell entirely,
+  // and the workbook's own "Back to dashboard" link pointed here and bounced
+  // them straight back. /admin/development is inside the shell, so the nav
+  // stays reachable and that link resolves to a real page.
+  if (user?.profile?.role === "staff") {
+    redirect("/admin/development");
+  }
+
   const isManager = user?.profile?.role === "manager";
 
   const { data: leads } = await supabase

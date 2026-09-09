@@ -6,6 +6,7 @@ import { useFormStatus } from "react-dom";
 import { useSearchParams } from "next/navigation";
 import { login } from "./actions";
 import { initialLoginState } from "./state";
+import PasswordInput from "@/app/admin/components/PasswordInput";
 
 // Set by /admin/auth/callback when an emailed link couldn't be turned into a
 // session. Mapped to fixed copy here so nothing from the URL is rendered.
@@ -79,10 +80,9 @@ export default function LoginForm() {
               Forgot password?
             </Link>
           </div>
-          <input
+          <PasswordInput
             id="password"
             name="password"
-            type="password"
             required
             autoComplete="current-password"
             className={inputClass}

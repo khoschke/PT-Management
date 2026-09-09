@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentUser, worksThroughWorkbook } from "@/lib/auth";
 import type { OnboardingPartStatus } from "@/lib/onboarding/progress";
 
 export interface ActionResult {
@@ -10,9 +10,12 @@ export interface ActionResult {
   message?: string;
 }
 
-async function requireTrainerId(): Promise<string | null> {
+// Staff on the development pathway save answers exactly as a trainer does:
+// both carry a trainer_id, and the RLS on both onboarding tables keys on
+// `trainer_id = my_trainer_id()` rather than on the role.
+async function requireWorkbookTrainerId(): Promise<string | null> {
   const user = await getCurrentUser();
-  if (!user?.profile || user.profile.role !== "trainer" || !user.profile.trainer_id) {
+  if (!user?.profile || !worksThroughWorkbook(user.profile.role) || !user.profile.trainer_id) {
     return null;
   }
   return user.profile.trainer_id;
@@ -23,9 +26,9 @@ export async function saveResponse(
   activityKey: string,
   response: string,
 ): Promise<ActionResult> {
-  const trainerId = await requireTrainerId();
+  const trainerId = await requireWorkbookTrainerId();
   if (!trainerId) {
-    return { ok: false, message: "Only a signed-in trainer can save answers here." };
+    return { ok: false, message: "Only a signed-in trainer or staff member can save answers here." };
   }
 
   const supabase = await createClient();
@@ -54,9 +57,9 @@ export async function setPartStatus(
   partNumber: number,
   status: OnboardingPartStatus,
 ): Promise<ActionResult> {
-  const trainerId = await requireTrainerId();
+  const trainerId = await requireWorkbookTrainerId();
   if (!trainerId) {
-    return { ok: false, message: "Only a signed-in trainer can update progress here." };
+    return { ok: false, message: "Only a signed-in trainer or staff member can update progress here." };
   }
 
   const supabase = await createClient();

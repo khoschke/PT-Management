@@ -14,7 +14,11 @@ export type LeadStatus =
   | "Unreachable";
 export type GenderPreference = "male" | "female" | "no_preference";
 export type TimePreference = "AM" | "PM" | "either";
-export type AppRole = "manager" | "trainer";
+// `staff` are gym staff on the development pathway toward becoming a PT.
+// They carry a `trainer_id` pointing at an inactive `trainers` row, which is
+// how they get onboarding progress and compliance documents for free, and is
+// what makes promotion to trainer two writes rather than a data migration.
+export type AppRole = "manager" | "trainer" | "staff";
 
 export interface Trainer {
   id: string;
@@ -112,3 +116,33 @@ export const LEAD_STATUSES: LeadStatus[] = [
   "Not interested",
   "Unreachable",
 ];
+
+// ---------------------------------------------------------------------------
+// Development pathway (0011_development_goals.sql)
+// ---------------------------------------------------------------------------
+
+// Three states, with no "overdue" and no failure state. See the migration.
+export type DevelopmentGoalStatus = "active" | "achieved" | "parked";
+
+export interface DevelopmentGoal {
+  id: string;
+  trainer_id: string;
+  title: string;
+  detail: string;
+  status: DevelopmentGoalStatus;
+  target_date: string | null;
+  created_at: string;
+  updated_at: string;
+  achieved_at: string | null;
+}
+
+// One row serves both conversations: `goal_id` null is a check-in on the
+// person, `goal_id` set is a comment on that goal.
+export interface DevelopmentNote {
+  id: string;
+  trainer_id: string;
+  goal_id: string | null;
+  body: string;
+  author_id: string;
+  created_at: string;
+}

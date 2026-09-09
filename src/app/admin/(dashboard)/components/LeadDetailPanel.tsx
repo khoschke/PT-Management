@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useTransition } from "react";
 import { goalLabel } from "@/lib/goals";
-import { suggestTrainer, type TrainerWithLoad } from "@/lib/allocation";
+import { isAcceptingLeads, suggestTrainer, type TrainerWithLoad } from "@/lib/allocation";
 import { LEAD_STATUSES, type LeadStatus, type Trainer } from "@/lib/types";
 import { SourceBadge, StatusBadge } from "./Badges";
 import ClockPill from "./ClockPill";
@@ -215,6 +215,7 @@ export default function LeadDetailPanel({
                   {activeTrainers.map((t) => (
                     <option key={t.id} value={t.id}>
                       {t.name} ({trainerLoads[t.id] ?? 0} active)
+                      {isAcceptingLeads(t) ? "" : " — paused"}
                     </option>
                   ))}
                 </select>
