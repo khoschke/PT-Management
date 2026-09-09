@@ -35,12 +35,63 @@ supersedes anything narrower elsewhere:
 > never appears in trainer-facing content, however it is framed. Point at the
 > contract instead.
 
+### Scope of the figure rule
+
+From ADDENDUM 4 of the spec, verbatim:
+
+> The figure rule governs figures that state **what a PT should charge their
+> clients, or what Fitaz Gym charges the PT**. Those are the only numbers this
+> workbook has no business setting, because the trainer is self-employed.
+>
+> Outside the rule:
+>
+> - statutory thresholds and caps (GST registration, concessional super cap)
+> - suggested levels of insurance cover
+> - third-party costs the trainer does not set (card processing fees)
+> - magnitudes of change rather than prices (a $5-10 annual rate increase)
+>
+> Being outside the rule does NOT mean stating them bare. Each carries two
+> obligations:
+>
+> **1. Say whose figure it is.** Insurance cover levels are a SUGGESTION, not a
+> Fitaz Gym requirement, and must say so in plain words. Holding liability
+> insurance IS a condition of training at the gym; what level of cover a
+> trainer takes out is their decision and their insurer's advice. Never write
+> "minimum cover $10M" as though the gym set it.
+>
+> **2. Date it and hand the check back to the reader.** Any figure that changes
+> over time (tax, super, thresholds, statutory caps, market fees) carries a
+> note in this shape:
+>
+> > These figures are current as at [month year]. Rates and thresholds change,
+> > often each financial year. Check the current figure with the ATO or your
+> > accountant before you rely on it. This workbook is general information, not
+> > financial, tax or legal advice.
+>
+> A wrong number stated plainly is worse than a right number framed badly.
+>
+> The principle behind both: this workbook is a tool for trainers to use, not a
+> document that can be used against Fitaz Gym later. Where it gives general
+> information it says so. Where it gives a figure that will age it dates it and
+> points at the authority. It never lets a suggestion read as a rule.
+
+A scheduled task runs on **1 July each year** to check every ageing figure,
+roll the "current as at" dates forward, and check for regulatory changes
+affecting self-employed PTs. If you change an ageing figure outside that pass,
+roll its date too.
+
 ### How to check it
 
 Sweep for the **figure**, not for the sentence you already know about: `$80`,
 `$20 a week`, `$275`. Four instances of the same fault were missed in the first
 pass because it was swept by phrasing. Every hit then needs one of the three
 framings above, or it comes out.
+
+Sweep the ageing figures the same way, and separately, because they fail
+differently: they go stale rather than reading as a rule. Currently `$75,000`
+(GST), `$32,500` (super cap), `25-30%` and `5-10%` (tax and super set-asides),
+`$10M` and `$5M` (cover levels), `1.7-2.9%` (card fees). Each needs a currency
+note near it, in the same section a trainer would read it in.
 
 ### Why the rule exists
 

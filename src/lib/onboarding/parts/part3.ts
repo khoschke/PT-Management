@@ -16,7 +16,7 @@ export const part3: OnboardingPart = {
         "- Open a separate business bank account",
         "- Set up an accounting system (Xero, MYOB, Hnry, or a clean spreadsheet)",
         "- Sort your tax and super",
-        "- Purchase your insurance (Public Liability $10M minimum, Professional Indemnity $5M minimum)",
+        "- Purchase your insurance (Public Liability and Professional Indemnity; $10M and $5M are common levels of cover)",
         "- Keep First Aid and CPR certifications current (also a Fitaz Gym contract requirement)",
         "- Set up your client payment system",
         "- Decide whether to register with AUSactive or similar (not mandatory, useful for events/discounts/industry recognition)",
@@ -27,7 +27,7 @@ export const part3: OnboardingPart = {
     {
       heading: "Australian tax and super for sole traders",
       body: [
-        "You're running a business, not collecting a wage — tax and super are now your job. Rates and thresholds change, so always cross-check with the ATO or your accountant.",
+        "You're running a business, not collecting a wage — tax and super are now your job. Here are the basics. The figures below are current as at September 2026. Rates and thresholds change, often each financial year, so check the current numbers with the ATO or your accountant before you rely on them. This workbook is general information, not financial, tax or legal advice.",
         "**Income tax.** Taxed at your individual rate via your annual return. No PAYG withholding, no payslip. Rule of thumb: park around 25-30% of every payment into a separate tax account. Track every business expense (rent, insurance, education, equipment, phone, internet, travel). The ATO can ask you to start PAYG instalments once you've lodged a return showing decent income.",
         "**GST and BAS.** Register for GST once turnover hits $75,000 in a 12-month period (or you expect to). Below that, stay unregistered and keep pricing GST-free. Once registered, charge 10% GST and lodge a Business Activity Statement, usually quarterly. If you're voluntarily registered and under $75k, you can elect to lodge annually. If you're under the threshold and not registered, leave it alone — registering early just creates admin you don't need yet. Keep an eye on your rolling 12-month turnover — the clock doesn't reset at the financial year.",
         "**Superannuation.** Not legally required to pay yourself super as a sole trader, but you should. Personal contributions are tax-deductible up to the concessional cap (currently $32,500 from 1 July 2026, indexed to AWOTE). Treat it like rent for your future self.",
@@ -39,9 +39,9 @@ export const part3: OnboardingPart = {
       heading: "Insurance",
       body: [
         "Liability insurance is non-negotiable. You can't train clients at Fitaz Gym without it.",
-        "**Public Liability** — covers you if a client or anyone else is injured or has property damaged because of something you did. Minimum cover $10M.",
-        "**Professional Indemnity** — covers you if a client claims your advice or service caused them loss or harm. Minimum cover $5M.",
-        "Many policies bundle both, plus extras like personal accident cover, equipment, and income protection. Read what's actually included before you sign.",
+        "**Public Liability** — covers you if a client or anyone else is injured or has property damaged because of something you did. $10M is a common level of cover.",
+        "**Professional Indemnity** — covers you if a client claims your advice or service caused them loss or harm. $5M is a common level of cover.",
+        "Many policies bundle both, plus extras like personal accident cover, equipment, and income protection. Read what's actually included before you sign. Those cover levels are a guide, not a Fitaz Gym requirement. Holding liability insurance is a condition of training here. What level you take out is your decision, and your insurer or broker is the one to advise you on what suits your business.",
         "Get quotes from a few providers (Guild Insurance, AON Sport, Marsh, Sport & Fitness Insurance Brokers). AUSactive membership often includes or discounts insurance.",
       ],
       managerNote:
@@ -69,7 +69,7 @@ export const part3: OnboardingPart = {
         "- **PayPal** — flexible backup, fees can stack.",
         "- **Newie** — Australian app built for service businesses. Subscriptions, one-off payments, tap to pay on your phone, and client comms in one place. Suits the weekly subscription model.",
         "- **Direct bank transfer** — zero fees, but you chase manually.",
-        "These are what other trainers use, not a list you have to pick from. Your payment system is your call.",
+        "These are what other trainers use, not a list you have to pick from. Your payment system is your call. Fees quoted are indicative as at September 2026, so check current rates with the provider.",
         "Recurring clients are usually best on direct debit — it removes the awkward 'have you paid this week?' conversation. Build processing fees into your pricing.",
       ],
     },
