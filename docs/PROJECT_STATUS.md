@@ -49,8 +49,20 @@ digest (Vercel cron) are confirmed sending from the branded
 > anything about the live schema, and update the status column below from what
 > it returns — not from what you expect it to say.**
 
-Migrations live in `supabase/migrations/`. Status column set from an audit run on
-**12 Aug 2026**, verified row by row against the live project — not asserted:
+Migrations live in `supabase/migrations/`. Status column set from an audit run,
+verified row by row against the live project — not asserted.
+
+**Last verified in full: 9 September 2026.** Every row in this table was
+checked against the live database by running
+`supabase/reconcile/01_audit_live_schema.sql` through the Supabase MCP server's
+`execute_sql`, which reaches the live project straight from a build session.
+51 checks: 49 PRESENT, and the only two MISSING are `0007` and `0008`, the
+GymMaster pair on an unmerged branch, which are expected to be absent.
+
+That took one tool call. **Re-run it rather than trusting this table**, and
+update the date above when you do. It is the cheapest possible insurance
+against the thing that broke `/admin/compliance` for days in August: a table
+that said "applied" about a migration nobody had run.
 
 | Migration | What it adds | On live? |
 |---|---|---|
