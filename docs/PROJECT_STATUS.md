@@ -411,6 +411,12 @@ whole migration chain against a local Postgres 16.
   their own compliance documents, self-authored development goals with a
   coaching conversation, and no leads. The manager sees their progress and can
   promote them to trainer in one action.
+  - **First person on the pathway: Henry, added 10 Sep 2026** as early access to
+    the workbook while the offer is still being finalised with the owners. The
+    invite is `docs/staff-development-invite-email.md`, kept as the template for
+    the next candidate. It is deliberately separate from
+    `docs/pt-login-details-email.md` because a login for a "development pathway"
+    reads as the offer landing when it has not been made yet.
   - **Walked through on the live site 8 Sep 2026 and confirmed working.** That
     was the last outstanding step: the RLS had been exercised locally and on
     live, but the server actions had never run. They have now.
