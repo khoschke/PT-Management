@@ -49,8 +49,20 @@ digest (Vercel cron) are confirmed sending from the branded
 > anything about the live schema, and update the status column below from what
 > it returns — not from what you expect it to say.**
 
-Migrations live in `supabase/migrations/`. Status column set from an audit run on
-**12 Aug 2026**, verified row by row against the live project — not asserted:
+Migrations live in `supabase/migrations/`. Status column set from an audit run,
+verified row by row against the live project — not asserted.
+
+**Last verified in full: 9 September 2026.** Every row in this table was
+checked against the live database by running
+`supabase/reconcile/01_audit_live_schema.sql` through the Supabase MCP server's
+`execute_sql`, which reaches the live project straight from a build session.
+51 checks: 49 PRESENT, and the only two MISSING are `0007` and `0008`, the
+GymMaster pair on an unmerged branch, which are expected to be absent.
+
+That took one tool call. **Re-run it rather than trusting this table**, and
+update the date above when you do. It is the cheapest possible insurance
+against the thing that broke `/admin/compliance` for days in August: a table
+that said "applied" about a migration nobody had run.
 
 | Migration | What it adds | On live? |
 |---|---|---|
@@ -64,6 +76,9 @@ Migrations live in `supabase/migrations/`. Status column set from an audit run o
 | `0010_trainer_self_profile.sql` | per-trainer self-edit of `bio`/`specialties`: `trainers_select_self` + `trainers_update_self` policies, `guard_trainer_self_update` column-guard trigger | Applied 7 Sep 2026 — verified, incl. the guard exercised both ways against live |
 | `0011_trainer_self_availability.sql` | widens the self-edit guard to `available_am`/`available_pm` | Applied 7 Sep 2026 — verified both ways against live |
 | `0012_trainer_pause_leads.sql` | lifts 0011's both-slots-off block so it means "not taking new leads"; grants anon read on the two availability columns so the public picker can hide paused PTs | Applied 8 Sep 2026 — verified against live, incl. anon still blocked from `email` |
+| `0013_staff_role.sql` | `staff` on the `app_role` enum, the `my_role()` helper, and the three lead/history policies rewritten off `not is_manager()` | Applied 8 Sep 2026 — verified against live |
+| `0014_development_goals.sql` | `development_goals` and `development_notes`, with no manager write policy on goals | Applied 8 Sep 2026 — verified against live, incl. the ownership rule |
+| `0015_contract_document_type.sql` | "PT Contract" built-in compliance document type | Applied 8 Sep 2026 — verified against live (`contract` row present) |
 
 **The drift is closed and the hardening is deployed.** `0006` had never been
 applied despite this doc claiming it was, which left `/admin/compliance` and
@@ -181,6 +196,14 @@ strength". Change it in that one file and it flows to both sides.
   `not is_manager()` hole was genuinely exploitable, and confirmed the
   development-goals ownership rule refuses a manager's UPDATE. **Reasoning
   about a policy is not the same as running it.**
+- **The Supabase MCP server reaches the LIVE project from here.** `execute_sql`
+  against project `fbzearypwpjcyrmdivsz` answers "is this actually on live?"
+  in one call, with no deploy and no asking anyone to paste output. Used on
+  8 Sep 2026 to confirm `0013`, `0014` and `0015`, and to establish that
+  `auth.users` has never sent a recovery email. The Resend and GitHub MCP
+  servers reach their live services the same way. **Check with these before
+  concluding something cannot be verified from a build session** — the
+  no-outbound-network note above is about `curl`, not about the MCP tools.
 - **A migration in `supabase/migrations/` is not proof it ran on live.** Nothing
   applies migrations automatically; a human pastes them into the Supabase SQL
   editor, and that step has been silently skipped before (`0006`, which broke two
@@ -308,9 +331,11 @@ the commit history.
 | `claude/docs-reconcile-live-state` | Branch-map reconciliation | **Merged.** Docs only. |
 | `claude/security-hardening-csv-ip-cron` | Security hardening (CSV/IP/cron) | **Merged** (PR #18). CSV formula-injection guard, IP-salt production guard, cron fail-closed + constant-time auth. Also added `docs/handoff-security-hardening.md` for the remaining items. |
 | `claude/forgot-password-change-email-gl4lca` | Self-service forgot-password + change-email | **1 unmerged, and it is the actual build**, roughly 990 added lines: `/admin/reset-password`, `src/lib/recovery-session.ts`, `src/lib/site-url.ts`, proxy changes. Not the handoff-note-only branch below. |
+| `claude/pt-onboarding-workbook-updates-xmrtqs` | PT onboarding workbook content | **4 unmerged, pushed after PR #27 merged.** Restores detail that Parts 2, 3, 4, 7 and 9 had condensed away, and extends the coaching-notes gate to withhold `managerNote`/`workedExample` from trainers as well as staff. |
 | `claude/gymmaster-phase-1-pull-7yuxuy` | GymMaster integration | **3 unmerged.** Phase 1 pull scaffolding plus migrations `0007` and `0008`, which keep those numbers. |
 | `claude/pt-team-onboarding-rw5awg` | PT team update email | **Merged.** The team update email and the login details email, from `docs/handoff-pt-team-update-email.md`. Both were sent on 12 August 2026; the files are kept as the record of what went out and as the template for the next trainer who joins. |
 | `claude/handoff-email-notifications-9m67a6` | Branded HTML notification emails | **Merged** (PR #4). Replaced the plain-text ops emails with branded HTML plus a dashboard link. |
+| `claude/staff-development-pathway-scope-ac664k` | Staff development pathway | **Merged, 0 unmerged.** Still on the remote because the follow-ups went in as direct merges rather than PRs, so auto-delete never fired. Safe to delete. |
 | `claude/self-service-password-change-3ydtqu` | Forgot-password | **1 unmerged**, a handoff note only. No implementation; still needs Supabase Custom SMTP. |
 | `claude/gym-nurture-email-design-uw9nvu` | Member email series | **Merged** (PR #13 and #14, plus the August logo and template work). Emails 1 to 3, CMS-safe variants, brand assets, this doc. |
 | `claude/pt-document-expiry-feature-ppsy30` | PT compliance documents with expiry reminders | **Merged** (PR #8). |
@@ -338,7 +363,7 @@ anyway because `0004_trainer_am_pm.sql` merged with the availability work.
 | 0012 | `trainer_pause_leads` | applied to live 8 Sep 2026, verified |
 | 0013 | `staff_role` | staff pathway (PR #28). **Applied to live 8 Sep 2026.** Run it whole; safe to re-run |
 | 0014 | `development_goals` | development goals (PR #28). **Applied to live 8 Sep 2026 — verified** (enum, both relations, RLS on both, all 6 policies, composite FK). Safe to re-run |
-| 0015 | `contract_document_type` | "PT Contract" document type (PR #27). **Applied to live and verified by audit 8 Sep 2026** — `document_types row "contract"` reads PRESENT. It went on under its original number `0010`, before the self-profile work took that slot; the renumber is file ordering, not state, so there is nothing to re-run. Safe to re-run anyway |
+| 0015 | `contract_document_type` | "PT Contract" document type (PR #27). **Applied to live — verified 8 Sep 2026** (the `contract` row is in `document_types`). Safe to re-run |
 
 Merge in that order and Supabase stays in step. GymMaster is deliberately in the
 middle rather than last: its numbers were already written and pushed, and moving
@@ -371,20 +396,27 @@ whole migration chain against a local Postgres 16.
 
 ## Outstanding / next up
 
-- **Staff development pathway** — **MERGED (PR #28), deployed, and both
-  migrations applied to live on 8 Sep 2026.** The only thing left is a browser
-  walkthrough to exercise the server actions, which nothing so far has run.
-  Gym staff working towards
+- ~~**Staff development pathway**~~ — **DONE, 8 Sep 2026.** Merged (PR #28),
+  migrations `0013` and `0014` applied to live, and walked through end to end
+  on the live site. Gym staff working towards
   becoming a PT get a login, the full onboarding workbook with saving progress,
   their own compliance documents, self-authored development goals with a
   coaching conversation, and no leads. The manager sees their progress and can
   promote them to trainer in one action.
-  - **The action still outstanding:** a walkthrough on the live site. Every
-    RLS policy has been exercised, against a local Postgres and now on live,
-    but the **server actions have never been run**: the three-goal cap in
-    `addGoal`, `promoteStaffToTrainer`, and `addStaffLogin`. Adding a staff
-    member and promoting them is the test.
-  - The `staff` role is on the live enum, so `/admin/staff` can create one.
+  - **Walked through on the live site 8 Sep 2026 and confirmed working.** That
+    was the last outstanding step: the RLS had been exercised locally and on
+    live, but the server actions had never run. They have now.
+  - The walkthrough found two things, both fixed the same day:
+    - **A redirect loop that trapped staff in the workbook.** `/admin` sent
+      them to `/onboarding`, whose "Back to dashboard" link points at `/admin`,
+      which sent them back. The workbook is a separate visual layer with none
+      of the dashboard nav, so it dropped them out of the shell holding their
+      links. Staff now land on `/admin/development`, inside the shell. **If you
+      ever redirect a role somewhere, check the destination carries the nav
+      that role needs to get anywhere else.**
+    - **"My profile" removed for staff.** The screen drives the public form's
+      picker and lead matching, and an inactive roster row is in neither, so
+      nothing set there took effect. They get one on promotion.
   - A staff member is a `profiles` row with the new `staff` role pointing at an
     **inactive `trainers` row**. Onboarding progress, documents and Storage all
     key on `my_trainer_id()` rather than on the role, so they work for staff
