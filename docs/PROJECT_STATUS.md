@@ -341,14 +341,10 @@ the commit history.
 |---|---|---|
 | `claude/docs-reconcile-live-state` | Branch-map reconciliation | **Merged.** Docs only. |
 | `claude/security-hardening-csv-ip-cron` | Security hardening (CSV/IP/cron) | **Merged** (PR #18). CSV formula-injection guard, IP-salt production guard, cron fail-closed + constant-time auth. Also added `docs/handoff-security-hardening.md` for the remaining items. |
-| `claude/forgot-password-change-email-gl4lca` | Self-service forgot-password + change-email | **1 unmerged, and it is the actual build**, roughly 990 added lines: `/admin/reset-password`, `src/lib/recovery-session.ts`, `src/lib/site-url.ts`, proxy changes. Not the handoff-note-only branch below. |
-| `claude/pt-onboarding-workbook-updates-xmrtqs` | PT onboarding workbook content | **Merged** (PR #27, then PR #30, 10 Sep 2026). All 33 changes from the 7 Sept spec and its five addenda; figure support so the workbook's three diagrams render; the invented Part 9 "commercial terms at a glance" section removed; `CLAUDE.md` created carrying the figure rule; migration `0015`; detail restored to Parts 2, 3, 4, 7 and 9; and the coaching notes withheld from trainers as well as staff. |
 | `claude/gymmaster-phase-1-pull-7yuxuy` | GymMaster integration | **3 unmerged.** Phase 1 pull scaffolding plus migrations `0007` and `0008`, which keep those numbers. |
 | `claude/pt-team-onboarding-rw5awg` | PT team update email | **Merged.** The team update email and the login details email, from `docs/handoff-pt-team-update-email.md`. Both were sent on 12 August 2026; the files are kept as the record of what went out and as the template for the next trainer who joins. |
 | `claude/handoff-email-notifications-9m67a6` | Branded HTML notification emails | **Merged** (PR #4). Replaced the plain-text ops emails with branded HTML plus a dashboard link. |
-| `claude/staff-development-pathway-scope-ac664k` | Staff development pathway | **Merged, 0 unmerged.** Still on the remote because the follow-ups went in as direct merges rather than PRs, so auto-delete never fired. Safe to delete. |
 | `claude/self-service-password-change-3ydtqu` | Forgot-password (superseded) | **1 unmerged**, a handoff note only. Superseded by the branch below; the combined brief is `docs/handoff-auth-self-service.md`. |
-| `claude/forgot-password-change-email-gl4lca` | Self-service auth (forgot-password + change-email) | **Unmerged, ready to merge.** Both flows built. Auth email confirmed sending and landing in a real inbox, and all three dashboard prerequisites verified (SMTP, redirect allowlist, Site URL). Carries a merge of production, resolving the login-form clash with the new `PasswordInput`. See `docs/handoff-auth-self-service.md`. |
 | `claude/gym-nurture-email-design-uw9nvu` | Member email series | **Merged** (PR #13 and #14, plus the August logo and template work). Emails 1 to 3, CMS-safe variants, brand assets, this doc. |
 | `claude/pt-document-expiry-feature-ppsy30` | PT compliance documents with expiry reminders | **Merged** (PR #8). |
 | `claude/availability-am-pm-model-yj1dby` | Trainer AM/PM availability | Merged. |
@@ -489,12 +485,10 @@ whole migration chain against a local Postgres 16.
   Sending from GymMaster on days 1, 10 and 30 off each member's join date, with
   the unsubscribe handled by GymMaster. `docs/handoff-email-1-go-live.md` is now
   a record rather than a task, apart from its last item: telling the PTs.
-- **Self-service auth (forgot-password + change-email)** — **BUILT, READY TO
-  MERGE** on `claude/forgot-password-change-email-gl4lca`, about 990 added lines.
-  Read that branch before starting anything here: the thing already exists. The
-  row further up for `claude/self-service-password-change-3ydtqu` is a different
-  branch carrying only a handoff note, and confusing the two would mean
-  rebuilding work that is already done.
+- ~~**Self-service auth (forgot-password + change-email)**~~ — **DONE.** Merged
+  via PR #31 on 9 Sep 2026 and live. (The row for
+  `claude/self-service-password-change-3ydtqu` further up is a different branch
+  carrying only a handoff note; it is not this work and never was.)
   Full status: `docs/handoff-auth-self-service.md`.
   **Supabase Auth email now works, verified end to end.** As of 8 Sep 2026 a real
   recovery email has been sent, delivered, and landed in the inbox from
