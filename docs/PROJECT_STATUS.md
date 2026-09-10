@@ -33,6 +33,11 @@ Set and working: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 (a new-style `sb_publishable_…` key), `SUPABASE_SERVICE_ROLE_KEY` (a new-style
 `sb_secret_…` key), `IP_HASH_SALT`, `PT_MANAGER_EMAIL`.
 
+**Not set yet: `NEXT_PUBLIC_SITE_URL`.** The self-service auth branch needs it
+set to `https://pt.fitazgym.com` so recovery and email-change links point at the
+custom domain rather than whichever host served the request. Nothing on
+production reads it today, so setting it early is harmless.
+
 `RESEND_API_KEY`, `NOTIFICATIONS_FROM_EMAIL`, and `CRON_SECRET` are all set —
 email is fully live. Both the trainer allocation email and the manager daily
 digest (Vercel cron) are confirmed sending from the branded
@@ -342,7 +347,8 @@ the commit history.
 | `claude/pt-team-onboarding-rw5awg` | PT team update email | **Merged.** The team update email and the login details email, from `docs/handoff-pt-team-update-email.md`. Both were sent on 12 August 2026; the files are kept as the record of what went out and as the template for the next trainer who joins. |
 | `claude/handoff-email-notifications-9m67a6` | Branded HTML notification emails | **Merged** (PR #4). Replaced the plain-text ops emails with branded HTML plus a dashboard link. |
 | `claude/staff-development-pathway-scope-ac664k` | Staff development pathway | **Merged, 0 unmerged.** Still on the remote because the follow-ups went in as direct merges rather than PRs, so auto-delete never fired. Safe to delete. |
-| `claude/self-service-password-change-3ydtqu` | Forgot-password | **1 unmerged**, a handoff note only. No implementation; still needs Supabase Custom SMTP. |
+| `claude/self-service-password-change-3ydtqu` | Forgot-password (superseded) | **1 unmerged**, a handoff note only. Superseded by the branch below; the combined brief is `docs/handoff-auth-self-service.md`. |
+| `claude/forgot-password-change-email-gl4lca` | Self-service auth (forgot-password + change-email) | **Unmerged, ready to merge.** Both flows built. Auth email confirmed sending and landing in a real inbox, and all three dashboard prerequisites verified (SMTP, redirect allowlist, Site URL). Carries a merge of production, resolving the login-form clash with the new `PasswordInput`. See `docs/handoff-auth-self-service.md`. |
 | `claude/gym-nurture-email-design-uw9nvu` | Member email series | **Merged** (PR #13 and #14, plus the August logo and template work). Emails 1 to 3, CMS-safe variants, brand assets, this doc. |
 | `claude/pt-document-expiry-feature-ppsy30` | PT compliance documents with expiry reminders | **Merged** (PR #8). |
 | `claude/availability-am-pm-model-yj1dby` | Trainer AM/PM availability | Merged. |
@@ -483,25 +489,39 @@ whole migration chain against a local Postgres 16.
   Sending from GymMaster on days 1, 10 and 30 off each member's join date, with
   the unsubscribe handled by GymMaster. `docs/handoff-email-1-go-live.md` is now
   a record rather than a task, apart from its last item: telling the PTs.
-- **Self-service auth (forgot-password + change-email)** — **BUILT AND
-  UNMERGED** on `claude/forgot-password-change-email-gl4lca`, about 990 added
-  lines. Read that branch before starting anything here: the thing already
-  exists. The row further up for `claude/self-service-password-change-3ydtqu`
-  is a different branch carrying only a handoff note, and confusing the two
-  would mean rebuilding work that is already done.
-  Brief is `docs/handoff-auth-self-service.md`. **Unblocked:** Supabase
-  Custom SMTP (pointed at Resend) was set up ~2 Sep 2026, which was the last
-  dependency. One caveat carried into the handoff: that a Supabase *auth* email
-  actually delivers has not been confirmed end to end yet, so the build session
-  must send a real test first and not merge a dead link.
-  - **Forgot-password** — a self-serve "Forgot password?" reset link on
-    `/admin/login` for locked-out staff/trainers. (Older standalone note
-    `docs/handoff-forgot-password.md` is now superseded by the combined doc.)
-  - **Change-email** — a "change my email" field on `/admin/account`
-    (`supabase.auth.updateUser({ email })`) so users update their own sign-in
-    email. (Managers can already change *anyone's* sign-in email immediately from
-    the Staff screen via the admin client, no confirmation email needed — this
-    item is specifically the self-service version.)
+- **Self-service auth (forgot-password + change-email)** — **BUILT, READY TO
+  MERGE** on `claude/forgot-password-change-email-gl4lca`, about 990 added lines.
+  Read that branch before starting anything here: the thing already exists. The
+  row further up for `claude/self-service-password-change-3ydtqu` is a different
+  branch carrying only a handoff note, and confusing the two would mean
+  rebuilding work that is already done.
+  Full status: `docs/handoff-auth-self-service.md`.
+  **Supabase Auth email now works, verified end to end.** As of 8 Sep 2026 a real
+  recovery email has been sent, delivered, and landed in the inbox from
+  `noreply@mail.fitazgym.com`; `recovery_sent_at` is non-null for the first time
+  in this project's life. The ~2 Sep "Custom SMTP is set up" report was wrong and
+  cost four days of `535 Authentication credentials invalid`: the password in
+  Supabase was not a valid Resend key. **A Resend key's value cannot be read back
+  after creation**, so a suspect key is never worth re-typing — mint a fresh one.
+  All three dashboard prerequisites are now confirmed: SMTP sends, the redirect
+  allowlist entry works, and Site URL is `https://pt.fitazgym.com` (it had been
+  left on the Supabase default `http://localhost:3000`, which is the fallback for
+  every auth email, so it mattered well beyond this feature).
+  **Hard-won, worth not relearning:** Supabase matches `redirectTo` against the
+  Redirect URLs allowlist **as a whole string, query string included**, and a
+  miss is *silent* — it drops the redirect, falls back to Site URL, and sends the
+  email anyway with a link to the wrong place. Two otherwise-identical test
+  emails proved it: with `?next=...` appended the link came back pointing at
+  `localhost:3000`; bare, it came back correct. The code now sends bare URLs and
+  carries its state in a cookie instead.
+  - **Forgot-password** — "Forgot password?" on `/admin/login` →
+    `/admin/forgot-password` → emailed link → `/admin/auth/callback` →
+    `/admin/reset-password`. (`docs/handoff-forgot-password.md` remains superseded.)
+  - **Change-email** — a "change my email" form on `/admin/account`, gated on the
+    current password, sending a confirmation link to the new address. (Managers
+    can still change anyone's sign-in email immediately from the Staff screen via
+    the admin client, no confirmation email needed. That path is unaffected and
+    stays as the fallback.)
 - **Availability as AM + PM (not "both")** — change trainer availability to
   independent AM/PM selection. See `docs/handoff-availability-am-pm.md`.
 - ~~**Custom web address**~~ — **DONE.** `pt.fitazgym.com` is live over HTTPS. DNS
