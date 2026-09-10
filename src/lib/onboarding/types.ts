@@ -22,11 +22,20 @@ export interface OnboardingActivity {
 export interface OnboardingSection {
   heading: string;
   /**
-   * Paragraphs of body copy. A line starting with "- " renders as a bullet.
-   * A line of the form `![alt](/path/to.png "optional caption")` renders as a
-   * figure, so a diagram can sit at its exact spot in the flow the way it does
-   * in the printed workbook. Figures live in `body` rather than in a
-   * manager-only field on purpose: the workbook's diagrams are trainer-facing.
+   * Paragraphs of body copy, in order. Each entry is one block:
+   *
+   * - `"- item"` renders as a bullet; consecutive ones become one list.
+   * - `"> line"` renders as a script, the words a PT can borrow verbatim
+   *   (a phone opener, a text, the pricing line). Consecutive ones become
+   *   one quote, so a two-part opener stays a single block.
+   * - `"| A | B |\n| --- | --- |\n| 1 | 2 |"` renders as a table. Wide ones
+   *   scroll inside their own container; the first column is a row label.
+   * - `` `![alt](/path/to.png "optional caption")` `` renders as a figure, so
+   *   a diagram sits at its exact spot in the flow the way it does in print.
+   * - Anything else is a paragraph. `**bold**` works inside all of them.
+   *
+   * Figures and scripts live in `body` rather than in a manager-only field on
+   * purpose: the workbook's diagrams and its scripts are trainer-facing.
    */
   body: string[];
   /** Zero or more fill-in activities tied to this section. */

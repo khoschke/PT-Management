@@ -16,7 +16,7 @@ export const part3: OnboardingPart = {
         "- Open a separate business bank account",
         "- Set up an accounting system (Xero, MYOB, Hnry, or a clean spreadsheet)",
         "- Sort your tax and super",
-        "- Purchase your insurance (Public Liability $10M minimum, Professional Indemnity $5M minimum)",
+        "- Purchase your insurance (Public Liability and Professional Indemnity; $10M and $5M are common levels of cover)",
         "- Keep First Aid and CPR certifications current (also a Fitaz Gym contract requirement)",
         "- Set up your client payment system",
         "- Decide whether to register with AUSactive or similar (not mandatory, useful for events/discounts/industry recognition)",
@@ -27,9 +27,9 @@ export const part3: OnboardingPart = {
     {
       heading: "Australian tax and super for sole traders",
       body: [
-        "You're running a business, not collecting a wage — tax and super are now your job. Rates and thresholds change, so always cross-check with the ATO or your accountant.",
+        "You're running a business, not collecting a wage — tax and super are now your job. Here are the basics. The figures below are current as at September 2026. Rates and thresholds change, often each financial year, so check the current numbers with the ATO or your accountant before you rely on them. This workbook is general information, not financial, tax or legal advice.",
         "**Income tax.** Taxed at your individual rate via your annual return. No PAYG withholding, no payslip. Rule of thumb: park around 25-30% of every payment into a separate tax account. Track every business expense (rent, insurance, education, equipment, phone, internet, travel). The ATO can ask you to start PAYG instalments once you've lodged a return showing decent income.",
-        "**GST and BAS.** Register for GST once turnover hits $75,000 in a 12-month period (or you expect to). Below that, stay unregistered and keep pricing GST-free. Once registered, charge 10% GST and lodge a Business Activity Statement, usually quarterly. Keep an eye on your rolling 12-month turnover — the clock doesn't reset at the financial year.",
+        "**GST and BAS.** Register for GST once turnover hits $75,000 in a 12-month period (or you expect to). Below that, stay unregistered and keep pricing GST-free. Once registered, charge 10% GST and lodge a Business Activity Statement, usually quarterly. If you're voluntarily registered and under $75k, you can elect to lodge annually. If you're under the threshold and not registered, leave it alone — registering early just creates admin you don't need yet. Keep an eye on your rolling 12-month turnover — the clock doesn't reset at the financial year.",
         "**Superannuation.** Not legally required to pay yourself super as a sole trader, but you should. Personal contributions are tax-deductible up to the concessional cap (currently $32,500 from 1 July 2026, indexed to AWOTE). Treat it like rent for your future self.",
       ],
       managerNote:
@@ -39,8 +39,9 @@ export const part3: OnboardingPart = {
       heading: "Insurance",
       body: [
         "Liability insurance is non-negotiable. You can't train clients at Fitaz Gym without it.",
-        "**Public Liability** — covers you if a client or anyone else is injured or has property damaged because of something you did. Minimum cover $10M.",
-        "**Professional Indemnity** — covers you if a client claims your advice or service caused them loss or harm. Minimum cover $5M.",
+        "**Public Liability** — covers you if a client or anyone else is injured or has property damaged because of something you did. $10M is a common level of cover.",
+        "**Professional Indemnity** — covers you if a client claims your advice or service caused them loss or harm. $5M is a common level of cover.",
+        "Many policies bundle both, plus extras like personal accident cover, equipment, and income protection. Read what's actually included before you sign. Those cover levels are a guide, not a Fitaz Gym requirement. Holding liability insurance is a condition of training here. What level you take out is your decision, and your insurer or broker is the one to advise you on what suits your business.",
         "Get quotes from a few providers (Guild Insurance, AON Sport, Marsh, Sport & Fitness Insurance Brokers). AUSactive membership often includes or discounts insurance.",
       ],
       managerNote:
@@ -68,7 +69,7 @@ export const part3: OnboardingPart = {
         "- **PayPal** — flexible backup, fees can stack.",
         "- **Newie** — Australian app built for service businesses. Subscriptions, one-off payments, tap to pay on your phone, and client comms in one place. Suits the weekly subscription model.",
         "- **Direct bank transfer** — zero fees, but you chase manually.",
-        "These are what other trainers use, not a list you have to pick from. Your payment system is your call.",
+        "These are what other trainers use, not a list you have to pick from. Your payment system is your call. Fees quoted are indicative as at September 2026, so check current rates with the provider.",
         "Recurring clients are usually best on direct debit — it removes the awkward 'have you paid this week?' conversation. Build processing fees into your pricing.",
       ],
     },
@@ -79,7 +80,7 @@ export const part3: OnboardingPart = {
         "1. Define the lifestyle you actually want.",
         "2. Set your personal income target from that.",
         "3. Add your business expenses (weekly rent, insurance, software, education, phone, marketing).",
-        "4. Set aside tax (25-30%) and super (5-10%).",
+        "4. Set aside tax and super: treat tax as 25-30% off the top, and super as another 5-10% you owe to your future self. Add both to your target. Both are rules of thumb rather than ATO figures, so check the current rates in Australian tax and super above, and with your accountant.",
         "5. Divide by your rate: this is where your own rate goes in. If your income has two parts, as in the example below (a session rate plus a flat weekly fee for the program and coaching app), sessions do the heavy lifting. Divide your weekly target by your session rate for the session count, then treat the weekly fees as recurring income on top.",
         "6. Add a 10-15% cancellation buffer.",
       ],
@@ -103,7 +104,20 @@ export const part3: OnboardingPart = {
         "Everything below is an example, not a rate card. What you charge and how you package it is your call.",
         "One example of what some trainers here use is a split rate: $80 per 45-minute session for the training, plus a flat $20 a week per client for their program and coaching app (their personalised program, weekly check-ins, and progress tracking). The split matters. It means you're still paid for the programming and check-ins you do in any week a session doesn't happen, whether you or the client is away, sick, or slammed. Coaching here runs as an ongoing subscription rather than fixed blocks clients renew, so the income is recurring and predictable. Where you sit on rate is your call, and it depends on your experience, your specialty, and the value clients get from working with you. Part 7 covers how to explain a split like this to a client with confidence.",
         "**Signs you're underpriced:** almost every prospect says yes without hesitating, retention and referrals are constant, you're delivering above and beyond and resentment is creeping in, or you can't afford the lifestyle you mapped out.",
-        "**When to raise your rates:** books full with a waitlist, retention and results justify it, you've added a meaningful skill since your last increase, or it's been 12 months since your last raise. You don't renegotiate client by client — set the new rate, notify existing clients by email with plenty of notice, new clients start at the new price.",
+        "**Three scenarios to read your pricing.**",
+        "- **Nobody signs up after hearing your price.** Either the price doesn't fit the market you're talking to, or you haven't communicated the value clearly enough before quoting. Both are fixable.",
+        "- **Clients sign up but don't stick around.** Usually a delivery gap, not a price problem. What you promised and what they're getting don't line up.",
+        "- **Clients stay long-term and refer others.** You're doing the work. Small annual rate increases ($5-10 per session) won't lose loyal clients who are getting results.",
+        "**When to raise your rates:** books full with a waitlist, retention and results justify it, you've added a meaningful skill since your last increase, or it's been 12 months since your last raise. You don't renegotiate client by client — set the new rate, notify existing clients by email with plenty of notice, new clients start at the new price. Frame it around the value they're getting, not your cost of living. Your terms and conditions set the notice you owe them.",
+        "**Announcing a price increase.** One clear, warm email with at least four weeks notice. It's an announcement, not a negotiation. Personalise the name if your email tool allows it, but you're sending the same message to everyone.",
+        "> **Subject: A quick update on session pricing**",
+        "> Hey [Client name],",
+        "> A quick heads-up on a small change coming up. From [date, at least four weeks out], my session rate will move from $[old] to $[new] per 45-minute session, and the weekly program and app fee will move from $[old] to $[new].",
+        "> I've held my rates steady for [time period] and over that time I've added [what's changed: a new qualification, refined programming systems, better tracking, more experience] so I can keep delivering the kind of coaching that gets you the results you're after.",
+        "> Nothing changes between now and [date], and your training continues exactly as it is. After that, the new rate applies automatically.",
+        "> Thanks for the trust you put in me each week. It genuinely means a lot, and I'm looking forward to the next stretch of work together.",
+        "> Any questions, just message me.",
+        "> [Your name]",
       ],
       activities: [
         {
@@ -122,13 +136,25 @@ export const part3: OnboardingPart = {
       heading: "Your terms and conditions",
       body: [
         "Your T&Cs protect both sides: they set expectations, prevent awkward conversations later, and give you something to point to when a boundary gets tested.",
-        "**Cancellation and no-show policy** — industry standard is 24 hours notice; inside that window, the session is charged. No-shows are always charged in full.",
+        "**Cancellation and no-show policy** — most trainers run 24 hours notice; inside that window, the session is charged. No-shows are always charged in full.",
         "**Payment terms** — ongoing clients pay weekly in advance (training plus the program-and-app fee); casual clients pay per session. Clarify what happens if a payment fails (coaching pauses until resolved).",
         "**Refund policy** — what happens to prepaid time when a client gives notice; your humane exception clause for injury/illness.",
         "**Trial session terms** — free, discounted or full price; how many per prospect; what happens at the end.",
         "**Client code of conduct** — punctuality, communication, attire, respect, honesty about injuries/medications, behaviour that ends the relationship.",
         "**Privacy and data handling** — the Australian Privacy Principles cover most of it: collect only what you need, store it securely, get consent before sharing anything, let clients access or delete their data.",
-        "Aim for a one-page Coaching Agreement in plain language, signed at signup, covering: sessions, payment, cancellations and reschedules, cancelling coaching (28 days notice is a sensible default), trial sessions, client conduct, health and safety, privacy, communication hours, and price changes.",
+        "**A recommended one-page Coaching Agreement, not mandatory.** Use it as a starting point. Adjust the wording to suit your business, but keep the structure. One page, plain language, signed at signup.",
+        "> **Coaching Agreement and Terms**",
+        "> **1. Sessions.** Sessions run for 45 minutes unless otherwise agreed. Sessions are booked in advance and confirmed by message.",
+        "> **2. Payment.** Ongoing coaching runs as a weekly subscription (training plus a program and app fee), paid in advance via [your payment system], and continues until cancelled with notice. Casual sessions are paid per session. Coaching pauses if a payment fails until the account is settled.",
+        "> **3. Cancellations and reschedules.** More than 24 hours notice: reschedule at no charge. Less than 24 hours notice: full session fee applies. No-shows are charged in full.",
+        "> **4. Cancelling coaching.** Either of us can end the arrangement with 28 days notice. Your sessions and weekly fee continue through the notice period. Any prepaid casual sessions are transferable or held as credit for up to 6 months. Medical exceptions (injury or illness with documentation) are handled case-by-case.",
+        "> **5. Trial sessions.** Trial sessions are offered at [free / discounted / full price]. One trial per prospect. The next step after a trial is starting ongoing coaching.",
+        "> **6. Client conduct.** Arrive on time. Be honest about injuries, medications, and health changes. Treat the gym, the equipment, and other members with respect. I reserve the right to end the relationship if behaviour puts safety or the gym environment at risk.",
+        "> **7. Health and safety.** You confirm you've completed the PT Waiver Form honestly and will tell me about any change in your health, medication, or injury status as soon as it happens.",
+        "> **8. Privacy.** I collect personal and health information to deliver your coaching. I store it securely, I don't share it without your consent, and I'll delete it on request. Testimonials, photos, and progress shares require your written consent each time.",
+        "> **9. Communication.** Standard contact hours are [your hours]. I'll respond within [your turnaround]. Urgent issues outside those hours, please flag in your message.",
+        "> **10. Price changes.** From time to time my rates may rise. I'll let you know by email with at least four weeks notice. Continuing past the change date confirms the new rate.",
+        "> Signed: ______________________   Date: ____________",
       ],
       activities: [
         {
@@ -144,7 +170,7 @@ export const part3: OnboardingPart = {
         },
       ],
       managerNote:
-        "Most new PTs don't have written T&Cs, and they get caught out the first time a client no-shows and refuses to pay. The structure above is a clean starting point, not a Fitaz Gym mandate — walk through the full template in the workbook with them and have them adapt it to their business in the first 1:1.",
+        "Most new PTs don't have written T&Cs, and they get caught out the first time a client no-shows and refuses to pay. The template above is a clean starting point, not a Fitaz Gym mandate — walk through it together and have them adapt it to their business in the first 1:1.",
     },
     {
       heading: "Scope of practice",
@@ -162,7 +188,14 @@ export const part3: OnboardingPart = {
       body: [
         "Knowing when to refer out is part of the job. Having someone to refer to is the rest of it — build the relationships before you need them.",
         "**When to refer:** persistent or unexplained pain, a suspected injury not yet assessed, disordered eating signals, mental health concerns, pregnancy/post-partum/chronic conditions needing GP clearance first.",
-        "Fitaz Gym doesn't keep a fixed referral list — build your own as the work shows you who you need. Start with physio and GP, introduce yourself in person or by email, refer first and ask for nothing.",
+        "**Building your own referral network.** Fitaz Gym doesn't keep a fixed referral list. What your clients present with is too varied: a shift worker dealing with sleep and back niggles needs a different network to a postnatal client returning to training. Build your own list as the work shows you who you need.",
+        "- Start with the categories you already see in your client base (physio is usually first, GP a close second).",
+        "- Add new contacts as new client needs come up. Don't try to build the whole list upfront.",
+        "- Introduce yourself in person or by email. Bring a brief on what you do and who you train.",
+        "- Refer first, ask for nothing. Trust is built over time, not in one meeting.",
+        "- When a referral lands with you, communicate cleanly back to the referring professional with the client's consent.",
+        "**How to make the referral.** Frame it as care, not rejection.",
+        "> “I want to make sure we're working with the right info before we keep going. Let's get this looked at by [professional]. Once they've cleared you, we'll pick up where we left off.”",
       ],
       activities: [
         {
@@ -180,7 +213,10 @@ export const part3: OnboardingPart = {
       body: [
         "A few things you specifically need sorted before you start training clients at Fitaz Gym. The actual numbers live in your PT contract. This section is the prompt to make sure you've actioned them.",
         "**Your weekly gym fee** — your weekly gym fee is in your contract. Plug the actual figure in below so it lives next to your numbers.",
-        "**Certifications** — CPR renews every 12 months, First Aid every 3 years, both required by your contract. Insurance certificate uploaded to your folder in the shared drive.",
+        "**Certifications:**",
+        "- CPR: renew every 12 months. Required by your Fitaz Gym contract.",
+        "- First Aid: renew every 3 years. Required by your Fitaz Gym contract.",
+        "- Insurance: current Public Liability and Professional Indemnity. Certificate uploaded to your folder in the Fitaz Gym shared drive.",
         "**Pre-start checklist:** signed PT contract on file, ABN confirmed, insurance certificate uploaded, CPR and First Aid current and uploaded, bank details provided for internal lead payments, walk-through of the gym/PT spaces/equipment booking system.",
       ],
       activities: [

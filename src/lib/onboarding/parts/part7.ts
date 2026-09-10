@@ -35,9 +35,15 @@ export const part7: OnboardingPart = {
       heading: "Phone approach: first contact",
       body: [
         "A phone call still converts better than a text for a cold lead — it's harder to ignore a voice. Keep it short, sound like a person, one goal: book the complimentary session.",
-        "**Warm call:** “Hey [Name], it's [Your Name] from Fitaz Gym. We had a chat on the floor last week about your training. Is now alright? ... I said I'd sort out a session for us. Are you better earlier or later in the week?”",
-        "**Cold call:** “Hi, is this [Name]? Hey [Name], it's [Your Name], one of the personal trainers at Fitaz Gym. You signed up recently and your details came through to me... What I'd love to do is get you in for a complimentary session, just so you can see the place, meet me, and talk through what you're chasing. No pressure, no commitment.”",
-        "Once they say yes, lock the detail: day, time, what to bring, where to meet, and the cancellation policy. When they say no, leave the door open gracefully and note them for the 2-2-2 follow-up.",
+        "Lose the “Good morning, may I speak with [Full Name]” telemarketer voice. Nobody under fifty talks like that, and it screams sales call. Talk the way you'd talk if you were inviting them to a session, because that's exactly what you're doing.",
+        "**Warm call**",
+        "> “Hey [Name], it's [Your Name] from Fitaz Gym. We had a chat on the floor last week about your training. Is now alright? ... Good. I said I'd sort out a session for us, so that's why I'm calling. Are you better earlier or later in the week? ... Tuesday or Thursday? ... Sweet, Thursday 6:30am. Wear something you can sweat in, bring a water bottle, and I'll meet you at reception. Quick heads up, I've got a 24-hour cancellation policy, so just message me if anything changes. Looking forward to it.”",
+        "**Cold call**",
+        "> “Hi, is this [Name]? ... Hey [Name], it's [Your Name], one of the personal trainers at Fitaz Gym. You signed up recently and your details came through to me, so I thought I'd reach out personally. Is now an okay time for a quick one? ... Have you trained with a coach before, or is this more of a fresh start? ... [listen] ... What I'd love to do is get you in for a complimentary session, just so you can see the place, meet me, and we can talk through what you're chasing. No pressure, no commitment. Are you better earlier or later in the week?”",
+        "Once they say yes, lock the detail. Day, time, what to bring, where to meet, and the cancellation policy. Vague bookings become no-shows.",
+        "**When they say no thanks.** Plenty will, and that's fine. Don't take it personally and don't argue the point. A graceful no leaves the door open for later, a pushy comeback slams it shut.",
+        "> “No worries at all, [Name]. If things change down the track, or you just want to come check the place out, I'm here. All the best with it.”",
+        "Then note them for a follow-up (the 2-2-2 rule, coming up next). A clean no today is often a yes in a couple of months, but only if you left them feeling respected.",
       ],
       activities: [
         { key: "cold-call-opener", prompt: "Write your cold-call opener in your own words. Say it out loud until it stops sounding like a script.", multiline: true },
@@ -50,7 +56,14 @@ export const part7: OnboardingPart = {
     {
       heading: "Text approach: first contact",
       body: [
-        "Some people won't answer an unknown number but will reply to a text. Keep it short, name the gym, end with an easy either/or ('earlier or later in the week') rather than a plain yes/no.",
+        "Some people won't answer an unknown number but will reply to a text within the hour. Text is your backup and, for a lot of leads, their preferred channel. Keep it short, name the gym, and make replying easy.",
+        "**Warm text**",
+        "> “Hey [Name], it's [Your Name] from Fitaz Gym. Great chatting on the floor the other day. Keen to lock in that session we talked about. Are you better earlier or later in the week?”",
+        "**Cold text**",
+        "> “Hi [Name], it's [Your Name], a personal trainer at Fitaz Gym. You signed up recently so your details came through to me. I'd love to get you in for a complimentary session to show you around and talk through your goals, no strings. Are you better earlier or later in the week?”",
+        "**Referral text**",
+        "> “Hey [Name], it's [Your Name] from Fitaz Gym. [Friend] trains with me and mentioned you might be keen. Happy to get you in for a complimentary session and see if we're a good fit. What's your week looking like?”",
+        "Notice every one ends with an easy either/or, not “let me know if you're interested.” “Earlier or later in the week” is a softer ask than “yes or no,” and it gets a reply.",
       ],
       activities: [
         { key: "cold-text-draft", prompt: "Draft your cold-lead first text. Cut it until it's four sentences or fewer.", multiline: true },
@@ -61,9 +74,17 @@ export const part7: OnboardingPart = {
     {
       heading: "The gym-provided lead process",
       body: [
-        "Most of your early leads come from the gym, not your own marketing. Each week the PT Manager runs a report on new members and drops details into the lead spreadsheet, then assigns each lead to a trainer.",
-        "You contact your assigned leads within **48 hours**, and keep the Status column current (Contacted, Interested, Not Interested, Comp. Booked, Converted) — it's how the Manager sees what's working and where leads get stuck.",
-        "Leads are allocated on workload, not seniority. If a new member asks for a specific trainer, that comes first; after that it's about matching the right PT to the member, then the Manager's call.",
+        "Most of your early leads won't come from your own marketing. They'll come from the gym. Here's how that works at Fitaz Gym right now.",
+        "- Each week the PT Manager runs a report on new members who've joined since the last one and drops the details into the lead spreadsheet (the “PT Lead Form”).",
+        "- The PT Manager assigns each lead to a trainer and emails the team once the new leads are up.",
+        "- You contact your assigned leads within **48 hours**. Call, text, or email, whatever suits your system. The goal is to book a complimentary consult.",
+        "- You update the Status column as things move: Contacted, Interested, Not Interested, Comp. Booked, Converted.",
+        "- Keep the status current. It's how the Manager sees what's working and where leads are getting stuck.",
+        "- Hit a problem, or a lead you can't take? Email the PT Manager to pass it to the next trainer.",
+        "Leads are allocated on workload, not seniority. Newer trainers get a fair run, either by volume or by the warmer leads, unless another trainer is clearly the better fit. If a new member asks for a specific trainer, that comes first. After that it's about matching the right PT to the member, then the Manager's call.",
+        "The sheet tracks Date Added, Name, Email, Mobile, Lead Source, Comments, PT Allocated, and Status. Lead sources you'll see include New Member, Fitness Passport, and various promotions run throughout the year. Here's a sample of the allocation tab:",
+        "| Date Added | Name | Lead Source | PT Allocated | Status |\n| --- | --- | --- | --- | --- |\n| 1-7-26 | Jack Russell | Fitness Passport | Karl | Contacted |\n| 1-7-26 | James Smith | New Member | Shahd | Interested |\n| 1-7-26 | Eileen Jones | FFW | GSP | Not Interested |\n| 1-7-26 | Katie King | 12WC | Julie | Comp. Booked |\n| 1-7-26 | Dane Margret | $21 for 21 Days | Dylan | Converted |\n| 1-7-26 | Bella Vista | New Member | Michael | |",
+        "Keep your own simple list of who you've contacted and where each one's at, so nobody slips through the cracks while you're juggling a full board of clients.",
       ],
       activities: [
         { key: "own-lead-tracking-system", prompt: "Where will you keep your own simple list of who you've contacted and where each one's at?", multiline: true },
@@ -82,8 +103,19 @@ export const part7: OnboardingPart = {
     {
       heading: "The 2-2-2 rule for leads who don't convert",
       body: [
-        "Most leads don't sign up the first time — that's normal. The 2-2-2 rule keeps you on their radar without becoming the trainer who can't take a hint.",
-        "**2 days** after first contact: a light nudge. **2 weeks** later: check back with something useful (a tip, an invite), not just 'you still there?'. **2 months** later: one more genuine reconnect — a 'not now' from January is often a 'yes' by March.",
+        "Most leads don't sign up the first time, and that's normal. Some go quiet on you, some say “not right now.” Neither is a dead end, it's usually just timing. The 2-2-2 rule keeps you on their radar without becoming the trainer who can't take a hint. It works the same whether they ghosted you or gave you a polite no, the touches just flex a little to match.",
+        "- **2 days after first contact:** a light nudge. If they went quiet: “Hey [Name], no rush at all, just checking you got my message. Happy to hold a spot this week if you're keen.” If they said not right now: a quick “No worries, I'll check back down the track,” so the no feels respected, not pestered.",
+        "- **2 weeks later:** check back in with something useful, not just “you still there?” A tip you genuinely think helps, an invite to a community session, or a quick “saw this and thought of you.”",
+        "- **2 months later:** one more genuine reconnect. Life changes. The “not now” from January is often a “yes” by March.",
+        "Here's what those second and third touches might actually sound like.",
+        "**2-week tip**",
+        "> “Hey [Name], saw this and thought of you, a quick read on training around night shifts. No agenda, just reckoned it might help. Hope you're travelling well.”",
+        "**2-week invite**",
+        "> “Hey [Name], we've got a free community session Saturday morning, relaxed vibe and a good crew. Want me to save you a spot?”",
+        "**2-month reconnect**",
+        "> “Hey [Name], it's [Your Name] from Fitaz Gym, been a while. No pressure at all, just wondering how you've been going with your training. If you ever want that complimentary session, the offer still stands.”",
+        "This maps to step 6 of the client journey, Follow-Up. It's the step most PTs skip, and it's where a big chunk of your conversions actually live. Note each one with the date of your next touch so none slip through.",
+        "Each touch should feel like a person who remembers them, not an automated sequence. If it ever feels like you're nagging, you've made it about you. Make it about them and it stays welcome.",
       ],
       activities: [
         { key: "222-tracking-location", prompt: "Where will you track your 2-2-2 follow-ups so none slip through?", multiline: true },
@@ -96,8 +128,13 @@ export const part7: OnboardingPart = {
     {
       heading: "Creating certainty: emotional and logical",
       body: [
-        "People commit when they feel certain about you, the plan, and their own ability to stick with it. **Emotional certainty** ('this is right for me') comes from listening and connecting their goals to what they want out of life. **Logical certainty** ('this will actually work') comes from explaining how the coaching runs and showing results.",
-        "Lead with emotional, back it with logical. Hit only the logic and they nod politely then 'think about it.' Hit only the feeling and they get excited then talk themselves out of it on the drive home.",
+        "People commit when they feel certain. Certain about you, about the plan, and about their own ability to stick with it. That certainty comes in two flavours, and a good sales chat builds both.",
+        "- **Emotional certainty** is the feeling: “this is right for me.” You build it by listening, showing you get them, and connecting their goals to what they actually want out of life.",
+        "- **Logical certainty** is the facts: “this will actually work.” You build it by explaining how the coaching runs, showing results, and laying out a clear plan.",
+        "Lead with emotional, back it with logical. People decide on feeling and justify with reason. Hit only the logic and they nod, then leave to “think about it.” Hit only the feeling and they get excited, then talk themselves out of it on the drive home. You need both.",
+        "| | **Emotional certainty** | **Logical certainty** |\n| --- | --- | --- |\n| The belief you're building | “This is right for me.” | “This will actually work.” |\n| How you build it | Listen to their story, show you get them, connect their goals to the life they want, name what's at stake. | Explain how the coaching runs, show results and credentials, lay out a clear plan, spell out what's included. |\n| What to ask or say | Why does this goal matter to you now? What's stopped you before? What changes if you pull this off? | Here's how the program works. Here's what clients like you have achieved. Here's the cost and exactly what you get. |",
+        "This isn't a script, it's a checklist for the conversation. By the time you talk price, both columns should be ticked.",
+        "When someone seems keen but won't commit, it's usually because one of these columns is missing. Work out which one and you know exactly what the next conversation needs to do.",
       ],
       activities: [
         { key: "certainty-example", prompt: "Think of a goal a client of yours might have. What's one emotional and one logical certainty you'd want to build for them?", multiline: true },
@@ -108,7 +145,22 @@ export const part7: OnboardingPart = {
     {
       heading: "The sales chat: 5-step framework",
       body: [
-        "The sales chat usually happens straight after the complimentary session. Five steps: **Engage** (a real chat about how the session felt), **Frame** (tell them what's next, get permission), **Summarise** (reflect back their goals, motivations and barriers — proves you listened), **Plan** (map the next 8-12 weeks, realistic and personal), **Recommend** (now you talk price and options, having earned it).",
+        "The sales chat usually happens straight after the complimentary session, which Part 5 covers. They've shown up, given you their time, and had a good experience. Now you help them take the next step. This is step 5 of the client journey, and it's the highest-leverage conversation you'll have with anyone.",
+        "You're not opening with price. You're opening with connection and clarity. Five steps: Engage, Frame, Summarise, Plan, Recommend. Here's Taylor running all five with Mel, the ICU nurse she cold-called earlier.",
+        "**1. Engage.** Start with a real chat. How did they find the session? What felt good? What challenged them? Be specific with your praise, it shows you were paying attention.",
+        "> **Taylor:** “Mel, how'd you find that?”",
+        "> **Mel:** “Better than I expected. I actually liked the technique stuff, I could feel the difference straight away.”",
+        "> **Taylor:** “Yeah, you picked it up fast, and you pushed through that last set when it got hard. That tells me you're serious about this.”",
+        "**2. Frame.** Tell them what's next and get permission to go there. Permission makes the rest of the conversation feel collaborative, not pushy.",
+        "> **Taylor:** “What I'd like to do now is run you through what I picked up about you today and show you the plan I reckon would work best. Sound good?”",
+        "**3. Summarise.** Reflect back what they've told you and what you saw. This proves you listened and that the plan is built for them, not pulled off a shelf. Cover their goals and motivations, what's held them back, and anything you noticed in the session.",
+        "> **Taylor:** “So when we sat down, you said the main thing is building strength and stamina so the physical side of nursing stops wrecking you. Twelve-hour shifts, lifting and repositioning patients, and a back that's been grumbling. You've struggled to stay consistent when the roster goes mad, and you want something that fits around your shifts, not the other way round. Did I miss anything?”",
+        "> **Mel:** “No, that's it exactly.”",
+        "> **Taylor:** “And in the session I noticed a bit of instability through your mid-back on the carries, which could be feeding that soreness. That's an easy early win. Everything else looked solid, your squat and hinge are already strong. Any questions on what we did?”",
+        "**4. Plan.** Map out how the next 8 to 12 weeks could look. Realistic, personal, tied to what they care about.",
+        "> **Taylor:** “Your goal is doable inside 12 weeks. I'd build it in three phases. First four weeks we lock in core control and carrying mechanics, the stuff that protects your back on shift. Weeks five to eight we load it up, squats, hinges, carries, so you feel stronger under fatigue. Last four weeks we make it shift-proof, longer carries and conditioning that mirrors a busy night. Does that line up with what you're after?”",
+        "**5. Recommend.** Now you talk price and options. You've earned it. Keep it simple and tie everything back to the value you've already shown.",
+        "> **Taylor:** “Here's how I'd support you across those 12 weeks. I split it into two parts. Your training is $80 a session, 45 minutes each. Then there's a flat $20 a week for your program and coaching app, which covers your personalised program, demo videos, weekly check-ins, and progress tracking. The reason I separate them is so you're supported every single week, even the odd one where we can't get a session in because you're on nights or I'm away. You're never left without a plan. Most clients with a goal like yours train twice a week, and given your roster I'd suggest we start there and adjust as we go. How does that sound?”",
       ],
       activities: [
         { key: "engage-frame-lines", prompt: "Write a one-line Engage opener and a one-line Frame line you'd actually say.", multiline: true },
@@ -120,7 +172,8 @@ export const part7: OnboardingPart = {
       heading: "Explaining pricing with confidence",
       body: [
         "Price is where new PTs flinch — don't. If you believe in the value, say the price plainly and let the silence sit. Here's how Taylor does it, using her own rate:",
-        "“I run it in two parts. Training is $80 for a 45-minute session. On top of that there's a flat $20 a week for your program and coaching app, which covers your personalised program, weekly check-ins, and progress tracking. That weekly fee means you're supported every week, even the ones we don't train.”",
+        "> **Taylor:** “I run it in two parts. Training is $80 for a 45-minute session. On top of that there's a flat $20 a week for your program and coaching app, which covers your personalised program, weekly check-ins, and progress tracking. That weekly fee means you're supported every week, even the ones we don't train, so you're never paying for nothing and never left without a plan.”",
+        "Splitting training from coaching does two things. It shows the client they're paying for more than just gym time, and it means you still get paid for the programming and check-ins you do in any week a session doesn't happen, whether that's you or them away, sick, or slammed at work. The coaching doesn't stop just because a session got missed.",
         "- **Be direct.** No apologising, no “it's a bit pricey but...”",
         "- **Lead with value, not cost.** They're investing in the outcome, not buying a slot.",
         "- **Say the number and pause.** Don't talk yourself into a discount nobody asked for.",

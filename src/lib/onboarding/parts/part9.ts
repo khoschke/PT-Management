@@ -44,8 +44,10 @@ export const part9: OnboardingPart = {
     {
       heading: "Scheduling and time management",
       body: [
-        "Lock recurring clients into consistent weekly slots first, fill gaps with newer clients, then protect time for programming, admin, your own training, and a life outside the gym.",
-        "A sample perfect week chunks sessions into early-morning and early-evening blocks, keeps the middle of the day for programming/admin/personal training, and keeps weekends light.",
+        "Recurring clients are the backbone of your week and your income, so lock them into consistent weekly slots first. Fill the gaps with one-off or newer clients. Then protect time for programming, admin, your own training, and a life outside the gym. Use one calendar and use it religiously.",
+        "Here's what a perfect week can look like. This is Taylor's, built around early-morning and early-evening blocks for her shift-working clients, with the middle of the day kept for everything else.",
+        "| Day | Time block | Activity |\n| --- | --- | --- |\n| Monday | 5:30am - 9:00am | Train clients (early block) |\n| | 9:00am - 10:30am | Personal workout |\n| | 10:30am - 12:30pm | Programming and client admin |\n| | 4:00pm - 7:00pm | Train clients (evening block) |\n| Tuesday | 5:30am - 9:00am | Train clients (early block) |\n| | 9:30am - 11:00am | Marketing and content |\n| | 11:00am - 12:30pm | Admin and session follow-ups |\n| | 4:00pm - 6:30pm | Train clients (evening block) |\n| Wednesday | 5:30am - 9:00am | Train clients (early block) |\n| | 9:00am - 10:30am | Personal workout |\n| | 10:30am - 12:30pm | Programming |\n| | Afternoon | Personal time |\n| Thursday | 5:30am - 9:00am | Train clients (early block) |\n| | 9:30am - 11:30am | Admin and lead follow-ups |\n| | 4:00pm - 7:00pm | Train clients (evening block) |\n| Friday | 5:30am - 9:00am | Train clients (early block) |\n| | 9:00am - 10:30am | Personal workout |\n| | 10:30am - 12:00pm | Programming and admin |\n| Saturday | 7:00am - 9:00am | Train clients (light morning) |\n| | 9:00am - 10:00am | Weekly review and planning |\n| Sunday | Rest | Recharge |",
+        "A few things to notice: sessions are chunked into blocks so the day has shape and you're not driving back and forth. The middle of the day is for programming, admin and your own training. Weekends are kept light so you don't burn out.",
       ],
       activities: [
         {

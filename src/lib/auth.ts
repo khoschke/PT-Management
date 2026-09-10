@@ -42,16 +42,20 @@ export function worksThroughWorkbook(role: AppRole | null | undefined): boolean 
 }
 
 // Who may read the workbook's coaching notes and worked examples, the two
-// things Manager view reveals. Managers use them to run a 1:1; trainers have
-// always been able to flip to them and keep that. Staff on the development
-// pathway do not: they are meant to work the questions, and a model answer
-// sitting one click away is a different exercise.
+// things Manager view reveals. The manager, and nobody else.
+//
+// These are notes ABOUT the reader, not FOR them: how to coach this section in
+// a 1:1, what to watch for, which answer is a red flag. Staff were cut off
+// first, on the grounds that a model answer one click away turns working the
+// questions into copying them. That reasoning was never specific to staff, and
+// trainers could reach the same notes by clicking the toggle. So they no longer
+// can.
 //
 // Written as an allow list on purpose. A role added later sees nothing until
 // somebody decides it should, which is the safe direction to fail in and the
 // opposite of the `not is_manager()` mistake this codebase already made once.
 export function canSeeCoachingNotes(role: AppRole | null | undefined): boolean {
-  return role === "manager" || role === "trainer";
+  return role === "manager";
 }
 
 // Defence in depth for the manager-only server actions. RLS is still the real
