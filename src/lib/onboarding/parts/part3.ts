@@ -80,7 +80,7 @@ export const part3: OnboardingPart = {
         "1. Define the lifestyle you actually want.",
         "2. Set your personal income target from that.",
         "3. Add your business expenses (weekly rent, insurance, software, education, phone, marketing).",
-        "4. Set aside tax (25-30%) and super (5-10%).",
+        "4. Set aside tax and super: treat tax as 25-30% off the top, and super as another 5-10% you owe to your future self. Add both to your target. Both are rules of thumb rather than ATO figures, so check the current rates in Australian tax and super above, and with your accountant.",
         "5. Divide by your rate: this is where your own rate goes in. If your income has two parts, as in the example below (a session rate plus a flat weekly fee for the program and coaching app), sessions do the heavy lifting. Divide your weekly target by your session rate for the session count, then treat the weekly fees as recurring income on top.",
         "6. Add a 10-15% cancellation buffer.",
       ],
@@ -136,7 +136,7 @@ export const part3: OnboardingPart = {
       heading: "Your terms and conditions",
       body: [
         "Your T&Cs protect both sides: they set expectations, prevent awkward conversations later, and give you something to point to when a boundary gets tested.",
-        "**Cancellation and no-show policy** — industry standard is 24 hours notice; inside that window, the session is charged. No-shows are always charged in full.",
+        "**Cancellation and no-show policy** — most trainers run 24 hours notice; inside that window, the session is charged. No-shows are always charged in full.",
         "**Payment terms** — ongoing clients pay weekly in advance (training plus the program-and-app fee); casual clients pay per session. Clarify what happens if a payment fails (coaching pauses until resolved).",
         "**Refund policy** — what happens to prepaid time when a client gives notice; your humane exception clause for injury/illness.",
         "**Trial session terms** — free, discounted or full price; how many per prospect; what happens at the end.",
@@ -213,7 +213,10 @@ export const part3: OnboardingPart = {
       body: [
         "A few things you specifically need sorted before you start training clients at Fitaz Gym. The actual numbers live in your PT contract. This section is the prompt to make sure you've actioned them.",
         "**Your weekly gym fee** — your weekly gym fee is in your contract. Plug the actual figure in below so it lives next to your numbers.",
-        "**Certifications** — CPR renews every 12 months, First Aid every 3 years, both required by your contract. Insurance certificate uploaded to your folder in the shared drive.",
+        "**Certifications:**",
+        "- CPR: renew every 12 months. Required by your Fitaz Gym contract.",
+        "- First Aid: renew every 3 years. Required by your Fitaz Gym contract.",
+        "- Insurance: current Public Liability and Professional Indemnity. Certificate uploaded to your folder in the Fitaz Gym shared drive.",
         "**Pre-start checklist:** signed PT contract on file, ABN confirmed, insurance certificate uploaded, CPR and First Aid current and uploaded, bank details provided for internal lead payments, walk-through of the gym/PT spaces/equipment booking system.",
       ],
       activities: [
