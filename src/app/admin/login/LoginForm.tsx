@@ -12,7 +12,7 @@ import PasswordInput from "@/app/admin/components/PasswordInput";
 // session. Mapped to fixed copy here so nothing from the URL is rendered.
 const AUTH_ERRORS: Record<string, string> = {
   expired:
-    "That link has expired or has already been used. Request a new one below.",
+    "That reset link has expired or has already been used. If you asked for more than one email, only the newest link works — check for a later one, or request a new link below.",
   verify:
     "We couldn't verify that link. Open it in the same browser you requested it from, or request a new one below.",
 };

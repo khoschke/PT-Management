@@ -30,7 +30,9 @@ export default async function ResetPasswordPage() {
             <h1 className="display-heading text-2xl text-foreground">Link expired</h1>
             <p className="mt-2 text-[15px] leading-relaxed text-secondary-label">
               Reset links can only be used once, and they stop working after an hour.
-              Request a fresh one and open it in this browser.
+              Requesting another email also cancels the previous link, so if you asked
+              more than once, use the newest email. Otherwise request a fresh one and
+              open it in this browser.
             </p>
             <Link
               href="/admin/forgot-password"
