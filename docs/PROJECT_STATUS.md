@@ -491,29 +491,48 @@ whole migration chain against a local Postgres 16.
   Sending from GymMaster on days 1, 10 and 30 off each member's join date, with
   the unsubscribe handled by GymMaster. `docs/handoff-email-1-go-live.md` is now
   a record rather than a task, apart from its last item: telling the PTs.
-- ~~**Self-service auth (forgot-password + change-email)**~~ — **DONE.** Merged
-  via PR #31 on 9 Sep 2026 and live. (The row for
-  `claude/self-service-password-change-3ydtqu` further up is a different branch
-  carrying only a handoff note; it is not this work and never was.)
-  Full status: `docs/handoff-auth-self-service.md`.
-  **Supabase Auth email now works, verified end to end.** As of 8 Sep 2026 a real
-  recovery email has been sent, delivered, and landed in the inbox from
-  `noreply@mail.fitazgym.com`; `recovery_sent_at` is non-null for the first time
-  in this project's life. The ~2 Sep "Custom SMTP is set up" report was wrong and
-  cost four days of `535 Authentication credentials invalid`: the password in
-  Supabase was not a valid Resend key. **A Resend key's value cannot be read back
-  after creation**, so a suspect key is never worth re-typing — mint a fresh one.
-  All three dashboard prerequisites are now confirmed: SMTP sends, the redirect
-  allowlist entry works, and Site URL is `https://pt.fitazgym.com` (it had been
-  left on the Supabase default `http://localhost:3000`, which is the fallback for
-  every auth email, so it mattered well beyond this feature).
-  **Hard-won, worth not relearning:** Supabase matches `redirectTo` against the
-  Redirect URLs allowlist **as a whole string, query string included**, and a
-  miss is *silent* — it drops the redirect, falls back to Site URL, and sends the
-  email anyway with a link to the wrong place. Two otherwise-identical test
-  emails proved it: with `?next=...` appended the link came back pointing at
-  `localhost:3000`; bare, it came back correct. The code now sends bare URLs and
-  carries its state in a cookie instead.
+- **Self-service auth (forgot-password + change-email)** — **FORGOT-PASSWORD IS
+  LIVE AND VERIFIED, 10 Sep 2026.** Merged via PRs #31, #33 and #34. A locked-out
+  trainer reset their own password on the live site with no admin involved,
+  confirmed in the auth logs (`Login`, then `PUT /user` 200, recovery token spent)
+  rather than from a screenshot. **Change-email is built and deployed but has not
+  been exercised against a real inbox** — same callback, same template style, so
+  it is expected to work, but expected is not verified. That is the one open item.
+  (The row for `claude/self-service-password-change-3ydtqu` further up is a
+  different branch carrying only a handoff note; it is not this work.)
+  It took **six separate faults** to get here, each invisible until something was
+  measured. The full account, and the technique that found each, is in
+  `docs/handoff-auth-self-service.md`. The short version, because every one of
+  these will bite again:
+  - **A Resend API key cannot be read back after creation.** A suspect key is
+    never worth re-typing; mint a fresh one. Four days went to a wrong SMTP
+    password that had been reported as working and never tested.
+  - **Supabase matches `redirectTo` against the Redirect URLs allowlist as a
+    whole string, query string included, and a miss is silent** — the redirect is
+    dropped, the Site URL is used instead, and the email still sends, with a link
+    to the wrong place. Proven with two emails differing only in that parameter.
+  - **Site URL matters well beyond one feature.** It was left on the Supabase
+    default `http://localhost:3000` and is the fallback for *every* auth email.
+  - **`otp_expired` does not mean the link timed out.** Supabase reports a
+    *spent* token that way, and each new recovery email spends the previous one.
+  - **Emailed auth links use `{{ .TokenHash }}`, not PKCE.** PKCE needs a code
+    verifier cookie in the requesting browser, so it can never work when the
+    email is opened on a phone. The two Supabase email templates now point
+    straight at `/admin/auth/callback`, which also takes the redirect allowlist
+    out of this flow entirely. **Do not revert the templates to
+    `{{ .ConfirmationURL }}`.**
+  - **Never let middleware touch `/admin/auth/callback`.** `src/proxy.ts` calling
+    `getUser()` there cleared the PKCE verifier mid-handshake. It now returns
+    before building a Supabase client.
+  **How to debug it next time:** read `auth_logs` via the Supabase MCP and check
+  whether `POST /token` happened at all. Absent means supabase-js refused locally
+  and the token was fine. That single observation cracked it after two wrong
+  diagnoses. Following a real emailed link with the Postgres `http` extension and
+  reading the `Location` chain is the other tool that paid for itself.
+  **How to test it without wasting an afternoon:** send one email, click that one,
+  touch nothing else. The emails are byte-identical, Gmail collapses them into one
+  thread, and each new request kills the last link. Delete the thread and start
+  with exactly one.
   - **Forgot-password** — "Forgot password?" on `/admin/login` →
     `/admin/forgot-password` → emailed link → `/admin/auth/callback` →
     `/admin/reset-password`. (`docs/handoff-forgot-password.md` remains superseded.)

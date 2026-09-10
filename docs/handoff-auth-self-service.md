@@ -254,6 +254,64 @@ new recovery email cancels the last. Read the auth logs before believing the
 error text, and check whether a `POST /token` even happened: no `/token` means
 the failure was client-side, not a bad token.
 
+## ✅ 10 September 2026: forgot-password WORKS, verified end to end on live
+
+A locked-out trainer reset their own password on `pt.fitazgym.com`, with no
+admin involved. Confirmed from the auth logs, not from a screenshot:
+
+```
+07:40:42  Login              session created from the emailed recovery link
+07:41:10  PUT /user  → 422   "New password should be different from the old password"
+07:41:30  PUT /user  → 200   password changed
+```
+
+`recovery_token` spent, `recovery_sent_at` cleared, `updated_at` matching the 200.
+Definition-of-done item 1 is met. Item 2, self-service change-email, is still
+untested against a real inbox — the plumbing is identical and its template is
+changed, so it is expected to work, but expected is not verified.
+
+Note the 422 in the middle: Supabase's own password-reuse guard, surfaced by the
+reset action passing `error.message` straight through. Worth keeping. The reset
+screen cannot run the Account screen's "not a password you've used here" check,
+because there is no current password to compare against, so Supabase's guard is
+the only thing standing there.
+
+### What it took, in order, and what each step cost
+
+Every one of these was invisible until something was measured. The pattern is
+worth reading before debugging auth in this project again.
+
+| Symptom | Actual cause |
+|---|---|
+| `500 Error sending recovery email` | Supabase's SMTP password was not a valid Resend key. Four days lost to a "Custom SMTP is set up" report that had never been tested. **A Resend key cannot be read back after creation** — never re-type a suspect one, mint a fresh one. |
+| Email arrived, link pointed at `localhost:3000` | Two faults at once: the code appended `?next=…` to `redirectTo`, which fails the Redirect URLs allowlist as a whole-string match; and the project's Site URL was still the Supabase default. A failed allowlist match is **silent** — the redirect is dropped, Site URL is used, the email sends anyway. |
+| Expired link dumped the user on the public PT form | Auth errors landing on the Site URL root, where `/` was a bare `redirect("/pt-session")` that discarded the query string. |
+| Link verified, then "link expired" | The real one. `/verify` succeeded and returned a `?code=`, but `exchangeCodeForSession` failed **with no `POST /token` in the logs at all** — supabase-js refusing locally for want of a PKCE code verifier. `src/proxy.ts` matched `/admin/auth/callback` and called `getUser()` over the same cookie jar, clearing it. |
+| Still failing after that | PKCE cannot work cross-device at all. Switched the templates to `{{ .TokenHash }}` and the callback to prefer `verifyOtp`, which needs nothing from the browser. |
+| Every failure said `otp_expired` | It never once meant "timed out". Supabase reports a **spent** token that way, and each new recovery email spends the previous one. |
+
+### The debugging technique that actually worked
+
+Reading the auth logs, every time, instead of the error text:
+
+- `select … from logs where source = 'auth_logs'` via the Supabase MCP.
+- **Check whether `POST /token` happened at all.** Absent means the failure was
+  client-side in supabase-js, not a bad token. That single observation is what
+  cracked it after two wrong diagnoses.
+- Follow a real emailed link with the `http` extension from inside Postgres and
+  read the `Location` headers. That shows the entire redirect chain, including
+  what our own callback does with it, without deploying anything.
+- Compare two otherwise-identical emails that differ in one variable. That is
+  what proved the allowlist matches the query string.
+
+### Testing this flow without wasting anyone's afternoon
+
+**Send one email, click that one, touch nothing else.** Each new request
+invalidates the previous link, the emails are byte-identical, and Gmail collapses
+them into one thread where they cannot be told apart. Two of the failed runs here
+were a stale link, and two more were test emails from the build session polluting
+the same thread. If in doubt, delete the whole thread and start with exactly one.
+
 ## What was built
 
 - `src/lib/site-url.ts` — absolute base URL for emailed links.
@@ -383,8 +441,9 @@ Vercel — this has bitten the project before).
 | Redirect allowlist entry for `https://pt.fitazgym.com/admin/auth/callback` | **CONFIRMED WORKING** — proven by the two-email comparison above |
 | Supabase **Site URL** | **STILL `http://localhost:3000`.** Set it to `https://pt.fitazgym.com` |
 | `NEXT_PUBLIC_SITE_URL` in Vercel | Reported set; not verifiable from a build workspace, and it only takes effect on the next deploy |
-| Clicking the link in a real browser (PKCE exchange → reset → sign in) | **Not yet run.** Needs the branch deployed — the route doesn't exist on production until merge |
-| Merge to production | Ready once Site URL is fixed |
+| Clicking the link in a real browser → reset → signed in | **DONE, 10 Sep 2026.** Verified in the auth logs; see the section above |
+| Self-service change-email against a real inbox | **Not yet run.** Same callback, same template style, expected to work — but untested |
+| Merge to production | **Merged** (PRs #31, #33, #34) |
 
 ### The last mile
 
