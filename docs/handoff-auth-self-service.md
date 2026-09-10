@@ -88,6 +88,77 @@ fallback for *every* auth email, so any redirect that misses the allowlist for
 any reason emails a link to localhost. It is also the last thing standing
 between "the link works" and "the link works reliably".
 
+## Post-launch, 10 September 2026: two rough edges from the first real run
+
+PR #31 merged and deployed. The first real end-to-end attempt surfaced two
+things, only one of which was a defect.
+
+### The emails that looked empty were not empty
+
+Three recovery emails sat in one Gmail thread and the later two appeared to have
+no body, just a `...`. That is Gmail collapsing message content that repeats
+what an earlier message in the thread already said; the `...` is its
+show-trimmed-content toggle. All three bodies were fetched and are complete and
+identical. No code change, and none wanted.
+
+It is worth knowing about anyway, because it is what set up the real problem:
+identical, collapsed emails give a locked-out user no way to tell which one is
+current.
+
+### The real defect: a spent link landed on the public PT form
+
+Reported symptom: clicking an expired link ended at
+
+```
+https://pt.fitazgym.com/pt-session#error=access_denied&error_code=otp_expired&error_description=Email+link+is+invalid+or+has+expired&sb=
+```
+
+The public lead-capture form, with a raw error in the address bar and no way
+back to sign-in.
+
+Traced with the auth logs and the actual emails:
+
+- Karl's real request through the app was **correct** — the 05:02 email carried
+  `token=pkce_…&type=recovery&redirect_to=https://pt.fitazgym.com/admin/auth/callback`.
+- The link he clicked was an **earlier** email in the collapsed thread, one of
+  the deliverability tests, sent deliberately with `redirect_to` = the bare Site
+  URL to prove the Site URL fallback had been fixed.
+- Supabase honours `redirect_to` on failure and puts the error in **both** the
+  query string and the fragment. Confirmed directly:
+  `…/verify?token=<invalid>&redirect_to=…/admin/auth/callback` →
+  `…/admin/auth/callback?error=access_denied&error_code=otp_expired…#error=…&sb=`
+- So an expired link generated **by the app** already worked correctly: the
+  callback saw `?error=` and sent the user to `/admin/login?authError=expired`.
+- But a link falling back to the **Site URL** landed on `/`, and `/` was a bare
+  `redirect("/pt-session")` that dropped the query string while the browser
+  carried the fragment along. Hence the reported URL.
+
+Every failure the logs show is `One-time token not found`, not a timeout —
+**requesting another recovery email invalidates the previous link immediately.**
+Combined with Gmail collapsing the thread, clicking a dead link was the likely
+outcome rather than the unlucky one.
+
+### What changed
+
+1. **`src/app/page.tsx`** now inspects its search params before redirecting. An
+   `error` / `error_code` goes to `/admin/login?authError=expired`; a `code` or
+   `token_hash`+`type` is forwarded to `/admin/auth/callback` so a valid link
+   that fell back to the Site URL still establishes a session instead of being
+   thrown away; anything else still goes to `/pt-session`. This makes the root a
+   dynamic route, which it has to be to read the query string at all.
+2. **Copy**, in three places, now says the thing that actually bites: only the
+   newest email works, because asking for another cancels the previous link.
+   The login banner, the "we've sent it" screen, and the expired-link card.
+
+Verified against a local production build: `/?error=…` →
+`/admin/login?authError=expired`; `/` → `/pt-session`; `/?code=…` and
+`/?token_hash=…&type=…` → the callback with the parameter intact;
+`/admin/auth/callback?error=…` unchanged.
+
+**Note for whoever tests this next:** send the test email, then click *that*
+email and nothing else. A second request to prove the mail is flowing kills the
+first link, and the thread will not make it obvious which is which.
+
 ## What was built
 
 - `src/lib/site-url.ts` — absolute base URL for emailed links.

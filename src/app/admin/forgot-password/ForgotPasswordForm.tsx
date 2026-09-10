@@ -44,8 +44,13 @@ export default function ForgotPasswordForm() {
             {state.message}
           </div>
           <p className="mt-4 text-[15px] text-secondary-label">
-            Open the link on this device, in this browser. Didn&rsquo;t get it? Check your
-            junk folder, or ask a manager to reset your password from the Staff screen.
+            Open the link on this device, in this browser. If you request another
+            email, only the newest link will work &mdash; the earlier ones stop
+            working straight away.
+          </p>
+          <p className="mt-3 text-[15px] text-secondary-label">
+            Didn&rsquo;t get it? Check your junk folder, or ask a manager to reset your
+            password from the Staff screen.
           </p>
           <Link
             href="/admin/login"
