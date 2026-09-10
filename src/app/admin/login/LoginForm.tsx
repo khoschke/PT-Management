@@ -11,10 +11,20 @@ import PasswordInput from "@/app/admin/components/PasswordInput";
 // Set by /admin/auth/callback when an emailed link couldn't be turned into a
 // session. Mapped to fixed copy here so nothing from the URL is rendered.
 const AUTH_ERRORS: Record<string, string> = {
+  // Deliberately says "link" rather than "reset link": the same banner serves
+  // email-change confirmations, and calling one of those a reset is confusing
+  // at exactly the moment the user is already confused.
   expired:
-    "That reset link has expired or has already been used. If you asked for more than one email, only the newest link works — check for a later one, or request a new link below.",
+    "That link has expired or has already been used. If you asked for more than one email, only the newest link works — check for a later one, or start again below.",
   verify:
     "We couldn't verify that link. Open it in the same browser you requested it from, or request a new one below.",
+};
+
+// Not failures. These are "that worked, here's what happens next" messages for
+// a user who has just been signed out by the flow itself.
+const AUTH_NOTICES: Record<string, string> = {
+  "email-change-half":
+    "Confirmed from this address. For security, an email change has to be confirmed from BOTH addresses — open the link in your other inbox to finish it. Your sign-in email doesn't change until then, so sign in with your current one.",
 };
 
 const inputClass =
@@ -44,6 +54,7 @@ export default function LoginForm() {
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("redirectTo") ?? "/admin";
   const authError = AUTH_ERRORS[searchParams.get("authError") ?? ""];
+  const authNotice = AUTH_NOTICES[searchParams.get("authNotice") ?? ""];
 
   return (
     <div className="rounded-3xl border border-black/5 bg-surface p-8 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_24px_rgba(0,0,0,0.06)]">
@@ -53,7 +64,11 @@ export default function LoginForm() {
       <form action={formAction} className="mt-6 flex flex-col gap-4">
         <input type="hidden" name="redirectTo" value={redirectTo} />
 
-        {authError && state.status !== "error" && (
+        {authNotice && state.status !== "error" && (
+          <div className="rounded-xl bg-blue-50 px-3.5 py-2.5 text-sm text-blue-900">{authNotice}</div>
+        )}
+
+        {authError && !authNotice && state.status !== "error" && (
           <div className="rounded-xl bg-amber-50 px-3.5 py-2.5 text-sm text-amber-800">{authError}</div>
         )}
 
