@@ -131,6 +131,18 @@ through `part10.ts`, typed by `src/lib/onboarding/types.ts`.
   only in Manager view; everything else is trainer-facing. If a change must
   reach trainers, it goes in `body`.
 
+### Check the document before flagging a fault in it
+
+The portal is a condensed retelling of the `.docx`, so a gap you see here is
+usually the condensation, not a fault in the source. Before reporting that the
+workbook says something wrong, or proposing a change to it, pull the master and
+read the passage. Three flags have been raised off a portal reading projected
+back onto the source, and all three were wrong: the source already said the
+right thing.
+
+Quoting the master's actual words costs one grep and turns a wrong flag into a
+correct one.
+
 ## Database migrations
 
 `supabase/migrations/` is applied by hand in the Supabase SQL editor, so
