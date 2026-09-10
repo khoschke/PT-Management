@@ -226,6 +226,12 @@ strength". Change it in that one file and it flows to both sides.
 
 ## Working practices in this repo
 
+- **Read `CLAUDE.md` at the repo root.** Claude Code loads it automatically, but
+  a human or another agent reading this doc will not. It holds the rules that
+  are easiest to get wrong here and most expensive to get wrong: the figure rule
+  and its scope (what the workbook may and may not say about money), that the
+  workbook content is hand-authored and must never be regenerated, the migration
+  discipline, and the check to run before reporting a fault in a source document.
 - Develop on branch `claude/fitaz-gym-pt-leads-76ffhv` (or a dedicated branch
   per workstream, merged back via PR — that's how the onboarding dashboard came in).
 - Commit messages end with the Co-Authored-By / Claude-Session trailers.
@@ -331,7 +337,7 @@ the commit history.
 | `claude/docs-reconcile-live-state` | Branch-map reconciliation | **Merged.** Docs only. |
 | `claude/security-hardening-csv-ip-cron` | Security hardening (CSV/IP/cron) | **Merged** (PR #18). CSV formula-injection guard, IP-salt production guard, cron fail-closed + constant-time auth. Also added `docs/handoff-security-hardening.md` for the remaining items. |
 | `claude/forgot-password-change-email-gl4lca` | Self-service forgot-password + change-email | **1 unmerged, and it is the actual build**, roughly 990 added lines: `/admin/reset-password`, `src/lib/recovery-session.ts`, `src/lib/site-url.ts`, proxy changes. Not the handoff-note-only branch below. |
-| `claude/pt-onboarding-workbook-updates-xmrtqs` | PT onboarding workbook content | **4 unmerged, pushed after PR #27 merged.** Restores detail that Parts 2, 3, 4, 7 and 9 had condensed away, and extends the coaching-notes gate to withhold `managerNote`/`workedExample` from trainers as well as staff. |
+| `claude/pt-onboarding-workbook-updates-xmrtqs` | PT onboarding workbook content | **Merged** (PR #27, then PR #30, 10 Sep 2026). All 33 changes from the 7 Sept spec and its five addenda; figure support so the workbook's three diagrams render; the invented Part 9 "commercial terms at a glance" section removed; `CLAUDE.md` created carrying the figure rule; migration `0015`; detail restored to Parts 2, 3, 4, 7 and 9; and the coaching notes withheld from trainers as well as staff. |
 | `claude/gymmaster-phase-1-pull-7yuxuy` | GymMaster integration | **3 unmerged.** Phase 1 pull scaffolding plus migrations `0007` and `0008`, which keep those numbers. |
 | `claude/pt-team-onboarding-rw5awg` | PT team update email | **Merged.** The team update email and the login details email, from `docs/handoff-pt-team-update-email.md`. Both were sent on 12 August 2026; the files are kept as the record of what went out and as the template for the next trainer who joins. |
 | `claude/handoff-email-notifications-9m67a6` | Branded HTML notification emails | **Merged** (PR #4). Replaced the plain-text ops emails with branded HTML plus a dashboard link. |
@@ -538,10 +544,12 @@ Reminders only. Each gets scoped and built in its own session.
 
 - **PT onboarding checklist, tracked per trainer** — turn the paper operational
   setup checklist (contract, bond, uniform, systems access, profiles, certs, rent
-  ramp) into a live per-trainer checklist the manager ticks off and the trainer can
-  see. **Now scoped** in `docs/handoff-onboarding-checklist-tracking.md` (decisions
-  first, and note it is separate from the educational `/onboarding` workbook). Open
-  it in its own thread.
+  ramp) into an editable tick-off form the manager works through. **v1 is
+  manager-only, with no trainer-facing view** (Karl, 8 Sep 2026) — a deliberate
+  narrowing of the original scope, which envisaged a read view for each trainer.
+  **Now scoped** in `docs/handoff-onboarding-checklist-tracking.md` (settled
+  decisions first, and note it is separate from the educational `/onboarding`
+  workbook). Open it in its own thread.
 - **PT prospect interview system** in the PT Manager area. STAR method has been
   suggested; approach to be agreed when it is scoped.
 - **Ezidebit connected to the PT Manager dashboard via an MCP, reading live.**
