@@ -159,6 +159,101 @@ Verified against a local production build: `/?error=…` →
 email and nothing else. A second request to prove the mail is flowing kills the
 first link, and the thread will not make it obvious which is which.
 
+## 10 September 2026: why the first real reset failed, and the fix
+
+The reset flow was reaching the reset screen for nobody. Diagnosed to the exact
+call, against the live project.
+
+### The chain, measured rather than guessed
+
+Following a real emailed link with an invalid-but-well-formed token, and then a
+genuine one, gave the whole picture:
+
+```
+GoTrue /verify  → https://pt.fitazgym.com/admin/auth/callback?code=3e912a51-…   OK
+our callback    → https://pt.fitazgym.com/admin/login?authError=verify          FAILS
+```
+
+So `/verify` was fine. The token was fine. The redirect was fine. What failed was
+**`exchangeCodeForSession`** — and the auth logs contain **no `POST /token`
+request at all** for any of these attempts, which is the tell: supabase-js
+rejected the exchange locally, before making a network call. It does that in
+exactly one situation — **the PKCE code verifier is missing from this browser.**
+
+### What was eating the verifier
+
+`src/proxy.ts` matched `/admin/:path*`, which includes `/admin/auth/callback`.
+On every request it built a second Supabase client over the same cookie jar and
+called `getUser()`. On the callback that call always fails — there is no session
+yet, that being the entire point of the route — and a failed `getUser()` can
+clear the auth storage keys, the PKCE code verifier among them. The route handler
+then ran a few milliseconds later and found nothing to exchange.
+
+The callback gates nothing and needs no session, so the proxy has no business
+touching it. It now returns immediately for that one path, before any Supabase
+client is constructed.
+
+### The durable fix: stop depending on the verifier at all
+
+Removing the proxy interference addresses one cause. It does not address the
+other: a PKCE link **cannot** work when opened on a different device or browser
+from the one that requested it, because the verifier only exists there. A trainer
+requesting a reset on the gym desktop and opening the email on their phone is
+not an edge case.
+
+`token_hash` has neither problem. It verifies straight against Supabase and needs
+nothing from the browser. Proven against the live project — the hashed token from
+`auth.users.recovery_token` posted to `/auth/v1/verify` returns a full session for
+the right user, with no cookies in the request at all:
+
+```
+POST /auth/v1/verify  {"type":"recovery","token_hash":"…"}
+  → 200  {"access_token":"…","sub":"e6dfe0b7-…"}
+```
+
+The callback now tries `token_hash` **first** and falls back to `code`, so links
+already sitting in inboxes keep working through the transition.
+
+**This needs the two Supabase email templates changed** — the one remaining step,
+and the only one that actually cures it. Authentication → Emails:
+
+*Reset Password:*
+```html
+<h2>Reset your password</h2>
+<p>We received a request to reset your password. Follow the link below to choose a new one.</p>
+<p><a href="{{ .SiteURL }}/admin/auth/callback?token_hash={{ .TokenHash }}&type=recovery">Reset password</a></p>
+<p>If you didn't request this, you can safely ignore this email.</p>
+```
+
+*Change Email Address:*
+```html
+<h2>Confirm your new email</h2>
+<p>Follow the link below to confirm this address as your new sign-in email.</p>
+<p><a href="{{ .SiteURL }}/admin/auth/callback?token_hash={{ .TokenHash }}&type=email_change">Confirm email change</a></p>
+<p>If you didn't request this, you can safely ignore this email.</p>
+```
+
+A useful side effect: these links point straight at the app instead of hopping
+through Supabase's `/verify`, so the Redirect URLs allowlist stops being involved
+in this flow at all — one whole class of silent failure gone.
+
+### Also fixed: the message was lying
+
+`exchangeCodeForSession` fails with "both auth code and code verifier should be
+non-empty". The old mapping saw the word *invalid* elsewhere in that class of
+error and reported "link expired", sending users round the loop requesting fresh
+emails that failed identically. A missing verifier is now detected on its own and
+reports the truth: open the link in the browser you requested it from.
+
+### For whoever tests this next
+
+`otp_expired` in the URL is **not** proof the link timed out. Every failure here
+logged as `One-time token not found`, which is what Supabase says for a token
+that was already spent — including one spent by a *previous* request, since each
+new recovery email cancels the last. Read the auth logs before believing the
+error text, and check whether a `POST /token` even happened: no `/token` means
+the failure was client-side, not a bad token.
+
 ## What was built
 
 - `src/lib/site-url.ts` — absolute base URL for emailed links.

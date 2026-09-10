@@ -49,11 +49,17 @@ export async function GET(request: NextRequest) {
   const supabase = await createClient();
   let errorMessage: string | null = null;
 
-  if (code) {
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
-    errorMessage = error?.message ?? null;
-  } else if (tokenHash && type) {
+  // token_hash first, deliberately. It verifies against Supabase directly and
+  // needs nothing from this browser, so it survives being opened on a phone,
+  // in another browser, or after anything has disturbed the cookie jar. The
+  // PKCE `code` path needs the code verifier this browser stored when the email
+  // was sent, and is the fragile one — it is kept only so links already in
+  // people's inboxes, and any flow still on the default templates, keep working.
+  if (tokenHash && type) {
     const { error } = await supabase.auth.verifyOtp({ type, token_hash: tokenHash });
+    errorMessage = error?.message ?? null;
+  } else if (code) {
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
     errorMessage = error?.message ?? null;
   } else {
     return failure(request, "expired");
@@ -62,8 +68,17 @@ export async function GET(request: NextRequest) {
   if (errorMessage) {
     console.error("auth callback failed", errorMessage);
     const lower = errorMessage.toLowerCase();
+
+    // "code verifier should be non-empty" is supabase-js refusing locally,
+    // before any network call, because this browser has no PKCE verifier —
+    // a different device, or something cleared the cookie. It is emphatically
+    // not an expired link, and telling the user it was sends them round the
+    // loop requesting fresh emails that fail the same way.
+    const missingVerifier = lower.includes("code verifier") || lower.includes("code_verifier");
     const expired =
-      lower.includes("expired") || lower.includes("invalid") || lower.includes("already");
+      !missingVerifier &&
+      (lower.includes("expired") || lower.includes("invalid") || lower.includes("already"));
+
     return failure(request, expired ? "expired" : "verify");
   }
 
