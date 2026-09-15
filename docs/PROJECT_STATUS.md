@@ -61,8 +61,10 @@ verified row by row against the live project — not asserted.
 checked against the live database by running
 `supabase/reconcile/01_audit_live_schema.sql` through the Supabase MCP server's
 `execute_sql`, which reaches the live project straight from a build session.
-51 checks: 49 PRESENT, and the only two MISSING are `0007` and `0008`, the
+52 checks: 50 PRESENT, and the only two MISSING are `0007` and `0008`, the
 GymMaster pair on an unmerged branch, which are expected to be absent.
+(Re-counted 15 Sep 2026 from a local run of the whole chain: the query emits 52
+rows, not the 51 this said.)
 
 That took one tool call. **Re-run it rather than trusting this table**, and
 update the date above when you do. It is the cheapest possible insurance
@@ -348,7 +350,7 @@ Zero means everything on that branch is already on production, whatever the
 table says. If what you find disagrees with the table, **the command is right**:
 fix the table in the same session rather than leaving it to mislead the next one.
 
-### Snapshot, 8 September 2026 (verified with the command above)
+### Snapshot, 15 September 2026 (verified with the command above)
 
 The three branches the August reconciliation left behind
 (`reconcile-database-security-deploy-01sf2h`, `security-merge-pending-parta`,
@@ -622,14 +624,18 @@ whole migration chain against a local Postgres 16.
 
 Reminders only. Each gets scoped and built in its own session.
 
-- **PT onboarding checklist, tracked per trainer** — turn the paper operational
+- **PT setup checklist, tracked per trainer.** Turn the paper operational
   setup checklist (contract, bond, uniform, systems access, profiles, certs, rent
-  ramp) into an editable tick-off form the manager works through. **v1 is
-  manager-only, with no trainer-facing view** (Karl, 8 Sep 2026) — a deliberate
-  narrowing of the original scope, which envisaged a read view for each trainer.
-  **Now scoped** in `docs/handoff-onboarding-checklist-tracking.md` (settled
-  decisions first, and note it is separate from the educational `/onboarding`
-  workbook). Open it in its own thread.
+  ramp) into a live per-trainer checklist **the manager ticks off**. v1 is
+  **manager-only**: an editable tick-off form in its own tab, with **no
+  trainer-facing view**. That is a deliberate narrowing of the original scope
+  (Karl, 8 Sep 2026), not a correction of it. A trainer view may come later,
+  but nobody has asked for one. The checklist holds commercial terms (bond,
+  Business Pack, rent ramp), which is why manager-only is enforced in RLS rather
+  than by simply not building the screen: see `CLAUDE.md`. **Scoped** in
+  `docs/handoff-onboarding-checklist-tracking.md`, **planned** in
+  `docs/handoff-onboarding-checklist-build-plan.md`. Separate from the
+  educational `/onboarding` workbook. Open it in its own thread.
 - **PT prospect interview system** in the PT Manager area. STAR method has been
   suggested; approach to be agreed when it is scoped.
 - **Ezidebit connected to the PT Manager dashboard via an MCP, reading live.**

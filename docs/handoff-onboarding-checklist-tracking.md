@@ -2,6 +2,10 @@
 
 **Start a new session with this note.** Read `docs/PROJECT_STATUS.md` first, then this.
 
+> **A build plan now exists:** `docs/handoff-onboarding-checklist-build-plan.md`
+> answers every open question below and is awaiting Karl's sign-off (15 Sep 2026).
+> Read it after this note. Where the two disagree, the build plan wins.
+
 > **This is a SCOPING note, not a build brief.** Karl supplied the paper checklist
 > (below) and wants it turned into something tracked inside the portal that the
 > **manager** and each **trainer** interact with. Settle the decisions in
@@ -24,8 +28,10 @@ There are now two distinct "onboarding" things — keep them separate:
 
 1. **The educational workbook** at `/onboarding` (already built and live) — the
    10-part, 12-week *learning* journey a trainer works through (content in
-   `src/lib/onboarding/content.ts`, progress in `onboarding_responses` /
-   `onboarding_part_status`). This is about developing the trainer.
+   `src/lib/onboarding/parts/part1.ts` to `part10.ts`, progress in
+   `onboarding_responses` / `onboarding_part_status`). This is about developing
+   the trainer. *(Corrected 15 Sep 2026: this said `content.ts`, which is now
+   only an index over the part files.)*
 2. **This operational setup checklist** (new) — the *admin/compliance* steps to
    get a new trainer set up in the business: contract, bond, uniform, systems
    access, profiles, certs, rent ramp. This is about onboarding them into the
@@ -165,12 +171,18 @@ Confirm or change all of that with Karl, then write the real build plan.
 - New role/policy work must respect existing RLS (`is_manager()` / `my_trainer_id()`).
 - `"use server"` files export only async functions; form-state in sibling `state.ts`.
 - Australian English, no em dashes in user-facing copy.
-- Run `npm run build` + `npx tsc --noEmit` + `npm run lint` before pushing.
+- Run `npx tsc --noEmit` + `npx eslint src` + `npm run build` before pushing, per `CLAUDE.md`.
 - Can't be tested against live from the build workspace (no Supabase network) —
   verify on a deployment.
 
-## Definition of done (v1, once scope is agreed)
+## Definition of done (v1)
 
 For a given trainer, the manager can work through the setup checklist in the portal
-with each tick recorded (who/when), the trainer can see their own checklist status,
-and the checklist is clearly separate from the educational onboarding workbook.
+with each tick recorded (who/when), and the checklist is clearly separate from the
+educational onboarding workbook.
+
+**Corrected 15 Sep 2026.** This previously required that "the trainer can see
+their own checklist status", contradicting the "Decisions already settled"
+section above in this same file. v1 is manager-only and has no trainer-facing
+view. The definition of done is the part somebody reads last and builds to, so
+a stale one here is worse than a stale one anywhere else in the note.
