@@ -56,8 +56,10 @@ verified row by row against the live project — not asserted.
 checked against the live database by running
 `supabase/reconcile/01_audit_live_schema.sql` through the Supabase MCP server's
 `execute_sql`, which reaches the live project straight from a build session.
-51 checks: 49 PRESENT, and the only two MISSING are `0007` and `0008`, the
+52 checks: 50 PRESENT, and the only two MISSING are `0007` and `0008`, the
 GymMaster pair on an unmerged branch, which are expected to be absent.
+(Re-counted 15 Sep 2026 from a local run of the whole chain: the query emits 52
+rows, not the 51 this said.)
 
 That took one tool call. **Re-run it rather than trusting this table**, and
 update the date above when you do. It is the cheapest possible insurance
@@ -317,7 +319,7 @@ Zero means everything on that branch is already on production, whatever the
 table says. If what you find disagrees with the table, **the command is right**:
 fix the table in the same session rather than leaving it to mislead the next one.
 
-### Snapshot, 8 September 2026 (verified with the command above)
+### Snapshot, 15 September 2026 (verified with the command above)
 
 The three branches the August reconciliation left behind
 (`reconcile-database-security-deploy-01sf2h`, `security-merge-pending-parta`,
@@ -330,8 +332,8 @@ the commit history.
 |---|---|---|
 | `claude/docs-reconcile-live-state` | Branch-map reconciliation | **Merged.** Docs only. |
 | `claude/security-hardening-csv-ip-cron` | Security hardening (CSV/IP/cron) | **Merged** (PR #18). CSV formula-injection guard, IP-salt production guard, cron fail-closed + constant-time auth. Also added `docs/handoff-security-hardening.md` for the remaining items. |
-| `claude/forgot-password-change-email-gl4lca` | Self-service forgot-password + change-email | **1 unmerged, and it is the actual build**, roughly 990 added lines: `/admin/reset-password`, `src/lib/recovery-session.ts`, `src/lib/site-url.ts`, proxy changes. Not the handoff-note-only branch below. |
-| `claude/pt-onboarding-workbook-updates-xmrtqs` | PT onboarding workbook content | **4 unmerged, pushed after PR #27 merged.** Restores detail that Parts 2, 3, 4, 7 and 9 had condensed away, and extends the coaching-notes gate to withhold `managerNote`/`workedExample` from trainers as well as staff. |
+| `claude/forgot-password-change-email-gl4lca` | Self-service forgot-password + change-email | **3 unmerged** (corrected 15 Sep 2026, this said 1), **and they are the actual build**, roughly 990 added lines: `/admin/reset-password`, `src/lib/recovery-session.ts`, `src/lib/site-url.ts`, proxy changes. Not the handoff-note-only branch below. |
+| `claude/pt-onboarding-workbook-updates-xmrtqs` | PT onboarding workbook content | **Merged** (PR #30) and the branch is deleted from the remote. Restored the detail Parts 2, 3, 4, 7 and 9 had condensed away, and extended the coaching-notes gate to withhold `managerNote`/`workedExample` from trainers as well as staff. Row corrected 15 Sep 2026: it said "4 unmerged". |
 | `claude/gymmaster-phase-1-pull-7yuxuy` | GymMaster integration | **3 unmerged.** Phase 1 pull scaffolding plus migrations `0007` and `0008`, which keep those numbers. |
 | `claude/pt-team-onboarding-rw5awg` | PT team update email | **Merged.** The team update email and the login details email, from `docs/handoff-pt-team-update-email.md`. Both were sent on 12 August 2026; the files are kept as the record of what went out and as the template for the next trainer who joins. |
 | `claude/handoff-email-notifications-9m67a6` | Branded HTML notification emails | **Merged** (PR #4). Replaced the plain-text ops emails with branded HTML plus a dashboard link. |
@@ -536,12 +538,18 @@ whole migration chain against a local Postgres 16.
 
 Reminders only. Each gets scoped and built in its own session.
 
-- **PT onboarding checklist, tracked per trainer** — turn the paper operational
+- **PT setup checklist, tracked per trainer.** Turn the paper operational
   setup checklist (contract, bond, uniform, systems access, profiles, certs, rent
-  ramp) into a live per-trainer checklist the manager ticks off and the trainer can
-  see. **Now scoped** in `docs/handoff-onboarding-checklist-tracking.md` (decisions
-  first, and note it is separate from the educational `/onboarding` workbook). Open
-  it in its own thread.
+  ramp) into a live per-trainer checklist **the manager ticks off**. v1 is
+  **manager-only**: an editable tick-off form in its own tab, with **no
+  trainer-facing view**. That is a deliberate narrowing of the original scope
+  (Karl, 8 Sep 2026), not a correction of it. A trainer view may come later,
+  but nobody has asked for one. The checklist holds commercial terms (bond,
+  Business Pack, rent ramp), which is why manager-only is enforced in RLS rather
+  than by simply not building the screen: see `CLAUDE.md`. **Scoped** in
+  `docs/handoff-onboarding-checklist-tracking.md`, **planned** in
+  `docs/handoff-onboarding-checklist-build-plan.md`. Separate from the
+  educational `/onboarding` workbook. Open it in its own thread.
 - **PT prospect interview system** in the PT Manager area. STAR method has been
   suggested; approach to be agreed when it is scoped.
 - **Ezidebit connected to the PT Manager dashboard via an MCP, reading live.**
