@@ -143,6 +143,15 @@ right thing.
 Quoting the master's actual words costs one grep and turns a wrong flag into a
 correct one.
 
+## Verifying live state
+
+The `verify-live-state` skill in `.claude/skills/` carries the verification
+discipline this project has paid for: what evidence settles a claim about the
+live system, the six auth-email faults and the techniques that found them, what
+this build workspace can and cannot reach, and why "built and deployed" is never
+"verified". It should trigger on its own whenever you are about to assert that
+something is applied, live, working or fixed. Read it before you do.
+
 ## Database migrations
 
 `supabase/migrations/` is applied by hand in the Supabase SQL editor, so
