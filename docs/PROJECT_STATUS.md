@@ -441,18 +441,17 @@ whole migration chain against a local Postgres 16.
     breaks. All three now check `my_role() = 'trainer'`.
   - Full detail, including the two decisions Karl made and why, in
     `docs/handoff-staff-development-pathway.md`.
-- **Tell the PT team about the trainer portal and the pause.** The feature is
-  live and none of them know it exists — a control nobody knows about is a
-  control nobody uses. **Karl is deliberately holding this until Friday
-  11 September 2026** so any further updates from this week go out in one email
-  rather than three. Cover: they can now edit their own bio, specialties and
-  AM/PM availability at `/admin/profile`; specialties drive who gets suggested
-  for a lead, so tag what they are genuinely best at rather than everything they
-  can do; unticking both availability slots pauses them (no new lead
-  suggestions, hidden from the public booking form, existing leads untouched);
-  and that pausing when full is expected and welcome, whereas letting a lead go
-  cold is not. `docs/pt-team-update-email.md` is the template from the last
-  round.
+- **Send the PT team the portal profiles briefing.** Still not sent as at
+  19 September 2026. The feature has been live since 8 September and none of the
+  four PTs know it exists — a control nobody knows about is a control nobody
+  uses. **The email is drafted and ready** at
+  `docs/pt-portal-profiles-briefing-email.md`: self-editable bio, specialties
+  and AM/PM availability; specialties drive who gets suggested for a lead, so
+  tag what they are genuinely best at; both slots off pauses them; pausing when
+  full is expected, letting a lead go cold is not; and they can reset their own
+  password now. It was held back on purpose so a week of changes went out
+  together, which they now have. It needs Karl to read it and send it, nothing
+  else.
 
 - **GymMaster integration** — see `docs/handoff-gymmaster-integration.md`.
   **Phase 1 scaffolding already exists unmerged** on
@@ -504,13 +503,14 @@ whole migration chain against a local Postgres 16.
   Fixed in **PR #36** (merged 19 Sep 2026): the callback detects the half state
   and says so, the sign-in screen gained a notice channel that outranks the error
   banner, and the Account screen stops promising one email when two are sent.
-  **Still open: the two-link change-email flow has not been run end to end since
-  that fix.** Expected to work; expected is not verified.
-  A leftover from that run: the `khoschke+trainer@gmail.com` test account sits at
-  `email_change_confirm_status = 1` pending `karlandtay@outlook.com`, on a link
-  from 10 Sep that is long past Supabase's 24-hour validity. Harmless — sign-in is
-  unaffected — but the Account screen shows a pending badge until it is re-run or
-  cleared.
+  **Now closed: the two-link change-email flow has been run end to end since
+  that fix, confirmed by Karl on 19 Sep 2026.** Both the old and the new address
+  confirm, and the half-confirmed state the callback now handles no longer
+  strands anyone. Verified against live the same day: no row in `auth.users`
+  carries a non-zero `email_change_confirm_status` or a pending `email_change`,
+  so the stale `khoschke+trainer@gmail.com` pending badge from the 10 Sep run is
+  gone too. **Self-service auth is done** — forgot-password and change-email
+  both live and both verified.
   (Built on `claude/forgot-password-change-email-gl4lca`, which auto-deleted on
   merge. An older `claude/self-service-password-change-3ydtqu` branch used to sit
   in the map above and was a different thing entirely — superseded hardening code,
@@ -556,8 +556,12 @@ whole migration chain against a local Postgres 16.
     can still change anyone's sign-in email immediately from the Staff screen via
     the admin client, no confirmation email needed. That path is unaffected and
     stays as the fallback.)
-- **Availability as AM + PM (not "both")** — change trainer availability to
-  independent AM/PM selection. See `docs/handoff-availability-am-pm.md`.
+- ~~**Availability as AM + PM (not "both")**~~ — **DONE, and has been for some
+  time.** Migration `0004_trainer_am_pm.sql` replaced the old three-way enum
+  with independent `available_am` / `available_pm` booleans, the branch merged,
+  and the trainer portal and the `0012` pause are both built on top of it. This
+  sat in the outstanding list until 19 Sep 2026 purely because nobody struck it
+  out. `docs/handoff-availability-am-pm.md` is history, not a task.
 - ~~**Custom web address**~~ — **DONE.** `pt.fitazgym.com` is live over HTTPS. DNS
   records live at **CrazyDomains (Dreamscape), not Shopify** — fitazgym.com is
   connected to Shopify but its DNS zone is at CrazyDomains, which is where all
