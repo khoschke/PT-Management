@@ -344,7 +344,7 @@ the commit history.
 | `claude/gymmaster-phase-1-pull-7yuxuy` | GymMaster integration | **3 unmerged.** Phase 1 pull scaffolding plus migrations `0007` and `0008`, which keep those numbers. |
 | `claude/pt-team-onboarding-rw5awg` | PT team update email | **Merged.** The team update email and the login details email, from `docs/handoff-pt-team-update-email.md`. Both were sent on 12 August 2026; the files are kept as the record of what went out and as the template for the next trainer who joins. |
 | `claude/handoff-email-notifications-9m67a6` | Branded HTML notification emails | **Merged** (PR #4). Replaced the plain-text ops emails with branded HTML plus a dashboard link. |
-| `claude/self-service-password-change-3ydtqu` | Forgot-password (superseded) | **1 unmerged**, a handoff note only. Superseded by the branch below; the combined brief is `docs/handoff-auth-self-service.md`. |
+| `claude/self-service-password-change-3ydtqu` | Superseded public-access hardening | **1 unmerged, and it is NOT a handoff note** — this row said so for weeks and it is wrong. It is 597 lines across 16 files, including `supabase/migrations/0007_public_access_hardening.sql`. **Do not merge it.** That work went to live as `0009` on 12 Aug 2026 (app-side half in PR #18), and `0007`/`0008` are reserved by the GymMaster branch, so merging this would collide on migration numbers in a chain applied by hand. Its PR #21 sat open five weeks looking harmless because of the old description; **closed 19 Sep 2026** with the reasoning on the PR. |
 | `claude/gym-nurture-email-design-uw9nvu` | Member email series | **Merged** (PR #13 and #14, plus the August logo and template work). Emails 1 to 3, CMS-safe variants, brand assets, this doc. |
 | `claude/pt-document-expiry-feature-ppsy30` | PT compliance documents with expiry reminders | **Merged** (PR #8). |
 | `claude/availability-am-pm-model-yj1dby` | Trainer AM/PM availability | Merged. |
@@ -495,11 +495,26 @@ whole migration chain against a local Postgres 16.
   LIVE AND VERIFIED, 10 Sep 2026.** Merged via PRs #31, #33 and #34. A locked-out
   trainer reset their own password on the live site with no admin involved,
   confirmed in the auth logs (`Login`, then `PUT /user` 200, recovery token spent)
-  rather than from a screenshot. **Change-email is built and deployed but has not
-  been exercised against a real inbox** — same callback, same template style, so
-  it is expected to work, but expected is not verified. That is the one open item.
+  rather than from a screenshot.
+  **Change-email was then exercised on 10 Sep and half-worked, which is the more
+  useful result.** Supabase's "Secure email change" is on, so a change is
+  confirmed from **both** the old and the new address; the first confirmation
+  records one of two and returns no session. Nothing handled that, so the user
+  was bounced to sign-in with no message and no hint a second link existed, then
+  clicked the spent link and got an "expired" banner that called it a reset link.
+  Fixed in **PR #36** (merged 19 Sep 2026): the callback detects the half state
+  and says so, the sign-in screen gained a notice channel that outranks the error
+  banner, and the Account screen stops promising one email when two are sent.
+  **Still open: the two-link change-email flow has not been run end to end since
+  that fix.** Expected to work; expected is not verified.
+  A leftover from that run: the `khoschke+trainer@gmail.com` test account sits at
+  `email_change_confirm_status = 1` pending `karlandtay@outlook.com`, on a link
+  from 10 Sep that is long past Supabase's 24-hour validity. Harmless — sign-in is
+  unaffected — but the Account screen shows a pending badge until it is re-run or
+  cleared.
   (The row for `claude/self-service-password-change-3ydtqu` further up is a
-  different branch carrying only a handoff note; it is not this work.)
+  different branch. It is not this work, and despite what that row used to say it
+  is not a handoff note either.)
   It took **six separate faults** to get here, each invisible until something was
   measured. The full account, and the technique that found each, is in
   `docs/handoff-auth-self-service.md`. The short version, because every one of
