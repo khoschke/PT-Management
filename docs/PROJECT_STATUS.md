@@ -490,8 +490,9 @@ whole migration chain against a local Postgres 16.
   Sending from GymMaster on days 1, 10 and 30 off each member's join date, with
   the unsubscribe handled by GymMaster. `docs/handoff-email-1-go-live.md` is now
   a record rather than a task, apart from its last item: telling the PTs.
-- **Self-service auth (forgot-password + change-email)** — **FORGOT-PASSWORD IS
-  LIVE AND VERIFIED, 10 Sep 2026.** Merged via PRs #31, #33 and #34. A locked-out
+- ~~**Self-service auth (forgot-password + change-email)**~~ — **DONE. Both
+  halves live and verified.** **FORGOT-PASSWORD IS LIVE AND VERIFIED,
+  10 Sep 2026.** Merged via PRs #31, #33 and #34. A locked-out
   trainer reset their own password on the live site with no admin involved,
   confirmed in the auth logs (`Login`, then `PUT /user` 200, recovery token spent)
   rather than from a screenshot.
