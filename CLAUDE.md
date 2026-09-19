@@ -173,5 +173,29 @@ audits the result. Add an assertion for your migration to
 ```
 npx tsc --noEmit
 npx eslint src
+npm test
 npm run build
 ```
+
+`.github/workflows/ci.yml` runs the same four on every push and pull request,
+so a miss is caught either way. Run them locally anyway — a failure found here
+costs a minute rather than a deploy cycle.
+
+## Tests
+
+Vitest, in `src/lib/*.test.ts`, covering the pure logic: the allocation
+suggestion engine, form validation, the 48-hour contact clock, and the CSV
+export's formula-injection guard. `npm test` runs once, `npm run test:watch`
+stays open.
+
+The suite is deliberately narrow. It covers logic that is wrong or right on its
+own terms, and nothing that depends on the live system — no Supabase, no
+network, no DOM. That boundary is the point: RLS is proven against a real
+Postgres (see `supabase/reconcile/`), and live behaviour is proven by
+observation, per the `verify-live-state` skill. A passing suite says the rules
+in `src/lib` still hold. It says nothing about production.
+
+When you add a test, make it fail first. Break the source, watch the test go
+red, put the source back. A test that cannot fail is worse than no test,
+because it reads like cover. All four suites were checked this way when they
+landed.

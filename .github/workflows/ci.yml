@@ -1,0 +1,46 @@
+name: CI
+
+# The checks that CLAUDE.md asks for before a push, run automatically so they
+# cannot be forgotten. Nothing here touches the live Supabase project, Resend
+# or the deployed site: every route is server-rendered on demand, so the build
+# needs no secrets. Claims about live state are verified separately — see
+# .claude/skills/verify-live-state.
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Typecheck, lint, test, build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      # Cheapest first, so an obvious failure reports in under a minute
+      # rather than after a full Next build.
+      - name: Typecheck
+        run: npx tsc --noEmit
+
+      - name: Lint
+        run: npx eslint src
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Build
+        run: npm run build
