@@ -48,6 +48,7 @@ export async function GET(request: NextRequest) {
 
   const supabase = await createClient();
   let errorMessage: string | null = null;
+  let verifiedUser: { new_email?: string } | null = null;
 
   // token_hash first, deliberately. It verifies against Supabase directly and
   // needs nothing from this browser, so it survives being opened on a phone,
@@ -56,8 +57,9 @@ export async function GET(request: NextRequest) {
   // was sent, and is the fragile one — it is kept only so links already in
   // people's inboxes, and any flow still on the default templates, keep working.
   if (tokenHash && type) {
-    const { error } = await supabase.auth.verifyOtp({ type, token_hash: tokenHash });
+    const { data, error } = await supabase.auth.verifyOtp({ type, token_hash: tokenHash });
     errorMessage = error?.message ?? null;
+    verifiedUser = data?.user ?? null;
   } else if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     errorMessage = error?.message ?? null;
@@ -87,6 +89,27 @@ export async function GET(request: NextRequest) {
   // is on this browser already, since PKCE needs its code verifier here too.
   const flow = type ?? request.cookies.get(AUTH_FLOW_COOKIE)?.value;
   const isRecovery = flow === "recovery";
+
+  // An email change is not necessarily finished just because this link
+  // verified. With Supabase's "Secure email change" on — it is on for this
+  // project, and it is the default — BOTH the old and the new address get a
+  // link and both have to be clicked. The first confirmation records 1 of 2
+  // and hands back **no session**.
+  //
+  // Left unhandled that was silently awful: the callback redirected to
+  // /admin/account, the proxy found no session and bounced to sign-in, and
+  // nothing anywhere said "one down, one to go". The user reasonably concluded
+  // the link was broken and clicked it again, which really did fail.
+  //
+  // `new_email` still being set on the returned user is the authoritative
+  // "there is another confirmation outstanding" signal.
+  if (!isRecovery && verifiedUser?.new_email) {
+    const url = new URL("/admin/login", request.url);
+    url.searchParams.set("authNotice", "email-change-half");
+    const half = NextResponse.redirect(url);
+    half.cookies.set(AUTH_FLOW_COOKIE, "", { ...authCookieOptions, maxAge: 0 });
+    return half;
+  }
 
   const response = NextResponse.redirect(
     new URL(isRecovery ? RESET_PASSWORD_PATH : ACCOUNT_PATH, request.url),

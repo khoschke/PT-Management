@@ -312,6 +312,67 @@ them into one thread where they cannot be told apart. Two of the failed runs her
 were a stale link, and two more were test emails from the build session polluting
 the same thread. If in doubt, delete the whole thread and start with exactly one.
 
+## 10 September 2026, later: change-email needed two links, not one
+
+First real change-email run. It half-worked, in the most confusing way available.
+
+### What happened
+
+```
+07:59:01  change requested to karlandtay@outlook.com — TWO emails sent
+08:00:21  POST /verify → 200   first confirmation succeeded (the new-address link)
+08:00:40  /logout               user dumped to sign-in with no explanation
+08:00:46  POST /verify → 403   same link clicked again
+08:03:11  POST /verify → 403   and again
+```
+
+Database state after: `email_change_token_new` empty, `email_change_token_current`
+still set, `email_change_confirm_status` **1** of 2.
+
+**"Secure email change" is on** for this project — it is Supabase's default —
+so an email change is confirmed from **both** the old and the new address. The
+first confirmation records one of two and returns **no session**.
+
+Nothing handled that. The callback treated a successful verify as "done",
+redirected to `/admin/account`, the proxy found no session and bounced to
+sign-in. No message, no hint that a second link existed. The user quite
+reasonably decided the link was broken and clicked it again — and *that* really
+did fail, with the "expired" banner, which then said "reset link" about an
+email-change link.
+
+The second email was sitting unread in the current address's inbox the whole
+time.
+
+### What changed
+
+1. **The callback detects a half-finished change.** `new_email` still set on the
+   user returned by `verifyOtp` is the authoritative "another confirmation is
+   outstanding" signal. It now redirects to
+   `/admin/login?authNotice=email-change-half` with copy saying the confirmation
+   worked, both addresses have to confirm, and to sign in with the current email
+   meanwhile.
+2. **A notice channel on the sign-in screen**, separate from the error banner and
+   taking precedence over it, because "that worked, here is the next step" must
+   not be dressed as a failure.
+3. **The expired banner says "link", not "reset link".** It serves both flows.
+4. **The Account screen stops promising one email.** Both the form's description
+   and the pending banner now say two links go out and both must be clicked, and
+   that clicking only one leaves the change half-done.
+
+### Consequence worth knowing
+
+A half-finished change leaves the user signed out with `new_email` still set.
+They sign in with their **current** address — the change has not happened — and
+the Account screen shows the pending badge. Nothing is broken and nothing is
+lost; the outstanding link just has to be clicked, or left to expire.
+
+If the two-link dance is judged not worth it for a five-person internal tool,
+**Authentication → Sign In / Providers → "Secure email change"** turns it off and
+only the new address confirms. Worth noting the app already gates this on the
+current password, so single confirmation is defensible. It was left on because it
+is the safer default and because the confusing part was our handling, not the
+policy.
+
 ## What was built
 
 - `src/lib/site-url.ts` — absolute base URL for emailed links.

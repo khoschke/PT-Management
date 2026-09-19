@@ -194,6 +194,6 @@ export async function changeEmail(
 
   return {
     status: "success",
-    message: `Check ${newEmail} for a confirmation link. Your sign-in email changes once you click it — keep using ${user.email} until then.`,
+    message: `Confirmation links sent to ${newEmail} and to ${user.email}. Both have to be clicked — your sign-in email changes only once they are. Keep using ${user.email} until then.`,
   };
 }

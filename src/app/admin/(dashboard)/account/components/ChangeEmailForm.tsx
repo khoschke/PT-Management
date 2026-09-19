@@ -39,14 +39,17 @@ export default function ChangeEmailForm({ pendingEmail }: { pendingEmail: string
     >
       <h2 className="text-sm font-semibold text-foreground">Change sign-in email</h2>
       <p className="mt-0.5 text-xs text-secondary-label">
-        We&rsquo;ll email a confirmation link to the new address. Nothing changes until
-        it&rsquo;s clicked, so keep signing in with your current email in the meantime.
+        We&rsquo;ll email a confirmation link to the new address <strong>and to your
+        current one</strong>. For security both have to be clicked. Nothing changes
+        until then, so keep signing in with your current email in the meantime.
       </p>
 
       {pendingEmail && state.status !== "success" && (
         <div className="mt-3 rounded-xl bg-amber-50 px-3.5 py-2.5 text-sm text-amber-800">
-          Waiting on confirmation for <strong>{pendingEmail}</strong>. Check that inbox for
-          the link. Sending a new one below replaces it.
+          Waiting on confirmation for <strong>{pendingEmail}</strong>. Check{" "}
+          <strong>both</strong> inboxes &mdash; that one and your current address &mdash;
+          and click both links. Clicking only one leaves the change half-done and
+          signs you out without finishing it. Sending a new one below replaces both links.
         </div>
       )}
 
