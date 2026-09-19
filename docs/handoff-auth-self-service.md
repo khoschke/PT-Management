@@ -7,6 +7,48 @@ in the one session: they share the same Supabase Auth email plumbing, the same
 redirect-URL allowlist step, and the same `@supabase/ssr` patterns, so doing them
 together avoids repeating the config and the verification.
 
+## Runbook: someone can't get into their account
+
+Put first because it is the only part of this note anyone needs in a hurry. The
+self-service flows below are the *convenient* path. The manager override is the
+floor under them, and it depends on nothing — not email, not the trainer's
+inbox, not the old address.
+
+**A trainer lost access to the email they sign in with.**
+Manager goes to `/admin/staff` and changes their sign-in email. It takes effect
+immediately: that path uses the service-role admin client with
+`email_confirm: true`, so no confirmation email is sent and **neither inbox has
+to be reachable**. It refuses if another login already uses the new address, so
+a collision can't be created by accident. Thirty seconds, no code, no Supabase.
+
+**A trainer is locked out entirely** — can't sign in *and* can't receive the
+reset email. Same screen: a manager can set their password directly as well.
+Hand them the new one and have them change it on `/admin/account`.
+
+**A manager lost access to their own email.**
+Another manager fixes them on the same screen. There are three manager accounts
+(Karl, Daniel, Georgio), so this is real redundancy rather than a theoretical
+one — a manager can always fix a manager.
+
+**Every manager is unreachable at once.**
+The last resort is the Supabase dashboard: Authentication → Users → edit the
+email on the row. This is the only lever that doesn't depend on the app working
+at all, which is exactly why it is worth knowing it exists.
+
+### Two things worth knowing before you use it
+
+- **The override is a genuine super-power.** It changes any account's sign-in
+  email with no confirmation from anyone, gated only by `callerIsManager()` in
+  `src/app/admin/(dashboard)/staff/actions.ts`. Whoever holds a manager login
+  can take over any account in the system. That is the correct design for a
+  five-person gym tool, but it should be a decision someone made rather than
+  something they discover.
+- **Untested edge.** If someone has a half-finished self-service email change in
+  flight and a manager overrides from the Staff screen, whether the pending badge
+  on `/admin/account` clears or lingers has not been tested. Low stakes: starting
+  and completing a fresh change clears it either way. Worth thirty seconds to
+  check the next time it comes up rather than guessing.
+
 ## The two goals
 
 ### 1. "Forgot password?" on the login page
