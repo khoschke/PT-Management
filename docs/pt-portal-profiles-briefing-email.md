@@ -8,9 +8,11 @@ Internal, from Karl's own address, not from the system. Same audience and same
 voice as `docs/pt-team-update-email.md` and
 `docs/pt-nurture-flow-briefing-email.md`.
 
-**NOT SENT YET.** Drafted 15 September 2026, still to go out. Karl held it
-deliberately so a week of changes went in one email rather than three, which is
-why it covers the trainer portal and the password reset together.
+**SENT 19 September 2026** from Karl's own address to the four PTs. Drafted
+15 September and held deliberately so a week of changes went out in one email
+rather than three, which is why it covers the trainer portal and the password
+reset together. The copy below is what actually went out, including Karl's edit
+to the opening paragraph.
 
 ## Send details
 
@@ -52,8 +54,8 @@ use. That framing is the point of the paragraph, not the mechanics above it.
 Hi Dylan, Julie, Shahd and Michael,
 
 A few things have gone live in the PT Portal since my last note. None of it
-changes how leads reach you. It is mostly about giving you control of things you
-used to have to ask me for.
+changes how leads reach you. It is mostly about giving you control of your own
+profile.
 
 **Your profile is yours now**
 
