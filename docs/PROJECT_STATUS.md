@@ -442,17 +442,18 @@ whole migration chain against a local Postgres 16.
     breaks. All three now check `my_role() = 'trainer'`.
   - Full detail, including the two decisions Karl made and why, in
     `docs/handoff-staff-development-pathway.md`.
-- **Send the PT team the portal profiles briefing.** Still not sent as at
-  19 September 2026. The feature has been live since 8 September and none of the
-  four PTs know it exists — a control nobody knows about is a control nobody
-  uses. **The email is drafted and ready** at
-  `docs/pt-portal-profiles-briefing-email.md`: self-editable bio, specialties
-  and AM/PM availability; specialties drive who gets suggested for a lead, so
-  tag what they are genuinely best at; both slots off pauses them; pausing when
-  full is expected, letting a lead go cold is not; and they can reset their own
-  password now. It was held back on purpose so a week of changes went out
-  together, which they now have. It needs Karl to read it and send it, nothing
-  else.
+- ~~**Send the PT team the portal profiles briefing**~~ — **SENT 19 September
+  2026.** The four PTs now know they can edit their own bio, specialties and
+  AM/PM availability, that specialties drive which leads get suggested to them,
+  that both slots off pauses them when their book is full, and that they can
+  reset their own password. `docs/pt-portal-profiles-briefing-email.md` is the
+  record of what went out and the template for the next one.
+  **The standing job it creates:** nothing tells the manager when a PT pauses.
+  If two pause in the same week, leads quietly concentrate on the rest. The
+  Trainers screen labels a paused trainer "Paused, not taking new leads", so it
+  is a glance during the weekly review rather than anything to build — unless
+  pausing turns out to be common, in which case a count on the lead board is the
+  next increment.
 
 - **GymMaster integration** — see `docs/handoff-gymmaster-integration.md`.
   **Phase 1 scaffolding already exists unmerged** on
