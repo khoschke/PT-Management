@@ -344,7 +344,6 @@ the commit history.
 | `claude/gymmaster-phase-1-pull-7yuxuy` | GymMaster integration | **3 unmerged.** Phase 1 pull scaffolding plus migrations `0007` and `0008`, which keep those numbers. |
 | `claude/pt-team-onboarding-rw5awg` | PT team update email | **Merged.** The team update email and the login details email, from `docs/handoff-pt-team-update-email.md`. Both were sent on 12 August 2026; the files are kept as the record of what went out and as the template for the next trainer who joins. |
 | `claude/handoff-email-notifications-9m67a6` | Branded HTML notification emails | **Merged** (PR #4). Replaced the plain-text ops emails with branded HTML plus a dashboard link. |
-| `claude/self-service-password-change-3ydtqu` | Superseded public-access hardening | **1 unmerged, and it is NOT a handoff note** — this row said so for weeks and it is wrong. It is 597 lines across 16 files, including `supabase/migrations/0007_public_access_hardening.sql`. **Do not merge it.** That work went to live as `0009` on 12 Aug 2026 (app-side half in PR #18), and `0007`/`0008` are reserved by the GymMaster branch, so merging this would collide on migration numbers in a chain applied by hand. Its PR #21 sat open five weeks looking harmless because of the old description; **closed 19 Sep 2026** with the reasoning on the PR. |
 | `claude/gym-nurture-email-design-uw9nvu` | Member email series | **Merged** (PR #13 and #14, plus the August logo and template work). Emails 1 to 3, CMS-safe variants, brand assets, this doc. |
 | `claude/pt-document-expiry-feature-ppsy30` | PT compliance documents with expiry reminders | **Merged** (PR #8). |
 | `claude/availability-am-pm-model-yj1dby` | Trainer AM/PM availability | Merged. |
@@ -512,9 +511,10 @@ whole migration chain against a local Postgres 16.
   from 10 Sep that is long past Supabase's 24-hour validity. Harmless — sign-in is
   unaffected — but the Account screen shows a pending badge until it is re-run or
   cleared.
-  (The row for `claude/self-service-password-change-3ydtqu` further up is a
-  different branch. It is not this work, and despite what that row used to say it
-  is not a handoff note either.)
+  (Built on `claude/forgot-password-change-email-gl4lca`, which auto-deleted on
+  merge. An older `claude/self-service-password-change-3ydtqu` branch used to sit
+  in the map above and was a different thing entirely — superseded hardening code,
+  not this work. Its PR #21 was closed and the branch deleted on 19 Sep 2026.)
   It took **six separate faults** to get here, each invisible until something was
   measured. The full account, and the technique that found each, is in
   `docs/handoff-auth-self-service.md`. The short version, because every one of
