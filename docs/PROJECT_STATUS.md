@@ -654,3 +654,19 @@ Reminders only. Each gets scoped and built in its own session.
   **Baseline:** the day tagging goes in is day zero. There is no history to
   recover, and a retrospective PT-versus-non-PT tenure analysis was deliberately
   dropped rather than built on the unreliable membership type.
+- **Development goals and notes for trainers, not only staff** (raised 21 Sep
+  2026). The fortnightly PT development session runs with Dylan, Shahd, Henry
+  and Michael and has no home in the portal, so every goal set and every
+  conversation had lives in Karl's head and in a calendar description.
+  **The schema already supports it.** `development_goals` and
+  `development_notes` key on `trainer_id`, not on the role, which is why they
+  survive a promotion untouched. It is the screens that are gated to staff, not
+  the data. So this is a UI and access question rather than a migration.
+  **The design rule carries over and matters more here:** a goal belongs to the
+  person who set it, and there is no manager write policy on the goal text. A
+  self-employed trainer being coached by the PT Manager is exactly the case
+  that rule was written for.
+  **What must stay out of it:** the portal's development notes are a shared
+  record the trainer can read. Karl's own observations about a trainer belong
+  in `docs/pt-development-coaching-notes.md`, which is private to him. Do not
+  merge the two.
