@@ -631,3 +631,26 @@ Reminders only. Each gets scoped and built in its own session.
   proposal to the owners rather than something Karl can build. Karl held it on
   21 September to clear higher-priority work first. Raise both together when the
   sign-up conversation is next on the table.
+- **PT client tagging in GymMaster** — in flight, waiting on Danny (21 Sep 2026).
+  There is currently no reliable way to tell who is actually training with a PT,
+  which blocks every PT metric worth having, including PT clients as a
+  percentage of membership.
+  **Why membership type cannot answer it:** it fails in both directions. A PT
+  membership is for a client a trainer brings in to train under them, and some
+  of those members have since stopped training, so they look like PT clients and
+  are not. Meanwhile most clients who came through the gym are on Base or
+  Ultimate, so they are PT clients and do not look like it.
+  **Asked of Danny:** three member tags in GymMaster, which he has confirmed it
+  supports — currently training with a PT (yes/no), which trainer, and
+  previously trained but no longer does. The third is also the best
+  re-engagement list in the gym, so it is kept rather than cleared.
+  **Where the truth comes from:** the trainers, not the database. Karl confirms
+  the client list with each of the five, front of house enters it. Monthly is
+  the opening suggestion; the mechanism is deliberately unsettled until one the
+  trainers will actually sustain is found.
+  **Not Karl's call:** what happens to members whose membership type no longer
+  matches what they do, and what that means for their billing. Danny and
+  Georgio decide, and the member hears a decision rather than a question.
+  **Baseline:** the day tagging goes in is day zero. There is no history to
+  recover, and a retrospective PT-versus-non-PT tenure analysis was deliberately
+  dropped rather than built on the unreliable membership type.
