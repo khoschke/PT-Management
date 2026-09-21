@@ -614,3 +614,20 @@ Reminders only. Each gets scoped and built in its own session.
   suggested; approach to be agreed when it is scoped.
 - **Ezidebit connected to the PT Manager dashboard via an MCP, reading live.**
   Georgio's request, raised in the rents thread on 3 August 2026. Read only.
+- **Two sign-up capture questions — parked, not dropped** (Karl, 21 Sep 2026).
+  Both belong to one conversation with Danny and Georgio about what front of
+  house asks a new member at sign-up, and neither is worth building or
+  requesting before that conversation happens.
+  - **"How did you hear about us", captured at sign-up.** Raised in Karl's
+    9 September recap to Dylan. This is the member-level source tag the pipeline
+    design depends on: without it, conversion rate by source cannot be
+    calculated, which is the whole reason for tracking sources.
+  - **PT interest at sign-up, asked as a three-way question** — "yes I'd like to
+    get started" / "I'd like to know more first" / "not right now" — with a yes
+    or a maybe walked through the comp session request form at the desk rather
+    than sent a link. Designed in full in the 10 September pipeline draft to
+    Dylan, including why the link version fails.
+  **Why parked:** the tick box sits inside Danny's sign-up process, so it is a
+  proposal to the owners rather than something Karl can build. Karl held it on
+  21 September to clear higher-priority work first. Raise both together when the
+  sign-up conversation is next on the table.
