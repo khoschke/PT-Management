@@ -221,6 +221,23 @@ strength". Change it in that one file and it flows to both sides.
 
 ## Small shipped touches
 
+- **The 48 hour clock stops once a lead is past first contact.** It used to stop
+  only when `first_contacted_at` was stamped, which the DB trigger does only on the
+  exact "Contacted" status. A lead advanced straight to Booked/Completed kept
+  counting and showed as overdue forever (e.g. a Completed lead reading "Overdue by
+  7d"). `getContactClock` now takes the lead status and treats anything past
+  New/Allocated as done (`src/lib/countdown.ts`, `AWAITING_CONTACT_STATUSES` in
+  `src/lib/types.ts`). This also corrects the board's overdue count, the "Overdue
+  only" filter, and the daily digest email, which shared the same logic. No data
+  migration was needed — the fix is in how the clock reads status. (The trigger
+  still only stamps `first_contacted_at` on "Contacted", so the CSV's "First
+  contacted at" column stays blank for leads that skipped that step; stamp it on
+  Booked/Completed too in a later migration if that column needs to be complete.)
+- **Closed leads hide from the lead board by default.** Completed / Not interested
+  / Unreachable (`CLOSED_LEAD_STATUSES`) drop off the default view so the board is a
+  live "work to do" list; a "Show closed" toggle (or picking a closed status in the
+  filter) brings them back. Nothing is deleted — soft delete stays reserved for
+  actually removing a lead (spam, duplicate, removal request).
 - **Password show/hide toggle.** Every password field (login, the Account
   change-password form, and the Staff add-manager / add-trainer-login temp-password
   fields) uses a shared `PasswordInput`

@@ -25,7 +25,7 @@ export default function LeadCard({
           </div>
         </div>
         <div className="shrink-0">
-          <ClockPill dueAt={lead.first_contact_due_at} firstContactedAt={lead.first_contacted_at} />
+          <ClockPill dueAt={lead.first_contact_due_at} firstContactedAt={lead.first_contacted_at} status={lead.status} />
         </div>
       </div>
 

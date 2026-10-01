@@ -117,6 +117,22 @@ export const LEAD_STATUSES: LeadStatus[] = [
   "Unreachable",
 ];
 
+// The only states the 48 hour first contact clock applies to: a lead that is
+// still waiting to be contacted for the first time. Once it moves past these
+// (contacted, booked, or closed out) first contact has happened or no longer
+// matters, so the clock stops regardless of whether the "Contacted" step was
+// ticked explicitly.
+export const AWAITING_CONTACT_STATUSES: LeadStatus[] = ["New", "Allocated"];
+
+// Finished states. The work on these is done, so the board hides them from its
+// default view (a "Show closed" toggle brings them back) and the clock never
+// counts them as overdue.
+export const CLOSED_LEAD_STATUSES: LeadStatus[] = [
+  "Completed",
+  "Not interested",
+  "Unreachable",
+];
+
 // ---------------------------------------------------------------------------
 // Development pathway (0011_development_goals.sql)
 // ---------------------------------------------------------------------------

@@ -111,7 +111,7 @@ export default function LeadDetailPanel({
             <div className="mt-2.5 flex flex-wrap gap-1.5">
               <SourceBadge source={lead.lead_source} />
               <StatusBadge status={lead.status} />
-              <ClockPill dueAt={lead.first_contact_due_at} firstContactedAt={lead.first_contacted_at} />
+              <ClockPill dueAt={lead.first_contact_due_at} firstContactedAt={lead.first_contacted_at} status={lead.status} />
             </div>
           </div>
           <button

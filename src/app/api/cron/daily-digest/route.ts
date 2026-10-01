@@ -43,7 +43,7 @@ export async function GET(request: Request) {
     .map((lead) => ({
       name: lead.name,
       source: lead.lead_source,
-      clock: getContactClock(lead.first_contact_due_at, lead.first_contacted_at, now),
+      clock: getContactClock(lead.first_contact_due_at, lead.first_contacted_at, lead.status, now),
     }))
     .filter((l) => l.clock.band === "amber")
     .map((l) => ({ name: l.name, source: l.source, hoursRemaining: l.clock.hoursRemaining }));
@@ -52,7 +52,7 @@ export async function GET(request: Request) {
     .map((lead) => ({
       name: lead.name,
       source: lead.lead_source,
-      clock: getContactClock(lead.first_contact_due_at, lead.first_contacted_at, now),
+      clock: getContactClock(lead.first_contact_due_at, lead.first_contacted_at, lead.status, now),
     }))
     .filter((l) => l.clock.band === "red")
     .map((l) => ({ name: l.name, source: l.source, hoursRemaining: l.clock.hoursRemaining }));
