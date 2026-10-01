@@ -277,5 +277,13 @@ from (
     exists (select 1 from public.document_types
             where key = 'contract' and expiry_rule = 'none')
 
+  -- 0016_stamp_first_contacted ----------------------------------------------
+  -- 0016 widens which statuses stamp first_contacted_at. The observable fact is
+  -- that the trigger body now stamps on Booked/Completed, not only Contacted,
+  -- so first contact is recorded even when a lead skips the "Contacted" step.
+  union all select '0016', 'record_status_history stamps on Booked/Completed',
+    (select prosrc from pg_proc
+      where oid = to_regprocedure('public.record_status_history()')) like '%Booked%'
+
 ) checks
 order by migration, item;

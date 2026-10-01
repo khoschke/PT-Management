@@ -228,11 +228,14 @@ strength". Change it in that one file and it flows to both sides.
   7d"). `getContactClock` now takes the lead status and treats anything past
   New/Allocated as done (`src/lib/countdown.ts`, `AWAITING_CONTACT_STATUSES` in
   `src/lib/types.ts`). This also corrects the board's overdue count, the "Overdue
-  only" filter, and the daily digest email, which shared the same logic. No data
-  migration was needed — the fix is in how the clock reads status. (The trigger
-  still only stamps `first_contacted_at` on "Contacted", so the CSV's "First
-  contacted at" column stays blank for leads that skipped that step; stamp it on
-  Booked/Completed too in a later migration if that column needs to be complete.)
+  only" filter, and the daily digest email, which shared the same logic. The
+  board/clock fix needed no migration — it reads status. **Migration
+  `0016_stamp_first_contacted.sql`** then follows up on the stored data: the
+  status trigger now stamps `first_contacted_at` on Booked/Completed too (not just
+  "Contacted"), and the migration backfills existing leads from the earliest
+  contacted-status history entry, so the CSV's "First contacted at" column is
+  filled. "Unreachable" is deliberately left null (no contact was made). Apply it
+  in the Supabase SQL editor like the rest; audit row added for it.
 - **Closed leads hide from the lead board by default.** Completed / Not interested
   / Unreachable (`CLOSED_LEAD_STATUSES`) drop off the default view so the board is a
   live "work to do" list; a "Show closed" toggle (or picking a closed status in the
