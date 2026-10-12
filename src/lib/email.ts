@@ -149,6 +149,82 @@ export async function sendTrainerAllocationEmail(trainer: Trainer, lead: Lead) {
   });
 }
 
+interface NewLeadAlertParams {
+  name: string;
+  phone: string;
+  email: string | null;
+  goals: string[];
+  preferredTrainerName: string | null;
+  timePreference: Lead["time_preference"];
+  dueAt: Date;
+}
+
+const TIME_PREFERENCE_LABELS: Record<NonNullable<Lead["time_preference"]>, string> = {
+  AM: "Morning",
+  PM: "Evening",
+  either: "Either",
+};
+
+// Sent to the PT Manager the moment a member submits the public form. The 48
+// hour clock starts at submission, so waiting for the next morning's digest
+// can eat most of it (a Friday-evening lead breached that way in Oct 2026).
+export async function sendManagerNewLeadAlert(managerEmail: string, params: NewLeadAlertParams) {
+  const client = getClient();
+  if (!client) return;
+
+  const goalsText = params.goals.length > 0 ? params.goals.map(goalLabel).join(", ") : "Not stated";
+  const trainerText = params.preferredTrainerName ?? "No preference";
+  const timeText = params.timePreference ? TIME_PREFERENCE_LABELS[params.timePreference] : "No preference";
+  const dueText = params.dueAt.toLocaleString("en-AU", { timeZone: "Australia/Brisbane" });
+
+  const text = [
+    `${params.name} has just filled in the complimentary PT session form.`,
+    "",
+    `Phone: ${params.phone}`,
+    `Email: ${params.email ?? "Not provided"}`,
+    `Goals: ${goalsText}`,
+    `Preferred trainer: ${trainerText}`,
+    `Time preference: ${timeText}`,
+    "",
+    `First contact is due by ${dueText}. Allocate soon so the trainer has the time.`,
+    "",
+    dashboardTextLine("Open the dashboard to allocate."),
+  ].join("\n");
+
+  const detailRow = (label: string, value: string) =>
+    `<tr>
+      <td style="padding:6px 0;font-size:13px;color:#777777;width:150px;vertical-align:top;">${label}</td>
+      <td style="padding:6px 0;font-size:14px;color:#111111;vertical-align:top;">${value}</td>
+    </tr>`;
+
+  const html = layout(`
+    <p style="margin:0 0 6px;font-size:20px;font-weight:600;line-height:1.3;">${esc(params.name)}</p>
+    <p style="margin:0 0 20px;font-size:14px;line-height:1.5;color:#444444;">
+      has just filled in the complimentary PT session form.
+    </p>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #eeeeee;">
+      ${detailRow("Phone", esc(params.phone))}
+      ${detailRow("Email", params.email ? esc(params.email) : "Not provided")}
+      ${detailRow("Goals", esc(goalsText))}
+      ${detailRow("Preferred trainer", esc(trainerText))}
+      ${detailRow("Time preference", esc(timeText))}
+    </table>
+    <p style="margin:20px 0 0;font-size:13px;line-height:1.5;color:#777777;">
+      First contact is due by <strong style="color:#111111;">${esc(dueText)}</strong>.
+      Allocate soon so the trainer has the time.
+    </p>
+    ${ctaButton()}
+  `);
+
+  await client.emails.send({
+    from: FROM_ADDRESS,
+    to: managerEmail,
+    subject: `New PT lead to allocate: ${params.name}`,
+    text,
+    html,
+  });
+}
+
 interface DigestLeadSummary {
   name: string;
   hoursRemaining: number;
@@ -217,7 +293,7 @@ export async function sendManagerDailyDigest(
   await client.emails.send({
     from: FROM_ADDRESS,
     to: managerEmail,
-    subject: `Fitaz PT leads: ${breached.length} breached, ${approachingBreach.length} due soon`,
+    subject: `Fitaz PT leads: ${overnight.length} new, ${approachingBreach.length} due soon, ${breached.length} breached`,
     text,
     html,
   });
