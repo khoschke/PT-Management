@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { leadFormSchema } from "@/lib/validation";
 import { hashIp } from "@/lib/ip";
+import { sendManagerNewLeadAlert } from "@/lib/email";
 import type { LeadFormState } from "./state";
 
 export async function submitLead(
@@ -86,6 +87,35 @@ export async function submitLead(
       status: "error",
       message: "Please check the highlighted fields and try again.",
     };
+  }
+
+  // Tell the manager straight away. The lead is already saved, so a failed
+  // email must never turn a successful submission into an error for the member.
+  if (process.env.PT_MANAGER_EMAIL) {
+    try {
+      let preferredTrainerName: string | null = null;
+      if (parsed.data.preferred_trainer_id) {
+        const { data: trainer } = await supabase
+          .from("trainers")
+          .select("name")
+          .eq("id", parsed.data.preferred_trainer_id)
+          .maybeSingle<{ name: string }>();
+        preferredTrainerName = trainer?.name ?? null;
+      }
+      await sendManagerNewLeadAlert(process.env.PT_MANAGER_EMAIL, {
+        name: parsed.data.name,
+        phone: parsed.data.phone,
+        email: parsed.data.email || null,
+        goals: parsed.data.goals,
+        preferredTrainerName,
+        timePreference: parsed.data.time_preference ?? null,
+        // Matches the column default on leads.first_contact_due_at to within
+        // the few milliseconds the insert took.
+        dueAt: new Date(Date.now() + 48 * 60 * 60 * 1000),
+      });
+    } catch (err) {
+      console.error("New lead alert email failed", err);
+    }
   }
 
   return { status: "success" };

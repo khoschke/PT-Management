@@ -12,7 +12,11 @@ export interface ContactClock {
   hoursRemaining: number;
 }
 
-const AMBER_THRESHOLD_HOURS = 12;
+// 24, not 12: the manager digest runs once a day, so a 24 hour amber window
+// guarantees every uncontacted lead is flagged "due soon" in at least one
+// digest before it breaches. At 12, a lead could sit just outside amber at one
+// 7am run and be breached before the next.
+const AMBER_THRESHOLD_HOURS = 24;
 
 export function getContactClock(
   dueAt: string,
