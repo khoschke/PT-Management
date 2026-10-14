@@ -4,6 +4,7 @@ import type {
   DocumentType,
   SetupChecklistItem,
   SetupItemState,
+  Trainer,
   TrainerDocument,
   TrainerSetupChecklist,
   TrainerSetupChecklistItem,
@@ -132,7 +133,7 @@ export function setupProgress(
 // If that ever changes, the cheap version is a suggested state ("looks done,
 // tick to confirm"), not a silent tick.
 
-export const DERIVED_ITEM_KEYS = ["signed_contract", "received_certs", "onboarding_program"] as const;
+export const DERIVED_ITEM_KEYS = ["signed_contract", "profile", "received_certs", "onboarding_program"] as const;
 
 export interface SetupEvidence {
   text: string;
@@ -159,6 +160,42 @@ export function contractEvidence(
   const verified = contracts.filter((d) => d.status === "verified").length;
   return {
     text: verified > 0 ? "Contract on file, verified" : "Contract on file, awaiting review",
+    href,
+    linkLabel,
+    empty: false,
+  };
+}
+
+// "Profile" is their bio and specialty tags, not a GymMaster profile. It is the
+// source content that feeds two separate outputs further down the list: the
+// Coaches Board corflute on the gym wall, and their profile on the gym website.
+// The five original PTs' rows were themselves built from their corflutes, so
+// this is the same material going the other way.
+//
+// The portal holds it on the trainers row and the trainer edits it themselves
+// at /admin/profile, so this is the one derived item where the subject, not the
+// manager, does the work. All the more reason the manager still ticks it: the
+// tick means "I have read it and it is good enough to print", which no amount
+// of text in a column can tell you.
+export function profileEvidence(
+  trainer: Pick<Trainer, "bio" | "specialties">,
+): SetupEvidence {
+  const href = "/admin/trainers";
+  const linkLabel = "Roster";
+  const hasBio = Boolean(trainer.bio?.trim());
+  const tags = trainer.specialties?.length ?? 0;
+
+  if (!hasBio && tags === 0) {
+    return { text: "No bio or specialty tags yet", href, linkLabel, empty: true };
+  }
+  if (!hasBio) {
+    return { text: `${tags} specialty tag${tags === 1 ? "" : "s"}, no bio`, href, linkLabel, empty: true };
+  }
+  if (tags === 0) {
+    return { text: "Bio written, no specialty tags", href, linkLabel, empty: true };
+  }
+  return {
+    text: `Bio and ${tags} specialty tag${tags === 1 ? "" : "s"}`,
     href,
     linkLabel,
     empty: false,

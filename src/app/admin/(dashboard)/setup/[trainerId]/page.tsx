@@ -9,6 +9,7 @@ import {
   getContractTypeId,
   getSetupChecklistItems,
   getTrainerSetup,
+  profileEvidence,
   rentRamp,
   setupProgress,
   workbookEvidence,
@@ -72,6 +73,9 @@ export default async function TrainerSetupPage({
   // tick; the tick stays the manager's. See lib/setup.ts for why.
   const evidenceFor = (key: string): SetupEvidence | null => {
     if (key === "signed_contract") return contractEvidence(documents, contractTypeId, trainerId);
+    // Profile is their bio and specialty tags, the source for both the Coaches
+    // Board corflute and the website profile further down the list.
+    if (key === "profile") return profileEvidence(trainer);
     if (key === "received_certs") return certsEvidence(documents, trainerId);
     if (key === "onboarding_program") return workbookEvidence(percent, trainerId);
     return null;

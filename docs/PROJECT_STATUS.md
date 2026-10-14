@@ -486,13 +486,20 @@ whole migration chain against a local Postgres 16.
   - **Three states per item, not a boolean** (`pending` / `done` /
     `not_applicable`), because the source document says "Fitaz email signature
     (if applicable)" and without N/A a checklist can never read as complete.
-  - **The three items that overlap existing features show live evidence beside
+  - **The four items that overlap existing features show live evidence beside
     the tick and never tick themselves.** Signed contract reads
     `trainer_documents` for a `contract`-type upload, Received certs reads the
     compliance documents, Completed onboarding program reads
-    `workbookPercent()`. An automatic tick would be a second source of truth
-    for "is this done" that a manager could not correct. Full reasoning in
+    `workbookPercent()`, and Profile reads the bio and specialty tags off the
+    `trainers` row. An automatic tick would be a second source of truth for "is
+    this done" that a manager could not correct. Full reasoning in
     `src/lib/setup.ts`.
+  - **"Profile" is their bio and specialty tags, not a GymMaster profile.** It
+    is the source content, and two later items are its outputs: the Coaches
+    Board corflute on the gym wall and their profile on
+    fitazgym.com/pages/personal-trainers. The five original PTs' `trainers`
+    rows were built from their corflutes, so it is the same material going the
+    other way. Don't re-guess this: it was guessed wrong once.
   - **Staff on the development pathway have no checklist until promotion.**
     Almost none of the 18 items is true of one, and the two that are read live
     state keyed on `trainer_id`, which does not change at promotion, so a

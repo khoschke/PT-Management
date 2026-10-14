@@ -129,16 +129,39 @@ insert into setup_checklist_items (key, label, hint, sort_order) values
   ('whatsapp',             'WhatsApp',                                   'Added to the team group.',                                                       70),
   ('gym_master',           'GymMaster set up',                           '',                                                                              80),
   ('google_drive',         'Google Drive set up',                        '',                                                                              90),
-  ('profile',              'Profile',                                    'Their GymMaster profile filled in.',                                           100),
-  ('profile_pics',         'Profile pics',                               '',                                                                             110),
+  ('profile',              'Profile',                                    'Their bio and specialty tags. One source, two outputs: the Coaches Board corflute and the website profile.', 100),
+  ('profile_pics',         'Profile pics',                               'Photos for the corflute and the website profile.',                             110),
   ('received_certs',       'Received certs',                             'Qualifications, CPR and first aid, insurances.',                                120),
   ('rent_ezidebit',        'Rent set up in Ezidebit',                    '',                                                                             130),
-  ('website_pt_profile',   'Fitaz Gym website PT profile',               '',                                                                             140),
-  ('coaches_board',        'Coaches Board profile ordered',              '',                                                                             150),
+  ('website_pt_profile',   'Fitaz Gym website PT profile',               'Live on fitazgym.com/pages/personal-trainers, from the profile above.',        140),
+  ('coaches_board',        'Coaches Board profile ordered',              'Their corflute for the gym wall, from the profile above.',                     150),
   ('welcome_announcement', 'Welcome announcement on social media',       '',                                                                             160),
   ('email_signature',      'Fitaz email signature',                      'If applicable. Mark it not applicable if they are not getting one.',           170),
   ('onboarding_program',   'Completed onboarding program',               'The 10-part workbook at /onboarding.',                                         180)
-on conflict (key) do nothing;
+on conflict (key) do update set
+  label = excluded.label,
+  hint = excluded.hint,
+  sort_order = excluded.sort_order;
+
+-- Why `do update` rather than `do nothing`.
+--
+-- `do nothing` was the first version, and it meant that correcting a label or
+-- a hint needed a whole new migration, which was discovered the same day: the
+-- "Profile" hint shipped saying "their GymMaster profile", and Profile is
+-- actually their bio and specialty tags, the source that feeds both the
+-- Coaches Board corflute and the website profile. Re-running the file now
+-- fixes the template instead.
+--
+-- `active` is deliberately NOT in the update list, so retiring an item by
+-- hand survives a re-run.
+--
+-- **If a manager-editable item list is ever built, this has to change.** Right
+-- now nothing in the app writes to this table, so the migration is the only
+-- author and converging on it is strictly better. The day a manager can edit a
+-- label, re-running this would silently undo their edit.
+--
+-- The three per-trainer tables are untouched by this: the ticks key on
+-- item_id, which is stable, so editing a label never orphans anything.
 
 -- ---------------------------------------------------------------------------
 -- trainer_setup_checklists — the header, one row per trainer

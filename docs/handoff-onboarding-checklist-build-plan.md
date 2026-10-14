@@ -404,6 +404,11 @@ change would cost:
    two separate items on the paper list. I have assumed "Profile" means their
    GymMaster profile and the other means the public site. If "Profile" means
    something else, say so, otherwise I will word the hints to that assumption.
+   **Answered, 14 Oct 2026, and the assumption was wrong.** "Profile" is the
+   trainer's own profile: their bio and specialty tags. It is the *source*,
+   and two later items on the list are its *outputs*: the Coaches Board
+   corflute on the gym wall, and their profile on the gym website. Nothing to
+   do with GymMaster. See the note below.
 
 No new access needed. Supabase MCP reaches the live project from here, so I can
 apply `0016`, run the audit against live and test the RLS as a real signed-in
@@ -524,6 +529,34 @@ reason.** Feed those tests literal ids.
 reimplemented.** Two copies of that calculation would eventually disagree
 about how far through the workbook somebody is, on two screens a manager reads
 in the same sitting.
+
+**"Profile" turned out to be a fourth derived item.** The assumption in the
+plan was that it meant their GymMaster profile. It does not: it is their bio
+and specialty tags, and the Coaches Board corflute and the website PT profile
+are two outputs of that one piece of content. That makes the list read as a
+small pipeline rather than three unrelated ticks, and the hints now say so.
+
+It also means the portal already knows whether it is done, because the bio and
+specialty tags live on the `trainers` row. So `profile` got an evidence line
+like the other three, reading "Bio and 3 specialty tags" or "No bio or
+specialty tags yet", linking to the roster. It costs no extra query: the
+trainer row is already loaded on the page.
+
+Worth noting what makes this one different. It is the only derived item where
+the **subject** does the work rather than the manager, since a trainer edits
+their own bio and specialties at `/admin/profile`. That is an argument for
+auto-ticking it, and it is still the wrong call: the manager's tick means "I
+have read it and it is good enough to print on a corflute", which is a
+judgement no column can hold.
+
+**One schema change came out of this.** The seed was `on conflict (key) do
+nothing`, which meant correcting a label or hint needed a brand new migration.
+It is now `do update set label, hint, sort_order`, so re-running `0017` fixes
+the template. `active` is left out of the update list so retiring an item by
+hand survives a re-run, and the per-trainer ticks key on `item_id`, which never
+changes, so editing a label orphans nothing. **If a manager-editable item list
+is ever built this has to change back**, because re-running would then undo a
+manager's edit. Right now the migration is the only author of that table.
 
 **Still deliberately not built**, unchanged from the plan: any trainer-facing
 view, a manager-editable item list, rent amounts anywhere, auto-ticking the
