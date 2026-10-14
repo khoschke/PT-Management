@@ -49,6 +49,20 @@ export function worksThroughWorkbook(role: AppRole | null | undefined): boolean 
   return role === "trainer" || role === "staff";
 }
 
+// Whether trainers get their own development page ("My development"). Off
+// since October 2026 (Karl): the page was built for the staff development
+// pathway, not for PTs, and trainers keep the workbook instead. Nothing is
+// deleted, so a promoted staff member's goals and notes are still there.
+// Set this to true to give trainers the tab back.
+export const TRAINERS_SEE_OWN_DEVELOPMENT = false;
+
+// Who sees their own development page. Staff always do; it is their home
+// screen, and /admin and /admin/profile both redirect them to it. The manager
+// gets the overview instead, which this does not govern.
+export function seesOwnDevelopment(role: AppRole | null | undefined): boolean {
+  return role === "staff" || (role === "trainer" && TRAINERS_SEE_OWN_DEVELOPMENT);
+}
+
 // Who may read the workbook's coaching notes and worked examples, the two
 // things Manager view reveals. The manager, and nobody else.
 //
