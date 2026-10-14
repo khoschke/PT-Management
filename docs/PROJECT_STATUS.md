@@ -272,6 +272,19 @@ strength". Change it in that one file and it flows to both sides.
   has been refused by GitHub with a 403, and the GitHub MCP server has no
   delete-branch tool. Don't burn time retrying it; hand the branch name to Karl,
   or let the auto-delete above handle it.
+- **Checking a change by role: the accounts, and the address.** Karl checks
+  role-gated changes himself; nobody else needs to log in.
+  - **Trainer view:** Karl's own trainer login.
+  - **Staff view:** a **"Test Staff"** account (role `staff`, created 14 Oct
+    2026). It's a test account, not a real person on the pathway: leave it
+    out of anything real, such as any email that goes to staff.
+  - **Manager view:** Karl's manager login.
+  - **Check the PR preview, not production.** Each PR has its own Vercel
+    preview address (`pt-management-git-<branch>-fitaz-pt-manager.vercel.app`,
+    linked in the Vercel bot's comment on the PR). `pt-management-two.vercel.app`
+    and `pt.fitazgym.com` run the merged code, so a check there before merging
+    tests the old version. The preview uses the same live database, so the same
+    logins work, but it is a different address and needs its own sign-in.
 
 ## Member email series
 
@@ -441,7 +454,9 @@ The changes, as briefed:
   Karl. Active leads only. Per lead: name, status, last contacted, assigned
   date. Header: count of active leads. Send even with no leads ("no active leads
   this week").
-- **[4] Hide "My development" from trainers.** Done: one switch,
+- **[4] Hide "My development" from trainers.** Done, merged (PR #44) and checked
+  on the preview 14 Oct 2026 as a trainer (tab gone, address redirects) and as
+  staff (unchanged). One switch,
   `TRAINERS_SEE_OWN_DEVELOPMENT` in `src/lib/auth.ts`, hides the tab and
   redirects trainers off the route. Staff and the manager are unchanged.
 
