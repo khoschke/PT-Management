@@ -87,6 +87,12 @@ export default async function DashboardLayout({ children }: { children: React.Re
                 ...(isManager
                   ? [
                       { href: "/admin/trainers", label: "Trainers" },
+                      // "Setup" rather than anything with "onboarding" in it.
+                      // The workbook already owns that word twice over, and a
+                      // second "Onboarding" tab is exactly the confusion the
+                      // scoping note warned about. This is the business setup
+                      // checklist; "PT onboarding" below is the workbook.
+                      { href: "/admin/setup", label: "Setup" },
                       { href: "/admin/staff", label: "Staff" },
                       { href: "/admin/development", label: "Development" },
                       { href: "/admin/compliance", label: "Compliance" },

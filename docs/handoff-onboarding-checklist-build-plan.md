@@ -1,5 +1,22 @@
 # Build plan (v1): PT setup checklist, tracked per trainer
 
+**Status: BUILT, 14 October 2026.** Signed off and built as planned. This file
+is kept as the reasoning and the record of the roads not taken; the summary
+lives in `PROJECT_STATUS.md` and the code is the truth.
+
+**Two things changed between the plan and the build:**
+
+1. **The migration is `0017`, not `0016`.** `0016_stamp_first_contacted.sql`
+   merged and went to live while this plan sat awaiting sign-off. Re-derived
+   from disk and from all 16 remote branches on the day of the build rather
+   than from the plan, which is the only reason it was caught.
+2. **The three derived items stayed manual ticks, the staff answer held, the
+   labels shipped without dollar figures, the rent ramp shipped computed with
+   no amounts, and the feature is called Setup.** All five calls below went as
+   proposed.
+
+Originally written 15 Sep 2026 as:
+
 **Status: PROPOSED, awaiting Karl's sign-off (written 15 Sep 2026).**
 Scoping lives in `docs/handoff-onboarding-checklist-tracking.md`. That note asks
 the questions; this one answers them. Once Karl agrees, this becomes the build
@@ -16,7 +33,7 @@ session, because the docs have lagged the code before.
 
 | Claim | Where the docs say it | What is actually true |
 |---|---|---|
-| Next free migration is `0016` | Scoping note, "Constraints" | **Correct.** Highest on disk is `0015`. I checked all 15 remote branches: nothing anywhere numbers `0016`. GymMaster still holds `0007`/`0008` on `claude/gymmaster-phase-1-pull-7yuxuy`; `0005` is retired. |
+| Next free migration is `0016` | Scoping note, "Constraints" | **Was correct on 15 Sep, wrong by 14 Oct.** Highest on disk was `0015` and no branch numbered `0016`. Then `0016_stamp_first_contacted.sql` merged while this plan awaited sign-off, so **the build is `0017`**. The lesson is not that the check was wrong, it is that a migration number has a shelf life: re-derive it on the day you build, from disk *and* from every remote branch. |
 | `0013`, `0014`, `0015` are on live | PROJECT_STATUS Database table | **Correct**, re-confirmed by querying live: the `staff` enum value, `my_role()`, both development relations and the `contract` document type are all present. |
 | No checklist tables exist yet | not stated anywhere | **Confirmed against live.** No relation in `public` matching `%checklist%`. Starting from nothing. |
 | Workbook content is in `src/lib/onboarding/content.ts` | Scoping note, "This is NOT the existing workbook" | **Stale.** `content.ts` is now an index; the content is in `parts/part1.ts` to `part10.ts`, as `CLAUDE.md` says. Fixed in the scoping note as part of this pass. |
@@ -456,3 +473,60 @@ Carried here rather than raised as separate questions.
   `claude/staff-development-pathway-scope-ac664k` is fully merged and still on
   the remote, marked "safe to delete" in the status doc. I will fold both into
   the build commit unless you would rather I left them.
+
+---
+
+## Build notes, 14 October 2026
+
+Things worth knowing that only surfaced while building it.
+
+**The audit guard was tested for its ability to fail, not just to pass.** A
+check that cannot catch a violation is worse than no check, because it reports
+a clean bill of health. So the "trainers locked out of every setup relation"
+assertion was run three times against a throwaway Postgres carrying the full
+chain: PRESENT on the clean schema, **MISSING** the moment a
+`trainer_id = my_trainer_id()` select policy was added to
+`trainer_setup_checklists`, and PRESENT again once it was dropped. It catches
+the real thing.
+
+**`apply_migration` over the Supabase MCP times out at 60 seconds, and the
+timeout tells you nothing about what happened.** Applying `0017` hit it four
+times and produced three different outcomes: a clean rollback, a half-applied
+part that left RLS enabled with no policies, and success. The half-applied
+state was fail-closed, so nothing leaked, but a manager would have hit an
+empty screen. Recorded in `PROJECT_STATUS.md` with the rule: after a timeout,
+query the catalog before touching anything, and push policy and grant DDL
+through `execute_sql` a statement at a time. Every statement in `0017` is
+idempotent, which is the only reason this was recoverable rather than a
+forensic exercise.
+
+**RLS was exercised on live as three real signed-in users**, inside
+`begin; ... rollback;`:
+
+| Who | Template items | Headers | Ticks | Write |
+|---|---|---|---|---|
+| A real trainer, own `trainer_id` | 0 | 0 | 0 | denied `42501` |
+| The staff member on the pathway | 0 | 0 | 0 | not attempted, reads already 0 |
+| A real manager | 18 | all | all | allowed |
+
+A trainer is denied on their **own** row, which is the intended behaviour and
+the thing worth checking rather than assuming.
+
+One note on that test, because it nearly produced a false pass: the first
+version of the write check inserted via
+`select ... from setup_checklist_items limit 1`, which the trainer cannot
+read, so it inserted zero rows, raised nothing, and reported ALLOWED. Re-run
+with a literal item id it correctly reported `42501`. **A negative RLS test
+that reads from a table the test subject cannot see will pass for the wrong
+reason.** Feed those tests literal ids.
+
+**`workbookPercent` was reused from `src/lib/staff.ts` rather than
+reimplemented.** Two copies of that calculation would eventually disagree
+about how far through the workbook somebody is, on two screens a manager reads
+in the same sitting.
+
+**Still deliberately not built**, unchanged from the plan: any trainer-facing
+view, a manager-editable item list, rent amounts anywhere, auto-ticking the
+derived items, a roster badge, a stall nudge in the daily digest, and a print
+view. The first four are decisions; the last three are cheap once the screen
+has been used in anger.
