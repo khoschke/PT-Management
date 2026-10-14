@@ -423,6 +423,102 @@ whole migration chain against a local Postgres 16.
 
 ## Outstanding / next up
 
+### Batch 1 from the change list: three decisions parked (14 Oct 2026)
+
+Four portal changes, three from Dylan. **[4] is shipped (see below); [1], [2]
+and [3] are parked until Karl answers Q1 to Q3.** The answers exist in another
+thread. **Whoever has them: record them here, then build.** Nothing below has
+been built.
+
+The changes, as briefed:
+
+- **[1] Add an "Attended" status** between "Comp. Booked" and "Converted":
+  records that a first session actually happened. Attendance can't be
+  backfilled, so this is the urgent one.
+- **[2] Remove "Interested"**, moving those leads to "Contacted". Briefed final
+  list: Contacted, Not Interested, Comp. Booked, Attended, Converted.
+- **[3] Weekly lead summary email to each trainer**, Mondays 7am Brisbane, CC
+  Karl. Active leads only. Per lead: name, status, last contacted, assigned
+  date. Header: count of active leads. Send even with no leads ("no active leads
+  this week").
+- **[4] Hide "My development" from trainers.** Done: one switch,
+  `TRAINERS_SEE_OWN_DEVELOPMENT` in `src/lib/auth.ts`, hides the tab and
+  redirects trainers off the route. Staff and the manager are unchanged.
+
+**What orientation found (verified against code and live, 14 Oct 2026):**
+
+- **The briefed status list is the Google Sheet's, not the portal's.** It
+  matches the "PT Lead Form" spreadsheet described in workbook Part 7. The
+  portal's `lead_status` enum is, on live:
+  New, Allocated, Contacted, Booked, Completed, Not interested, Unreachable.
+  "Interested", "Comp. Booked" and "Converted" do not exist, so [2] has no rows
+  to migrate. Live counts on 14 Oct: Contacted 3, Booked 3, Completed 1,
+  Unreachable 1 (8 leads, none deleted).
+- **Keep New, Allocated and Unreachable**, whatever the answers. New and
+  Allocated drive the 48 hour clock, the digest and allocation. Unreachable
+  deliberately keeps a lead in the GymMaster email flow
+  (`docs/pt-nurture-flow-briefing-email.md`).
+- **Neither date field exists.** There's no `last_contacted_at` and no
+  `allocated_at`. `first_contacted_at` is stamped once. The first allocation is
+  in `status_history`, but a reassignment of an already-contacted lead leaves no
+  trace. There is also no "log contact" action: trainers can only change status
+  or edit notes.
+- **Every status-by-name reference** a change to the enum must update in the
+  same pass:
+  - `LEAD_STATUSES`, `AWAITING_CONTACT_STATUSES` and `CLOSED_LEAD_STATUSES` in
+    `src/lib/types.ts`.
+  - The badge map in `Badges.tsx` (typed, so the build catches a gap).
+  - **`ACTIVE_LOAD_STATUSES` in `src/app/admin/(dashboard)/page.tsx`**, a bare
+    string list that would *silently* drop a renamed status from trainer
+    workload counts.
+  - **The `record_status_history` trigger (0016)**, which stamps
+    `first_contacted_at` on Contacted/Booked/Completed and would silently stop
+    on a renamed value.
+  - `actions.ts` (New → Allocated), the CSV, the audit SQL, the README, and
+    the briefing email.
+- **The weekly email reuses the daily digest's mechanism.** That's a Vercel cron
+  in `vercel.json` hitting an `/api/cron/*` route that sends through Resend in
+  `src/lib/email.ts`. Monday 7am Brisbane is `0 21 * * 0` UTC. On the Hobby plan
+  a cron fires somewhere within its hour, as the daily digest already does.
+
+**The three questions:**
+
+- **Q1. Which portal statuses change, and what does "Completed" mean today?**
+  - If Completed means "came to the comp session", Attended already exists under
+    that name and the missing status is Converted. The proposal is then: rename
+    Booked → Comp. Booked, rename Completed → Attended (and take it out of
+    "closed"), add Converted (closed), and keep the rest.
+  - If Completed means "signed up", then rename it to Converted and add Attended
+    before it.
+  - Either way, record a before/after count per status in the migration.
+- **Q2. Backfill for the new date columns.**
+  - Proposal for `allocated_at`: stamp it whenever the assigned trainer changes,
+    and backfill from the first "Allocated" history row (all 8 live leads have
+    one).
+  - Proposal for `last_contacted_at`: stamp it on any status change past
+    Allocated, and backfill from the latest such change. Leads with none read
+    "Not yet contacted" rather than a guessed date.
+  - Also: add a "Log contact" button, so a follow-up with no status change
+    counts?
+- **Q3. Does "active" for the weekly email also exclude Unreachable?** The
+  proposal is yes, matching what the board treats as closed.
+
+**Build order once answered:** [1]+[2] in one PR (status migration plus every
+reference above), then [3] (needs the final status set and the date columns).
+After that, in this order:
+
+- **Generate a sample weekly email from real data for Karl to read before it is
+  scheduled.**
+- **Update workbook Part 7 to match the resolved portal.**
+  `src/lib/onboarding/parts/part7.ts:81` tells trainers the spreadsheet statuses
+  (Contacted, Interested, Not Interested, Comp. Booked, Converted), and line 86
+  is a sample table using them. Align them with whatever the portal ends up
+  with. That's hand-authored workbook content, so check the master `.docx`
+  passage first, per `CLAUDE.md`.
+- **The pipeline stage definitions doc** (outside this repo) still lists
+  "Contacted / Interested" in its sub-stage table, and marks the attended
+  sub-stage as having no status. Update it once Q1 is settled.
+
 - ~~**Staff development pathway**~~ — **DONE, 8 Sep 2026.** Merged (PR #28),
   migrations `0013` and `0014` applied to live, and walked through end to end
   on the live site. Gym staff working towards
