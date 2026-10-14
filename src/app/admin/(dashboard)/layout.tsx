@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentUser, seesOwnDevelopment } from "@/lib/auth";
 import { signOut } from "../actions";
 import DashboardNav from "./components/DashboardNav";
 
@@ -98,15 +98,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
                       { href: "/admin/compliance", label: "Compliance" },
                     ]
                   : []),
-                ...(isTrainer || isStaff
-                  ? [
-                      // Trainers get this too: a promoted staff member keeps
-                      // every goal and note they wrote, and would otherwise
-                      // lose sight of them the day they are promoted.
-                      { href: "/admin/development", label: "My development" },
-                      { href: "/admin/documents", label: "My documents" },
-                    ]
+                ...(seesOwnDevelopment(user.profile.role)
+                  ? [{ href: "/admin/development", label: "My development" }]
                   : []),
+                ...(isTrainer || isStaff ? [{ href: "/admin/documents", label: "My documents" }] : []),
                 ...(hasOwnProfile ? [{ href: "/admin/profile", label: "My profile" }] : []),
                 { href: "/onboarding", label: "PT onboarding" },
                 { href: "/admin/account", label: "Account" },
