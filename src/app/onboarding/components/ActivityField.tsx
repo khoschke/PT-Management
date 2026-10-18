@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
+import { useEffect, useEffectEvent, useRef, useState, useTransition } from "react";
 import { saveResponse } from "../actions";
 
 export function ActivityField({
@@ -25,18 +25,51 @@ export function ActivityField({
   const [isPending, startTransition] = useTransition();
   const dirtyRef = useRef(false);
 
-  function handleBlur() {
+  // Read by save() so a retry sends what is in the box now, not what was
+  // there when the failed attempt started.
+  const valueRef = useRef(value);
+
+  function save() {
     if (!dirtyRef.current) return;
     dirtyRef.current = false;
     setStatus("saving");
     startTransition(async () => {
-      const result = await saveResponse(partNumber, activityKey, value);
-      setStatus(result.ok ? "saved" : "error");
-      if (result.ok) {
+      // On a phone, switching apps blurs the field and fires this save just as
+      // the browser suspends the tab, so the request can fail outright rather
+      // than come back with an error. Left uncaught that rejection takes down
+      // the whole page. Catch it, keep the answer marked unsaved, and let the
+      // listeners below try again once the page is back.
+      let ok = false;
+      try {
+        const result = await saveResponse(partNumber, activityKey, valueRef.current);
+        ok = result.ok;
+      } catch {
+        ok = false;
+      }
+      if (ok) {
+        setStatus("saved");
         setTimeout(() => setStatus((s) => (s === "saved" ? "idle" : s)), 1800);
+      } else {
+        dirtyRef.current = true;
+        setStatus("error");
       }
     });
   }
+
+  // Retry an unsaved answer when the tab comes back into view or the
+  // connection returns, so leaving the workbook mid-answer loses nothing.
+  const retry = useEffectEvent(() => {
+    if (status === "error" && document.visibilityState === "visible" && navigator.onLine) save();
+  });
+  useEffect(() => {
+    const onReturn = () => retry();
+    document.addEventListener("visibilitychange", onReturn);
+    window.addEventListener("online", onReturn);
+    return () => {
+      document.removeEventListener("visibilitychange", onReturn);
+      window.removeEventListener("online", onReturn);
+    };
+  }, []);
 
   const fieldStyle: React.CSSProperties = {
     background: "var(--ob-bg)",
@@ -72,9 +105,10 @@ export function ActivityField({
             rows={3}
             onChange={(e) => {
               setValue(e.target.value);
+              valueRef.current = e.target.value;
               dirtyRef.current = true;
             }}
-            onBlur={handleBlur}
+            onBlur={save}
             className="w-full resize-y rounded-xl px-3.5 py-2.5 text-[14px] leading-relaxed outline-none transition-shadow focus:shadow-[0_0_0_3px_var(--ob-accent-soft)]"
             style={fieldStyle}
           />
@@ -85,9 +119,10 @@ export function ActivityField({
             placeholder={placeholder ?? "Your answer"}
             onChange={(e) => {
               setValue(e.target.value);
+              valueRef.current = e.target.value;
               dirtyRef.current = true;
             }}
-            onBlur={handleBlur}
+            onBlur={save}
             className="w-full rounded-xl px-3.5 py-2.5 text-[14px] outline-none transition-shadow focus:shadow-[0_0_0_3px_var(--ob-accent-soft)]"
             style={fieldStyle}
           />
@@ -98,7 +133,7 @@ export function ActivityField({
             : status === "saved"
               ? "Saved"
               : status === "error"
-                ? "Couldn't save — try again"
+                ? "Not saved yet, will retry"
                 : ""}
         </div>
       </div>
