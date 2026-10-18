@@ -74,53 +74,40 @@ export default async function DashboardLayout({ children }: { children: React.Re
   return (
     <div className="min-h-screen bg-background">
       <header className="glass-header sticky top-0 z-10 border-b border-black/5">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3.5 sm:px-6">
-          <div className="flex items-center gap-8">
-            <div className="flex items-center gap-2.5">
-              <Image src="/brand/fitaz-gym-logo.svg" alt="Fitaz Gym" width={138} height={18} priority />
-              <span className="h-3.5 w-px bg-black/15" aria-hidden />
-              <span className="text-[13px] font-medium text-secondary-label">PT leads</span>
-            </div>
-            <DashboardNav
-              items={[
-                ...(isStaff ? [] : [{ href: "/admin", label: "Lead board" }]),
-                ...(isManager
-                  ? [
-                      { href: "/admin/trainers", label: "Trainers" },
-                      // "Setup" rather than anything with "onboarding" in it.
-                      // The workbook already owns that word twice over, and a
-                      // second "Onboarding" tab is exactly the confusion the
-                      // scoping note warned about. This is the business setup
-                      // checklist; "PT onboarding" below is the workbook.
-                      { href: "/admin/setup", label: "Setup" },
-                      { href: "/admin/staff", label: "Staff" },
-                      { href: "/admin/development", label: "Development" },
-                      { href: "/admin/compliance", label: "Compliance" },
-                    ]
-                  : []),
-                ...(seesOwnDevelopment(user.profile.role)
-                  ? [{ href: "/admin/development", label: "My development" }]
-                  : []),
-                ...(isTrainer || isStaff ? [{ href: "/admin/documents", label: "My documents" }] : []),
-                ...(hasOwnProfile ? [{ href: "/admin/profile", label: "My profile" }] : []),
-                { href: "/onboarding", label: "PT onboarding" },
-                { href: "/admin/account", label: "Account" },
-              ]}
-            />
+        <div className="relative mx-auto flex max-w-7xl items-center justify-between gap-8 px-5 py-3.5 sm:px-6">
+          <div className="flex shrink-0 items-center gap-2.5">
+            <Image src="/brand/fitaz-gym-logo.svg" alt="Fitaz Gym" width={138} height={18} priority />
+            <span className="h-3.5 w-px bg-black/15" aria-hidden />
+            <span className="whitespace-nowrap text-[13px] font-medium text-secondary-label">PT leads</span>
           </div>
-          <div className="flex items-center gap-4 text-sm text-secondary-label">
-            <span className="flex items-center gap-1.5">
-              {user.profile.full_name ?? user.email}
-              <span className="rounded-full bg-fill px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-secondary-label">
-                {user.profile.role}
-              </span>
-            </span>
-            <form action={signOut}>
-              <button type="submit" className="font-semibold text-foreground underline">
-                Sign out
-              </button>
-            </form>
-          </div>
+          <DashboardNav
+            items={[
+              ...(isStaff ? [] : [{ href: "/admin", label: "Lead board" }]),
+              ...(isManager
+                ? [
+                    { href: "/admin/trainers", label: "Trainers" },
+                    // "Setup" rather than anything with "onboarding" in it.
+                    // The workbook already owns that word twice over, and a
+                    // second "Onboarding" tab is exactly the confusion the
+                    // scoping note warned about. This is the business setup
+                    // checklist; "PT onboarding" below is the workbook.
+                    { href: "/admin/setup", label: "Setup" },
+                    { href: "/admin/staff", label: "Staff" },
+                    { href: "/admin/development", label: "Development" },
+                    { href: "/admin/compliance", label: "Compliance" },
+                  ]
+                : []),
+              ...(seesOwnDevelopment(user.profile.role)
+                ? [{ href: "/admin/development", label: "My development" }]
+                : []),
+              ...(isTrainer || isStaff ? [{ href: "/admin/documents", label: "My documents" }] : []),
+              ...(hasOwnProfile ? [{ href: "/admin/profile", label: "My profile" }] : []),
+              { href: "/onboarding", label: "PT onboarding" },
+              { href: "/admin/account", label: "Account" },
+            ]}
+            displayName={user.profile.full_name ?? user.email ?? ""}
+            role={user.profile.role}
+          />
         </div>
       </header>
       {isPaused && (
