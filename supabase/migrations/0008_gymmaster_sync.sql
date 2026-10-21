@@ -64,3 +64,9 @@ comment on table gymmaster_sync_log is
 -- The service-role cron reads and writes this table, bypassing RLS. Enable RLS
 -- with no policies so it is never reachable from an anon or trainer client.
 alter table gymmaster_sync_log enable row level security;
+
+-- From 30 October 2026 Supabase no longer auto-grants API access to new tables
+-- in "public", so the cron's service role needs an explicit grant to reach this
+-- one. Deliberately nothing to anon or authenticated: no client should see it.
+grant select, insert, update, delete on gymmaster_sync_log to service_role;
+grant usage, select on sequence gymmaster_sync_log_id_seq to service_role;
