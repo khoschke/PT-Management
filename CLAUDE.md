@@ -159,6 +159,29 @@ It builds a throwaway Postgres, runs the whole chain in fresh-setup order, and
 audits the result. Add an assertion for your migration to
 `supabase/reconcile/01_audit_live_schema.sql` so it is checked like the rest.
 
+### New tables need explicit grants (from 30 October 2026)
+
+From **30 October 2026**, Supabase stops automatically granting Data API
+access to new tables in the `public` schema. Tables that existed before that
+date keep their grants. Any table created on or after it is unreachable from
+supabase-js until a migration grants access, and the portal gets a
+`permission denied` error instead.
+
+So every `create table` in a migration needs its grants in the same file,
+scoped to who actually reads the table:
+
+- `authenticated`: trainers and managers using the portal. RLS still decides
+  which rows they see; the grant only lets them reach the table at all.
+- `anon`: almost never. The public form goes through `submit_form_lead()`, and
+  `0009` deliberately strips table access from `anon`. Don't hand it back.
+- `service_role`: server-side jobs (crons, sync). Needs `usage, select` on the
+  table's sequence too if it has a `serial`/`bigserial` id.
+
+Model it on `0008_gymmaster_sync.sql` on the GymMaster branch (service role
+only, because no client should see the sync log). A migration written before
+30 October but applied after it is a new table on the live database, so it
+needs grants too.
+
 ## Checks before you push
 
 ```
