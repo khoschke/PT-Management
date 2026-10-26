@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { LEAD_STATUSES, type Trainer } from "@/lib/types";
+import { LEAD_STATUSES, CLOSED_LEAD_STATUSES, type Trainer } from "@/lib/types";
 import { getContactClock } from "@/lib/countdown";
 import { leadsToCsv, downloadCsv } from "@/lib/csv";
 import LeadCard from "./LeadCard";
@@ -15,6 +15,7 @@ interface Filters {
   source: string;
   allocatedTrainerId: string;
   overdueOnly: boolean;
+  showClosed: boolean;
 }
 
 const DEFAULT_FILTERS: Filters = {
@@ -22,6 +23,7 @@ const DEFAULT_FILTERS: Filters = {
   source: "",
   allocatedTrainerId: "",
   overdueOnly: false,
+  showClosed: false,
 };
 
 export default function LeadBoard({
@@ -43,10 +45,13 @@ export default function LeadBoard({
   const filteredLeads = useMemo(() => {
     return leads.filter((lead) => {
       if (filters.status && lead.status !== filters.status) return false;
+      // Finished leads drop off the default view. They come back when "Show
+      // closed" is on, or when a closed status is picked from the filter.
+      if (!filters.showClosed && !filters.status && CLOSED_LEAD_STATUSES.includes(lead.status)) return false;
       if (filters.source && lead.lead_source !== filters.source) return false;
       if (filters.allocatedTrainerId && lead.allocated_trainer_id !== filters.allocatedTrainerId) return false;
       if (filters.overdueOnly) {
-        const clock = getContactClock(lead.first_contact_due_at, lead.first_contacted_at);
+        const clock = getContactClock(lead.first_contact_due_at, lead.first_contacted_at, lead.status);
         if (clock.band !== "red") return false;
       }
       return true;
@@ -58,13 +63,13 @@ export default function LeadBoard({
   const overdueCount = useMemo(
     () =>
       filteredLeads.filter(
-        (lead) => getContactClock(lead.first_contact_due_at, lead.first_contacted_at).band === "red",
+        (lead) => getContactClock(lead.first_contact_due_at, lead.first_contacted_at, lead.status).band === "red",
       ).length,
     [filteredLeads],
   );
 
   const hasFilters = Boolean(
-    filters.status || filters.source || filters.allocatedTrainerId || filters.overdueOnly,
+    filters.status || filters.source || filters.allocatedTrainerId || filters.overdueOnly || filters.showClosed,
   );
 
   const selectClass =
@@ -143,6 +148,16 @@ export default function LeadBoard({
             className="sr-only"
           />
           Overdue only
+        </label>
+
+        <label className="press flex cursor-pointer items-center gap-1.5 rounded-full bg-fill px-4 py-2 text-sm font-medium text-foreground transition has-[:checked]:bg-foreground has-[:checked]:text-white has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-foreground">
+          <input
+            type="checkbox"
+            checked={filters.showClosed}
+            onChange={(e) => setFilters((f) => ({ ...f, showClosed: e.target.checked }))}
+            className="sr-only"
+          />
+          Show closed
         </label>
 
         {hasFilters && (

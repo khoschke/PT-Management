@@ -350,7 +350,12 @@ Files changed:
 of everyone on the pathway, anyone else gets their own profile. **Trainers get
 it too**, not only staff. A promoted staff member keeps every goal and note
 they wrote, and would otherwise lose sight of all of it the day they were
-promoted. That is why "My development" is in the nav for both roles.
+promoted. That is why "My development" was in the nav for both roles.
+
+**Superseded 14 Oct 2026:** trainers no longer see it. The page was built for
+the pathway, not for PTs. It is hidden, not deleted: set
+`TRAINERS_SEE_OWN_DEVELOPMENT` in `src/lib/auth.ts` to `true` to bring it back.
+A promoted staff member's goals and notes are untouched in the meantime.
 
 The three rules from the design survived into the build and are worth not
 undoing:

@@ -2,6 +2,8 @@
 // cares about most, so it gets its own small module rather than being
 // scattered through the dashboard components.
 
+import { AWAITING_CONTACT_STATUSES, type LeadStatus } from "./types";
+
 export type ClockBand = "green" | "amber" | "red" | "done";
 
 export interface ContactClock {
@@ -10,15 +12,26 @@ export interface ContactClock {
   hoursRemaining: number;
 }
 
-const AMBER_THRESHOLD_HOURS = 12;
+// 24, not 12: the manager digest runs once a day, so a 24 hour amber window
+// guarantees every uncontacted lead is flagged "due soon" in at least one
+// digest before it breaches. At 12, a lead could sit just outside amber at one
+// 7am run and be breached before the next.
+const AMBER_THRESHOLD_HOURS = 24;
 
 export function getContactClock(
   dueAt: string,
   firstContactedAt: string | null,
+  status: LeadStatus,
   now: Date = new Date(),
 ): ContactClock {
-  if (firstContactedAt) {
-    return { band: "done", label: "Contacted", hoursRemaining: 0 };
+  // The clock only runs while a lead is still awaiting first contact. A lead
+  // that's been contacted, booked, or closed out is done, even if it jumped
+  // straight to that state without the "Contacted" step stamping a timestamp.
+  const stillAwaiting = AWAITING_CONTACT_STATUSES.includes(status);
+  if (firstContactedAt || !stillAwaiting) {
+    // Keep the explicit "Contacted" label only when we actually recorded first
+    // contact; otherwise the pill has nothing useful to say and is hidden.
+    return { band: "done", label: firstContactedAt ? "Contacted" : "", hoursRemaining: 0 };
   }
 
   const due = new Date(dueAt);

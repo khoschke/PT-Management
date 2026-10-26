@@ -8,7 +8,7 @@ keep it for reference and for turning email on again in a fresh environment
 
 ## What this is
 
-The app has two notification emails, built in `src/lib/email.ts`:
+The app has three lead notification emails, built in `src/lib/email.ts`:
 
 1. **Trainer allocation email** — when the manager allocates a lead to a trainer,
    that trainer gets an email with the lead's details (`sendTrainerAllocationEmail`).
@@ -16,9 +16,17 @@ The app has two notification emails, built in `src/lib/email.ts`:
 2. **Manager daily digest** — a morning summary of overnight leads, ones
    approaching the 48-hour mark, and breached ones (`sendManagerDailyDigest`),
    fired by the Vercel cron in `vercel.json` → `src/app/api/cron/daily-digest/route.ts`.
-   **Confirmed live.**
+   **Confirmed live.** The subject reads "N new, N due soon, N breached", and
+   "due soon" means 24 hours or less left, so every uncontacted lead appears in
+   at least one digest before it breaches.
+3. **Manager new-lead alert** — sent the moment a member submits the public
+   form (`sendManagerNewLeadAlert`, called from `src/app/pt-session/actions.ts`).
+   Added 12 Oct 2026 after a Friday-evening lead breached before anyone
+   allocated it: the 48-hour clock starts at submission, and the digest alone
+   left most of a weekend between the lead arriving and anyone being told.
+   Sweep leads don't trigger it; the manager enters those themselves.
 
-Both are still **no-ops if `RESEND_API_KEY` is unset** — `emailEnabled` goes
+All three are still **no-ops if `RESEND_API_KEY` is unset** — `emailEnabled` goes
 false and the send functions return early — so the dashboard keeps working
 regardless. Email is a convenience layer, not a dependency. It was pure
 configuration to turn on: **no code changes were required.**

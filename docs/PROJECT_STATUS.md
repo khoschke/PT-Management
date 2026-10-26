@@ -23,7 +23,7 @@ hours. Built for a five-PT gym, ~30 leads/month.
 
 - **Next.js 16** (App Router, Turbopack) + TypeScript + Tailwind v4.
 - **Supabase** — Postgres, Auth, Row Level Security. Project ref `fbzearypwpjcyrmdivsz`.
-- **Resend** — the two notification emails. **LIVE** and sending from `noreply@mail.fitazgym.com` (confirmed 4 Aug 2026 by a real trainer allocation email landing in the inbox). Georgio added the DNS records. **DNS lives at CrazyDomains (Dreamscape), not Shopify** (confirmed 5 Aug 2026); fitazgym.com is connected to Shopify but not bought through it, so the zone is elsewhere. The SPF record had a copy-paste error early on but **has since been corrected** (confirmed 11 Aug 2026 in the CrazyDomains DNS panel): `send.mail.fitazgym.com` now reads `v=spf1 include:amazonses.com ~all` and is Active, alongside the Active `resend._domainkey` DKIM record. SPF and DKIM both pass.
+- **Resend** — the lead notification emails (trainer allocation, manager daily digest, manager new-lead alert). **LIVE** and sending from `noreply@mail.fitazgym.com` (confirmed 4 Aug 2026 by a real trainer allocation email landing in the inbox). Georgio added the DNS records. **DNS lives at CrazyDomains (Dreamscape), not Shopify** (confirmed 5 Aug 2026); fitazgym.com is connected to Shopify but not bought through it, so the zone is elsewhere. The SPF record had a copy-paste error early on but **has since been corrected** (confirmed 11 Aug 2026 in the CrazyDomains DNS panel): `send.mail.fitazgym.com` now reads `v=spf1 include:amazonses.com ~all` and is Active, alongside the Active `resend._domainkey` DKIM record. SPF and DKIM both pass.
 - **Vercel** — hosting + a daily-digest cron (`vercel.json`). Hobby (free) plan.
 - **GitHub:** `khoschke/pt-management`. Active branch: `claude/fitaz-gym-pt-leads-76ffhv` (this is also Vercel's production branch — pushing to it auto-deploys).
 
@@ -57,12 +57,14 @@ digest (Vercel cron) are confirmed sending from the branded
 Migrations live in `supabase/migrations/`. Status column set from an audit run,
 verified row by row against the live project — not asserted.
 
-**Last verified in full: 9 September 2026.** Every row in this table was
+**Last verified in full: 14 October 2026.** Every row in this table was
 checked against the live database by running
 `supabase/reconcile/01_audit_live_schema.sql` through the Supabase MCP server's
 `execute_sql`, which reaches the live project straight from a build session.
-51 checks: 49 PRESENT, and the only two MISSING are `0007` and `0008`, the
+61 checks: 59 PRESENT, and the only two MISSING are `0007` and `0008`, the
 GymMaster pair on an unmerged branch, which are expected to be absent.
+(The count moves every time a migration adds its rows. It read 51 when the
+query emitted 52, so count it from a run rather than copying the number.)
 
 That took one tool call. **Re-run it rather than trusting this table**, and
 update the date above when you do. It is the cheapest possible insurance
@@ -84,6 +86,8 @@ that said "applied" about a migration nobody had run.
 | `0013_staff_role.sql` | `staff` on the `app_role` enum, the `my_role()` helper, and the three lead/history policies rewritten off `not is_manager()` | Applied 8 Sep 2026 — verified against live |
 | `0014_development_goals.sql` | `development_goals` and `development_notes`, with no manager write policy on goals | Applied 8 Sep 2026 — verified against live, incl. the ownership rule |
 | `0015_contract_document_type.sql` | "PT Contract" built-in compliance document type | Applied 8 Sep 2026 — verified against live (`contract` row present) |
+| `0016_stamp_first_contacted.sql` | widens `record_status_history()` so `first_contacted_at` is stamped on Booked/Completed, not only Contacted, plus a backfill | Applied — verified against live 14 Oct 2026 (trigger body mentions Booked). **This row was missing from this table entirely** until 14 Oct 2026, while the migration was on live and in the audit query. Exactly the drift the warning above is about, in the other direction. |
+| `0017_setup_checklist.sql` | PT setup checklist: `setup_checklist_items` (18 seeded), `trainer_setup_checklists`, `trainer_setup_checklist_items`, `setup_item_state` enum, manager-only RLS | Applied 14 Oct 2026 — verified against live, all 8 audit rows PRESENT, and the RLS exercised as a real trainer, a real staff member and a real manager. **Applied in four pieces, not one** — see the note below. |
 
 **The drift is closed and the hardening is deployed.** `0006` had never been
 applied despite this doc claiming it was, which left `/admin/compliance` and
@@ -108,7 +112,15 @@ since been renumbered to `0009` because it rewrites a policy on
 have failed on a fresh setup. GymMaster keeps `0007/0008` untouched. `0010`, `0011`
 and `0012` are the trainer self-profile work; `0013` and `0014` are the staff
 development pathway, and `0015` is `contract_document_type`, merged via
-PR #27. Anything new starts at **0016**.
+PR #27. `0016` is `stamp_first_contacted` and `0017` is `setup_checklist`.
+Anything new starts at **0018**.
+
+**Work out the next number from disk and from every branch, not from this
+line.** It said "starts at 0016" for a month after `0016` was taken, and a
+build plan written against it had to be renumbered on the day it was built.
+The folder is necessary but not sufficient: `git ls-remote` the branches and
+check their `supabase/migrations/` too, because `0007`/`0008` are reserved by
+an unmerged branch and that is exactly how a collision gets written.
 
 `0009`'s two-part structure is spent — both parts are on live. It only ever
 mattered because a running form was mid-flight between the old insert path and
@@ -133,6 +145,28 @@ editor. **Test RLS inside `begin; … rollback;`** — set
 to become that user, then roll the whole thing back. That is what caught the
 `PUBLIC`-grant bug in `0010`'s revoke. If the MCP is not connected, a human at
 the SQL editor is still the mechanism.
+
+**The MCP's `apply_migration` times out at 60 seconds, and a timeout is not an
+answer.** Applying `0017` hit this four times. What it looks like: the tool
+returns "timed out after 60s" and you cannot tell from that whether the
+migration applied, partly applied, or rolled back. Every outcome happened
+during that one apply:
+
+- The first attempt, the whole file at once, timed out and **rolled back
+  cleanly**: none of the three relations existed afterwards.
+- Split into three, parts 1 and 2 succeeded, and part 3 timed out **half
+  applied**: `alter table ... enable row level security` had committed on all
+  three relations but none of the three policies had been created. RLS on with
+  no policies is fail-closed, so nothing leaked, but the feature was broken for
+  managers and the audit would have said so.
+- The policies then went in one statement at a time through `execute_sql`,
+  which does not have the same timeout, and succeeded.
+
+So: **after any timeout, query the catalog before doing anything else.** Never
+re-run blind and never assume either outcome. This is survivable only because
+every migration in this project is idempotent, which is the whole argument for
+that rule — `0014`'s header makes it on different grounds and they compound.
+Prefer `execute_sql`, a statement or two at a time, for policy and grant DDL.
 
 Roles live in `profiles` (`manager` / `trainer`). Managers see/allocate all
 leads; trainers see only their own. RLS enforces this at the database level.
@@ -221,6 +255,26 @@ strength". Change it in that one file and it flows to both sides.
 
 ## Small shipped touches
 
+- **The 48 hour clock stops once a lead is past first contact.** It used to stop
+  only when `first_contacted_at` was stamped, which the DB trigger does only on the
+  exact "Contacted" status. A lead advanced straight to Booked/Completed kept
+  counting and showed as overdue forever (e.g. a Completed lead reading "Overdue by
+  7d"). `getContactClock` now takes the lead status and treats anything past
+  New/Allocated as done (`src/lib/countdown.ts`, `AWAITING_CONTACT_STATUSES` in
+  `src/lib/types.ts`). This also corrects the board's overdue count, the "Overdue
+  only" filter, and the daily digest email, which shared the same logic. The
+  board/clock fix needed no migration — it reads status. **Migration
+  `0016_stamp_first_contacted.sql`** then follows up on the stored data: the
+  status trigger now stamps `first_contacted_at` on Booked/Completed too (not just
+  "Contacted"), and the migration backfills existing leads from the earliest
+  contacted-status history entry, so the CSV's "First contacted at" column is
+  filled. "Unreachable" is deliberately left null (no contact was made). Apply it
+  in the Supabase SQL editor like the rest; audit row added for it.
+- **Closed leads hide from the lead board by default.** Completed / Not interested
+  / Unreachable (`CLOSED_LEAD_STATUSES`) drop off the default view so the board is a
+  live "work to do" list; a "Show closed" toggle (or picking a closed status in the
+  filter) brings them back. Nothing is deleted — soft delete stays reserved for
+  actually removing a lead (spam, duplicate, removal request).
 - **Password show/hide toggle.** Every password field (login, the Account
   change-password form, and the Staff add-manager / add-trainer-login temp-password
   fields) uses a shared `PasswordInput`
@@ -328,7 +382,7 @@ Zero means everything on that branch is already on production, whatever the
 table says. If what you find disagrees with the table, **the command is right**:
 fix the table in the same session rather than leaving it to mislead the next one.
 
-### Snapshot, 8 September 2026 (verified with the command above)
+### Snapshot, 15 September 2026 (verified with the command above)
 
 The three branches the August reconciliation left behind
 (`reconcile-database-security-deploy-01sf2h`, `security-merge-pending-parta`,
@@ -341,6 +395,7 @@ the commit history.
 |---|---|---|
 | `claude/docs-reconcile-live-state` | Branch-map reconciliation | **Merged.** Docs only. |
 | `claude/security-hardening-csv-ip-cron` | Security hardening (CSV/IP/cron) | **Merged** (PR #18). CSV formula-injection guard, IP-salt production guard, cron fail-closed + constant-time auth. Also added `docs/handoff-security-hardening.md` for the remaining items. |
+| `claude/practical-mayer-dujpqd` | PT setup checklist | **The build.** Migration `0017`, `/admin/setup`, `src/lib/setup.ts`, and the build plan. Migration applied to live and verified 14 Oct 2026. |
 | `claude/gymmaster-phase-1-pull-7yuxuy` | GymMaster integration | **3 unmerged.** Phase 1 pull scaffolding plus migrations `0007` and `0008`, which keep those numbers. |
 | `claude/pt-team-onboarding-rw5awg` | PT team update email | **Merged.** The team update email and the login details email, from `docs/handoff-pt-team-update-email.md`. Both were sent on 12 August 2026; the files are kept as the record of what went out and as the template for the next trainer who joins. |
 | `claude/handoff-email-notifications-9m67a6` | Branded HTML notification emails | **Merged** (PR #4). Replaced the plain-text ops emails with branded HTML plus a dashboard link. |
@@ -371,6 +426,8 @@ anyway because `0004_trainer_am_pm.sql` merged with the availability work.
 | 0013 | `staff_role` | staff pathway (PR #28). **Applied to live 8 Sep 2026.** Run it whole; safe to re-run |
 | 0014 | `development_goals` | development goals (PR #28). **Applied to live 8 Sep 2026 — verified** (enum, both relations, RLS on both, all 6 policies, composite FK). Safe to re-run |
 | 0015 | `contract_document_type` | "PT Contract" document type (PR #27). **Applied to live — verified 8 Sep 2026** (the `contract` row is in `document_types`). Safe to re-run |
+| 0016 | `stamp_first_contacted` | lead first-contact stamping (PR #43). **Applied to live — verified 14 Oct 2026.** Safe to re-run |
+| 0017 | `setup_checklist` | PT setup checklist. **Applied to live — verified 14 Oct 2026.** Safe to re-run, and it had to be |
 
 Merge in that order and Supabase stays in step. GymMaster is deliberately in the
 middle rather than last: its numbers were already written and pushed, and moving
@@ -402,6 +459,157 @@ it, so the file commits in a single transaction. Confirmed by executing the
 whole migration chain against a local Postgres 16.
 
 ## Outstanding / next up
+
+- ~~**PT setup checklist, tracked per trainer**~~ — **DONE, 14 Oct 2026.**
+  Migration `0017` applied to live and verified. The paper operational
+  checklist (contract, accounts, bond, Business Pack, uniform, systems access,
+  profiles, certs, rent) is now an editable tick-off form at **`/admin/setup`**,
+  manager-only, with a per-trainer screen at `/admin/setup/[trainerId]`.
+  - **Called "Setup", never "onboarding".** The workbook at `/onboarding`
+    already owns that word and the nav already says "PT onboarding". Tables and
+    types are all `setup_*`. Keep it that way: a second "Onboarding" tab is the
+    confusion `docs/handoff-onboarding-checklist-tracking.md` was written to
+    prevent.
+  - **v1 is manager-only and that is enforced in RLS, not by the absence of a
+    route.** All three tables carry an `is_manager()` policy and nothing else.
+    The audit query asserts the negative: no policy on any setup relation may
+    mention `my_trainer_id`. Verified on live as a real signed-in trainer, who
+    sees zero rows and is denied `42501` on write **even for their own
+    trainer_id**, and as a real manager, who sees everything.
+  - **Why that matters:** the checklist touches the bond, the Business Pack and
+    the rent ramp. If anyone adds a trainer-facing view, that audit row goes
+    MISSING and the figure rule in `CLAUDE.md` has to be read first. The
+    seeded labels carry **no dollar figures** and there is **no rent amount or
+    per-trainer rent figure anywhere in the schema**: the rent ramp is week
+    ranges and percentages computed from `start_date`, and the amounts stay in
+    the contract.
+  - **Three states per item, not a boolean** (`pending` / `done` /
+    `not_applicable`), because the source document says "Fitaz email signature
+    (if applicable)" and without N/A a checklist can never read as complete.
+  - **The four items that overlap existing features show live evidence beside
+    the tick and never tick themselves.** Signed contract reads
+    `trainer_documents` for a `contract`-type upload, Received certs reads the
+    compliance documents, Completed onboarding program reads
+    `workbookPercent()`, and Profile reads the bio and specialty tags off the
+    `trainers` row. An automatic tick would be a second source of truth for "is
+    this done" that a manager could not correct. Full reasoning in
+    `src/lib/setup.ts`.
+  - **"Profile" is their bio and specialty tags, not a GymMaster profile.** It
+    is the source content, and two later items are its outputs: the Coaches
+    Board corflute on the gym wall and their profile on
+    fitazgym.com/pages/personal-trainers. The five original PTs' `trainers`
+    rows were built from their corflutes, so it is the same material going the
+    other way. Don't re-guess this: it was guessed wrong once.
+  - **Staff on the development pathway have no checklist until promotion.**
+    Almost none of the 18 items is true of one, and the two that are read live
+    state keyed on `trainer_id`, which does not change at promotion, so a
+    promoted staff member's checklist appears already reflecting their real
+    position. `promoteStaffToTrainer` seeds the header with that day as the
+    start date.
+  - **Archiving follows `trainers.active`** and invents nothing. Deactivating
+    never touches the record; inactive trainers move to a "No longer active"
+    group and stay editable.
+  - Plan and the roads not taken:
+    `docs/handoff-onboarding-checklist-build-plan.md`. **Still not built, and
+    deliberately:** any trainer-facing view, a manager-editable item list, rent
+    amounts, auto-ticking, a roster badge, a stall nudge in the daily digest,
+    and a print view.
+
+### Batch 1 from the change list: three decisions parked (14 Oct 2026)
+
+Four portal changes, three from Dylan. **[4] is shipped (see below); [1], [2]
+and [3] are parked until Karl answers Q1 to Q3.** The answers exist in another
+thread. **Whoever has them: record them here, then build.** Nothing below has
+been built.
+
+The changes, as briefed:
+
+- **[1] Add an "Attended" status** between "Comp. Booked" and "Converted":
+  records that a first session actually happened. Attendance can't be
+  backfilled, so this is the urgent one.
+- **[2] Remove "Interested"**, moving those leads to "Contacted". Briefed final
+  list: Contacted, Not Interested, Comp. Booked, Attended, Converted.
+- **[3] Weekly lead summary email to each trainer**, Mondays 7am Brisbane, CC
+  Karl. Active leads only. Per lead: name, status, last contacted, assigned
+  date. Header: count of active leads. Send even with no leads ("no active leads
+  this week").
+- **[4] Hide "My development" from trainers.** Done: one switch,
+  `TRAINERS_SEE_OWN_DEVELOPMENT` in `src/lib/auth.ts`, hides the tab and
+  redirects trainers off the route. Staff and the manager are unchanged.
+
+**What orientation found (verified against code and live, 14 Oct 2026):**
+
+- **The briefed status list is the Google Sheet's, not the portal's.** It
+  matches the "PT Lead Form" spreadsheet described in workbook Part 7. The
+  portal's `lead_status` enum is, on live:
+  New, Allocated, Contacted, Booked, Completed, Not interested, Unreachable.
+  "Interested", "Comp. Booked" and "Converted" do not exist, so [2] has no rows
+  to migrate. Live counts on 14 Oct: Contacted 3, Booked 3, Completed 1,
+  Unreachable 1 (8 leads, none deleted).
+- **Keep New, Allocated and Unreachable**, whatever the answers. New and
+  Allocated drive the 48 hour clock, the digest and allocation. Unreachable
+  deliberately keeps a lead in the GymMaster email flow
+  (`docs/pt-nurture-flow-briefing-email.md`).
+- **Neither date field exists.** There's no `last_contacted_at` and no
+  `allocated_at`. `first_contacted_at` is stamped once. The first allocation is
+  in `status_history`, but a reassignment of an already-contacted lead leaves no
+  trace. There is also no "log contact" action: trainers can only change status
+  or edit notes.
+- **Every status-by-name reference** a change to the enum must update in the
+  same pass:
+  - `LEAD_STATUSES`, `AWAITING_CONTACT_STATUSES` and `CLOSED_LEAD_STATUSES` in
+    `src/lib/types.ts`.
+  - The badge map in `Badges.tsx` (typed, so the build catches a gap).
+  - **`ACTIVE_LOAD_STATUSES` in `src/app/admin/(dashboard)/page.tsx`**, a bare
+    string list that would *silently* drop a renamed status from trainer
+    workload counts.
+  - **The `record_status_history` trigger (0016)**, which stamps
+    `first_contacted_at` on Contacted/Booked/Completed and would silently stop
+    on a renamed value.
+  - `actions.ts` (New → Allocated), the CSV, the audit SQL, the README, and
+    the briefing email.
+- **The weekly email reuses the daily digest's mechanism.** That's a Vercel cron
+  in `vercel.json` hitting an `/api/cron/*` route that sends through Resend in
+  `src/lib/email.ts`. Monday 7am Brisbane is `0 21 * * 0` UTC. On the Hobby plan
+  a cron fires somewhere within its hour, as the daily digest already does.
+
+**The three questions:**
+
+- **Q1. Which portal statuses change, and what does "Completed" mean today?**
+  - If Completed means "came to the comp session", Attended already exists under
+    that name and the missing status is Converted. The proposal is then: rename
+    Booked → Comp. Booked, rename Completed → Attended (and take it out of
+    "closed"), add Converted (closed), and keep the rest.
+  - If Completed means "signed up", then rename it to Converted and add Attended
+    before it.
+  - Either way, record a before/after count per status in the migration.
+- **Q2. Backfill for the new date columns.**
+  - Proposal for `allocated_at`: stamp it whenever the assigned trainer changes,
+    and backfill from the first "Allocated" history row (all 8 live leads have
+    one).
+  - Proposal for `last_contacted_at`: stamp it on any status change past
+    Allocated, and backfill from the latest such change. Leads with none read
+    "Not yet contacted" rather than a guessed date.
+  - Also: add a "Log contact" button, so a follow-up with no status change
+    counts?
+- **Q3. Does "active" for the weekly email also exclude Unreachable?** The
+  proposal is yes, matching what the board treats as closed.
+
+**Build order once answered:** [1]+[2] in one PR (status migration plus every
+reference above), then [3] (needs the final status set and the date columns).
+After that, in this order:
+
+- **Generate a sample weekly email from real data for Karl to read before it is
+  scheduled.**
+- **Update workbook Part 7 to match the resolved portal.**
+  `src/lib/onboarding/parts/part7.ts:81` tells trainers the spreadsheet statuses
+  (Contacted, Interested, Not Interested, Comp. Booked, Converted), and line 86
+  is a sample table using them. Align them with whatever the portal ends up
+  with. That's hand-authored workbook content, so check the master `.docx`
+  passage first, per `CLAUDE.md`.
+- **The pipeline stage definitions doc** (outside this repo) still lists
+  "Contacted / Interested" in its sub-stage table, and marks the attended
+  sub-stage as having no status. Update it once Q1 is settled.
 
 - ~~**Staff development pathway**~~ — **DONE, 8 Sep 2026.** Merged (PR #28),
   migrations `0013` and `0014` applied to live, and walked through end to end
@@ -602,14 +810,6 @@ whole migration chain against a local Postgres 16.
 
 Reminders only. Each gets scoped and built in its own session.
 
-- **PT onboarding checklist, tracked per trainer** — turn the paper operational
-  setup checklist (contract, bond, uniform, systems access, profiles, certs, rent
-  ramp) into an editable tick-off form the manager works through. **v1 is
-  manager-only, with no trainer-facing view** (Karl, 8 Sep 2026) — a deliberate
-  narrowing of the original scope, which envisaged a read view for each trainer.
-  **Now scoped** in `docs/handoff-onboarding-checklist-tracking.md` (settled
-  decisions first, and note it is separate from the educational `/onboarding`
-  workbook). Open it in its own thread.
 - **PT prospect interview system** in the PT Manager area. STAR method has been
   suggested; approach to be agreed when it is scoped.
 - **Ezidebit connected to the PT Manager dashboard via an MCP, reading live.**

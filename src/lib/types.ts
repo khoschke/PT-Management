@@ -117,8 +117,24 @@ export const LEAD_STATUSES: LeadStatus[] = [
   "Unreachable",
 ];
 
+// The only states the 48 hour first contact clock applies to: a lead that is
+// still waiting to be contacted for the first time. Once it moves past these
+// (contacted, booked, or closed out) first contact has happened or no longer
+// matters, so the clock stops regardless of whether the "Contacted" step was
+// ticked explicitly.
+export const AWAITING_CONTACT_STATUSES: LeadStatus[] = ["New", "Allocated"];
+
+// Finished states. The work on these is done, so the board hides them from its
+// default view (a "Show closed" toggle brings them back) and the clock never
+// counts them as overdue.
+export const CLOSED_LEAD_STATUSES: LeadStatus[] = [
+  "Completed",
+  "Not interested",
+  "Unreachable",
+];
+
 // ---------------------------------------------------------------------------
-// Development pathway (0011_development_goals.sql)
+// Development pathway (0014_development_goals.sql)
 // ---------------------------------------------------------------------------
 
 // Three states, with no "overdue" and no failure state. See the migration.
@@ -145,4 +161,49 @@ export interface DevelopmentNote {
   body: string;
   author_id: string;
   created_at: string;
+}
+
+// ---------------------------------------------------------------------------
+// PT setup checklist (0017_setup_checklist.sql)
+// ---------------------------------------------------------------------------
+// The operational steps that get a new trainer set up in the business. NOT the
+// educational workbook at /onboarding, which is `onboarding_*`. Manager-only:
+// these three tables carry no my_trainer_id() policy, deliberately, because
+// the checklist touches the bond, the Business Pack and the rent ramp. See the
+// migration header and the figure rule in CLAUDE.md.
+
+// Three states rather than a boolean: the source checklist has "Fitaz email
+// signature (if applicable)" in it, so without N/A a checklist can never read
+// as complete.
+export type SetupItemState = "pending" | "done" | "not_applicable";
+
+export interface SetupChecklistItem {
+  id: string;
+  /** Stable slug. Permanent: renaming one orphans recorded ticks. */
+  key: string;
+  label: string;
+  /** Detail under the label. Never a rent, bond or Business Pack figure. */
+  hint: string;
+  sort_order: number;
+  active: boolean;
+  created_at: string;
+}
+
+export interface TrainerSetupChecklist {
+  trainer_id: string;
+  /** Drives the rent ramp. No amounts are stored anywhere. */
+  start_date: string | null;
+  amendments: string;
+  completed_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface TrainerSetupChecklistItem {
+  trainer_id: string;
+  item_id: string;
+  state: SetupItemState;
+  note: string;
+  updated_by: string | null;
+  updated_at: string;
 }

@@ -1,4 +1,5 @@
 import { getContactClock } from "@/lib/countdown";
+import type { LeadStatus } from "@/lib/types";
 
 // The one number the manager cannot miss. Colour carries the urgency, and a
 // matching dot reinforces the band so it reads without relying on colour.
@@ -12,11 +13,18 @@ const BAND_STYLES: Record<string, { badge: string; dot?: string }> = {
 export default function ClockPill({
   dueAt,
   firstContactedAt,
+  status,
 }: {
   dueAt: string;
   firstContactedAt: string | null;
+  status: LeadStatus;
 }) {
-  const clock = getContactClock(dueAt, firstContactedAt);
+  const clock = getContactClock(dueAt, firstContactedAt, status);
+
+  // A lead that's done but was never explicitly marked "Contacted" has no
+  // clock worth showing, so the pill disappears rather than adding noise.
+  if (clock.band === "done" && !clock.label) return null;
+
   const { badge, dot } = BAND_STYLES[clock.band];
 
   return (

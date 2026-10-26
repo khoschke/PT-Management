@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentUser, seesOwnDevelopment } from "@/lib/auth";
 import {
   getAuthorNames,
   getDevelopmentProfile,
@@ -28,11 +28,11 @@ export default async function DevelopmentPage() {
   const user = await getCurrentUser();
   if (!user?.profile) redirect("/admin/login");
 
-  // Anyone who owns a development profile sees their own here. That includes
-  // trainers, because a promoted staff member keeps every goal and note they
-  // wrote and would otherwise lose sight of them the day they are promoted.
+  // Staff see their own development profile here. Trainers only do while
+  // TRAINERS_SEE_OWN_DEVELOPMENT is on; the nav hides the tab, and this is what
+  // enforces it for anyone who types the address.
   if (user.profile.role !== "manager") {
-    if (!user.profile.trainer_id) redirect("/admin");
+    if (!user.profile.trainer_id || !seesOwnDevelopment(user.profile.role)) redirect("/admin");
     return <OwnDevelopment trainerId={user.profile.trainer_id} userId={user.id} />;
   }
 
