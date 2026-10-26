@@ -827,8 +827,22 @@ Reminders only. Each gets scoped and built in its own session.
     or a maybe walked through the comp session request form at the desk rather
     than sent a link. Designed in full in the 10 September pipeline draft to
     Dylan, including why the link version fails.
-  **Why parked:** the tick box sits inside Danny's sign-up process, so it is a
-  proposal to the owners rather than something Karl can build. Karl held it on
+  **DECIDED 26 Oct 2026: the tick box is parked indefinitely, and deliberately.**
+  Karl put it to Danny, who is also on the front desk, and Danny was not keen.
+  Karl's reasoning, and it is the right way round: front of house cannot see
+  what the question is worth, and he cannot show them, because the numbers that
+  would prove it do not exist yet. Introducing it now would be process for the
+  sake of process, and process nobody believes in quietly stops being used. The
+  PT nurture flow is already doing part of the job in the meantime.
+  **The trigger for picking it back up:** PT client tagging is live in GymMaster
+  and Karl can show front of house conversion by source. At that point he goes
+  back with evidence rather than a theory. Do not raise it before then, and do
+  not let it disappear: this is a sequencing decision, not a rejection.
+  **This makes the GymMaster tagging work a prerequisite, not a nice-to-have.**
+
+  **Why it was parked in the first place:** the tick box sits inside Danny's
+  sign-up process, so it is a proposal to the owners rather than something Karl
+  can build. Karl held it on
   21 September to clear higher-priority work first. Raise both together when the
   sign-up conversation is next on the table.
 - **PT client tagging in GymMaster** — in flight, waiting on Danny (21 Sep 2026).
