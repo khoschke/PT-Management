@@ -88,6 +88,7 @@ that said "applied" about a migration nobody had run.
 | `0015_contract_document_type.sql` | "PT Contract" built-in compliance document type | Applied 8 Sep 2026 — verified against live (`contract` row present) |
 | `0016_stamp_first_contacted.sql` | widens `record_status_history()` so `first_contacted_at` is stamped on Booked/Completed, not only Contacted, plus a backfill | Applied — verified against live 14 Oct 2026 (trigger body mentions Booked). **This row was missing from this table entirely** until 14 Oct 2026, while the migration was on live and in the audit query. Exactly the drift the warning above is about, in the other direction. |
 | `0017_setup_checklist.sql` | PT setup checklist: `setup_checklist_items` (18 seeded), `trainer_setup_checklists`, `trainer_setup_checklist_items`, `setup_item_state` enum, manager-only RLS | Applied 14 Oct 2026 — verified against live, all 8 audit rows PRESENT, and the RLS exercised as a real trainer, a real staff member and a real manager. **Applied in four pieces, not one** — see the note below. |
+| `0018_lead_status_funnel.sql` | lead statuses: Booked renamed Comp. Booked, Completed renamed Attended, Converted added; `record_status_history()` rewritten to match | **Not applied yet.** Apply in the same few minutes as the code deploy (see the PR), then run the audit. |
 
 **The drift is closed and the hardening is deployed.** `0006` had never been
 applied despite this doc claiming it was, which left `/admin/compliance` and
@@ -113,7 +114,7 @@ have failed on a fresh setup. GymMaster keeps `0007/0008` untouched. `0010`, `00
 and `0012` are the trainer self-profile work; `0013` and `0014` are the staff
 development pathway, and `0015` is `contract_document_type`, merged via
 PR #27. `0016` is `stamp_first_contacted` and `0017` is `setup_checklist`.
-Anything new starts at **0018**.
+Anything new starts at **0019**.
 
 **Work out the next number from disk and from every branch, not from this
 line.** It said "starts at 0016" for a month after `0016` was taken, and a
@@ -441,6 +442,7 @@ anyway because `0004_trainer_am_pm.sql` merged with the availability work.
 | 0015 | `contract_document_type` | "PT Contract" document type (PR #27). **Applied to live — verified 8 Sep 2026** (the `contract` row is in `document_types`). Safe to re-run |
 | 0016 | `stamp_first_contacted` | lead first-contact stamping (PR #43). **Applied to live — verified 14 Oct 2026.** Safe to re-run |
 | 0017 | `setup_checklist` | PT setup checklist. **Applied to live — verified 14 Oct 2026.** Safe to re-run, and it had to be |
+| 0018 | `lead_status_funnel` | Batch 1 status cleanup. **Not applied yet.** Safe to re-run |
 
 Merge in that order and Supabase stays in step. GymMaster is deliberately in the
 middle rather than last: its numbers were already written and pushed, and moving
