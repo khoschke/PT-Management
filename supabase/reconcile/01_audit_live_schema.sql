@@ -360,5 +360,22 @@ from (
     and (select prosrc from pg_proc
           where oid = to_regprocedure('public.record_status_history()')) not like '%''Completed''%'
 
+  -- 0019_lead_contact_dates --------------------------------------------------
+  -- The columns are useless without the trigger that keeps them current, so
+  -- both are checked.
+  union all select '0019', 'column leads.allocated_at',
+    exists (select 1 from pg_attribute
+            where attrelid = to_regclass('public.leads')
+              and attname = 'allocated_at' and not attisdropped)
+  union all select '0019', 'column leads.last_contacted_at',
+    exists (select 1 from pg_attribute
+            where attrelid = to_regclass('public.leads')
+              and attname = 'last_contacted_at' and not attisdropped)
+  union all select '0019', 'trigger leads_stamp_contact_dates',
+    exists (select 1 from pg_trigger
+            where tgrelid = to_regclass('public.leads')
+              and tgname = 'leads_stamp_contact_dates'
+              and not tgisinternal)
+
 ) checks
 order by migration, item;
