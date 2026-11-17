@@ -46,6 +46,8 @@ Adjust to fit the surrounding text.
 - "Before you start: make your own copy" added to the top of the tracker's Guide tab.
 - Master sheet sharing set to view-only.
 
+**Leave as is (Karl, 17 Nov 2026):** the "Mel Carter" example row in the tracker's Pipeline tab stays. It's made-up example data, not a real client, and the workbook no longer uses Mel (see item 14), so the two don't connect.
+
 ### 4. "Fitaz" always reads "Fitaz Gym" (logged 15 Nov 2026)
 
 **Where:** The whole workbook: PT portal, per-part sources, both combined masters, PDFs and .md.
@@ -280,7 +282,7 @@ Once built, update item 7's rewrite and the Part 6 "Tracking marketing performan
 
    No "Mel" is left anywhere in the workbook (portal, per-part sources, masters, PDFs and .md). Hannah was ruled out because a former PT at the gym has that name. Mel was dropped so no example looks like it's based on a real person.
 
-   **Superseded:** the "Jess avatar plus one Mel throughout" fix below, and the earlier idea of keeping Mel in Part 8. **Proposed fix:** keep the avatar as a type, not a client. Rename the Part 6 avatar to a different name (e.g. "Taylor's avatar: Jess, 34, ICU nurse...") and keep **Mel** as the real client who fits that avatar, running through Parts 6 to 8 and the tracker. Add one line in Part 6 making the link: "Mel, one of Taylor's real clients, fits Jess almost exactly. That's the avatar doing its job." Then fix Mel's lead source so it's the same everywhere (unverified lead, matching the new cold call in item 5, and change the tracker row to match).
+   **Superseded:** the "Jess avatar plus one Mel throughout" fix below, and the earlier idea of keeping Mel in Part 8. **Proposed fix:** keep the avatar as a type, not a client. Rename the Part 6 avatar to a different name (e.g. "Taylor's avatar: Jess, 34, ICU nurse...") and keep **Mel** as the real client who fits that avatar, running through Parts 6 to 8 and the tracker. Add one line in Part 6 making the link: "Mel, one of Taylor's real clients, fits Jess almost exactly. That's the avatar doing its job." Then fix Mel's lead source so it's the same everywhere (unverified lead, matching the new cold call in item 5). The tracker row stays as is, see item 3.
 2. **"Cold-called" no longer fits.** The intro says Taylor "cold-called" Mel. Update to the new terms (item 7): an unverified lead, or warm, depending on how she came in.
 3. **Engage praises pushing through.** "You pushed through that last set when it got hard. That tells me you're serious about this" rewards grit and effort, which is the push-harder message the workbook avoids. Praise what they learned or noticed instead, e.g. "You picked up the hinge really fast."
 4. **Summarise strays out of scope.** "I noticed a bit of instability through your mid-back on the carries, which could be feeding that soreness" links a movement pattern to the cause of pain, which is a diagnosis. Reword to what a PT can say, e.g. "That's something we can strengthen", plus a nudge to see their physio or GP if the soreness hangs around.
