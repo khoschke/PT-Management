@@ -16,6 +16,8 @@ as `docs/pt-nurture-flow-briefing-email.md`.
 `julie@fit365.net.au`, Shahd Herbert `shahdherbert@gmail.com`, Michael Hammett
 `michael@puremomentum.com.au`
 
+**Saved as a Gmail draft on 17 Nov 2026**, with Karl's signature, ready to send.
+
 **Send it before merging PR #48**, which switches on the Monday email. The copy
 says the first one lands Monday 23 November. If it goes out later than this
 week, move that date.

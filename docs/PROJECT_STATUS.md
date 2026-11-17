@@ -650,7 +650,10 @@ After that, in this order:
 - **Generate a sample weekly email from real data for Karl to read before it is
   scheduled.**
 - **Workbook Part 7: being rewritten in a separate thread (Karl, 17 Nov 2026).
-  Do not edit `part7.ts` from here.** That thread works from Karl's running list
+  Do not edit `part7.ts` from here.** The two flags below are Karl's to decide
+  when the Part 7 work reaches them. If his decision means the portal changes,
+  that's fine: come back to the Batch 1 thread, or any portal thread, and build
+  it then. That thread works from Karl's running list
   in Drive, `workbook-amendments-part 7.md`. Its item 7 ("The gym-provided lead
   process is out of date") lists "the portal's current status names" as a
   detail to confirm before writing. They are now settled and live: New,
@@ -671,15 +674,13 @@ After that, in this order:
     this is a cold lead"). Sweep leads are now hand-added by the PT Manager
     after a conversation or referral. That copy is in `sendTrainerAllocationEmail`
     in `src/lib/email.ts`. It is not yet fixed.
-- **The pipeline stage definitions doc** (outside this repo) still lists
-  "Contacted / Interested" in its sub-stage table, and marks the attended
-  sub-stage as having no status. Q1 is now settled (17 Nov 2026), so it can be
-  updated to the final list above. **Not found in Karl's Drive on 17 Nov 2026**
-  (searched by title and for "sub-stage", "Contacted / Interested", "stage
-  definitions" and "no status"). The Part 6 Client Journey Tracker is a
-  different thing, a PT's own 12-stage client tracker. Karl to supply a link.
-  The replacement sub-stage wording is the final status list under
-  "Decisions" above, with the meanings from `STATUS_DEFINITIONS`.
+- **Pipeline stage definitions: now `docs/pipeline-stage-definitions.md`**
+  (created 17 Nov 2026). The doc the brief referred to, whose sub-stage table
+  listed "Contacted / Interested" and gave the attended sub-stage no status,
+  couldn't be found in Drive, and Karl thinks there may never have been one.
+  This is the reference from here on. It covers the stages and statuses, the
+  rules, what the portal does at each step, lead types, the metrics, and the
+  open future sub-stages. Keep it in step with `STATUS_DEFINITIONS`.
 
 **For later: extending the funnel (parked by Karl, 17 Nov 2026).** None of these
 are needed now. The core funnel metrics already come out of `status_history`
