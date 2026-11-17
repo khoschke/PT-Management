@@ -150,7 +150,9 @@ export const AWAITING_CONTACT_STATUSES: LeadStatus[] = ["New", "Allocated"];
 // counts them as overdue. Attended is deliberately not here: the conversion
 // conversation is still to come, so it stays on the trainer's live list. It is
 // a waiting room, not a destination: the weekly email flags an Attended lead
-// that has waited longer than ATTENDED_DECISION_DAYS for an outcome.
+// that has waited longer than ATTENDED_DECISION_DAYS for an outcome, and a
+// Comp. Booked lead booked longer than COMP_BOOKED_CHECK_DAYS ago, whose
+// session has most likely happened or been missed by then.
 export const CLOSED_LEAD_STATUSES: LeadStatus[] = [
   "Converted",
   "Not interested",
@@ -158,6 +160,7 @@ export const CLOSED_LEAD_STATUSES: LeadStatus[] = [
 ];
 
 export const ATTENDED_DECISION_DAYS = 7;
+export const COMP_BOOKED_CHECK_DAYS = 7;
 
 // ---------------------------------------------------------------------------
 // Development pathway (0014_development_goals.sql)

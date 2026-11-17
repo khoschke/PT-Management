@@ -9,7 +9,7 @@
 // the markup.
 
 import { Resend } from "resend";
-import { ATTENDED_DECISION_DAYS, type Lead, type LeadStatus, type Trainer } from "./types";
+import { ATTENDED_DECISION_DAYS, COMP_BOOKED_CHECK_DAYS, type Lead, type LeadStatus, type Trainer } from "./types";
 import { goalLabel } from "./goals";
 
 const FROM_ADDRESS = process.env.NOTIFICATIONS_FROM_EMAIL ?? "Fitaz Gym <onboarding@resend.dev>";
@@ -379,8 +379,8 @@ export interface WeeklySummaryLead {
   status: LeadStatus;
   allocatedAt: string | null;
   lastContactedAt: string | null;
-  // When the lead moved to Attended, for the "decision pending" flag.
-  attendedAt: string | null;
+  // When the lead moved into its current status, for the two flags below.
+  statusSince: string | null;
 }
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -410,10 +410,20 @@ export function buildTrainerWeeklySummary(
     return a.lastContactedAt.localeCompare(b.lastContactedAt);
   });
 
-  const decisionWaitDays = (lead: WeeklySummaryLead): number | null => {
-    if (lead.status !== "Attended" || !lead.attendedAt) return null;
-    const days = Math.floor((now.getTime() - new Date(lead.attendedAt).getTime()) / DAY_MS);
-    return days > ATTENDED_DECISION_DAYS ? days : null;
+  // Two statuses are waiting rooms, and a lead sitting in one too long needs
+  // the trainer to act. Written as what to do next, not just how long it's
+  // been, because the likeliest reason is that the outcome happened and the
+  // status was never updated.
+  const flagFor = (lead: WeeklySummaryLead): string | null => {
+    if (!lead.statusSince) return null;
+    const days = Math.floor((now.getTime() - new Date(lead.statusSince).getTime()) / DAY_MS);
+    if (lead.status === "Attended" && days > ATTENDED_DECISION_DAYS) {
+      return `Waiting on a decision for ${days} days. Follow up, or update to Converted or Not interested if they've decided.`;
+    }
+    if (lead.status === "Comp. Booked" && days > COMP_BOOKED_CHECK_DAYS) {
+      return `Booked ${days} days ago. If the session's happened, update to Attended. If they didn't show, rebook.`;
+    }
+    return null;
   };
 
   const count = leads.length;
@@ -428,14 +438,13 @@ export function buildTrainerWeeklySummary(
     lead.lastContactedAt ? `Last contacted ${shortDate(lead.lastContactedAt)}` : "Not yet contacted";
   const assignedLabel = (lead: WeeklySummaryLead) =>
     lead.allocatedAt ? `Assigned ${shortDate(lead.allocatedAt)}` : "Assigned date unknown";
-  const flagLabel = (days: number) => `Decision pending for ${days} days. Time to get an outcome.`;
 
   const textLines = sorted.map((lead) => {
-    const wait = decisionWaitDays(lead);
+    const flag = flagFor(lead);
     return [
       `- ${lead.name} (${lead.status})`,
       `  ${lastContactedLabel(lead)} · ${assignedLabel(lead)}`,
-      ...(wait ? [`  ${flagLabel(wait)}`] : []),
+      ...(flag ? [`  ${flag}`] : []),
     ].join("\n");
   });
 
@@ -452,12 +461,12 @@ export function buildTrainerWeeklySummary(
 
   const rows = sorted
     .map((lead) => {
-      const wait = decisionWaitDays(lead);
+      const flag = flagFor(lead);
       return `<tr><td style="padding:12px 0;border-top:1px solid #eeeeee;">
         <p style="margin:0;font-size:15px;font-weight:600;color:#111111;">${esc(lead.name)}
           <span style="font-weight:500;color:#666666;"> · ${esc(lead.status)}</span></p>
         <p style="margin:4px 0 0;font-size:13px;color:#666666;">${lastContactedLabel(lead)} · ${assignedLabel(lead)}</p>
-        ${wait ? `<p style="margin:4px 0 0;font-size:13px;font-weight:600;color:#111111;">${flagLabel(wait)}</p>` : ""}
+        ${flag ? `<p style="margin:4px 0 0;font-size:13px;font-weight:600;color:#111111;">${esc(flag)}</p>` : ""}
       </td></tr>`;
     })
     .join("");

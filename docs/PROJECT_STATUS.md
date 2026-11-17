@@ -560,7 +560,10 @@ has read a sample.**
   happened, decision pending". Trainers tick through it even when the outcome
   is instant, because it is the only thing that tells a no-show from "came and
   said no". The weekly email flags an Attended lead with no decision after
-  more than `ATTENDED_DECISION_DAYS` (7).
+  more than `ATTENDED_DECISION_DAYS` (7), and a Comp. Booked lead booked more
+  than `COMP_BOOKED_CHECK_DAYS` (7) ago. Each flag says what to do next, since
+  the likeliest cause is an outcome nobody recorded. Karl read the sample
+  email and approved it on 17 Nov 2026.
 - **More statuses:** keep it simple for now and build on it later. The
   candidates are listed at the end of this section.
 
