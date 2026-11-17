@@ -342,5 +342,23 @@ from (
   union all select '0017', 'anon cannot read trainer_setup_checklists',
     not has_table_privilege('anon', 'public.trainer_setup_checklists', 'select')
 
+  -- 0018_lead_status_funnel --------------------------------------------------
+  -- The renames and the new value, then the trigger. The trigger row is the one
+  -- that matters most: renamed enum values with the old trigger body make every
+  -- status change fail, so "enum renamed" alone is not "migration applied".
+  union all select '0018', 'lead_status has Comp. Booked, Attended, Converted',
+    (select count(*) from pg_enum
+      where enumtypid = 'public.lead_status'::regtype
+        and enumlabel in ('Comp. Booked', 'Attended', 'Converted')) = 3
+  union all select '0018', 'lead_status no longer has Booked or Completed',
+    not exists (select 1 from pg_enum
+                 where enumtypid = 'public.lead_status'::regtype
+                   and enumlabel in ('Booked', 'Completed'))
+  union all select '0018', 'record_status_history uses the renamed statuses',
+    (select prosrc from pg_proc
+      where oid = to_regprocedure('public.record_status_history()')) like '%''Attended''%'
+    and (select prosrc from pg_proc
+          where oid = to_regprocedure('public.record_status_history()')) not like '%''Completed''%'
+
 ) checks
 order by migration, item;

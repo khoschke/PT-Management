@@ -161,7 +161,9 @@ take the suggestion or pick anyone else from the dropdown, it's always your
 call.
 
 **As you work a lead**, update its status: New → Allocated → Contacted →
-Booked → Completed, or Not interested / Unreachable if that's how it goes.
+Comp. Booked → Attended → Converted, or Not interested / Unreachable if that's
+how it goes. Each status's one-line meaning shows under the status dropdown
+(`STATUS_DEFINITIONS` in `src/lib/types.ts`).
 Add notes as you go, especially anything the trainer needs to know before
 they call.
 
