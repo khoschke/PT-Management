@@ -126,7 +126,8 @@ export const LEAD_STATUSES: LeadStatus[] = [
 // What each status means, in one line. Shown to trainers when they hover over
 // a status and under the status dropdown, so two trainers in the same
 // situation pick the same one. Agreed with Karl, 17 Nov 2026; change the
-// wording here and it changes everywhere.
+// wording here and it changes everywhere. The fuller reference, stages and
+// rules included, is docs/pipeline-stage-definitions.md: keep the two in step.
 export const STATUS_DEFINITIONS: Record<LeadStatus, string> = {
   New: "Lead has come in, no trainer yet.",
   Allocated: "Assigned to a trainer, not contacted yet.",

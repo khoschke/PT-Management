@@ -5,6 +5,10 @@
       "schedule": "0 21 * * *"
     },
     {
+      "path": "/api/cron/weekly-trainer-summary",
+      "schedule": "0 21 * * 0"
+    },
+    {
       "path": "/api/cron/document-expiry",
       "schedule": "0 22 * * *"
     },
