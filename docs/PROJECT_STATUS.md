@@ -649,16 +649,37 @@ After that, in this order:
 
 - **Generate a sample weekly email from real data for Karl to read before it is
   scheduled.**
-- **Update workbook Part 7 to match the resolved portal.**
-  `src/lib/onboarding/parts/part7.ts:81` tells trainers the spreadsheet statuses
-  (Contacted, Interested, Not Interested, Comp. Booked, Converted), and line 86
-  is a sample table using them. Align them with whatever the portal ends up
-  with. That's hand-authored workbook content, so check the master `.docx`
-  passage first, per `CLAUDE.md`.
+- **Workbook Part 7: being rewritten in a separate thread (Karl, 17 Nov 2026).
+  Do not edit `part7.ts` from here.** That thread works from Karl's running list
+  in Drive, `workbook-amendments-part 7.md`. Its item 7 ("The gym-provided lead
+  process is out of date") lists "the portal's current status names" as a
+  detail to confirm before writing. They are now settled and live: New,
+  Allocated, Contacted, Comp. Booked, Attended, Converted, Not interested,
+  Unreachable, with the one-line meanings in `STATUS_DEFINITIONS`
+  (`src/lib/types.ts`). Today `part7.ts:81` still lists the old spreadsheet
+  statuses (Contacted, Interested, Not Interested, Comp. Booked, Converted), and
+  the sample table at line 86 uses them. Both need to match the portal in that
+  rewrite.
+  - **Overlap to resolve in that thread:** amendments items 10 and 11 (the 2-2-2
+    rule and automated follow-ups) propose further statuses: "Said no",
+    "Agreed to check-in", "Declined", and an "Ended" close from a 48 hour timer
+    on nos. Those would extend the funnel above, so they are a portal change to
+    design against the settled list, not just workbook wording. "Not now" is
+    already parked under "For later" below for the same reason.
+  - **A portal wording fix logged in that list:** item 7 notes that the trainer
+    allocation email calls sweep leads cold ("Found on the GymMaster sweep, so
+    this is a cold lead"). Sweep leads are now hand-added by the PT Manager
+    after a conversation or referral. That copy is in `sendTrainerAllocationEmail`
+    in `src/lib/email.ts`. It is not yet fixed.
 - **The pipeline stage definitions doc** (outside this repo) still lists
   "Contacted / Interested" in its sub-stage table, and marks the attended
   sub-stage as having no status. Q1 is now settled (17 Nov 2026), so it can be
-  updated to the final list above.
+  updated to the final list above. **Not found in Karl's Drive on 17 Nov 2026**
+  (searched by title and for "sub-stage", "Contacted / Interested", "stage
+  definitions" and "no status"). The Part 6 Client Journey Tracker is a
+  different thing, a PT's own 12-stage client tracker. Karl to supply a link.
+  The replacement sub-stage wording is the final status list under
+  "Decisions" above, with the meanings from `STATUS_DEFINITIONS`.
 
 **For later: extending the funnel (parked by Karl, 17 Nov 2026).** None of these
 are needed now. The core funnel metrics already come out of `status_history`
