@@ -2,6 +2,24 @@
 
 **Start a new session with this note.** Read `docs/PROJECT_STATUS.md` first, then this.
 
+> **BUILT, 14 October 2026.** This note is now history. The feature ships as
+> **`/admin/setup`**, migration `0017_setup_checklist.sql`, applied to live and
+> verified. The decisions below were all answered in
+> `docs/handoff-onboarding-checklist-build-plan.md` and then built; read that
+> for the reasoning and the roads not taken, and `PROJECT_STATUS.md` for the
+> summary. Where any of them disagree with the code, the code is right.
+>
+> Two things in this note were wrong by the time it was built, both worth
+> knowing about:
+>
+> - **"Next free migration number is 0016"** was true when written and wrong a
+>   month later: `0016_stamp_first_contacted.sql` merged in between, so the
+>   build is `0017`. Work the number out from disk and from every remote branch
+>   rather than from a note.
+> - The decisions below were settled in the plan, not here. The "Decisions to
+>   make" section is kept as the record of what was open, with each answer
+>   marked.
+
 > **This is a SCOPING note, not a build brief.** Karl supplied the paper checklist
 > (below) and wants it turned into something tracked inside the portal that the
 > **manager** and each **trainer** interact with. Settle the decisions in
@@ -24,8 +42,10 @@ There are now two distinct "onboarding" things — keep them separate:
 
 1. **The educational workbook** at `/onboarding` (already built and live) — the
    10-part, 12-week *learning* journey a trainer works through (content in
-   `src/lib/onboarding/content.ts`, progress in `onboarding_responses` /
-   `onboarding_part_status`). This is about developing the trainer.
+   `src/lib/onboarding/parts/part1.ts` to `part10.ts`, progress in
+   `onboarding_responses` / `onboarding_part_status`). This is about developing
+   the trainer. *(Corrected 15 Sep 2026: this said `content.ts`, which is now
+   only an index over the part files.)*
 2. **This operational setup checklist** (new) — the *admin/compliance* steps to
    get a new trainer set up in the business: contract, bond, uniform, systems
    access, profiles, certs, rent ramp. This is about onboarding them into the
@@ -123,15 +143,42 @@ them without asking.
 3. **Is the item list fixed or editable?** A fixed seeded list is simplest.
    Editable-by-manager (add/remove/reorder) is more work — decide if v1 needs it.
    (The compliance `document_types` table is a precedent for an editable list.)
+   **Settled: fixed, seeded in the migration.** `active` and `sort_order` are in
+   the schema so a later migration or screen can change the list, and a
+   per-item `not_applicable` state handles "does not apply to this person",
+   which is what would otherwise drive someone to delete an item. No CRUD
+   screen in v1.
 4. **Rent ramp — how much to model?** Options: (a) just store it as reference/notes
    per trainer; (b) model week/date/percentage/amount rows with an editable
    "amendments" column. Confirm the week-13+ percentage (100%?) and whether amounts
    are entered manually or computed from a full-rent figure on the trainer.
+   **Settled: neither. Computed, not stored, and no amounts at all.** The header
+   holds `start_date` and a free-text `amendments`; the screen renders week
+   ranges, dates and percentages from that date. There is no rent amount and no
+   per-trainer rent figure anywhere in the schema, because that is a term of
+   their contract. This also disposes of the week-13 question: the last row
+   reads "Full rent" rather than a number, which is true and needs no
+   confirmation.
 5. **Where does it live in the UI?** A tab on each trainer's detail view, a column
    on `/admin/trainers`, or a dedicated `/admin/onboarding-checklist` screen with a
    per-trainer picker. Recommend surfacing from the trainer record.
+   **Settled: its own manager-only tab at `/admin/setup`, with
+   `/admin/setup/[trainerId]` per person.** Not `/admin/onboarding-checklist`:
+   "onboarding" is already the workbook, twice over, and a second tab using
+   that word is the confusion the warning at the top of this note is about.
 6. **Completion signal.** Should a fully-ticked checklist flip something visible
    (a badge on the roster, a date stamp)? Nice-to-have; decide if v1.
+   **Settled: a date stamp and a badge on the setup screens only.**
+   `trainer_setup_checklists.completed_at` is stamped when every active item is
+   done or N/A and cleared if one goes back, set by the server action rather
+   than a trigger so the rule sits beside the code that renders it. No badge on
+   the roster in v1.
+
+   The list screen also shows **how long a checklist has been sitting**, which
+   is the number the screen is really built around. A setup checklist does not
+   fail by never being started; it fails by stalling at 14 of 18 for two
+   months. Same lesson as the development screen's "you last wrote 6 weeks
+   ago" column.
 
 ## Suggested shape of a v1 (a starting point, not a decision)
 
@@ -149,6 +196,13 @@ them without asking.
 
 Confirm or change all of that with Karl, then write the real build plan.
 
+**What was actually built differs from that sketch in four ways**, all argued
+in the build plan: the tables are `setup_*` rather than `onboarding_*`/
+`trainer_checklist_progress`; there is no "who can tick" flag, which is dead
+weight in a manager-only v1; item state is a three-value enum rather than
+done/not-done; and the three overlapping items show live evidence beside the
+tick but never tick themselves.
+
 ## Constraints / house rules
 
 - Next free migration number is **0016** (0007/0008 reserved for GymMaster,
@@ -165,12 +219,18 @@ Confirm or change all of that with Karl, then write the real build plan.
 - New role/policy work must respect existing RLS (`is_manager()` / `my_trainer_id()`).
 - `"use server"` files export only async functions; form-state in sibling `state.ts`.
 - Australian English, no em dashes in user-facing copy.
-- Run `npm run build` + `npx tsc --noEmit` + `npm run lint` before pushing.
+- Run `npx tsc --noEmit` + `npx eslint src` + `npm run build` before pushing, per `CLAUDE.md`.
 - Can't be tested against live from the build workspace (no Supabase network) —
   verify on a deployment.
 
-## Definition of done (v1, once scope is agreed)
+## Definition of done (v1)
 
 For a given trainer, the manager can work through the setup checklist in the portal
-with each tick recorded (who/when), the trainer can see their own checklist status,
-and the checklist is clearly separate from the educational onboarding workbook.
+with each tick recorded (who/when), and the checklist is clearly separate from the
+educational onboarding workbook.
+
+**Corrected 15 Sep 2026.** This previously required that "the trainer can see
+their own checklist status", contradicting the "Decisions already settled"
+section above in this same file. v1 is manager-only and has no trainer-facing
+view. The definition of done is the part somebody reads last and builds to, so
+a stale one here is worse than a stale one anywhere else in the note.

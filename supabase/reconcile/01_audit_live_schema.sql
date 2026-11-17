@@ -285,5 +285,62 @@ from (
     (select prosrc from pg_proc
       where oid = to_regprocedure('public.record_status_history()')) like '%Booked%'
 
+  -- 0017_setup_checklist -----------------------------------------------------
+  union all select '0017', 'enum setup_item_state',
+    exists (select 1 from pg_type where typname = 'setup_item_state')
+  union all select '0017', 'relation setup_checklist_items',
+    to_regclass('public.setup_checklist_items') is not null
+  union all select '0017', 'relation trainer_setup_checklists',
+    to_regclass('public.trainer_setup_checklists') is not null
+  union all select '0017', 'relation trainer_setup_checklist_items',
+    to_regclass('public.trainer_setup_checklist_items') is not null
+
+  -- All 18 items seeded. A partial seed would leave a checklist that can never
+  -- be completed, and the count is the cheapest way to see it.
+  union all select '0017', 'all 18 setup checklist items seeded',
+    to_regclass('public.setup_checklist_items') is not null
+    and (select count(*) from public.setup_checklist_items) >= 18
+
+  -- RLS on, on all three. Without this the policies below are decoration.
+  union all select '0017', 'RLS enabled on all three setup relations',
+    (select count(*) from pg_class
+      where relname in ('setup_checklist_items', 'trainer_setup_checklists',
+                        'trainer_setup_checklist_items')
+        and relnamespace = 'public'::regnamespace
+        and relrowsecurity) = 3
+
+  -- The guard, asserted rather than assumed, in the same shape as 0014's
+  -- "manager cannot write development_goals".
+  --
+  -- The setup checklist holds commercial terms: the bond, the Business Pack,
+  -- the rent ramp. v1 is manager-only, and THIS is what makes that true.
+  -- Inverted: PRESENT means no policy on any setup relation grants a trainer
+  -- their own row, so trainers are correctly locked out at the database level
+  -- rather than by the absence of a screen.
+  --
+  -- If somebody adds a trainer-facing view, this row goes MISSING and they
+  -- have to make a deliberate decision instead of a quiet one. Read the figure
+  -- rule in CLAUDE.md before you do: a trainer's own figures are theirs to
+  -- see, the gym's standard terms are not.
+  --
+  -- The relation checks in front matter, because "no policy mentions
+  -- my_trainer_id" is trivially true of relations that do not exist.
+  union all select '0017', 'trainers locked out of every setup relation',
+    to_regclass('public.setup_checklist_items') is not null
+    and to_regclass('public.trainer_setup_checklists') is not null
+    and to_regclass('public.trainer_setup_checklist_items') is not null
+    and not exists (
+      select 1 from pg_policy
+      where polrelid in (to_regclass('public.setup_checklist_items'),
+                         to_regclass('public.trainer_setup_checklists'),
+                         to_regclass('public.trainer_setup_checklist_items'))
+        and coalesce(pg_get_expr(polqual, polrelid), '')
+            || coalesce(pg_get_expr(polwithcheck, polrelid), '') like '%my_trainer_id%')
+
+  -- anon revoked explicitly. RLS already denies it, but 0009 exists because
+  -- the hole was a grant nobody had thought about.
+  union all select '0017', 'anon cannot read trainer_setup_checklists',
+    not has_table_privilege('anon', 'public.trainer_setup_checklists', 'select')
+
 ) checks
 order by migration, item;

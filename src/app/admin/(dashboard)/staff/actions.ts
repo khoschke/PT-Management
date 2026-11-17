@@ -293,10 +293,28 @@ export async function promoteStaffToTrainer(userId: string): Promise<ActionResul
     return { ok: false, message: "Couldn't update their role." };
   }
 
+  // Their PT setup checklist starts now. A staff member has none, because
+  // almost nothing on it is true of one (no PT contract, no bond, no rent),
+  // and promotion day is genuinely the day they start as a PT.
+  //
+  // Seeding the start date rather than leaving it null means the rent ramp
+  // renders immediately instead of waiting for somebody to type a date. It is
+  // editable on the setup screen. A failure here is not worth unwinding the
+  // promotion for: the manager can set the date by hand, so it is logged and
+  // the promotion stands.
+  const { error: setupError } = await admin.from("trainer_setup_checklists").upsert(
+    { trainer_id: profile.trainer_id, start_date: new Date().toISOString().slice(0, 10) },
+    { onConflict: "trainer_id", ignoreDuplicates: true },
+  );
+  if (setupError) {
+    console.error("Promote staff: seeding the setup checklist failed", setupError);
+  }
+
   revalidatePath("/admin/staff");
   revalidatePath("/admin/development");
   revalidatePath("/admin/trainers");
   revalidatePath("/admin/compliance");
+  revalidatePath("/admin/setup");
   return { ok: true };
 }
 
