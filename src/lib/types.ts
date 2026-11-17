@@ -8,8 +8,9 @@ export type LeadStatus =
   | "New"
   | "Allocated"
   | "Contacted"
-  | "Booked"
-  | "Completed"
+  | "Comp. Booked"
+  | "Attended"
+  | "Converted"
   | "Not interested"
   | "Unreachable";
 export type GenderPreference = "male" | "female" | "no_preference";
@@ -53,6 +54,10 @@ export interface Lead {
   created_at: string;
   first_contact_due_at: string;
   first_contacted_at: string | null;
+  // When the current trainer got the lead, and the last time they reached out.
+  // Both kept current by a trigger (0019_lead_contact_dates.sql).
+  allocated_at: string | null;
+  last_contacted_at: string | null;
   created_by: string | null;
   deleted_at: string | null;
 }
@@ -111,11 +116,28 @@ export const LEAD_STATUSES: LeadStatus[] = [
   "New",
   "Allocated",
   "Contacted",
-  "Booked",
-  "Completed",
+  "Comp. Booked",
+  "Attended",
+  "Converted",
   "Not interested",
   "Unreachable",
 ];
+
+// What each status means, in one line. Shown to trainers when they hover over
+// a status and under the status dropdown, so two trainers in the same
+// situation pick the same one. Agreed with Karl, 17 Nov 2026; change the
+// wording here and it changes everywhere. The fuller reference, stages and
+// rules included, is docs/pipeline-stage-definitions.md: keep the two in step.
+export const STATUS_DEFINITIONS: Record<LeadStatus, string> = {
+  New: "Lead has come in, no trainer yet.",
+  Allocated: "Assigned to a trainer, not contacted yet.",
+  Contacted: "You have reached out (call, text or email), whether or not they replied.",
+  "Comp. Booked": "A date is locked in for the complimentary session.",
+  Attended: "Session happened, decision pending. Move to Converted or Not interested once they decide.",
+  Converted: "They have signed up to paid PT.",
+  "Not interested": "They said no.",
+  Unreachable: "You tried and never got a reply. They stay in the member email flow.",
+};
 
 // The only states the 48 hour first contact clock applies to: a lead that is
 // still waiting to be contacted for the first time. Once it moves past these
@@ -126,12 +148,20 @@ export const AWAITING_CONTACT_STATUSES: LeadStatus[] = ["New", "Allocated"];
 
 // Finished states. The work on these is done, so the board hides them from its
 // default view (a "Show closed" toggle brings them back) and the clock never
-// counts them as overdue.
+// counts them as overdue. Attended is deliberately not here: the conversion
+// conversation is still to come, so it stays on the trainer's live list. It is
+// a waiting room, not a destination: the weekly email flags an Attended lead
+// that has waited longer than ATTENDED_DECISION_DAYS for an outcome, and a
+// Comp. Booked lead booked longer than COMP_BOOKED_CHECK_DAYS ago, whose
+// session has most likely happened or been missed by then.
 export const CLOSED_LEAD_STATUSES: LeadStatus[] = [
-  "Completed",
+  "Converted",
   "Not interested",
   "Unreachable",
 ];
+
+export const ATTENDED_DECISION_DAYS = 7;
+export const COMP_BOOKED_CHECK_DAYS = 7;
 
 // ---------------------------------------------------------------------------
 // Development pathway (0014_development_goals.sql)

@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { LEAD_STATUSES, CLOSED_LEAD_STATUSES, type Trainer } from "@/lib/types";
+import { LEAD_STATUSES, CLOSED_LEAD_STATUSES, STATUS_DEFINITIONS, type Trainer } from "@/lib/types";
 import { getContactClock } from "@/lib/countdown";
 import { leadsToCsv, downloadCsv } from "@/lib/csv";
 import LeadCard from "./LeadCard";
@@ -109,7 +109,7 @@ export default function LeadBoard({
         >
           <option value="">All statuses</option>
           {LEAD_STATUSES.map((s) => (
-            <option key={s} value={s}>
+            <option key={s} value={s} title={STATUS_DEFINITIONS[s]}>
               {s}
             </option>
           ))}

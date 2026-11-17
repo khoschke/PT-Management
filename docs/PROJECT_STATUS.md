@@ -88,6 +88,8 @@ that said "applied" about a migration nobody had run.
 | `0015_contract_document_type.sql` | "PT Contract" built-in compliance document type | Applied 8 Sep 2026 — verified against live (`contract` row present) |
 | `0016_stamp_first_contacted.sql` | widens `record_status_history()` so `first_contacted_at` is stamped on Booked/Completed, not only Contacted, plus a backfill | Applied — verified against live 14 Oct 2026 (trigger body mentions Booked). **This row was missing from this table entirely** until 14 Oct 2026, while the migration was on live and in the audit query. Exactly the drift the warning above is about, in the other direction. |
 | `0017_setup_checklist.sql` | PT setup checklist: `setup_checklist_items` (18 seeded), `trainer_setup_checklists`, `trainer_setup_checklist_items`, `setup_item_state` enum, manager-only RLS | Applied 14 Oct 2026 — verified against live, all 8 audit rows PRESENT, and the RLS exercised as a real trainer, a real staff member and a real manager. **Applied in four pieces, not one** — see the note below. |
+| `0018_lead_status_funnel.sql` | lead statuses: Booked renamed Comp. Booked, Completed renamed Attended, Converted added; `record_status_history()` rewritten to match | Applied 17 Nov 2026 via the Supabase MCP, straight after PR #46 deployed — verified: full audit 62 PRESENT (only 0007/0008 missing, as expected), counts carried across (Comp. Booked 2, Attended 10, Contacted 5, Unreachable 1), all status history intact. |
+| `0019_lead_contact_dates.sql` | `leads.allocated_at` and `leads.last_contacted_at`, kept current by the `leads_stamp_contact_dates` trigger, backfilled from `status_history` | Applied 17 Nov 2026 via the Supabase MCP, straight after PR #47 deployed — verified: both columns and the trigger present, all 18 leads backfilled with both dates. |
 
 **The drift is closed and the hardening is deployed.** `0006` had never been
 applied despite this doc claiming it was, which left `/admin/compliance` and
@@ -113,7 +115,7 @@ have failed on a fresh setup. GymMaster keeps `0007/0008` untouched. `0010`, `00
 and `0012` are the trainer self-profile work; `0013` and `0014` are the staff
 development pathway, and `0015` is `contract_document_type`, merged via
 PR #27. `0016` is `stamp_first_contacted` and `0017` is `setup_checklist`.
-Anything new starts at **0018**.
+Anything new starts at **0020**.
 
 **Work out the next number from disk and from every branch, not from this
 line.** It said "starts at 0016" for a month after `0016` was taken, and a
@@ -306,6 +308,19 @@ strength". Change it in that one file and it flows to both sides.
   has been refused by GitHub with a 403, and the GitHub MCP server has no
   delete-branch tool. Don't burn time retrying it; hand the branch name to Karl,
   or let the auto-delete above handle it.
+- **Checking a change by role: the accounts, and the address.** Karl checks
+  role-gated changes himself; nobody else needs to log in.
+  - **Trainer view:** Karl's own trainer login.
+  - **Staff view:** a **"Test Staff"** account (role `staff`, created 14 Oct
+    2026). It's a test account, not a real person on the pathway: leave it
+    out of anything real, such as any email that goes to staff.
+  - **Manager view:** Karl's manager login.
+  - **Check the PR preview, not production.** Each PR has its own Vercel
+    preview address (`pt-management-git-<branch>-fitaz-pt-manager.vercel.app`,
+    linked in the Vercel bot's comment on the PR). `pt-management-two.vercel.app`
+    and `pt.fitazgym.com` run the merged code, so a check there before merging
+    tests the old version. The preview uses the same live database, so the same
+    logins work, but it is a different address and needs its own sign-in.
 
 ## Member email series
 
@@ -428,6 +443,8 @@ anyway because `0004_trainer_am_pm.sql` merged with the availability work.
 | 0015 | `contract_document_type` | "PT Contract" document type (PR #27). **Applied to live — verified 8 Sep 2026** (the `contract` row is in `document_types`). Safe to re-run |
 | 0016 | `stamp_first_contacted` | lead first-contact stamping (PR #43). **Applied to live — verified 14 Oct 2026.** Safe to re-run |
 | 0017 | `setup_checklist` | PT setup checklist. **Applied to live — verified 14 Oct 2026.** Safe to re-run, and it had to be |
+| 0018 | `lead_status_funnel` | Batch 1 status cleanup. **Applied to live — verified 17 Nov 2026.** Safe to re-run |
+| 0019 | `lead_contact_dates` | Batch 1 weekly email dates. **Applied to live — verified 17 Nov 2026.** Safe to re-run |
 
 Merge in that order and Supabase stays in step. GymMaster is deliberately in the
 middle rather than last: its numbers were already written and pushed, and moving
@@ -515,12 +532,41 @@ whole migration chain against a local Postgres 16.
     amounts, auto-ticking, a roster badge, a stall nudge in the daily digest,
     and a print view.
 
-### Batch 1 from the change list: three decisions parked (14 Oct 2026)
+### Batch 1 from the change list (opened 14 Oct 2026, decided 17 Nov 2026)
 
-Four portal changes, three from Dylan. **[4] is shipped (see below); [1], [2]
-and [3] are parked until Karl answers Q1 to Q3.** The answers exist in another
-thread. **Whoever has them: record them here, then build.** Nothing below has
-been built.
+Four portal changes, three from Dylan. **[4] is shipped. Karl answered Q1 to Q3
+on 17 Nov 2026 (decisions below). [1]+[2] shipped (PR #46, migration `0018`
+applied and verified 17 Nov). [3] shipped (PR #47, migration `0019` applied and
+verified 17 Nov). The Monday 7am cron (`0 21 * * 0` UTC in `vercel.json`) was
+added once Karl had read and approved a sample. Vercel's Hobby plan fires a
+cron somewhere within its hour, so it lands between 7 and 8am Brisbane.**
+
+**Decisions (Karl, 17 Nov 2026):**
+
+- **Q1, statuses.** Final funnel: New, Allocated, Contacted, Comp. Booked,
+  Attended, Converted, Not interested, Unreachable. Booked is renamed Comp.
+  Booked, and Completed is renamed Attended (the counts suggested trainers used
+  it that way). Converted is new. Each trainer then moves any of their Attended
+  leads who actually signed up to Converted. Each status has a one-line meaning
+  (`STATUS_DEFINITIONS` in `src/lib/types.ts`), shown on hover and under the
+  status dropdown. "Contacted" means reached out, replied or not, to match the
+  48 hour rule. There's no "no-show" status: booked-but-never-attended is
+  counted from `status_history`.
+- **Q2, dates.** Add `allocated_at` and `last_contacted_at`, backfilled from
+  `status_history` (option A), and add a "Log contact" button so a follow-up
+  with no status change still counts.
+- **Q3, weekly email.** Leave Unreachable out, along with Converted and Not
+  interested.
+- **Attended is a waiting room (Karl, 17 Nov 2026).** Its hint reads "Session
+  happened, decision pending". Trainers tick through it even when the outcome
+  is instant, because it is the only thing that tells a no-show from "came and
+  said no". The weekly email flags an Attended lead with no decision after
+  more than `ATTENDED_DECISION_DAYS` (7), and a Comp. Booked lead booked more
+  than `COMP_BOOKED_CHECK_DAYS` (7) ago. Each flag says what to do next, since
+  the likeliest cause is an outcome nobody recorded. Karl read the sample
+  email and approved it on 17 Nov 2026.
+- **More statuses:** keep it simple for now and build on it later. The
+  candidates are listed at the end of this section.
 
 The changes, as briefed:
 
@@ -533,7 +579,9 @@ The changes, as briefed:
   Karl. Active leads only. Per lead: name, status, last contacted, assigned
   date. Header: count of active leads. Send even with no leads ("no active leads
   this week").
-- **[4] Hide "My development" from trainers.** Done: one switch,
+- **[4] Hide "My development" from trainers.** Done, merged (PR #44) and checked
+  on the preview 14 Oct 2026 as a trainer (tab gone, address redirects) and as
+  staff (unchanged). One switch,
   `TRAINERS_SEE_OWN_DEVELOPMENT` in `src/lib/auth.ts`, hides the tab and
   redirects trainers off the route. Staff and the manager are unchanged.
 
@@ -573,7 +621,7 @@ The changes, as briefed:
   `src/lib/email.ts`. Monday 7am Brisbane is `0 21 * * 0` UTC. On the Hobby plan
   a cron fires somewhere within its hour, as the daily digest already does.
 
-**The three questions:**
+**The three questions, as they were asked (answered above):**
 
 - **Q1. Which portal statuses change, and what does "Completed" mean today?**
   - If Completed means "came to the comp session", Attended already exists under
@@ -601,15 +649,53 @@ After that, in this order:
 
 - **Generate a sample weekly email from real data for Karl to read before it is
   scheduled.**
-- **Update workbook Part 7 to match the resolved portal.**
-  `src/lib/onboarding/parts/part7.ts:81` tells trainers the spreadsheet statuses
-  (Contacted, Interested, Not Interested, Comp. Booked, Converted), and line 86
-  is a sample table using them. Align them with whatever the portal ends up
-  with. That's hand-authored workbook content, so check the master `.docx`
-  passage first, per `CLAUDE.md`.
-- **The pipeline stage definitions doc** (outside this repo) still lists
-  "Contacted / Interested" in its sub-stage table, and marks the attended
-  sub-stage as having no status. Update it once Q1 is settled.
+- **Workbook Part 7: being rewritten in a separate thread (Karl, 17 Nov 2026).
+  Do not edit `part7.ts` from here.** The two flags below are Karl's to decide
+  when the Part 7 work reaches them. If his decision means the portal changes,
+  that's fine: come back to the Batch 1 thread, or any portal thread, and build
+  it then. That thread works from Karl's running list
+  in Drive, `workbook-amendments-part 7.md`. Its item 7 ("The gym-provided lead
+  process is out of date") lists "the portal's current status names" as a
+  detail to confirm before writing. They are now settled and live: New,
+  Allocated, Contacted, Comp. Booked, Attended, Converted, Not interested,
+  Unreachable, with the one-line meanings in `STATUS_DEFINITIONS`
+  (`src/lib/types.ts`). Today `part7.ts:81` still lists the old spreadsheet
+  statuses (Contacted, Interested, Not Interested, Comp. Booked, Converted), and
+  the sample table at line 86 uses them. Both need to match the portal in that
+  rewrite.
+  - **Overlap to resolve in that thread:** amendments items 10 and 11 (the 2-2-2
+    rule and automated follow-ups) propose further statuses: "Said no",
+    "Agreed to check-in", "Declined", and an "Ended" close from a 48 hour timer
+    on nos. Those would extend the funnel above, so they are a portal change to
+    design against the settled list, not just workbook wording. "Not now" is
+    already parked under "For later" below for the same reason.
+  - **A portal wording fix logged in that list:** item 7 notes that the trainer
+    allocation email calls sweep leads cold ("Found on the GymMaster sweep, so
+    this is a cold lead"). Sweep leads are now hand-added by the PT Manager
+    after a conversation or referral. That copy is in `sendTrainerAllocationEmail`
+    in `src/lib/email.ts`. It is not yet fixed.
+- **Pipeline stage definitions: now `docs/pipeline-stage-definitions.md`**
+  (created 17 Nov 2026). The doc the brief referred to, whose sub-stage table
+  listed "Contacted / Interested" and gave the attended sub-stage no status,
+  couldn't be found in Drive, and Karl thinks there may never have been one.
+  This is the reference from here on. It covers the stages and statuses, the
+  rules, what the portal does at each step, lead types, the metrics, and the
+  open future sub-stages. Keep it in step with `STATUS_DEFINITIONS`.
+
+**For later: extending the funnel (parked by Karl, 17 Nov 2026).** None of these
+are needed now. The core funnel metrics already come out of `status_history`
+with no new statuses: contacted within 48 hours, booking rate (Comp. Booked from
+Contacted), show rate (Attended from Comp. Booked), conversion rate (Converted
+from Attended), and days from lead to conversion. A small dashboard of those
+numbers is probably the most valuable next step. The candidates beyond that:
+
+- **"Not now"**: said not right now, rather than no. This is the workbook's
+  2-2-2 follow-up list, and today it gets lumped into Not interested.
+- **A reason on Not interested** (price, time, chose elsewhere). This would be
+  a field, not a status.
+- **What a Converted lead signed up to** (package or value). Also a field.
+- **Still training at 3 and 6 months.** That's retention, which is really
+  client management rather than lead tracking.
 
 - ~~**Staff development pathway**~~ — **DONE, 8 Sep 2026.** Merged (PR #28),
   migrations `0013` and `0014` applied to live, and walked through end to end

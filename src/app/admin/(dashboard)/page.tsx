@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/lib/auth";
-import type { Lead, Trainer } from "@/lib/types";
+import type { Lead, LeadStatus, Trainer } from "@/lib/types";
 import LeadBoard from "./components/LeadBoard";
 
 export const dynamic = "force-dynamic";
@@ -12,7 +12,10 @@ export interface LeadRow extends Lead {
   status_history: { old_status: string | null; new_status: string; changed_at: string }[];
 }
 
-const ACTIVE_LOAD_STATUSES = ["New", "Allocated", "Contacted", "Booked"];
+// Typed, so renaming a status breaks the build here instead of quietly dropping
+// those leads out of every trainer's load count. Attended counts: the
+// conversion conversation is still ahead of the trainer.
+const ACTIVE_LOAD_STATUSES: LeadStatus[] = ["New", "Allocated", "Contacted", "Comp. Booked", "Attended"];
 
 export default async function AdminLeadBoardPage() {
   const user = await getCurrentUser();

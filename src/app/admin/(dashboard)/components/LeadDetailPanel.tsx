@@ -3,10 +3,10 @@
 import { useEffect, useState, useTransition } from "react";
 import { goalLabel } from "@/lib/goals";
 import { isAcceptingLeads, suggestTrainer, type TrainerWithLoad } from "@/lib/allocation";
-import { LEAD_STATUSES, type LeadStatus, type Trainer } from "@/lib/types";
+import { CLOSED_LEAD_STATUSES, LEAD_STATUSES, STATUS_DEFINITIONS, type LeadStatus, type Trainer } from "@/lib/types";
 import { SourceBadge, StatusBadge } from "./Badges";
 import ClockPill from "./ClockPill";
-import { allocateLead, updateLeadStatus, updateLeadNotes, softDeleteLead, hardDeleteLead } from "../actions";
+import { allocateLead, updateLeadStatus, updateLeadNotes, logLeadContact, softDeleteLead, hardDeleteLead } from "../actions";
 import type { LeadRow } from "../page";
 
 function formatDate(value: string | null) {
@@ -16,6 +16,14 @@ function formatDate(value: string | null) {
 
 function formatDateTime(value: string) {
   return new Date(value).toLocaleString("en-AU", { timeZone: "Australia/Brisbane" });
+}
+
+function formatShortDate(value: string) {
+  return new Date(value).toLocaleDateString("en-AU", {
+    timeZone: "Australia/Brisbane",
+    day: "numeric",
+    month: "short",
+  });
 }
 
 const PREFERENCE_LABELS: Record<string, string> = {
@@ -50,6 +58,7 @@ export default function LeadDetailPanel({
 }) {
   const [isPending, startTransition] = useTransition();
   const [notes, setNotes] = useState(lead.notes ?? "");
+  const [status, setStatus] = useState<LeadStatus>(lead.status);
   const [overrideTrainerId, setOverrideTrainerId] = useState(lead.allocated_trainer_id ?? "");
   const [error, setError] = useState<string | null>(null);
 
@@ -235,17 +244,58 @@ export default function LeadDetailPanel({
           <section className="border-t border-black/5 pt-6">
             <h3 className="text-xs font-semibold uppercase tracking-wide text-secondary-label">Status</h3>
             <select
-              defaultValue={lead.status}
+              value={status}
               disabled={isPending}
-              onChange={(e) => runAction(() => updateLeadStatus(lead.id, e.target.value as LeadStatus))}
+              onChange={(e) => {
+                const next = e.target.value as LeadStatus;
+                setStatus(next);
+                runAction(() => updateLeadStatus(lead.id, next));
+              }}
+              aria-describedby="status-meaning"
               className={`mt-2.5 ${selectClass}`}
             >
               {LEAD_STATUSES.map((s) => (
-                <option key={s} value={s}>
+                <option key={s} value={s} title={STATUS_DEFINITIONS[s]}>
                   {s}
                 </option>
               ))}
             </select>
+            {/* Hover hints don't exist on a phone, which is where trainers
+                mostly update status, so the meaning is also spelled out here. */}
+            <p id="status-meaning" className="mt-2 text-xs text-secondary-label">
+              {STATUS_DEFINITIONS[status] ?? ""}
+            </p>
+
+            {lead.allocated_trainer_id && (
+              <p className="mt-3 text-xs text-secondary-label">
+                Assigned {lead.allocated_at ? formatShortDate(lead.allocated_at) : "date unknown"}
+                {" · "}
+                {lead.last_contacted_at
+                  ? `last contacted ${formatShortDate(lead.last_contacted_at)}`
+                  : "not yet contacted"}
+              </p>
+            )}
+
+            {/* For a follow-up that changes no status, so the last contacted
+                date (and the weekly email) stays honest. */}
+            {lead.allocated_trainer_id && !CLOSED_LEAD_STATUSES.includes(status) && (
+              <div className="mt-3">
+                <button
+                  type="button"
+                  disabled={isPending}
+                  onClick={() => {
+                    if (status === "Allocated") setStatus("Contacted");
+                    runAction(() => logLeadContact(lead.id));
+                  }}
+                  className={`press rounded-full bg-fill px-4 py-2 text-xs font-semibold text-foreground disabled:opacity-50 ${btnFocus}`}
+                >
+                  Log contact
+                </button>
+                <p className="mt-1.5 text-xs text-secondary-label">
+                  Followed up without changing the status? Log it so your last contacted date stays current.
+                </p>
+              </div>
+            )}
           </section>
 
           {/* Notes */}
