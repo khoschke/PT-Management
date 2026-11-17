@@ -3,10 +3,10 @@
 import { useEffect, useState, useTransition } from "react";
 import { goalLabel } from "@/lib/goals";
 import { isAcceptingLeads, suggestTrainer, type TrainerWithLoad } from "@/lib/allocation";
-import { LEAD_STATUSES, STATUS_DEFINITIONS, type LeadStatus, type Trainer } from "@/lib/types";
+import { CLOSED_LEAD_STATUSES, LEAD_STATUSES, STATUS_DEFINITIONS, type LeadStatus, type Trainer } from "@/lib/types";
 import { SourceBadge, StatusBadge } from "./Badges";
 import ClockPill from "./ClockPill";
-import { allocateLead, updateLeadStatus, updateLeadNotes, softDeleteLead, hardDeleteLead } from "../actions";
+import { allocateLead, updateLeadStatus, updateLeadNotes, logLeadContact, softDeleteLead, hardDeleteLead } from "../actions";
 import type { LeadRow } from "../page";
 
 function formatDate(value: string | null) {
@@ -16,6 +16,14 @@ function formatDate(value: string | null) {
 
 function formatDateTime(value: string) {
   return new Date(value).toLocaleString("en-AU", { timeZone: "Australia/Brisbane" });
+}
+
+function formatShortDate(value: string) {
+  return new Date(value).toLocaleDateString("en-AU", {
+    timeZone: "Australia/Brisbane",
+    day: "numeric",
+    month: "short",
+  });
 }
 
 const PREFERENCE_LABELS: Record<string, string> = {
@@ -257,6 +265,37 @@ export default function LeadDetailPanel({
             <p id="status-meaning" className="mt-2 text-xs text-secondary-label">
               {STATUS_DEFINITIONS[status] ?? ""}
             </p>
+
+            {lead.allocated_trainer_id && (
+              <p className="mt-3 text-xs text-secondary-label">
+                Assigned {lead.allocated_at ? formatShortDate(lead.allocated_at) : "date unknown"}
+                {" · "}
+                {lead.last_contacted_at
+                  ? `last contacted ${formatShortDate(lead.last_contacted_at)}`
+                  : "not yet contacted"}
+              </p>
+            )}
+
+            {/* For a follow-up that changes no status, so the last contacted
+                date (and the weekly email) stays honest. */}
+            {lead.allocated_trainer_id && !CLOSED_LEAD_STATUSES.includes(status) && (
+              <div className="mt-3">
+                <button
+                  type="button"
+                  disabled={isPending}
+                  onClick={() => {
+                    if (status === "Allocated") setStatus("Contacted");
+                    runAction(() => logLeadContact(lead.id));
+                  }}
+                  className={`press rounded-full bg-fill px-4 py-2 text-xs font-semibold text-foreground disabled:opacity-50 ${btnFocus}`}
+                >
+                  Log contact
+                </button>
+                <p className="mt-1.5 text-xs text-secondary-label">
+                  Followed up without changing the status? Log it so your last contacted date stays current.
+                </p>
+              </div>
+            )}
           </section>
 
           {/* Notes */}

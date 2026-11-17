@@ -62,6 +62,34 @@ export async function updateLeadStatus(leadId: string, status: LeadStatus): Prom
   return { ok: true };
 }
 
+// A follow-up that changes no status (a second call, a reminder text) still
+// counts as contact, so the trainer's last contacted date stays honest. A lead
+// still on Allocated moves to Contacted, because that is what Contacted means.
+// Stays on RLS like updateLeadStatus: trainers log contact on their own leads.
+export async function logLeadContact(leadId: string): Promise<ActionResult> {
+  const supabase = await createClient();
+
+  const { data: lead, error: fetchError } = await supabase
+    .from("leads")
+    .select("status")
+    .eq("id", leadId)
+    .single();
+
+  if (fetchError || !lead) return { ok: false, message: "Lead not found." };
+
+  const update: { last_contacted_at: string; status?: LeadStatus } = {
+    last_contacted_at: new Date().toISOString(),
+  };
+  if (lead.status === "Allocated") update.status = "Contacted";
+
+  const { error } = await supabase.from("leads").update(update).eq("id", leadId);
+
+  if (error) return { ok: false, message: "Couldn't log that contact. Please try again." };
+
+  revalidatePath("/admin");
+  return { ok: true };
+}
+
 export async function updateLeadNotes(leadId: string, notes: string): Promise<ActionResult> {
   const supabase = await createClient();
   const { error } = await supabase.from("leads").update({ notes }).eq("id", leadId);

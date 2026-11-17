@@ -9,7 +9,7 @@
 // the markup.
 
 import { Resend } from "resend";
-import type { Lead, Trainer } from "./types";
+import { ATTENDED_DECISION_DAYS, COMP_BOOKED_CHECK_DAYS, type Lead, type LeadStatus, type Trainer } from "./types";
 import { goalLabel } from "./goals";
 
 const FROM_ADDRESS = process.env.NOTIFICATIONS_FROM_EMAIL ?? "Fitaz Gym <onboarding@resend.dev>";
@@ -363,4 +363,141 @@ export async function sendDocumentExpiryReminder(
       "Once a replacement with a later expiry date is uploaded and approved, these reminders stop.",
     ].join("\n"),
   });
+}
+
+// ---------------------------------------------------------------------------
+// Weekly lead summary to each trainer (Batch 1 item [3])
+// ---------------------------------------------------------------------------
+// The daily digest tells the manager when a trainer has already missed the
+// 48 hour rule. This is the prompt that comes before: every Monday, each
+// trainer sees their own active leads, the ones they have gone longest without
+// contacting at the top. It still sends with no leads, so a trainer can tell
+// the system is running rather than wonder whether it broke.
+
+export interface WeeklySummaryLead {
+  name: string;
+  status: LeadStatus;
+  allocatedAt: string | null;
+  lastContactedAt: string | null;
+  // When the lead moved into its current status, for the two flags below.
+  statusSince: string | null;
+}
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+function shortDate(iso: string): string {
+  return new Date(iso).toLocaleDateString("en-AU", {
+    timeZone: "Australia/Brisbane",
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+  });
+}
+
+// Built separately from sending so a sample can be rendered against real data
+// and read before the cron is ever switched on.
+export function buildTrainerWeeklySummary(
+  trainerName: string,
+  leads: WeeklySummaryLead[],
+  now: Date = new Date(),
+): { subject: string; text: string; html: string } {
+  const firstName = trainerName.split(" ")[0];
+
+  // Never contacted first, then longest since contact.
+  const sorted = [...leads].sort((a, b) => {
+    if (!a.lastContactedAt) return b.lastContactedAt ? -1 : 0;
+    if (!b.lastContactedAt) return 1;
+    return a.lastContactedAt.localeCompare(b.lastContactedAt);
+  });
+
+  // Two statuses are waiting rooms, and a lead sitting in one too long needs
+  // the trainer to act. Written as what to do next, not just how long it's
+  // been, because the likeliest reason is that the outcome happened and the
+  // status was never updated.
+  const flagFor = (lead: WeeklySummaryLead): string | null => {
+    if (!lead.statusSince) return null;
+    const days = Math.floor((now.getTime() - new Date(lead.statusSince).getTime()) / DAY_MS);
+    if (lead.status === "Attended" && days > ATTENDED_DECISION_DAYS) {
+      return `Waiting on a decision for ${days} days. Follow up, or update to Converted or Not interested if they've decided.`;
+    }
+    if (lead.status === "Comp. Booked" && days > COMP_BOOKED_CHECK_DAYS) {
+      return `Booked ${days} days ago. If the session's happened, update to Attended. If they didn't show, rebook.`;
+    }
+    return null;
+  };
+
+  const count = leads.length;
+  const headline =
+    count === 0
+      ? "No active leads this week."
+      : `You have ${count} active lead${count === 1 ? "" : "s"} assigned to you.`;
+  const subject =
+    count === 0 ? "Your PT leads this week: none active" : `Your PT leads this week: ${count} active`;
+
+  const lastContactedLabel = (lead: WeeklySummaryLead) =>
+    lead.lastContactedAt ? `Last contacted ${shortDate(lead.lastContactedAt)}` : "Not yet contacted";
+  const assignedLabel = (lead: WeeklySummaryLead) =>
+    lead.allocatedAt ? `Assigned ${shortDate(lead.allocatedAt)}` : "Assigned date unknown";
+
+  const textLines = sorted.map((lead) => {
+    const flag = flagFor(lead);
+    return [
+      `- ${lead.name} (${lead.status})`,
+      `  ${lastContactedLabel(lead)} · ${assignedLabel(lead)}`,
+      ...(flag ? [`  ${flag}`] : []),
+    ].join("\n");
+  });
+
+  const text = [
+    `Morning ${firstName}.`,
+    "",
+    headline,
+    ...(count > 0
+      ? ["Anyone you haven't contacted for a while is at the top.", "", ...textLines]
+      : []),
+    "",
+    dashboardTextLine("Update a status or log contact in the dashboard."),
+  ].join("\n");
+
+  const rows = sorted
+    .map((lead) => {
+      const flag = flagFor(lead);
+      return `<tr><td style="padding:12px 0;border-top:1px solid #eeeeee;">
+        <p style="margin:0;font-size:15px;font-weight:600;color:#111111;">${esc(lead.name)}
+          <span style="font-weight:500;color:#666666;"> · ${esc(lead.status)}</span></p>
+        <p style="margin:4px 0 0;font-size:13px;color:#666666;">${lastContactedLabel(lead)} · ${assignedLabel(lead)}</p>
+        ${flag ? `<p style="margin:4px 0 0;font-size:13px;font-weight:600;color:#111111;">${esc(flag)}</p>` : ""}
+      </td></tr>`;
+    })
+    .join("");
+
+  const html = layout(`
+    <p style="margin:0 0 6px;font-size:20px;font-weight:600;line-height:1.3;">Your leads this week</p>
+    <p style="margin:0 0 4px;font-size:14px;line-height:1.5;color:#444444;">Morning ${esc(firstName)}. ${headline}</p>
+    ${
+      count > 0
+        ? `<p style="margin:0 0 16px;font-size:14px;line-height:1.5;color:#444444;">Anyone you haven't contacted for a while is at the top.</p>
+           <table role="presentation" width="100%" cellpadding="0" cellspacing="0">${rows}</table>`
+        : ""
+    }
+    ${ctaButton()}
+  `);
+
+  return { subject, text, html };
+}
+
+export async function sendTrainerWeeklySummary(
+  trainer: Pick<Trainer, "name" | "email">,
+  managerEmail: string,
+  leads: WeeklySummaryLead[],
+) {
+  const client = getClient();
+  if (!client || !trainer.email) return;
+
+  const { subject, text, html } = buildTrainerWeeklySummary(trainer.name, leads);
+  // Karl is the manager and one of the trainers: don't CC him on his own.
+  const cc = managerEmail.toLowerCase() === trainer.email.toLowerCase() ? undefined : managerEmail;
+
+  const { error } = await client.emails.send({ from: FROM_ADDRESS, to: trainer.email, cc, subject, text, html });
+  if (error) throw new Error(`Weekly summary to ${trainer.name} failed: ${error.message}`);
 }
