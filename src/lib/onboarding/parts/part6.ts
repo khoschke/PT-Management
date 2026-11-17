@@ -39,7 +39,7 @@ export const part6: OnboardingPart = {
         },
       ],
       workedExample:
-        "Taylor's avatar: Mel, 34, ICU nurse on a rotating roster, lives in Woolloongabba, partner and a four-year-old. Earns a solid wage but time and energy are the scarce currency. Goal: more strength and steadier energy so the night shifts stop flattening her. Problem: every routine she has tried falls apart the week the roster changes. Hangs out on Instagram late at night, follows a couple of nurse-mum accounts, trusts word of mouth from colleagues over any ad. Motivated by feeling capable at work and present at home.\n\nHow Taylor serves Mel: flexible session times around the roster, short efficient programs she can run solo on chaotic weeks, and check-ins that account for shift fatigue instead of guilt-tripping her for missing a session.",
+        "Taylor's avatar: Isabel, 34, ICU nurse on a rotating roster, lives in Woolloongabba, partner and a four-year-old. Earns a solid wage but time and energy are the scarce currency. Goal: more strength and steadier energy so the night shifts stop flattening her. Problem: every routine she has tried falls apart the week the roster changes. Hangs out on Instagram late at night, follows a couple of nurse-mum accounts, trusts word of mouth from colleagues over any ad. Motivated by feeling capable at work and present at home.\n\nHow Taylor serves Isabel: flexible session times around the roster, short efficient programs she can run solo on chaotic weeks, and check-ins that account for shift fatigue instead of guilt-tripping her for missing a session.",
       managerNote:
         "Keep them to one avatar. The eager ones will try to write five and end up with mush. One sharp avatar beats five vague ones every time.",
     },
@@ -160,7 +160,7 @@ export const part6: OnboardingPart = {
         { key: "testimonial-candidates", prompt: "Name 3 clients who could give you a strong testimonial, and how you'll ask each one.", multiline: true },
       ],
       workedExample:
-        "Taylor's referral message: “Hi Mel, it has been great watching your strength climb even through that run of nights. If you know another shift worker who is struggling to make training stick, I would love to help. Send them my way and I will shout you an extra session and give them a free consult to get started. No pressure at all.”",
+        "Taylor's referral message: “Hi Raj, it has been great watching your strength climb even through that run of nights. If you know another shift worker who is struggling to make training stick, I would love to help. Send them my way and I will shout you an extra session and give them a free consult to get started. No pressure at all.”",
     },
     {
       heading: "Tracking marketing performance",

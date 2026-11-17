@@ -4,6 +4,24 @@ Running list of changes to make at the next workbook update, so they can all be 
 
 Standing reminder: a change goes to the per-part sources and both combined masters, then the PDFs and .md are regenerated. Portal copy should match the masters, so every item below also needs actioning in the PT portal unless it says otherwise.
 
+## Progress (17 Nov 2026)
+
+**Batch 1, Part 7 portal copy: done in the portal, masters still to do.** Branch `claude/tender-gauss-hfm632`, `src/lib/onboarding/parts/part6.ts`, `part7.ts`, `part8.ts`. Activity keys unchanged, so saved answers are kept.
+- Items 5, 6, 13, 14, 15, 16, 17 and 18 applied in full.
+- Item 14.1 names applied: Isabel and Raj (Part 6), Corey and Frankie (Part 7), Jane (Part 8). No Mel left in the portal.
+- Item 1 for Part 7 only: every em dash removed. The Part 7 master already had none, so this was portal drift.
+- Item 4 for Part 7 only: the one bare "Fitaz" fixed.
+- Item 7.4 terms, partly: "Cold vs warm lead scripts" now defines a cold lead as an unverified lead and drops the "weekly list from Front of House" line. The rest of item 7 is batch 3.
+- Item 13: the heading is now "Creating certainty: emotional, logical and self-belief", so it matches the third certainty.
+- Item 17: the master also only covers frequency, so "I need to think about it" and "I'll check with my partner" were added rather than renaming the section.
+- Item 18: Ezidebit isn't named anywhere else in the workbook, and PTs choose their own payment provider, so the text says "your agreement and payment setup". Add the name back if every PT really does use it.
+- Item 15: Taylor's weekly total is $180 (2 x $80 + $20). It sits inside her attributed script, so it passes the figure rule. The general bullet uses "$X", with "including GST, if you charge it".
+- Checks passed: `tsc`, `eslint`, `npm run build`.
+
+**Masters:** the Drive connector can open the .docx masters but can't edit them, so the per-part sources, combined masters, PDFs and .md still need these changes made by hand. The portal text in `part7.ts` is the version to copy from.
+
+**Found while checking item 7 (needs a decision before batch 2):** the portal has only two lead sources, `form` (warm) and `gymmaster_sweep`. Every lead the PT Manager adds by hand, whether it's from the GymMaster unverified list or a conversation on the floor, is saved as `gymmaster_sweep` and labelled "Sweep (cold)". So the portal can't tell a sweep lead from an unverified lead yet, and the allocation email saying "this is a cold lead" is right for unverified leads and wrong for sweep leads. Fixing item 7's email wording on its own would mislabel unverified leads. It needs a third lead source (a migration), which fits naturally with item 8's lead-source work.
+
 ## Open
 
 ### 1. Remove all em dashes (logged 1 Nov 2026, widened 15 Nov 2026)
