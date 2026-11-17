@@ -115,7 +115,7 @@ The activity question no longer fits either. Each PT's own list already lives in
 
 **Karl's answer on the 48-hour rule (17 Nov 2026):** the 48-hour rule covers unverified leads only, and only for responding to a no ("no thanks", "not for me at the moment"). The PT has 48 hours to send the permission question. A STOP is never permission to reply later: it ends the communication straight away.
 
-**Still to settle:** that answer is about the 48-hour window on a no. The separate 48-hour *first contact* rule for warm leads also exists and is promised to members in email 1 ("Your trainer gets in touch within 48 hours"), and the PT briefing says it is unchanged. Assumed it stays for warm and sweep leads. Confirm before rewriting item 7 and item 12.
+**Settled (Karl, 17 Nov 2026):** keep it simple, 48 hours everywhere. First contact is 48 hours for every lead type (warm, sweep and unverified), matching the promise in email 1. The 48-hour window to send the permission question after a no also applies to every lead type. In practice it will almost always be an unverified lead, because warm and sweep leads have already asked for PT, but the rule is the same either way.
 
 ### 8. PT portal build: PTs can't add their own leads (logged 15 Nov 2026, updated same day)
 
@@ -163,7 +163,7 @@ Once built, update item 7's rewrite and the Part 6 "Tracking marketing performan
   - If they say yes to a check-in, the 2-2-2 sequence starts, and every touch is one they agreed to.
   - If they say "leave it", or don't answer the permission question, treat it as a STOP: record it, end the sequence, no further contact about PT.
   - Ask once. The permission question is part of the "no" conversation, never a separate follow-up later.
-- **48-hour limit on responding to a no (unverified leads only, confirmed 17 Nov 2026).** The PT has 48 hours from receiving a no to send the permission question. After that, asking would count as pestering, so the window closes and the lead is treated as a STOP. This applies to nos only, not to any other step in the process. 48 hours is the outer limit, not the target: if the no comes on the phone or face to face, ask then and there.
+- **48-hour limit on responding to a no (all lead types, settled 17 Nov 2026; almost always unverified in practice).** The PT has 48 hours from receiving a no to send the permission question. After that, asking would count as pestering, so the window closes and the lead is treated as a STOP. This applies to nos only, not to any other step in the process. 48 hours is the outer limit, not the target: if the no comes on the phone or face to face, ask then and there.
 - **Missed windows go to the PT Manager.** If the 48-hour window closes, the PT Manager is notified automatically and follows it up with the PT. The PT Manager can reopen the lead if the close was an accident or the PT simply didn't update the portal in time.
 - **Leads who go quiet** (no reply at all to first contact) still get the 2-2-2 sequence, since they haven't said no.
 - **Name the end point.** After the 2-month touch with no reply, the lead closes. Say so, so PTs know when to stop.
@@ -252,7 +252,23 @@ Once built, update item 7's rewrite and the Part 6 "Tracking marketing performan
    - **Avatar and client are the same person.** Part 6 makes Mel the imaginary avatar, then she's a real client. That undercuts item 2 (the avatar is a writing tool, not a real client).
    - **Her story contradicts itself.** Part 7 has Taylor cold-calling her as a new member. The tracker has her as a Referral. And the Part 6 referral message thanks her as a client before Part 7 has signed her.
 
-   **Karl's call (17 Nov 2026):** make it obvious they're two different people. **Proposed fix:** keep the avatar as a type, not a client. Rename the Part 6 avatar to a different name (e.g. "Taylor's avatar: Jess, 34, ICU nurse...") and keep **Mel** as the real client who fits that avatar, running through Parts 6 to 8 and the tracker. Add one line in Part 6 making the link: "Mel, one of Taylor's real clients, fits Jess almost exactly. That's the avatar doing its job." Then fix Mel's lead source so it's the same everywhere (unverified lead, matching the new cold call in item 5, and change the tracker row to match).
+   **Karl's decision (17 Nov 2026):** Mel Carter in the tracker is a coincidence. There's no single client running through the workbook, so each example gets its own name. Taylor (the PT) stays.
+
+   **Names needed: five.** Part 7 can't share one name across its examples, because the phone section has Mel booking on the spot and the 2-2-2 section has the same Mel not booking.
+
+   | # | Where | Role | Notes |
+   |---|-------|------|-------|
+   | A | Part 6, Building your client avatar | Taylor's avatar (imaginary) | "follows a couple of nurse-mum accounts" is the only line that needs a woman. Reword it if the name changes gender |
+   | B | Part 6, Referrals and testimonials | A happy client of Taylor's | One message only |
+   | C | Part 7, Phone approach + Sales chat + Handling hesitations | Prospect who books and signs | One continuous story. The sales chat intro links back to the cold call, and the hesitation follows the chat |
+   | D | Part 7, The 2-2-2 rule | Prospect who didn't book at first | Has to be a different person from C |
+   | E | Part 8, all seven examples | Long-term client | One lifecycle: onboarding, check-ins, quarterly review, referral, graduating, reconnecting. Could keep "Mel" here, which matches the tracker's Mel Carter and means the fewest edits |
+
+   **Gender:** none of the five roles needs a particular gender. Every example uses she/her, so changing gender means changing pronouns too. Avoid the real team's names (Dylan, Julie, Shahd, Karl, Michael) and the tracker's example names.
+
+   **Recommendation:** use clearly gendered names, a mix of men and women, each starting with a different letter. Taylor is already a gender-neutral name, so five more neutral names (Jordan, Alex, Sam...) will blur who's the trainer and who's the client. A mix also shows PTs that the workbook isn't only about selling to women.
+
+   **Superseded:** the "Jess avatar plus one Mel throughout" fix below. **Proposed fix:** keep the avatar as a type, not a client. Rename the Part 6 avatar to a different name (e.g. "Taylor's avatar: Jess, 34, ICU nurse...") and keep **Mel** as the real client who fits that avatar, running through Parts 6 to 8 and the tracker. Add one line in Part 6 making the link: "Mel, one of Taylor's real clients, fits Jess almost exactly. That's the avatar doing its job." Then fix Mel's lead source so it's the same everywhere (unverified lead, matching the new cold call in item 5, and change the tracker row to match).
 2. **"Cold-called" no longer fits.** The intro says Taylor "cold-called" Mel. Update to the new terms (item 7): an unverified lead, or warm, depending on how she came in.
 3. **Engage praises pushing through.** "You pushed through that last set when it got hard. That tells me you're serious about this" rewards grit and effort, which is the push-harder message the workbook avoids. Praise what they learned or noticed instead, e.g. "You picked up the hinge really fast."
 4. **Summarise strays out of scope.** "I noticed a bit of instability through your mid-back on the carries, which could be feeding that soreness" links a movement pattern to the cause of pain, which is a diagnosis. Reword to what a PT can say, e.g. "That's something we can strengthen", plus a nudge to see their physio or GP if the soreness hangs around.
@@ -310,7 +326,7 @@ Once built, update item 7's rewrite and the Part 6 "Tracking marketing performan
    - Change it to something doable now, e.g. "Think back to your most recent sales chat. Run the four reflection questions and note your headline takeaway."
    - Or keep it as a standing habit and move it into the portal (see the portal idea below), so reflections are captured after every chat rather than once in the workbook.
 
-**Recommendation (17 Nov 2026, Karl asked for one):** do the workbook fix now, and park the portal form.
+**Decision (Karl, 17 Nov 2026): approved as recommended.** Do the workbook fix now, and park the portal form.
 - **Activity:** use the first option, "Think back to your most recent sales chat...". Every PT can do it today, and a PT who hasn't had a sales chat yet can run it on their consult or trial session.
 - **Make the reflection a standing habit in the text**, not a once-off activity: "Run these four questions after every sales chat. It takes two minutes."
 - **Portal form: later, and small.** Build it only after items 8 and 11, because those change how leads and statuses work and the form would hang off them. When it's built, make it optional and three taps, not four essays: which certainty was missing (emotional, logical, self-belief), where it stalled (a picklist), and one line on what to do differently. A compulsory form after every chat gets filled with "all good" by week three. A short one gives the PT Manager real patterns to coach on in the fortnightly sessions.
