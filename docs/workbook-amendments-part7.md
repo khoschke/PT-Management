@@ -20,6 +20,10 @@ Standing reminder: a change goes to the per-part sources and both combined maste
 
 **Masters:** the Drive connector can open the .docx masters but can't edit them, so the per-part sources, combined masters, PDFs and .md still need these changes made by hand. The portal text in `part7.ts` is the version to copy from.
 
+**Social Saturday (Karl, 17 Nov 2026), item 10.8:** the invite example uses Social Saturday, not First Friday. It's a free session for everyone, built to be inclusive, and the member can bring someone along so they feel more comfortable. Applied to the 2-week invite and the 2-2-2 bullet on 17 Nov, ahead of the rest of item 10.
+
+**Statuses settled elsewhere (17 Nov 2026):** the portal funnel is now New, Allocated, Contacted, Comp. Booked, Attended, Converted, Not interested, Unreachable (migration `0018`, meanings in `STATUS_DEFINITIONS`, reference doc `docs/pipeline-stage-definitions.md`). That answers item 7's open detail. Until item 11 adds its own statuses, the Part 7 copy tells PTs to mark a STOP or a "leave it" as **Not interested**, which also keeps them out of the gym's remaining PT emails.
+
 **Found while checking item 7 (needs a decision before batch 2):** the portal has only two lead sources, `form` (warm) and `gymmaster_sweep`. Every lead the PT Manager adds by hand, whether it's from the GymMaster unverified list or a conversation on the floor, is saved as `gymmaster_sweep` and labelled "Sweep (cold)". So the portal can't tell a sweep lead from an unverified lead yet, and the allocation email saying "this is a cold lead" is right for unverified leads and wrong for sweep leads. Fixing item 7's email wording on its own would mislabel unverified leads. It needs a third lead source (a migration), which fits naturally with item 8's lead-source work.
 
 ## Open

@@ -112,9 +112,10 @@ update to this document.
   them together.
 - **Fields rather than statuses:** a reason on Not interested (price, time,
   chose elsewhere), and what a Converted lead signed up to.
-- **Open question:** whether the 48 hour first contact clock should apply to
-  unverified leads, which the portal currently does for every lead (Part 7
-  amendments item 7).
+- **Settled (Karl, 17 Nov 2026):** the 48 hour first contact clock applies to
+  every lead type, unverified included, as the portal already does. The
+  48 hour window to send the permission question after a no also applies to
+  every type (Part 7 amendments item 7).
 
 ## Change log
 
