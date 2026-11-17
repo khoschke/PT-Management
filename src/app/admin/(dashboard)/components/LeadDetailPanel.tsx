@@ -3,7 +3,7 @@
 import { useEffect, useState, useTransition } from "react";
 import { goalLabel } from "@/lib/goals";
 import { isAcceptingLeads, suggestTrainer, type TrainerWithLoad } from "@/lib/allocation";
-import { LEAD_STATUSES, type LeadStatus, type Trainer } from "@/lib/types";
+import { LEAD_STATUSES, STATUS_DEFINITIONS, type LeadStatus, type Trainer } from "@/lib/types";
 import { SourceBadge, StatusBadge } from "./Badges";
 import ClockPill from "./ClockPill";
 import { allocateLead, updateLeadStatus, updateLeadNotes, softDeleteLead, hardDeleteLead } from "../actions";
@@ -50,6 +50,7 @@ export default function LeadDetailPanel({
 }) {
   const [isPending, startTransition] = useTransition();
   const [notes, setNotes] = useState(lead.notes ?? "");
+  const [status, setStatus] = useState<LeadStatus>(lead.status);
   const [overrideTrainerId, setOverrideTrainerId] = useState(lead.allocated_trainer_id ?? "");
   const [error, setError] = useState<string | null>(null);
 
@@ -235,17 +236,27 @@ export default function LeadDetailPanel({
           <section className="border-t border-black/5 pt-6">
             <h3 className="text-xs font-semibold uppercase tracking-wide text-secondary-label">Status</h3>
             <select
-              defaultValue={lead.status}
+              value={status}
               disabled={isPending}
-              onChange={(e) => runAction(() => updateLeadStatus(lead.id, e.target.value as LeadStatus))}
+              onChange={(e) => {
+                const next = e.target.value as LeadStatus;
+                setStatus(next);
+                runAction(() => updateLeadStatus(lead.id, next));
+              }}
+              aria-describedby="status-meaning"
               className={`mt-2.5 ${selectClass}`}
             >
               {LEAD_STATUSES.map((s) => (
-                <option key={s} value={s}>
+                <option key={s} value={s} title={STATUS_DEFINITIONS[s]}>
                   {s}
                 </option>
               ))}
             </select>
+            {/* Hover hints don't exist on a phone, which is where trainers
+                mostly update status, so the meaning is also spelled out here. */}
+            <p id="status-meaning" className="mt-2 text-xs text-secondary-label">
+              {STATUS_DEFINITIONS[status] ?? ""}
+            </p>
           </section>
 
           {/* Notes */}

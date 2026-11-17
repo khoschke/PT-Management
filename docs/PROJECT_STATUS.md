@@ -528,12 +528,30 @@ whole migration chain against a local Postgres 16.
     amounts, auto-ticking, a roster badge, a stall nudge in the daily digest,
     and a print view.
 
-### Batch 1 from the change list: three decisions parked (14 Oct 2026)
+### Batch 1 from the change list (opened 14 Oct 2026, decided 17 Nov 2026)
 
-Four portal changes, three from Dylan. **[4] is shipped (see below); [1], [2]
-and [3] are parked until Karl answers Q1 to Q3.** The answers exist in another
-thread. **Whoever has them: record them here, then build.** Nothing below has
-been built.
+Four portal changes, three from Dylan. **[4] is shipped. Karl answered Q1 to Q3
+on 17 Nov 2026 (decisions below). [1]+[2] are built as migration `0018`; [3] is
+next.**
+
+**Decisions (Karl, 17 Nov 2026):**
+
+- **Q1, statuses.** Final funnel: New, Allocated, Contacted, Comp. Booked,
+  Attended, Converted, Not interested, Unreachable. Booked is renamed Comp.
+  Booked, and Completed is renamed Attended (the counts suggested trainers used
+  it that way). Converted is new. Each trainer then moves any of their Attended
+  leads who actually signed up to Converted. Each status has a one-line meaning
+  (`STATUS_DEFINITIONS` in `src/lib/types.ts`), shown on hover and under the
+  status dropdown. "Contacted" means reached out, replied or not, to match the
+  48 hour rule. There's no "no-show" status: booked-but-never-attended is
+  counted from `status_history`.
+- **Q2, dates.** Add `allocated_at` and `last_contacted_at`, backfilled from
+  `status_history` (option A), and add a "Log contact" button so a follow-up
+  with no status change still counts.
+- **Q3, weekly email.** Leave Unreachable out, along with Converted and Not
+  interested.
+- **More statuses:** keep it simple for now and build on it later. The
+  candidates are listed at the end of this section.
 
 The changes, as briefed:
 
@@ -588,7 +606,7 @@ The changes, as briefed:
   `src/lib/email.ts`. Monday 7am Brisbane is `0 21 * * 0` UTC. On the Hobby plan
   a cron fires somewhere within its hour, as the daily digest already does.
 
-**The three questions:**
+**The three questions, as they were asked (answered above):**
 
 - **Q1. Which portal statuses change, and what does "Completed" mean today?**
   - If Completed means "came to the comp session", Attended already exists under
@@ -624,7 +642,23 @@ After that, in this order:
   passage first, per `CLAUDE.md`.
 - **The pipeline stage definitions doc** (outside this repo) still lists
   "Contacted / Interested" in its sub-stage table, and marks the attended
-  sub-stage as having no status. Update it once Q1 is settled.
+  sub-stage as having no status. Q1 is now settled (17 Nov 2026), so it can be
+  updated to the final list above.
+
+**For later: extending the funnel (parked by Karl, 17 Nov 2026).** None of these
+are needed now. The core funnel metrics already come out of `status_history`
+with no new statuses: contacted within 48 hours, booking rate (Comp. Booked from
+Contacted), show rate (Attended from Comp. Booked), conversion rate (Converted
+from Attended), and days from lead to conversion. A small dashboard of those
+numbers is probably the most valuable next step. The candidates beyond that:
+
+- **"Not now"**: said not right now, rather than no. This is the workbook's
+  2-2-2 follow-up list, and today it gets lumped into Not interested.
+- **A reason on Not interested** (price, time, chose elsewhere). This would be
+  a field, not a status.
+- **What a Converted lead signed up to** (package or value). Also a field.
+- **Still training at 3 and 6 months.** That's retention, which is really
+  client management rather than lead tracking.
 
 - ~~**Staff development pathway**~~ — **DONE, 8 Sep 2026.** Merged (PR #28),
   migrations `0013` and `0014` applied to live, and walked through end to end

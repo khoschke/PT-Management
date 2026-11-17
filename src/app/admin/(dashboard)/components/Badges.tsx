@@ -1,4 +1,4 @@
-import type { LeadSource, LeadStatus } from "@/lib/types";
+import { STATUS_DEFINITIONS, type LeadSource, type LeadStatus } from "@/lib/types";
 
 const badgeBase = "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold";
 
@@ -21,16 +21,19 @@ const STATUS_STYLES: Record<LeadStatus, { badge: string; dot?: string }> = {
   New: { badge: "bg-fill text-secondary-label" },
   Allocated: { badge: "bg-blue-100 text-blue-800", dot: "bg-blue-500" },
   Contacted: { badge: "bg-purple-100 text-purple-800", dot: "bg-purple-500" },
-  Booked: { badge: "bg-green-100 text-green-800", dot: "bg-green-600" },
-  Completed: { badge: "bg-foreground text-white" },
+  "Comp. Booked": { badge: "bg-green-100 text-green-800", dot: "bg-green-600" },
+  Attended: { badge: "bg-teal-100 text-teal-800", dot: "bg-teal-600" },
+  Converted: { badge: "bg-foreground text-white" },
   "Not interested": { badge: "bg-fill text-secondary-label" },
   Unreachable: { badge: "bg-orange-100 text-orange-800", dot: "bg-orange-500" },
 };
 
 export function StatusBadge({ status }: { status: LeadStatus }) {
-  const { badge, dot } = STATUS_STYLES[status];
+  // The fallback covers the minutes between a deploy and its status migration,
+  // when the database can still hand back a name this map no longer has.
+  const { badge, dot } = STATUS_STYLES[status] ?? STATUS_STYLES.New;
   return (
-    <span className={`${badgeBase} ${badge}`}>
+    <span className={`${badgeBase} ${badge}`} title={STATUS_DEFINITIONS[status]}>
       {dot && <span className={`h-1.5 w-1.5 rounded-full ${dot}`} aria-hidden />}
       {status}
     </span>
