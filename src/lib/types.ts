@@ -3,7 +3,31 @@
 import type { GoalCode } from "./goals";
 
 export type TrainerGender = "male" | "female";
-export type LeadSource = "form" | "gymmaster_sweep";
+// Three lead types (Part 7 workbook amendments, item 7; migration 0020):
+// - form: warm, they asked for PT themselves through /pt-session.
+// - gymmaster_sweep: "Sweep", added by the PT Manager after a conversation,
+//   an email or a front of house heads-up. Not cold. The value's name predates
+//   the term and is kept so existing rows and the GymMaster branch line up.
+// - unverified: a new member who hasn't asked about PT, handed over around
+//   day 10 to 17 after two of the three nurture emails. The only "cold" type.
+export type LeadSource = "form" | "gymmaster_sweep" | "unverified";
+
+// Sources the PT Manager can choose when adding a lead by hand. Form leads
+// only ever come from the public form.
+export const MANUAL_LEAD_SOURCES = ["gymmaster_sweep", "unverified"] as const;
+export type ManualLeadSource = (typeof MANUAL_LEAD_SOURCES)[number];
+
+export const LEAD_SOURCE_LABELS: Record<LeadSource, { label: string; hint: string }> = {
+  form: { label: "Form (warm)", hint: "Warm lead: asked for PT themselves through the form" },
+  gymmaster_sweep: {
+    label: "Sweep",
+    hint: "Added by the PT Manager after a conversation, email or heads-up. Not cold",
+  },
+  unverified: {
+    label: "Unverified (cold)",
+    hint: "New member who hasn't asked about PT yet, after two of the three welcome emails",
+  },
+};
 export type LeadStatus =
   | "New"
   | "Allocated"

@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { callerIsManager } from "@/lib/auth";
 import { sendTrainerAllocationEmail } from "@/lib/email";
 import { sweepLeadSchema } from "@/lib/validation";
-import type { LeadStatus } from "@/lib/types";
+import { MANUAL_LEAD_SOURCES, type LeadStatus, type ManualLeadSource } from "@/lib/types";
 import type { ActionResult, AddSweepLeadState } from "./state";
 
 // Allocation, deletion and sweep entry are the manager's alone. RLS already
@@ -131,12 +131,36 @@ export async function hardDeleteLead(leadId: string): Promise<ActionResult> {
   return { ok: true };
 }
 
+// Re-sorts a hand-added lead between Sweep and Unverified. Form leads are left
+// alone: that source records that the member asked for PT themselves, and it is
+// the only one the public form can create.
+export async function updateLeadSource(leadId: string, source: string): Promise<ActionResult> {
+  if (!(await callerIsManager())) {
+    return { ok: false, message: "Only managers can change a lead's type." };
+  }
+  if (!(MANUAL_LEAD_SOURCES as readonly string[]).includes(source)) {
+    return { ok: false, message: "Choose sweep or unverified." };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("leads")
+    .update({ lead_source: source as ManualLeadSource })
+    .eq("id", leadId)
+    .neq("lead_source", "form");
+
+  if (error) return { ok: false, message: "Couldn't change the lead type. Please try again." };
+
+  revalidatePath("/admin");
+  return { ok: true };
+}
+
 export async function addSweepLead(
   _prevState: AddSweepLeadState,
   formData: FormData,
 ): Promise<AddSweepLeadState> {
   if (!(await callerIsManager())) {
-    return { status: "error", message: "Only managers can add sweep leads." };
+    return { status: "error", message: "Only managers can add leads." };
   }
 
   const raw = {
@@ -145,6 +169,7 @@ export async function addSweepLead(
     email: formData.get("email")?.toString() || undefined,
     date_of_birth: formData.get("date_of_birth")?.toString() || undefined,
     goals: formData.getAll("goals").map((g) => g.toString()),
+    lead_source: formData.get("lead_source")?.toString() ?? "",
     goal_other: formData.get("goal_other")?.toString() || undefined,
     current_exercise: formData.get("current_exercise")?.toString() || undefined,
     gender_preference: formData.get("gender_preference")?.toString() || undefined,
@@ -176,12 +201,12 @@ export async function addSweepLead(
     time_preference: parsed.data.time_preference || null,
     preferred_trainer_id: parsed.data.preferred_trainer_id || null,
     contact_preference: parsed.data.contact_preference || null,
-    lead_source: "gymmaster_sweep",
+    lead_source: parsed.data.lead_source,
     status: "New",
   });
 
   if (error) {
-    console.error("Sweep lead insert failed", error);
+    console.error("Manual lead insert failed", error);
     return { status: "error", message: "Something went wrong saving that lead. Please try again." };
   }
 

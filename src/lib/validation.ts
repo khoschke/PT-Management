@@ -4,6 +4,7 @@
 
 import { z } from "zod";
 import { GOAL_OPTIONS } from "./goals";
+import { MANUAL_LEAD_SOURCES } from "./types";
 
 const GOAL_CODES = GOAL_OPTIONS.map((g) => g.code) as [string, ...string[]];
 
@@ -55,6 +56,7 @@ export const sweepLeadSchema = leadFormSchema
     name: leadFormSchema.shape.name,
     phone: leadFormSchema.shape.phone,
     goals: z.array(z.enum(GOAL_CODES)).optional().default([]),
+    lead_source: z.enum(MANUAL_LEAD_SOURCES, { message: "Choose sweep or unverified" }),
     email: z
       .string()
       .trim()

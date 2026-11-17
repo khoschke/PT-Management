@@ -3,10 +3,18 @@
 import { useEffect, useState, useTransition } from "react";
 import { goalLabel } from "@/lib/goals";
 import { isAcceptingLeads, suggestTrainer, type TrainerWithLoad } from "@/lib/allocation";
-import { CLOSED_LEAD_STATUSES, LEAD_STATUSES, STATUS_DEFINITIONS, type LeadStatus, type Trainer } from "@/lib/types";
+import {
+  CLOSED_LEAD_STATUSES,
+  LEAD_SOURCE_LABELS,
+  LEAD_STATUSES,
+  MANUAL_LEAD_SOURCES,
+  STATUS_DEFINITIONS,
+  type LeadStatus,
+  type Trainer,
+} from "@/lib/types";
 import { SourceBadge, StatusBadge } from "./Badges";
 import ClockPill from "./ClockPill";
-import { allocateLead, updateLeadStatus, updateLeadNotes, logLeadContact, softDeleteLead, hardDeleteLead } from "../actions";
+import { allocateLead, updateLeadSource, updateLeadStatus, updateLeadNotes, logLeadContact, softDeleteLead, hardDeleteLead } from "../actions";
 import type { LeadRow } from "../page";
 
 function formatDate(value: string | null) {
@@ -237,6 +245,30 @@ export default function LeadDetailPanel({
                   Allocate
                 </button>
               </div>
+            </section>
+          )}
+
+          {/* Lead type: hand-added leads only. Set it before allocating, because the
+              allocation email tells the trainer what kind of lead it is. */}
+          {isManager && lead.lead_source !== "form" && (
+            <section className="border-t border-black/5 pt-6">
+              <h3 className="text-xs font-semibold uppercase tracking-wide text-secondary-label">Lead type</h3>
+              <select
+                value={lead.lead_source}
+                disabled={isPending}
+                onChange={(e) => runAction(() => updateLeadSource(lead.id, e.target.value))}
+                className={`mt-2 ${selectClass}`}
+              >
+                {MANUAL_LEAD_SOURCES.map((source) => (
+                  <option key={source} value={source}>
+                    {LEAD_SOURCE_LABELS[source].label}
+                  </option>
+                ))}
+              </select>
+              <p className="mt-1.5 text-xs text-secondary-label">
+                {LEAD_SOURCE_LABELS[lead.lead_source].hint}. Set this before allocating: the trainer&apos;s email says
+                which type it is.
+              </p>
             </section>
           )}
 

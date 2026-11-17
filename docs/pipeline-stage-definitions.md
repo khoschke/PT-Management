@@ -74,11 +74,15 @@ The terms the workbook uses for where a lead comes from (Part 7 amendments,
 - **Sweep:** added to the portal by the PT Manager after a conversation on the
   floor, an email or a heads-up from the front of house team. Someone has shown
   interest or been flagged for a reason, so not cold. Source `gymmaster_sweep`
-  in the portal (the name predates the term).
+  in the portal (the name predates the term, and is kept so existing rows and
+  the GymMaster branch line up).
 - **Unverified:** new members who haven't asked about PT. They go through the
   GymMaster nurture emails and reach a trainer around day 10 to 17, after two
-  of the three emails. These are the only leads "cold" should describe. In the
-  portal today they are entered by the PT Manager the same way as sweep leads.
+  of the three emails. These are the only leads "cold" should describe. Source
+  `unverified` in the portal (migration `0020`). The PT Manager picks Sweep or
+  Unverified when adding a lead by hand, and can re-sort a hand-added lead from
+  the lead panel's "Lead type" control. Set it before allocating: the trainer's
+  allocation email says which type it is.
 
 Every type flows through the same stages and statuses above.
 
@@ -118,6 +122,11 @@ update to this document.
   every type (Part 7 amendments item 7).
 
 ## Change log
+
+- **17 Nov 2026:** Third lead source, `unverified` (`0020`). Leads added by hand
+  before this are all `gymmaster_sweep`, so the PT Manager re-sorts any that
+  were really unverified. Labels and hover text live in `LEAD_SOURCE_LABELS`
+  in `src/lib/types.ts`.
 
 - **17 Nov 2026:** Created with the settled funnel. Booked was renamed Comp.
   Booked, Completed renamed Attended (the counts suggested most trainers used it

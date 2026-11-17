@@ -2,7 +2,14 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { LEAD_STATUSES, CLOSED_LEAD_STATUSES, STATUS_DEFINITIONS, type Trainer } from "@/lib/types";
+import {
+  LEAD_STATUSES,
+  CLOSED_LEAD_STATUSES,
+  LEAD_SOURCE_LABELS,
+  STATUS_DEFINITIONS,
+  type LeadSource,
+  type Trainer,
+} from "@/lib/types";
 import { getContactClock } from "@/lib/countdown";
 import { leadsToCsv, downloadCsv } from "@/lib/csv";
 import LeadCard from "./LeadCard";
@@ -95,7 +102,7 @@ export default function LeadBoard({
               onClick={() => setShowAddSweepLead(true)}
               className="press rounded-full bg-foreground px-4 py-2 text-sm font-semibold text-white outline-none transition focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
-              Add sweep lead
+              Add lead
             </button>
           )}
         </div>
@@ -121,8 +128,11 @@ export default function LeadBoard({
           className={selectClass}
         >
           <option value="">All sources</option>
-          <option value="form">Form (warm)</option>
-          <option value="gymmaster_sweep">Sweep (cold)</option>
+          {(Object.keys(LEAD_SOURCE_LABELS) as LeadSource[]).map((s) => (
+            <option key={s} value={s} title={LEAD_SOURCE_LABELS[s].hint}>
+              {LEAD_SOURCE_LABELS[s].label}
+            </option>
+          ))}
         </select>
 
         {isManager && (
@@ -196,7 +206,7 @@ export default function LeadBoard({
             <p className="max-w-xs text-sm text-secondary-label">
               {hasFilters
                 ? "Try clearing a filter to see more."
-                : "New leads will appear here as members raise their hand or get added from a sweep."}
+                : "New leads will appear here as members raise their hand or get added by the PT Manager."}
             </p>
           </div>
         )}

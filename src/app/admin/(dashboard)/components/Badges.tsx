@@ -1,15 +1,18 @@
-import { STATUS_DEFINITIONS, type LeadSource, type LeadStatus } from "@/lib/types";
+import { LEAD_SOURCE_LABELS, STATUS_DEFINITIONS, type LeadSource, type LeadStatus } from "@/lib/types";
 
 const badgeBase = "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold";
 
 export function SourceBadge({ source }: { source: LeadSource }) {
-  const isForm = source === "form";
+  const { label, hint } = LEAD_SOURCE_LABELS[source];
+  const style =
+    source === "form"
+      ? "bg-foreground text-white"
+      : source === "unverified"
+        ? "bg-fill text-secondary-label ring-1 ring-inset ring-black/10"
+        : "bg-fill text-foreground";
   return (
-    <span
-      className={`${badgeBase} ${isForm ? "bg-foreground text-white" : "bg-fill text-foreground"}`}
-      title={isForm ? "Warm lead: filled in the form themselves" : "Cold lead: found on the GymMaster sweep"}
-    >
-      {isForm ? "Form (warm)" : "Sweep (cold)"}
+    <span className={`${badgeBase} ${style}`} title={hint}>
+      {label}
     </span>
   );
 }
