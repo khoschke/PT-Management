@@ -73,13 +73,17 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="glass-header sticky top-0 z-10 border-b border-black/5">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3.5 sm:px-6">
-          <div className="flex items-center gap-8">
-            <div className="flex items-center gap-2.5">
+      {/* Solid rather than glass, and one line at every width (Karl, 18 Nov
+          2026): content showed through when scrolling, and with the manager's
+          longer nav the items wrapped onto two lines and overlapped. The nav
+          now scrolls sideways if it runs out of room instead of wrapping. */}
+      <header className="sticky top-0 z-10 border-b border-black/5 bg-surface">
+        <div className="mx-auto flex max-w-7xl items-center gap-4 whitespace-nowrap px-5 py-3.5 sm:px-6">
+          <div className="flex min-w-0 flex-1 items-center gap-6">
+            <div className="flex shrink-0 items-center gap-2.5">
               <Image src="/brand/fitaz-gym-logo.svg" alt="Fitaz Gym" width={138} height={18} priority />
-              <span className="h-3.5 w-px bg-black/15" aria-hidden />
-              <span className="text-[13px] font-medium text-secondary-label">PT leads</span>
+              <span className="hidden h-3.5 w-px bg-black/15 2xl:block" aria-hidden />
+              <span className="hidden text-[13px] font-medium text-secondary-label 2xl:inline">PT leads</span>
             </div>
             <DashboardNav
               items={[
@@ -92,7 +96,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
                       // The workbook already owns that word twice over, and a
                       // second "Onboarding" tab is exactly the confusion the
                       // scoping note warned about. This is the business setup
-                      // checklist; "PT onboarding" below is the workbook.
+                      // checklist; "PT Workbook" below is the workbook.
                       { href: "/admin/setup", label: "Setup" },
                       { href: "/admin/staff", label: "Staff" },
                       { href: "/admin/development", label: "Development" },
@@ -104,14 +108,14 @@ export default async function DashboardLayout({ children }: { children: React.Re
                   : []),
                 ...(isTrainer || isStaff ? [{ href: "/admin/documents", label: "My documents" }] : []),
                 ...(hasOwnProfile ? [{ href: "/admin/profile", label: "My profile" }] : []),
-                { href: "/onboarding", label: "PT onboarding" },
+                { href: "/onboarding", label: "PT Workbook" },
                 { href: "/admin/account", label: "Account" },
               ]}
             />
           </div>
-          <div className="flex items-center gap-4 text-sm text-secondary-label">
+          <div className="flex shrink-0 items-center gap-4 text-sm text-secondary-label">
             <span className="flex items-center gap-1.5">
-              {user.profile.full_name ?? user.email}
+              <span className="hidden max-w-[12rem] truncate xl:inline">{user.profile.full_name ?? user.email}</span>
               <span className="rounded-full bg-fill px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-secondary-label">
                 {user.profile.role}
               </span>

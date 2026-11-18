@@ -21,9 +21,10 @@ export default function ClockPill({
 }) {
   const clock = getContactClock(dueAt, firstContactedAt, status);
 
-  // A lead that's done but was never explicitly marked "Contacted" has no
-  // clock worth showing, so the pill disappears rather than adding noise.
-  if (clock.band === "done" && !clock.label) return null;
+  // Once first contact has happened the clock has done its job, and a grey
+  // "Contacted" pill next to a status like Said no read as a contradiction
+  // (Karl, 18 Nov 2026). The status badge says where the lead is.
+  if (clock.band === "done") return null;
 
   const { badge, dot } = BAND_STYLES[clock.band];
 

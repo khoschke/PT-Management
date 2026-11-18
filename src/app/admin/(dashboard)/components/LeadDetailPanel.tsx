@@ -141,7 +141,9 @@ export default function LeadDetailPanel({
         className="flex h-full w-full max-w-lg translate-x-0 flex-col overflow-y-auto rounded-l-3xl bg-surface shadow-2xl animate-[slideIn_220ms_cubic-bezier(0.2,0.8,0.2,1)]"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="glass-header sticky top-0 z-10 flex items-start justify-between gap-3 border-b border-black/5 px-6 py-5">
+        {/* Solid, not glass: the badges can wrap to two rows, and scrolled content
+            showing through behind them was hard to read. */}
+        <div className="sticky top-0 z-10 flex items-start justify-between gap-3 border-b border-black/5 bg-surface px-6 py-5">
           <div className="min-w-0">
             <h2 className="truncate text-xl font-semibold tracking-tight text-foreground">{lead.name}</h2>
             <div className="mt-2.5 flex flex-wrap gap-1.5">

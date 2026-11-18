@@ -191,6 +191,8 @@ Once built, update item 7's rewrite and the Part 6 "Tracking marketing performan
 4. Link paths: change `/onboarding/` to `/workbook/` only with a permanent redirect from every old path to its new one, then test a few old links (including any in emails and calendar invites) to confirm they still land on the right page. Otherwise leave them alone.
 5. Leave file names alone.
 
+**Started 18 Nov 2026 (Karl asked, during the item 12 check):** the dashboard nav item "PT onboarding" now reads "PT Workbook", and so does the title in the workbook's own header. The workbook overview now reads "Fitaz Gym · Personal Trainer Workbook" with the heading "The PT Workbook, at a glance" (manager view) or "Your PT Workbook" (trainer view, was "Your 12-week onboarding journey"). Everything else in this item (page titles, buttons, the masters, link paths and redirects) is still to do in the whole-workbook pass.
+
 ### 10. The 2-2-2 rule: portal tracking, permission and opt-outs (logged 15 Nov 2026, updated same day)
 
 **Where:** Part 7 Making Sales, "The 2-2-2 rule for leads who don't convert": the intro, the three touches, the example messages, and the activity "Where will you track your 2-2-2 follow-ups so none slip through?". PT portal and masters.
@@ -261,6 +263,8 @@ Once built, update item 7's rewrite and the Part 6 "Tracking marketing performan
 **Decision (Karl, 15 Nov 2026):** Go ahead.
 
 **Fix:** Add one short page at the start of Part 7 showing how a lead moves through the system: the three lead types (warm, sweep, unverified), first contact and the 48-hour rule, the permission question on a no (and its 48-hour limit), the 2-2-2 follow-ups, opt-outs, and booking or conversion, all as they work in the portal. Then have each later section point to that page instead of re-describing the process, so the next system change means updating one page.
+
+**Built 18 Nov 2026.** New first section in Part 7, "How a lead moves through the portal": the four lead types (warm, flagged, unverified, own), first contact within 48 hours, the three paths (book, go quiet and the 2-2-2, say no and the permission question with its 48-hour window), opt-outs, and reminders. "The gym-provided lead process" and the 2-2-2 section's portal paragraph now point to it instead of re-describing the flow. No activity, so no new activity key.
 
 ### 13. "Creating certainty: emotional and logical" needs a rewrite (logged 15 Nov 2026)
 

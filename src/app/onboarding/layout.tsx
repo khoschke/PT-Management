@@ -64,7 +64,7 @@ export default async function OnboardingLayout({ children }: { children: React.R
                 >
                   F
                 </span>
-                <span className="text-[15px] font-semibold tracking-tight">PT Onboarding</span>
+                <span className="text-[15px] font-semibold tracking-tight">PT Workbook</span>
               </Link>
             </div>
             <div className="flex items-center gap-3">
