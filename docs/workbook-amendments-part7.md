@@ -262,6 +262,8 @@ Once built, update item 7's rewrite and the Part 6 "Tracking marketing performan
 
 **Fix:** Add one short page at the start of Part 7 showing how a lead moves through the system: the three lead types (warm, sweep, unverified), first contact and the 48-hour rule, the permission question on a no (and its 48-hour limit), the 2-2-2 follow-ups, opt-outs, and booking or conversion, all as they work in the portal. Then have each later section point to that page instead of re-describing the process, so the next system change means updating one page.
 
+**Built 18 Nov 2026.** New first section in Part 7, "How a lead moves through the portal": the four lead types (warm, flagged, unverified, own), first contact within 48 hours, the three paths (book, go quiet and the 2-2-2, say no and the permission question with its 48-hour window), opt-outs, and reminders. "The gym-provided lead process" and the 2-2-2 section's portal paragraph now point to it instead of re-describing the flow. No activity, so no new activity key.
+
 ### 13. "Creating certainty: emotional and logical" needs a rewrite (logged 15 Nov 2026)
 
 **Where:** Part 7 Making Sales, "Creating certainty: emotional and logical": the intro, the comparison table and the activity. PT portal and masters.
