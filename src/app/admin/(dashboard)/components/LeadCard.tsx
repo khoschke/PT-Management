@@ -1,4 +1,5 @@
 import ClockPill from "./ClockPill";
+import FollowUpPill from "./FollowUpPill";
 import { SourceBadge, StatusBadge } from "./Badges";
 import Avatar from "./Avatar";
 import type { LeadRow } from "../page";
@@ -22,6 +23,7 @@ export default function LeadCard({
           <div className="mt-2 flex flex-wrap gap-1.5">
             <SourceBadge source={lead.lead_source} />
             <StatusBadge status={lead.status} />
+            <FollowUpPill lead={lead} />
           </div>
         </div>
         <div className="shrink-0">

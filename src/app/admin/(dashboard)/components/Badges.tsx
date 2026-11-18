@@ -29,6 +29,8 @@ const STATUS_STYLES: Record<LeadStatus, { badge: string; dot?: string }> = {
   "Comp. Booked": { badge: "bg-green-100 text-green-800", dot: "bg-green-600" },
   Attended: { badge: "bg-teal-100 text-teal-800", dot: "bg-teal-600" },
   Converted: { badge: "bg-foreground text-white" },
+  "Said no": { badge: "bg-amber-100 text-amber-800", dot: "bg-amber-500" },
+  "Agreed to check-in": { badge: "bg-indigo-100 text-indigo-800", dot: "bg-indigo-500" },
   "Not interested": { badge: "bg-fill text-secondary-label" },
   Unreachable: { badge: "bg-orange-100 text-orange-800", dot: "bg-orange-500" },
 };

@@ -56,7 +56,7 @@ export async function updateLeadStatus(leadId: string, status: LeadStatus): Prom
   const supabase = await createClient();
   const { error } = await supabase.from("leads").update({ status }).eq("id", leadId);
 
-  if (error) return { ok: false, message: "Couldn't update that status. Please try again." };
+  if (error) return { ok: false, message: dbMessage(error, "Couldn't update that status. Please try again.") };
 
   revalidatePath("/admin");
   return { ok: true };
@@ -271,4 +271,100 @@ export async function addOwnLead(
 
   revalidatePath("/admin");
   return { status: "success" };
+}
+
+// ---------------------------------------------------------------------------
+// 2-2-2 follow-ups and the 48-hour clock on a no (Part 7 amendments, item 11).
+// The database enforces the rules (0022_follow_ups.sql): a timer close can't be
+// undone by a trainer, and a lead that opted out can't be reopened. These
+// actions pass its messages straight through.
+// ---------------------------------------------------------------------------
+
+function dbMessage(error: { message?: string } | null, fallback: string): string {
+  const msg = error?.message ?? "";
+  return /48-hour timer|opted out|PT Manager can reopen/.test(msg) ? msg : fallback;
+}
+
+/** The due 2-2-2 touch has been sent: log it and schedule the next one. */
+export async function completeFollowUp(leadId: string): Promise<ActionResult> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("complete_follow_up", { p_lead_id: leadId });
+  if (error) return { ok: false, message: "Couldn't log that follow-up. Please try again." };
+  if (!(data as { ok: boolean } | null)?.ok) return { ok: false, message: "There's no follow-up due on this lead." };
+  revalidatePath("/admin");
+  return { ok: true };
+}
+
+/** Starts the 2-2-2 for a lead that was contacted before follow-ups existed. */
+export async function startFollowUps(leadId: string): Promise<ActionResult> {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("leads")
+    .update({ follow_up_step: 1, next_follow_up_at: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString() })
+    .eq("id", leadId)
+    .eq("status", "Contacted")
+    .is("follow_up_step", null);
+  if (error) return { ok: false, message: "Couldn't start the follow-ups. Please try again." };
+  revalidatePath("/admin");
+  return { ok: true };
+}
+
+/** What happened with the permission question on a Said no lead. */
+export async function recordPermissionAnswer(
+  leadId: string,
+  answer: "yes" | "leave_it" | "asked_by_text",
+): Promise<ActionResult> {
+  const supabase = await createClient();
+  const update =
+    answer === "yes"
+      ? { status: "Agreed to check-in" as LeadStatus }
+      : answer === "leave_it"
+        ? { status: "Not interested" as LeadStatus, closed_reason: "declined", permission_asked_at: new Date().toISOString() }
+        : { permission_asked_at: new Date().toISOString() };
+  const { error } = await supabase.from("leads").update(update).eq("id", leadId).eq("status", "Said no");
+  if (error) return { ok: false, message: dbMessage(error, "Couldn't save that. Please try again.") };
+  revalidatePath("/admin");
+  return { ok: true };
+}
+
+/** The prospect ended it: they replied STOP, or asked to be left alone. */
+export async function endCommunication(
+  leadId: string,
+  reason: "replied_stop" | "ended_by_trainer",
+): Promise<ActionResult> {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("leads")
+    .update({ status: "Not interested" as LeadStatus, closed_reason: reason })
+    .eq("id", leadId);
+  if (error) return { ok: false, message: dbMessage(error, "Couldn't end communication. Please try again.") };
+  revalidatePath("/admin");
+  return { ok: true };
+}
+
+/** PT Manager only: reopen a lead the 48-hour timer closed. */
+export async function reopenTimerClose(
+  leadId: string,
+  newStatus: "Agreed to check-in" | "Not interested",
+  reason: string,
+): Promise<ActionResult> {
+  if (!(await callerIsManager())) {
+    return { ok: false, message: "Only the PT Manager can reopen a lead." };
+  }
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("reopen_timer_close", {
+    p_lead_id: leadId,
+    p_new_status: newStatus,
+    p_reason: reason,
+  });
+  if (error) return { ok: false, message: "Couldn't reopen that lead. Please try again." };
+  const result = data as { ok: boolean; reason?: string } | null;
+  if (!result?.ok) {
+    return {
+      ok: false,
+      message: result?.reason === "reason_required" ? "Add a short reason for reopening." : "That lead can't be reopened.",
+    };
+  }
+  revalidatePath("/admin");
+  return { ok: true };
 }
