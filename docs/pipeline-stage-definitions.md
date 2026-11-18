@@ -106,7 +106,10 @@ All of these come from `status_history`, with no extra statuses needed:
 - **Time to convert:** days from lead created to Converted.
 - **By source:** any of the above, split by lead type.
 
-None of these are on a dashboard yet. A small one is the obvious next step.
+Live at `/admin/metrics` (manager-only), computed from `status_history` on each
+load (`src/lib/metrics.ts`): the headline rates as stat tiles with their
+denominators, a monochrome funnel, and a by-lead-type breakdown. A rate counts
+whether a lead ever reached a stage, not its current status.
 
 ## Open: possible future sub-stages (not built)
 

@@ -699,7 +699,9 @@ After that, in this order:
     allocation email calls sweep leads cold ("Found on the GymMaster sweep, so
     this is a cold lead"). Sweep leads are now hand-added by the PT Manager
     after a conversation or referral. That copy is in `sendTrainerAllocationEmail`
-    in `src/lib/email.ts`. It is not yet fixed.
+    in `src/lib/email.ts`. **Fixed** (verified 18 Nov 2026): `ALLOCATION_SOURCE_TEXT`
+    now describes a flagged lead as added after a conversation, email or heads-up,
+    and "cold" is reserved for the `unverified` type, which is the only cold one.
 - **Pipeline stage definitions: now `docs/pipeline-stage-definitions.md`**
   (created 17 Nov 2026). The doc the brief referred to, whose sub-stage table
   listed "Contacted / Interested" and gave the attended sub-stage no status,
@@ -712,8 +714,11 @@ After that, in this order:
 are needed now. The core funnel metrics already come out of `status_history`
 with no new statuses: contacted within 48 hours, booking rate (Comp. Booked from
 Contacted), show rate (Attended from Comp. Booked), conversion rate (Converted
-from Attended), and days from lead to conversion. A small dashboard of those
-numbers is probably the most valuable next step. The candidates beyond that:
+from Attended), and days from lead to conversion. **That dashboard is now built
+and live at `/admin/metrics`** (manager-only): the five headline rates as stat
+tiles with their denominators shown, a monochrome funnel, and a by-lead-type
+breakdown. Logic in `src/lib/metrics.ts`, computed from `status_history` on each
+load, no new tables. The candidates beyond that:
 
 - **"Not now"**: said not right now, rather than no. This is the workbook's
   2-2-2 follow-up list, and today it gets lumped into Not interested.

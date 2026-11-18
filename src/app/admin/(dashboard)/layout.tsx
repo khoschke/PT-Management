@@ -86,6 +86,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
                 ...(isStaff ? [] : [{ href: "/admin", label: "Lead board" }]),
                 ...(isManager
                   ? [
+                      { href: "/admin/metrics", label: "Metrics" },
                       { href: "/admin/trainers", label: "Trainers" },
                       // "Setup" rather than anything with "onboarding" in it.
                       // The workbook already owns that word twice over, and a
