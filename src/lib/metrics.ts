@@ -26,6 +26,15 @@ const STAGE_INDEX: Record<string, number> = Object.fromEntries(
 );
 
 const CONTACTED = STAGE_INDEX["Contacted"];
+
+// Off the line, but they mean first contact happened: someone can say no on the
+// very first call (0022_follow_ups.sql). Without this, a lead that went
+// Allocated to Said no was missing from "contacted" and the booking rate.
+const IMPLIES_CONTACTED: Record<string, number> = {
+  "Said no": CONTACTED,
+  "Agreed to check-in": CONTACTED,
+};
+const stageOf = (status: string): number | undefined => STAGE_INDEX[status] ?? IMPLIES_CONTACTED[status];
 const BOOKED = STAGE_INDEX["Comp. Booked"];
 const ATTENDED = STAGE_INDEX["Attended"];
 const CONVERTED = STAGE_INDEX["Converted"];
@@ -74,9 +83,9 @@ const SOURCE_ORDER: LeadSource[] = ["form", "gymmaster_sweep", "unverified", "ow
 // or -1 if it never reached even New (it always has). Reads the current status
 // and every status_history entry, and takes the highest.
 function maxStage(lead: FunnelLead): number {
-  let max = STAGE_INDEX[lead.status] ?? -1;
+  let max = stageOf(lead.status) ?? -1;
   for (const h of lead.status_history) {
-    const i = STAGE_INDEX[h.new_status];
+    const i = stageOf(h.new_status);
     if (i !== undefined && i > max) max = i;
   }
   return max;

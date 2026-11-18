@@ -103,6 +103,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
                       { href: "/admin/compliance", label: "Compliance" },
                     ]
                   : []),
+                // A trainer's own numbers (Karl, 18 Nov 2026). Same page as the
+                // manager's Metrics; RLS limits it to their own leads.
+                ...(isTrainer ? [{ href: "/admin/metrics", label: "My numbers" }] : []),
                 ...(seesOwnDevelopment(user.profile.role)
                   ? [{ href: "/admin/development", label: "My development" }]
                   : []),
