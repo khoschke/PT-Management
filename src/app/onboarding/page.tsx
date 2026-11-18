@@ -32,10 +32,10 @@ export default async function OnboardingOverviewPage() {
         style={{ background: "var(--ob-surface)", boxShadow: "var(--ob-shadow)" }}
       >
         <p className="text-[13px] font-semibold uppercase tracking-wide" style={{ color: "var(--ob-accent)" }}>
-          Fitaz Gym · Personal Trainer Onboarding
+          Fitaz Gym · Personal Trainer Workbook
         </p>
         <h1 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
-          {savesProgress ? "Your 12-week onboarding journey" : "PT onboarding, at a glance"}
+          {savesProgress ? "Your PT Workbook" : "The PT Workbook, at a glance"}
         </h1>
         <p className="mt-3 max-w-2xl text-[15px] leading-relaxed" style={{ color: "var(--ob-text-secondary)" }}>
           Ten parts, from the role itself through to building and running your business. Work through
