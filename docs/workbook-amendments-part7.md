@@ -25,6 +25,12 @@ Standing reminder: a change goes to the per-part sources and both combined maste
 - **Interim, until item 11 is built:** PTs keep a lead on the 2-2-2 at Contacted, tap Log contact after each touch and put the next touch date in the notes. The text says automatic reminders are coming. Points 3, 4 and 5 of item 10 (the automatic close, the End communication button, portal reminders) get written once item 11 exists.
 - **Settled (Karl, 18 Nov 2026), option A:** the 2-2-2 is for leads who went quiet, and for leads who said not yet and agreed to a check-in. For went quiet: 2 days, 2 weeks, 2 months. For agreed to a check-in, the permission question is the first touch, then 2 weeks, then 2 months. No 2-day nudge after someone has just said not now, because it reads as not listening. Item 11.1 is superseded on this point: after "Agreed to check-in", the portal schedules the 2-week and 2-month reminders only.
 
+**Per-part masters rebuilt (18 Nov 2026).** All Part 7 changes applied to new copies, uploaded beside the originals for Karl to check and swap in:
+- `Part 7 - PT Manager Cheat Sheet (updated 18 Nov 2026).docx` in "02 Source - Manager Cheat Sheets"
+- `Part 7 - PT Workbook (updated 18 Nov 2026).docx` in "01 Source - PT Workbook"
+
+Untouched sections keep the master's own wording; changed sections use the new portal wording in the master's style. The document title line ("Fitaz Gym Personal Trainer Onboarding") is left for the whole-workbook rename (item 9). Tooling: `tools/workbook-masters/`. **Still to do:** the two combined masters (`Fitaz Gym PT Onboarding Workbook (Full).docx` and `... PT Manager Cheat Sheets (Full).docx`), then the PDFs and `.md`.
+
 **Masters:** the Drive connector can open the .docx masters but can't edit them, so the per-part sources, combined masters, PDFs and .md still need these changes made by hand. The portal text in `part7.ts` is the version to copy from.
 
 **Social Saturday (Karl, 17 Nov 2026), item 10.8:** the invite example uses Social Saturday, not First Friday. It's a free session for everyone, built to be inclusive, and the member can bring someone along so they feel more comfortable. Applied to the 2-week invite and the 2-2-2 bullet on 17 Nov, ahead of the rest of item 10.

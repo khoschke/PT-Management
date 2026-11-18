@@ -533,10 +533,10 @@ recorded against its item. **The portal side of Part 7 is done and live**
   adds a dated "Communication ended" note; the PT Manager's Reopen for timer
   closes only. The rules are enforced in the trigger
   `leads_apply_follow_up_rules`, not just the app.
-- **Still to do in this thread:** the Part 7 `.docx` masters (per-part sources
-  and both combined masters, then the PDFs and `.md`). The Drive connector
-  can't overwrite a file, so the plan is to edit a downloaded copy and upload
-  it beside the original for Karl to swap in.
+- **Masters:** the two per-part Part 7 masters are rebuilt and uploaded beside
+  the originals as "(updated 18 Nov 2026)" copies for Karl to check and swap
+  in (tooling and method: `tools/workbook-masters/`). **Still to do:** the two
+  combined masters, then the PDFs and `.md`.
 - **Whole-workbook items, for their own thread:** 1 (em dashes in the other
   parts and the masters), 2 (avatar line), 3 (tracker copy link), 4 ("Fitaz"
   to "Fitaz Gym"), and the rest of 9 (the "PT Workbook" rename is done in the
