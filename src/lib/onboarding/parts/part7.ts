@@ -18,7 +18,7 @@ export const part7: OnboardingPart = {
         "- **They book.** Comp. Booked, then Attended once the session happens, then Converted or Not interested once they decide.",
         "- **They go quiet.** The 2-2-2 runs itself: a nudge at 2 days, a touch at 2 weeks, a reconnect at 2 months. Tap **Done** after each one. A week after the reconnect with no reply, the lead closes as Unreachable.",
         "- **They say no.** Set **Said no**. You have 48 hours to ask once: “Mind if I check in down the track, or would you rather I leave it there?” A yes goes to **Agreed to check-in** and the 2-2-2 picks up at the 2-week touch. A “leave it” or no answer closes the lead. Miss the 48 hours and the portal closes it for you and lets the PT Manager know.",
-        "**4. Opt-outs are final.** A STOP, a “leave it there,” or picking **Not interested** closes the lead after a confirm, with a note saying why. Nobody contacts them about PT again. Only the PT Manager can reopen a lead, and only one the 48-hour timer closed.",
+        "**4. Opt-outs are final.** A STOP, a “leave it there,” or picking **Not interested** closes the lead after a confirm, with a note saying why. Nobody contacts them about PT again. The one exception is a lead the portal closed because the 48-hour window on a no was missed: the PT Manager can reopen that one if it was a mistake.",
         "**5. You don't have to remember any of it.** Your board shows what's due on each lead, a short email lands on any morning something's due, and your Monday email lists the week.",
       ],
       links: [
