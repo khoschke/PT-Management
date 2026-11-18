@@ -90,7 +90,7 @@ that said "applied" about a migration nobody had run.
 | `0017_setup_checklist.sql` | PT setup checklist: `setup_checklist_items` (18 seeded), `trainer_setup_checklists`, `trainer_setup_checklist_items`, `setup_item_state` enum, manager-only RLS | Applied 14 Oct 2026 — verified against live, all 8 audit rows PRESENT, and the RLS exercised as a real trainer, a real staff member and a real manager. **Applied in four pieces, not one** — see the note below. |
 | `0018_lead_status_funnel.sql` | lead statuses: Booked renamed Comp. Booked, Completed renamed Attended, Converted added; `record_status_history()` rewritten to match | Applied 17 Nov 2026 via the Supabase MCP, straight after PR #46 deployed — verified: full audit 62 PRESENT (only 0007/0008 missing, as expected), counts carried across (Comp. Booked 2, Attended 10, Contacted 5, Unreachable 1), all status history intact. |
 | `0019_lead_contact_dates.sql` | `leads.allocated_at` and `leads.last_contacted_at`, kept current by the `leads_stamp_contact_dates` trigger, backfilled from `status_history` | Applied 17 Nov 2026 via the Supabase MCP, straight after PR #47 deployed — verified: both columns and the trigger present, all 18 leads backfilled with both dates. |
-| `0020_unverified_lead_source.sql` | `lead_source` value `unverified`; goals check rewritten to `lead_source <> 'form' or ...` | **Not yet applied.** Apply it **before** the code that uses it deploys: the new Add lead form can save `unverified`, which fails until the value exists. The old code is unaffected by it, so applying first is safe. Verified locally with `local_migration_check.sh` (both 0020 rows PRESENT). |
+| `0020_unverified_lead_source.sql` | `lead_source` value `unverified`; goals check rewritten to `lead_source <> 'form' or ...` | Applied 18 Nov 2026 via the Supabase MCP, **before** PR #49 merged (the new Add lead form can save `unverified`, which fails without it; the old code is unaffected). Verified: `lead_source` is form, gymmaster_sweep, unverified; the goals check reads `lead_source <> 'form' or ...`; all 18 leads intact (15 form, 3 sweep, to be re-sorted by hand). |
 
 **The drift is closed and the hardening is deployed.** `0006` had never been
 applied despite this doc claiming it was, which left `/admin/compliance` and
@@ -446,7 +446,7 @@ anyway because `0004_trainer_am_pm.sql` merged with the availability work.
 | 0017 | `setup_checklist` | PT setup checklist. **Applied to live — verified 14 Oct 2026.** Safe to re-run, and it had to be |
 | 0018 | `lead_status_funnel` | Batch 1 status cleanup. **Applied to live — verified 17 Nov 2026.** Safe to re-run |
 | 0019 | `lead_contact_dates` | Batch 1 weekly email dates. **Applied to live — verified 17 Nov 2026.** Safe to re-run |
-| 0020 | `unverified_lead_source` | Third lead source (Part 7 amendments item 7). **Not yet applied — apply before the code deploys.** Safe to re-run |
+| 0020 | `unverified_lead_source` | Third lead source (Part 7 amendments item 7, PR #49). **Applied to live — verified 18 Nov 2026.** Safe to re-run |
 
 Merge in that order and Supabase stays in step. GymMaster is deliberately in the
 middle rather than last: its numbers were already written and pushed, and moving
