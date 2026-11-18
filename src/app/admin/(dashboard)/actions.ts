@@ -381,7 +381,7 @@ export async function reopenTimerClose(
 }
 
 // ---------------------------------------------------------------------------
-// Post-chat reflections (0023). Optional, saved once per lead, never edited.
+// Post-chat reflections (0023, 0024). Optional, one per lead, editable by its trainer.
 // ---------------------------------------------------------------------------
 
 const FEELS = ["well", "mixed", "tough"] as const;
@@ -403,20 +403,19 @@ export async function savePostChatReflection(
   const { data: lead } = await supabase.from("leads").select("allocated_trainer_id").eq("id", leadId).single();
   if (!lead?.allocated_trainer_id) return { ok: false, message: "This lead isn't allocated to a trainer." };
 
-  const { error } = await supabase.from("post_chat_reflections").insert({
-    lead_id: leadId,
-    trainer_id: lead.allocated_trainer_id,
+  const answers = {
+    skipped: false,
     feel: input.feel,
     stalled_at: input.stalledAt,
     missing_certainty: input.missingCertainty,
     next_time: nextTime,
-  });
-  if (error) {
-    return {
-      ok: false,
-      message: error.code === "23505" ? "There's already a reflection on this lead." : "Couldn't save your reflection. Please try again.",
-    };
-  }
+  };
+  // One per lead: edit it if it's there (including a skipped one), else add it.
+  const { data: existing } = await supabase.from("post_chat_reflections").select("id").eq("lead_id", leadId).maybeSingle();
+  const { error } = existing
+    ? await supabase.from("post_chat_reflections").update(answers).eq("id", existing.id)
+    : await supabase.from("post_chat_reflections").insert({ lead_id: leadId, trainer_id: lead.allocated_trainer_id, ...answers });
+  if (error) return { ok: false, message: "Couldn't save your reflection. Please try again." };
   revalidatePath("/admin");
   return { ok: true };
 }

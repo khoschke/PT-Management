@@ -341,6 +341,7 @@ export interface PostChatReflection {
   stalled_at: ReflectionStall | null;
   missing_certainty: ReflectionCertainty | null;
   next_time: string | null;
+  updated_at: string | null;
 }
 
 export const REFLECTION_FEEL_LABELS: Record<ReflectionFeel, string> = {

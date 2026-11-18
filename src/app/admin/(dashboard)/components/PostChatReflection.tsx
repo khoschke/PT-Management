@@ -96,7 +96,10 @@ export default function PostChatReflection({
   const [stall, setStall] = useState<ReflectionStall | null>(null);
   const [certainty, setCertainty] = useState<ReflectionCertainty | null>(null);
   const [nextTime, setNextTime] = useState("");
+  const [editing, setEditing] = useState(false);
+  const [justSaved, setJustSaved] = useState(false);
   const [listening, setListening] = useState(false);
+  const [interim, setInterim] = useState("");
   // False on the server, the real answer in the browser, so the first render
   // matches and the Speak button appears once hydrated.
   const speechSupported = useSyncExternalStore(
@@ -105,17 +108,71 @@ export default function PostChatReflection({
     () => false,
   );
   const recRef = useRef<Recognition | null>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+
+  const showForm = canAnswer && (!reflection || editing);
 
   useEffect(() => () => recRef.current?.stop(), []);
 
+  // The card sits at the top of the panel, often above where the trainer has
+  // scrolled to change the status (Karl, 18 Nov 2026), so bring it into view
+  // when the form appears and again when it's saved.
+  useEffect(() => {
+    if (showForm || justSaved) {
+      sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [showForm, justSaved]);
+
+  useEffect(() => {
+    if (!justSaved) return;
+    const t = setTimeout(() => setJustSaved(false), 6000);
+    return () => clearTimeout(t);
+  }, [justSaved]);
+
+  function startEditing() {
+    setFeel(reflection?.feel ?? null);
+    setStall(reflection?.stalled_at ?? null);
+    setCertainty(reflection?.missing_certainty ?? null);
+    setNextTime(reflection?.next_time ?? "");
+    setJustSaved(false);
+    setEditing(true);
+  }
+
   // Saved: show it (the trainer sees their own, the PT Manager sees everyone's).
-  if (reflection) {
+  if (reflection && !showForm) {
     if (reflection.skipped) {
-      return null;
+      if (!canAnswer) return null;
+      return (
+        <section ref={sectionRef} className="rounded-2xl bg-fill px-4 py-3 text-sm text-secondary-label">
+          You skipped the reflection on this chat.{" "}
+          <button type="button" onClick={startEditing} className="font-semibold text-foreground underline underline-offset-2">
+            Add one
+          </button>
+        </section>
+      );
     }
     return (
-      <section className="border-t border-black/5 pt-6">
-        <h3 className="text-xs font-semibold uppercase tracking-wide text-secondary-label">Post-chat reflection</h3>
+      <section ref={sectionRef} className="rounded-2xl bg-fill px-4 py-4">
+        <div className="flex items-center justify-between gap-2">
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-secondary-label">Post-chat reflection</h3>
+          {canAnswer && (
+            <button
+              type="button"
+              onClick={startEditing}
+              className="press rounded-full bg-surface px-3 py-1.5 text-xs font-semibold text-foreground ring-1 ring-black/10"
+            >
+              Edit
+            </button>
+          )}
+        </div>
+        {justSaved && (
+          <p role="status" className="mt-2 flex items-center gap-1.5 rounded-xl bg-green-100 px-3 py-2 text-sm font-semibold text-green-800">
+            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" aria-hidden>
+              <path d="M5 12l5 5L19 7" />
+            </svg>
+            Reflection saved
+          </p>
+        )}
         <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
           <Item label="How it went" value={reflection.feel ? REFLECTION_FEEL_LABELS[reflection.feel] : "Not recorded"} />
           <Item label="Where it stalled" value={reflection.stalled_at ? REFLECTION_STALL_LABELS[reflection.stalled_at] : "Not recorded"} />
@@ -124,12 +181,16 @@ export default function PostChatReflection({
             value={reflection.missing_certainty ? REFLECTION_CERTAINTY_LABELS[reflection.missing_certainty] : "Not recorded"}
           />
           <Item
-            label="Saved"
-            value={new Date(reflection.created_at).toLocaleDateString("en-AU", { timeZone: "Australia/Brisbane", day: "numeric", month: "short" })}
+            label={reflection.updated_at ? "Last edited" : "Saved"}
+            value={new Date(reflection.updated_at ?? reflection.created_at).toLocaleDateString("en-AU", {
+              timeZone: "Australia/Brisbane",
+              day: "numeric",
+              month: "short",
+            })}
           />
         </dl>
         {reflection.next_time && (
-          <div className="mt-3 rounded-2xl bg-fill px-4 py-3">
+          <div className="mt-3 rounded-2xl bg-surface px-4 py-3">
             <span className="text-xs font-semibold text-secondary-label">Next time</span>
             <p className="mt-1 whitespace-pre-wrap text-sm text-foreground">{reflection.next_time}</p>
           </div>
@@ -138,7 +199,7 @@ export default function PostChatReflection({
     );
   }
 
-  if (!canAnswer) return null;
+  if (!showForm) return null;
 
   function toggleSpeech() {
     if (listening) {
@@ -150,24 +211,37 @@ export default function PostChatReflection({
     const rec = new Ctor();
     rec.lang = "en-AU";
     rec.continuous = true;
-    rec.interimResults = false;
+    // Show words as they're heard, so the trainer can see it working and
+    // correct anything it got wrong.
+    rec.interimResults = true;
     rec.onresult = (e) => {
       let added = "";
+      let pending = "";
       for (let i = e.resultIndex; i < e.results.length; i++) {
         if (e.results[i].isFinal) added += e.results[i][0].transcript;
+        else pending += e.results[i][0].transcript;
       }
+      setInterim(pending.trim());
       if (added.trim()) setNextTime((t) => (t ? `${t.trimEnd()} ${added.trim()}` : added.trim()));
     };
-    rec.onend = () => setListening(false);
-    rec.onerror = () => setListening(false);
+    rec.onend = () => {
+      setListening(false);
+      setInterim("");
+    };
+    rec.onerror = () => {
+      setListening(false);
+      setInterim("");
+    };
     recRef.current = rec;
     rec.start();
     setListening(true);
   }
 
   return (
-    <section className="rounded-2xl bg-indigo-50 px-4 py-4 ring-1 ring-indigo-100">
-      <h3 className="text-sm font-semibold text-foreground">Quick reflection on the chat with {leadName}?</h3>
+    <section ref={sectionRef} className="rounded-2xl bg-indigo-50 px-4 py-4 ring-1 ring-indigo-100">
+      <h3 className="text-sm font-semibold text-foreground">
+        {editing ? "Edit your reflection" : `Quick reflection on the chat with ${leadName}?`}
+      </h3>
       <p className="mt-0.5 text-xs text-secondary-label">
         Thirty seconds while it&apos;s fresh. Optional, and only you and the PT Manager see it.
       </p>
@@ -212,7 +286,12 @@ export default function PostChatReflection({
           placeholder={speechSupported ? "Type, or tap Speak and talk it through." : "Type it, or use your keyboard's microphone to talk it through."}
           className="mt-1.5 w-full rounded-xl border-none bg-surface px-3.5 py-2.5 text-sm text-foreground outline-none ring-1 ring-black/10 focus:ring-2 focus:ring-foreground"
         />
-        {listening && <p className="mt-1 text-xs text-red-700">Listening. Tap Stop when you&apos;re done.</p>}
+        {listening && (
+          <p className="mt-1 text-xs text-red-700">
+            Listening{interim ? ": " : ". Tap Stop when you're done."}
+            {interim && <span className="italic text-secondary-label">{interim}</span>}
+          </p>
+        )}
       </div>
 
       <div className="mt-3 flex flex-wrap gap-2">
@@ -221,23 +300,45 @@ export default function PostChatReflection({
           disabled={isPending || !feel}
           onClick={() => {
             recRef.current?.stop();
-            runAction(() =>
-              savePostChatReflection(leadId, { feel: feel as string, stalledAt: stall, missingCertainty: certainty, nextTime }),
-            );
+            runAction(async () => {
+              const result = await savePostChatReflection(leadId, {
+                feel: feel as string,
+                stalledAt: stall,
+                missingCertainty: certainty,
+                nextTime,
+              });
+              if (result.ok) {
+                setEditing(false);
+                setJustSaved(true);
+              }
+              return result;
+            });
           }}
           className="press rounded-full bg-foreground px-4 py-2 text-xs font-semibold text-white disabled:opacity-40"
         >
-          Save reflection
+          {isPending ? "Saving..." : "Save reflection"}
         </button>
-        <button
-          type="button"
-          disabled={isPending}
-          onClick={() => runAction(() => skipPostChatReflection(leadId))}
-          className="press rounded-full bg-surface px-4 py-2 text-xs font-semibold text-foreground ring-1 ring-black/10 disabled:opacity-50"
-        >
-          Skip
-        </button>
+        {editing ? (
+          <button
+            type="button"
+            disabled={isPending}
+            onClick={() => setEditing(false)}
+            className="press rounded-full bg-surface px-4 py-2 text-xs font-semibold text-foreground ring-1 ring-black/10 disabled:opacity-50"
+          >
+            Cancel
+          </button>
+        ) : (
+          <button
+            type="button"
+            disabled={isPending}
+            onClick={() => runAction(() => skipPostChatReflection(leadId))}
+            className="press rounded-full bg-surface px-4 py-2 text-xs font-semibold text-foreground ring-1 ring-black/10 disabled:opacity-50"
+          >
+            Skip
+          </button>
+        )}
       </div>
+      {!feel && <p className="mt-2 text-xs text-secondary-label">Pick how it went to save.</p>}
     </section>
   );
 }
