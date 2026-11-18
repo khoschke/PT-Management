@@ -1,11 +1,10 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
-import { useFormStatus } from "react-dom";
+import { useState } from "react";
 import { GOAL_OPTIONS } from "@/lib/goals";
 import { FOUND_VIA_OPTIONS } from "@/lib/types";
 import { addOwnLead } from "../actions";
-import { initialAddSweepLeadState } from "../state";
+import { blank, useLeadForm } from "./useLeadForm";
 
 // A trainer adds a lead they found themselves (Part 7 amendments, item 8). The
 // lead is allocated straight to them; the database refuses a phone number
@@ -14,8 +13,7 @@ import { initialAddSweepLeadState } from "../state";
 const inputClass =
   "mt-1.5 w-full rounded-xl border-none bg-fill px-3.5 py-2.5 text-sm text-foreground outline-none ring-1 ring-transparent transition focus:ring-2 focus:ring-foreground";
 
-function SubmitButton() {
-  const { pending } = useFormStatus();
+function SubmitButton({ pending }: { pending: boolean }) {
   return (
     <button
       type="submit"
@@ -28,22 +26,26 @@ function SubmitButton() {
 }
 
 export default function AddOwnLeadModal({ onClose, onSaved }: { onClose: () => void; onSaved: () => void }) {
-  const [state, formAction] = useActionState(addOwnLead, initialAddSweepLeadState);
   const [foundVia, setFoundVia] = useState("");
-  const errors = state.fieldErrors ?? {};
-
-  useEffect(() => {
-    if (state.status === "success") onSaved();
-  }, [state.status, onSaved]);
+  const { formRef, onSubmit, errors, message, isPending } = useLeadForm(addOwnLead, onSaved, (fd) => {
+    const e: Record<string, string> = {};
+    if (!fd.get("found_via")) e.found_via = "Choose where you found them";
+    else if (fd.get("found_via") === "other" && blank(fd, "found_via_other")) e.found_via_other = "Say where you found them";
+    if (blank(fd, "name")) e.name = "Add their name";
+    if (blank(fd, "phone")) e.phone = "Add their phone number";
+    return e;
+  });
 
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 p-4 backdrop-blur-[2px] animate-[fadeIn_180ms_ease-out]"
-      onClick={onClose}
     >
+      {/* No click-outside close on purpose: a stray click or an autofill popup
+          shouldn't throw away a half-typed lead. The X is the only way out. */}
       <div
+        role="dialog"
+        aria-modal="true"
         className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-3xl bg-surface p-6 shadow-2xl animate-[scaleIn_200ms_cubic-bezier(0.2,0.8,0.2,1)] sm:p-7"
-        onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start justify-between">
           <div>
@@ -62,12 +64,14 @@ export default function AddOwnLeadModal({ onClose, onSaved }: { onClose: () => v
           </button>
         </div>
 
-        <form action={formAction} className="mt-5 flex flex-col gap-4">
-          {state.status === "error" && state.message && (
-            <div className="rounded-xl bg-red-50 px-3.5 py-2.5 text-sm text-red-700">{state.message}</div>
+        <form ref={formRef} onSubmit={onSubmit} noValidate className="mt-5 flex flex-col gap-4">
+          {message && (
+            <div data-form-message role="alert" className="rounded-xl bg-red-50 px-3.5 py-2.5 text-sm text-red-700">
+              {message}
+            </div>
           )}
 
-          <div>
+          <div data-field="found_via">
             <label className="text-sm font-semibold text-foreground">Where did you find them?</label>
             <div className="mt-1.5 flex flex-wrap gap-1.5">
               {FOUND_VIA_OPTIONS.map((option) => (
@@ -79,7 +83,6 @@ export default function AddOwnLeadModal({ onClose, onSaved }: { onClose: () => v
                     type="radio"
                     name="found_via"
                     value={option.value}
-                    required
                     onChange={() => setFoundVia(option.value)}
                     className="sr-only"
                   />
@@ -89,31 +92,32 @@ export default function AddOwnLeadModal({ onClose, onSaved }: { onClose: () => v
             </div>
             {errors.found_via && <p className="mt-1 text-xs text-red-600">{errors.found_via}</p>}
             {foundVia === "other" && (
-              <input
-                name="found_via_other"
-                type="text"
-                required
-                maxLength={200}
-                placeholder="Where, in a few words"
-                className={inputClass}
-              />
+              <div data-field="found_via_other">
+                <input
+                  name="found_via_other"
+                  type="text"
+                  maxLength={200}
+                  placeholder="Where, in a few words"
+                  className={inputClass}
+                />
+                {errors.found_via_other && <p className="mt-1 text-xs text-red-600">{errors.found_via_other}</p>}
+              </div>
             )}
-            {errors.found_via_other && <p className="mt-1 text-xs text-red-600">{errors.found_via_other}</p>}
           </div>
 
-          <div>
+          <div data-field="name">
             <label className="text-sm font-semibold text-foreground">Name</label>
-            <input name="name" type="text" required className={inputClass} />
+            <input name="name" type="text" className={inputClass} />
             {errors.name && <p className="mt-1 text-xs text-red-600">{errors.name}</p>}
           </div>
 
-          <div>
+          <div data-field="phone">
             <label className="text-sm font-semibold text-foreground">Phone</label>
-            <input name="phone" type="tel" required placeholder="04XX XXX XXX" className={inputClass} />
+            <input name="phone" type="tel" placeholder="04XX XXX XXX" className={inputClass} />
             {errors.phone && <p className="mt-1 text-xs text-red-600">{errors.phone}</p>}
           </div>
 
-          <div>
+          <div data-field="email">
             <label className="text-sm font-semibold text-foreground">
               Email <span className="font-normal text-secondary-label">(optional)</span>
             </label>
@@ -138,7 +142,7 @@ export default function AddOwnLeadModal({ onClose, onSaved }: { onClose: () => v
             </div>
           </div>
 
-          <SubmitButton />
+          <SubmitButton pending={isPending} />
         </form>
       </div>
     </div>
