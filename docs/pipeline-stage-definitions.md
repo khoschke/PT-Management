@@ -108,8 +108,9 @@ All of these come from `status_history`, with no extra statuses needed:
 
 Live at `/admin/metrics` (manager-only), computed from `status_history` on each
 load (`src/lib/metrics.ts`): the headline rates as stat tiles with their
-denominators, a monochrome funnel, and a by-lead-type breakdown. A rate counts
-whether a lead ever reached a stage, not its current status.
+denominators, a monochrome funnel, a by-lead-type breakdown, and a cohort
+date-range filter (leads grouped by when they came in). A rate counts whether a
+lead ever reached a stage, not its current status.
 
 ## Open: possible future sub-stages (not built)
 
