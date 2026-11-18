@@ -8,7 +8,7 @@ import { sweepLeadSchema } from "@/lib/validation";
 import { MANUAL_LEAD_SOURCES, type LeadStatus, type ManualLeadSource } from "@/lib/types";
 import type { ActionResult, AddSweepLeadState } from "./state";
 
-// Allocation, deletion and sweep entry are the manager's alone. RLS already
+// Allocation, deletion and manual lead entry are the manager's alone. RLS already
 // refuses them for a trainer; the explicit check means a future policy change
 // can't quietly open them up. updateLeadStatus and updateLeadNotes below stay
 // on RLS on purpose — trainers use both on their own leads.
@@ -131,7 +131,7 @@ export async function hardDeleteLead(leadId: string): Promise<ActionResult> {
   return { ok: true };
 }
 
-// Re-sorts a hand-added lead between Sweep and Unverified. Form leads are left
+// Re-sorts a hand-added lead between Flagged and Unverified. Form leads are left
 // alone: that source records that the member asked for PT themselves, and it is
 // the only one the public form can create.
 export async function updateLeadSource(leadId: string, source: string): Promise<ActionResult> {
@@ -139,7 +139,7 @@ export async function updateLeadSource(leadId: string, source: string): Promise<
     return { ok: false, message: "Only managers can change a lead's type." };
   }
   if (!(MANUAL_LEAD_SOURCES as readonly string[]).includes(source)) {
-    return { ok: false, message: "Choose sweep or unverified." };
+    return { ok: false, message: "Choose flagged or unverified." };
   }
 
   const supabase = await createClient();

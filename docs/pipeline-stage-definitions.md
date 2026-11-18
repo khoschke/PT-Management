@@ -71,7 +71,7 @@ The terms the workbook uses for where a lead comes from (Part 7 amendments,
 
 - **Warm (form):** the person enquired about PT themselves through
   pt.fitazgym.com/pt-session. Source `form` in the portal.
-- **Sweep:** added to the portal by the PT Manager after a conversation on the
+- **Flagged** (called "sweep" until 18 Nov 2026): added to the portal by the PT Manager after a conversation on the
   floor, an email or a heads-up from the front of house team. Someone has shown
   interest or been flagged for a reason, so not cold. Source `gymmaster_sweep`
   in the portal (the name predates the term, and is kept so existing rows and
@@ -79,7 +79,7 @@ The terms the workbook uses for where a lead comes from (Part 7 amendments,
 - **Unverified:** new members who haven't asked about PT. They go through the
   GymMaster nurture emails and reach a trainer around day 10 to 17, after two
   of the three emails. These are the only leads "cold" should describe. Source
-  `unverified` in the portal (migration `0020`). The PT Manager picks Sweep or
+  `unverified` in the portal (migration `0020`). The PT Manager picks Flagged or
   Unverified when adding a lead by hand, and can re-sort a hand-added lead from
   the lead panel's "Lead type" control. Set it before allocating: the trainer's
   allocation email says which type it is.
@@ -122,6 +122,11 @@ update to this document.
   every type (Part 7 amendments item 7).
 
 ## Change log
+
+- **18 Nov 2026:** "Sweep" renamed **Flagged** in the portal and the workbook
+  (Karl). The word came from the original "GymMaster sweep", when the PT
+  Manager typed in new members by hand, which is what `unverified` now covers.
+  The database value stays `gymmaster_sweep`; only `LEAD_SOURCE_LABELS` changed.
 
 - **17 Nov 2026:** Third lead source, `unverified` (`0020`). Leads added by hand
   before this are all `gymmaster_sweep`, so the PT Manager re-sorts any that

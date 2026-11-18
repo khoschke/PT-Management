@@ -248,7 +248,7 @@ export async function sendManagerDailyDigest(
   if (!client) return;
 
   const sourceLabel = (source: DigestLeadSummary["source"]) =>
-    source === "form" ? "form" : source === "unverified" ? "unverified" : "sweep";
+    source === "form" ? "form" : source === "unverified" ? "unverified" : "flagged";
 
   const textSection = (title: string, leads: DigestLeadSummary[]) =>
     leads.length === 0

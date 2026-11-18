@@ -49,14 +49,14 @@ export const leadFormSchema = z.object({
 
 export type LeadFormInput = z.infer<typeof leadFormSchema>;
 
-// Manual "add sweep lead" entry only requires name and phone.
+// Manual "Add lead" entry (Flagged or Unverified) only requires name and phone.
 export const sweepLeadSchema = leadFormSchema
   .partial()
   .extend({
     name: leadFormSchema.shape.name,
     phone: leadFormSchema.shape.phone,
     goals: z.array(z.enum(GOAL_CODES)).optional().default([]),
-    lead_source: z.enum(MANUAL_LEAD_SOURCES, { message: "Choose sweep or unverified" }),
+    lead_source: z.enum(MANUAL_LEAD_SOURCES, { message: "Choose flagged or unverified" }),
     email: z
       .string()
       .trim()
