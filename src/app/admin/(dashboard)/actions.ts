@@ -379,3 +379,55 @@ export async function reopenTimerClose(
   revalidatePath("/admin");
   return { ok: true };
 }
+
+// ---------------------------------------------------------------------------
+// Post-chat reflections (0023, 0024). Optional, one per lead, editable by its trainer.
+// ---------------------------------------------------------------------------
+
+const FEELS = ["well", "mixed", "tough"] as const;
+const STALLS = ["nowhere", "engage", "frame", "summarise", "plan", "recommend", "price", "frequency", "other"] as const;
+const CERTAINTIES = ["none", "emotional", "logical", "self_belief"] as const;
+
+export async function savePostChatReflection(
+  leadId: string,
+  input: { feel: string; stalledAt: string | null; missingCertainty: string | null; nextTime: string },
+): Promise<ActionResult> {
+  if (!(FEELS as readonly string[]).includes(input.feel)) return { ok: false, message: "Pick how it went." };
+  if (input.stalledAt && !(STALLS as readonly string[]).includes(input.stalledAt)) return { ok: false, message: "Pick where it stalled." };
+  if (input.missingCertainty && !(CERTAINTIES as readonly string[]).includes(input.missingCertainty)) {
+    return { ok: false, message: "Pick which certainty was missing." };
+  }
+  const nextTime = input.nextTime.trim().slice(0, 2000) || null;
+
+  const supabase = await createClient();
+  const { data: lead } = await supabase.from("leads").select("allocated_trainer_id").eq("id", leadId).single();
+  if (!lead?.allocated_trainer_id) return { ok: false, message: "This lead isn't allocated to a trainer." };
+
+  const answers = {
+    skipped: false,
+    feel: input.feel,
+    stalled_at: input.stalledAt,
+    missing_certainty: input.missingCertainty,
+    next_time: nextTime,
+  };
+  // One per lead: edit it if it's there (including a skipped one), else add it.
+  const { data: existing } = await supabase.from("post_chat_reflections").select("id").eq("lead_id", leadId).maybeSingle();
+  const { error } = existing
+    ? await supabase.from("post_chat_reflections").update(answers).eq("id", existing.id)
+    : await supabase.from("post_chat_reflections").insert({ lead_id: leadId, trainer_id: lead.allocated_trainer_id, ...answers });
+  if (error) return { ok: false, message: "Couldn't save your reflection. Please try again." };
+  revalidatePath("/admin");
+  return { ok: true };
+}
+
+export async function skipPostChatReflection(leadId: string): Promise<ActionResult> {
+  const supabase = await createClient();
+  const { data: lead } = await supabase.from("leads").select("allocated_trainer_id").eq("id", leadId).single();
+  if (!lead?.allocated_trainer_id) return { ok: false, message: "This lead isn't allocated to a trainer." };
+  const { error } = await supabase
+    .from("post_chat_reflections")
+    .insert({ lead_id: leadId, trainer_id: lead.allocated_trainer_id, skipped: true });
+  if (error && error.code !== "23505") return { ok: false, message: "Couldn't skip it. Please try again." };
+  revalidatePath("/admin");
+  return { ok: true };
+}

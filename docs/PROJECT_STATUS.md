@@ -6,15 +6,20 @@ any new session, then the workstream-specific handoff note for your task.
 ## What it is
 
 A lead intake and allocation system for Fitaz Gym's complimentary PT session
-offer. New members raise their hand (public form) or are entered off a
-GymMaster sweep, and the PT Manager allocates each lead to a trainer within 48
-hours. Built for a five-PT gym, ~30 leads/month.
+offer. New members raise their hand (public form, a **warm** lead), the PT
+Manager adds people by hand (**flagged** after a conversation, or **unverified**
+new members who haven't asked about PT), or trainers add leads they found
+themselves (**own** leads). The PT Manager allocates each gym lead to a trainer,
+first contact is due within 48 hours, and the portal then runs the 2-2-2
+follow-ups and the 48-hour clock on a no. Built for a five-PT gym, ~30
+leads/month. The full lead flow: `docs/pipeline-stage-definitions.md`.
 
 ## Live now
 
 - **Public form:** https://pt.fitazgym.com/pt-session
 - **Manager/trainer dashboard:** https://pt.fitazgym.com/admin
-- **PT onboarding workbook:** https://pt.fitazgym.com/onboarding
+- **PT Workbook** (was "PT onboarding", renamed in the nav and headings 18 Nov
+  2026; the address is still `/onboarding`): https://pt.fitazgym.com/onboarding
 - The `pt-management-two.vercel.app` addresses still work and are what Vercel
   deploys to, but `pt.fitazgym.com` is live and is the address to use and share.
 - Everything is deployed and working end to end with real data.
@@ -24,7 +29,7 @@ hours. Built for a five-PT gym, ~30 leads/month.
 - **Next.js 16** (App Router, Turbopack) + TypeScript + Tailwind v4.
 - **Supabase** — Postgres, Auth, Row Level Security. Project ref `fbzearypwpjcyrmdivsz`.
 - **Resend** — the lead notification emails (trainer allocation, manager daily digest, manager new-lead alert). **LIVE** and sending from `noreply@mail.fitazgym.com` (confirmed 4 Aug 2026 by a real trainer allocation email landing in the inbox). Georgio added the DNS records. **DNS lives at CrazyDomains (Dreamscape), not Shopify** (confirmed 5 Aug 2026); fitazgym.com is connected to Shopify but not bought through it, so the zone is elsewhere. The SPF record had a copy-paste error early on but **has since been corrected** (confirmed 11 Aug 2026 in the CrazyDomains DNS panel): `send.mail.fitazgym.com` now reads `v=spf1 include:amazonses.com ~all` and is Active, alongside the Active `resend._domainkey` DKIM record. SPF and DKIM both pass.
-- **Vercel** — hosting + a daily-digest cron (`vercel.json`). Hobby (free) plan.
+- **Vercel** — hosting + crons in `vercel.json`: daily follow-ups (closes and trainer reminders), daily manager digest, Monday trainer summary, document expiry, Supabase keep-alive. Hobby (free) plan, so each cron runs once a day at most and lands somewhere within its hour.
 - **GitHub:** `khoschke/pt-management`. Active branch: `claude/fitaz-gym-pt-leads-76ffhv` (this is also Vercel's production branch — pushing to it auto-deploys).
 
 ## Environment variables (names only — values live in Vercel + local .env.local)
@@ -93,6 +98,8 @@ that said "applied" about a migration nobody had run.
 | `0020_unverified_lead_source.sql` | `lead_source` value `unverified`; goals check rewritten to `lead_source <> 'form' or ...` | Applied 18 Nov 2026 via the Supabase MCP, **before** PR #49 merged (the new Add lead form can save `unverified`, which fails without it; the old code is unaffected). Verified: `lead_source` is form, gymmaster_sweep, unverified; the goals check reads `lead_source <> 'form' or ...`; all 18 leads intact (15 form, 3 sweep, to be re-sorted by hand). |
 | `0021_own_leads.sql` | `lead_source` value `own`; `lead_found_via` enum; `leads.found_via` and `found_via_other`; `add_own_lead()` security definer function (trainers only, duplicate check on the last nine phone digits) | Applied 18 Nov 2026 via the Supabase MCP, before the item 8 PR merged. Additive: the old code never calls it. Tested first on a throwaway database (own and unverified-list saves, duplicates blocked, staff and anon refused). |
 | `0022_follow_ups.sql` | `lead_status` values Said no and Agreed to check-in; `lead_closed_reason`; follow-up columns on `leads`; `lead_reopens`; trigger `leads_apply_follow_up_rules`; functions `complete_follow_up`, `close_expired_leads`, `reopen_timer_close`; `record_status_history` stamps first contact on the two new statuses | Applied 18 Nov 2026 via the Supabase MCP, before the item 11 PR merged. Tested first on a throwaway database (every path in `docs/spec-item-11-follow-ups.md`). Safe with the old code: it never uses the new statuses, and the trigger only adds a schedule when a lead goes to Contacted. |
+| `0023_post_chat_reflections.sql` | `post_chat_reflections` (one per lead; skipped rows stop the prompt repeating); RLS: a trainer reads and adds only on their own leads, nobody edits, the manager reads all and deletes | Applied 18 Nov 2026 via the Supabase MCP, before the PR merged. Additive: the old code never reads it. Tested first on a throwaway database (own-lead insert, another trainer blocked, no edits, manager reads all, anon denied). |
+| `0024_reflection_edits.sql` | `post_chat_reflections.updated_at`, trigger `post_chat_reflections_stamp_updated`, and policy `post_chat_reflections_update_trainer`: the trainer who owns a reflection can edit it (Karl, 18 Nov 2026) | Applied 18 Nov 2026 via the Supabase MCP. Tested first on a throwaway database (owner edits, another trainer blocked, ownership fields can't change). |
 
 **The drift is closed and the hardening is deployed.** `0006` had never been
 applied despite this doc claiming it was, which left `/admin/compliance` and
@@ -118,7 +125,7 @@ have failed on a fresh setup. GymMaster keeps `0007/0008` untouched. `0010`, `00
 and `0012` are the trainer self-profile work; `0013` and `0014` are the staff
 development pathway, and `0015` is `contract_document_type`, merged via
 PR #27. `0016` is `stamp_first_contacted` and `0017` is `setup_checklist`.
-Anything new starts at **0023**.
+Anything new starts at **0025**.
 
 **Work out the next number from disk and from every branch, not from this
 line.** It said "starts at 0016" for a month after `0016` was taken, and a
@@ -207,6 +214,22 @@ strength". Change it in that one file and it flows to both sides.
   filtered before any rule runs. Don't reason about availability from the field
   name; read `src/lib/allocation.ts`.
 
+- **A one-to-one embed comes back as an object, not a list.** PostgREST treats
+  a foreign key with a unique constraint as one-to-one, so
+  `post_chat_reflections(*)` on a lead returns one object. Reading it as an
+  array found nothing and made saved reflections look blank. Use
+  `reflectionOf()` (`src/lib/reflections.ts`); check the shape of any new embed
+  on a unique key.
+- **React resets a form after `<form action={...}>` runs.** On a server error
+  (a duplicate, a typo) everything the user typed was wiped. The add-lead forms
+  submit by hand through `useLeadForm`
+  (`src/app/admin/(dashboard)/components/useLeadForm.ts`), which also turns off
+  the browser's own validation bubbles in favour of inline messages. Reuse it
+  for any new form that can fail server-side.
+- **The Google Drive connector can read and download files and create new ones,
+  but can't overwrite an existing file's contents** (`update_file` is metadata
+  only). Updating a `.docx` master means downloading it, editing it locally,
+  and uploading the result as a new file for Karl to swap in.
 - **"use server" files may only export async functions.** Form-state objects
   and their types live in sibling `state.ts` files, never in `actions.ts`.
   Exporting a plain object from a "use server" file 500s on Vercel.
@@ -405,8 +428,8 @@ fix the table in the same session rather than leaving it to mislead the next one
 **Branches not in this table.** Besides `claude/practical-mayer-dujpqd`, which
 is the docs commit that made this edit, the command above also lists
 `ccr-9a0af25a-7urz50`, `ccr-a32f1d93-nm4hq5`, `claude/modest-tesla-anh612`,
-`claude/superpowers-setup-jkjgnn`, `claude/tender-gauss-hfm632` and
-`claude/weekly-fitness-standup-1h0mzj`, all carrying unmerged commits. They are
+`claude/superpowers-setup-jkjgnn` and `claude/weekly-fitness-standup-1h0mzj`,
+all carrying unmerged commits. They are
 deliberately not given rows here, because this session does not know what they
 are and a row guessing at a workstream is worse than no row. Whoever owns one:
 add it, or delete the branch.
@@ -430,6 +453,7 @@ the commit history.
 | `claude/availability-am-pm-model-yj1dby` | Trainer AM/PM availability | Merged. |
 | `claude/trainer-portal-handoff-doc-o0on8j` | Editable trainer pages (scoping) | Merged. Scoping note only; the build is the branch below. |
 | `claude/pt-onboarding-dashboard-9wwl17` | PT onboarding workbook | Merged and live. |
+| `claude/tender-gauss-hfm632` | Part 7 workbook rewrite; flagged, unverified and own lead types; 2-2-2 follow-ups and the 48-hour clock on a no | **Merged** (PRs #49, #51, #52, #53; migrations `0020` to `0022`). Still open in this thread: the Part 7 `.docx` masters. Details under Outstanding. |
 | `claude/handoff-trainer-profiles-link-buudia` | Trainer profile links | Merged. |
 | `claude/project-pause-prevention-083n5y` | Supabase keep-alive cron | Merged and live. |
 
@@ -459,6 +483,8 @@ anyway because `0004_trainer_am_pm.sql` merged with the availability work.
 | 0020 | `unverified_lead_source` | Third lead source (Part 7 amendments item 7, PR #49). **Applied to live — verified 18 Nov 2026.** Safe to re-run |
 | 0021 | `own_leads` | Trainers add their own leads (Part 7 amendments item 8). **Applied to live — verified 18 Nov 2026.** Safe to re-run |
 | 0022 | `follow_ups` | 2-2-2 reminders and the 48-hour clock on a no (Part 7 amendments item 11). **Applied to live — verified 18 Nov 2026.** Safe to re-run |
+| 0023 | `post_chat_reflections` | Post-chat reflections (Part 7 amendments item 18). **Applied to live — verified 18 Nov 2026.** Safe to re-run |
+| 0024 | `reflection_edits` | Trainers can edit their own reflections. **Applied to live — verified 18 Nov 2026.** Safe to re-run |
 
 Merge in that order and Supabase stays in step. GymMaster is deliberately in the
 middle rather than last: its numbers were already written and pushed, and moving
@@ -491,6 +517,69 @@ whole migration chain against a local Postgres 16.
 
 ## Outstanding / next up
 
+### Part 7 workbook amendments (15 to 18 Nov 2026, branch `claude/tender-gauss-hfm632`)
+
+Karl's running list is `docs/workbook-amendments-part7.md`, with every decision
+recorded against its item. **The portal side of Part 7 is done and live**
+(PRs #49, #51, #52, #53).
+
+- **Workbook copy (`part6.ts`, `part7.ts`, `part8.ts`):** items 5, 6, 7, 10,
+  12 to 18. Part 7 now opens with "How a lead moves through the portal", the
+  one page to update when the process changes. The Mel examples are renamed
+  (Isabel and Raj in Part 6, Corey and Frankie in Part 7, Jane in Part 8), every
+  em dash in Part 7 and the workbook page text is gone, and activity keys are
+  unchanged.
+- **Lead types (`0020`, `0021`):** form (warm), `gymmaster_sweep` shown as
+  **Flagged**, `unverified` (the only cold type) and `own`. The PT Manager's
+  Add lead asks for Flagged or Unverified, and a Lead type control re-sorts
+  hand-added leads. Trainers add their own leads through `add_own_lead()`,
+  which allocates to them and refuses a phone number already in the portal
+  (closed leads included, so opt-outs can't come back in) without saying who
+  has it.
+- **Follow-ups (`0022`, spec `docs/spec-item-11-follow-ups.md`):** Said no and
+  Agreed to check-in; the 2-2-2 schedule on the lead; automatic closes
+  (`close_expired_leads()`, from the daily `/api/cron/follow-ups` and on every
+  board load); one confirm dialog for every close as Not interested, which
+  adds a dated "Communication ended" note; the PT Manager's Reopen for timer
+  closes only. The rules are enforced in the trigger
+  `leads_apply_follow_up_rules`, not just the app.
+- **Post-chat reflections (`0023`, Karl, 18 Nov 2026):** when a lead moves on
+  from Attended, the allocated trainer gets an optional prompt at the top of
+  the lead panel: how it went, where it stalled, which certainty was missing,
+  and what they'd do differently, typed or dictated with the keyboard's own
+  microphone (a browser Speak button was tried and dropped on 18 Nov 2026: the
+  browser's speech recognition was too inaccurate; a paid transcription
+  service is the upgrade path if PTs want it, with a privacy check first, as
+  the audio would include client details). Only text is stored. Skip stops it asking again,
+  but the trainer can still add one later, and can edit a saved one (`0024`).
+  The PT Manager reads each one on the lead and sees per-trainer patterns on
+  `/admin/metrics`. Watch the skip rate: if most are skipped, the prompt is too
+  long or comes at the wrong moment.
+- **Masters:** the two per-part Part 7 masters are rebuilt and uploaded beside
+  the originals as "(updated 18 Nov 2026)" copies for Karl to check and swap
+  in (tooling and method: `tools/workbook-masters/`).
+- **Combined masters, PDFs and `.md`: deliberately deferred (Karl, 18 Nov
+  2026).** Karl is working through the workbook part by part and amending each
+  as he goes. **Once every part has been through that pass**, he will replace
+  each part's section in both combined masters (`Fitaz Gym PT Onboarding
+  Workbook (Full).docx` and `... PT Manager Cheat Sheets (Full).docx`) and
+  regenerate the full PDFs and `.md` in one go. Until then the combined masters
+  are expected to lag the per-part sources: don't treat that as drift, and
+  don't regenerate them part by part.
+- **Whole-workbook items, for their own thread:** 1 (em dashes in the other
+  parts and the masters), 2 (avatar line), 3 (tracker copy link), 4 ("Fitaz"
+  to "Fitaz Gym"), and the rest of 9 (the "PT Workbook" rename is done in the
+  nav and workbook headings; page titles, link paths with redirects and the
+  masters are not).
+- **Watch:**
+  - Whether trainers actually press Done and record the permission answer. The
+    timer closes are the signal: a run of them means the clock is being missed,
+    not that leads are saying no.
+  - Leads contacted before 18 Nov 2026 have no 2-2-2 running until a trainer
+    presses "Start the 2-2-2" on them.
+  - The daily follow-up email adds Resend volume. The free tier is 100 a day,
+    which this gym is nowhere near, but the limit is real.
+
 - ~~**PT setup checklist, tracked per trainer**~~ — **DONE and LIVE, 14 Oct
   2026.** Merged (PR #45) and deployed to production; Vercel reports the
   deployment on the merge commit completed, and Karl walked the screens
@@ -500,7 +589,7 @@ whole migration chain against a local Postgres 16.
   profiles, certs, rent) is now an editable tick-off form at **`/admin/setup`**,
   manager-only, with a per-trainer screen at `/admin/setup/[trainerId]`.
   - **Called "Setup", never "onboarding".** The workbook at `/onboarding`
-    already owns that word and the nav already says "PT onboarding". Tables and
+    already owns that word and the nav says "PT Workbook" (was "PT onboarding"). Tables and
     types are all `setup_*`. Keep it that way: a second "Onboarding" tab is the
     confusion `docs/handoff-onboarding-checklist-tracking.md` was written to
     prevent.
@@ -677,8 +766,10 @@ After that, in this order:
 
 - **Generate a sample weekly email from real data for Karl to read before it is
   scheduled.**
-- **Workbook Part 7: being rewritten in a separate thread (Karl, 17 Nov 2026).
-  Do not edit `part7.ts` from here.** The two flags below are Karl's to decide
+- **Workbook Part 7: rewritten and merged (18 Nov 2026). See "Part 7 workbook
+  amendments" at the top of Outstanding.** The note below is kept as the record
+  of what that thread was handed. ~~Being rewritten in a separate thread (Karl, 17 Nov 2026).
+  Do not edit `part7.ts` from here.~~ The two flags below are Karl's to decide
   when the Part 7 work reaches them. If his decision means the portal changes,
   that's fine: come back to the Batch 1 thread, or any portal thread, and build
   it then. That thread works from Karl's running list
@@ -691,6 +782,10 @@ After that, in this order:
   statuses (Contacted, Interested, Not Interested, Comp. Booked, Converted), and
   the sample table at line 86 uses them. Both need to match the portal in that
   rewrite.
+  - **Resolved (18 Nov 2026):** two statuses were added (Said no, Agreed to
+    check-in), and Declined and Ended became recorded close reasons instead of
+    statuses (`0022`, `docs/spec-item-11-follow-ups.md`). "Not now" is covered
+    by Said no plus the permission question.
   - **Overlap to resolve in that thread:** amendments items 10 and 11 (the 2-2-2
     rule and automated follow-ups) propose further statuses: "Said no",
     "Agreed to check-in", "Declined", and an "Ended" close from a 48 hour timer

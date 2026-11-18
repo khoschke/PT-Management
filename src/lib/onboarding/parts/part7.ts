@@ -18,7 +18,7 @@ export const part7: OnboardingPart = {
         "- **They book.** Comp. Booked, then Attended once the session happens, then Converted or Not interested once they decide.",
         "- **They go quiet.** The 2-2-2 runs itself: a nudge at 2 days, a touch at 2 weeks, a reconnect at 2 months. Tap **Done** after each one. A week after the reconnect with no reply, the lead closes as Unreachable.",
         "- **They say no.** Set **Said no**. You have 48 hours to ask once: “Mind if I check in down the track, or would you rather I leave it there?” A yes goes to **Agreed to check-in** and the 2-2-2 picks up at the 2-week touch. A “leave it” or no answer closes the lead. Miss the 48 hours and the portal closes it for you and lets the PT Manager know.",
-        "**4. Opt-outs are final.** A STOP, a “leave it there,” or picking **Not interested** closes the lead after a confirm, with a note saying why. Nobody contacts them about PT again. Only the PT Manager can reopen a lead, and only one the 48-hour timer closed.",
+        "**4. Opt-outs are final.** A STOP, a “leave it there,” or picking **Not interested** closes the lead after a confirm, with a note saying why. Nobody contacts them about PT again. The one exception is a lead the portal closed because the 48-hour window on a no was missed: the PT Manager can reopen that one if it was a mistake.",
         "**5. You don't have to remember any of it.** Your board shows what's due on each lead, a short email lands on any morning something's due, and your Monday email lists the week.",
       ],
       links: [
@@ -277,7 +277,7 @@ export const part7: OnboardingPart = {
         "Set the lead to Said no, and record their answer on the lead. Only start the 2-2-2 follow-up if they say yes to a check-in. Anything else is a STOP, and the lead closes.",
         "**When they're undecided** (“I need to think about it”), agree a specific time to reconnect before they leave, then note it on their lead in the portal so it doesn't rely on memory:",
         "> “Can I text you Thursday to see where you've landed?”",
-        "**Run a two-minute reflection after every sales chat,** win or lose. Four questions:",
+        "**Run a two-minute reflection after every sales chat,** win or lose. The portal asks you straight after: when a lead moves on from Attended, a short reflection appears at the top of the lead. Tap your answers, then type what you'd do differently, or tap the microphone on your keyboard and talk it through. It's optional, and only you and the PT Manager see it. The four questions:",
         "- What went well?",
         "- Where did it stall, if it did?",
         "- Which certainty was missing: emotional, logical or self-belief?",

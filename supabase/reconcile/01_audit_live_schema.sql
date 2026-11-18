@@ -430,5 +430,21 @@ from (
     and to_regprocedure('public.reopen_timer_close(uuid,lead_status,text)') is not null
   union all select '0022', 'relation lead_reopens (RLS on)',
     exists (select 1 from pg_class where oid = to_regclass('public.lead_reopens') and relrowsecurity)
+
+  -- 0023_post_chat_reflections ---------------------------------------------------
+  union all select '0023', 'relation post_chat_reflections (RLS on)',
+    exists (select 1 from pg_class where oid = to_regclass('public.post_chat_reflections') and relrowsecurity)
+  union all select '0023', 'anon cannot read post_chat_reflections',
+    not has_table_privilege('anon', 'public.post_chat_reflections', 'select')
+
+  -- 0024_reflection_edits ---------------------------------------------------------
+  union all select '0024', 'trainer update policy on post_chat_reflections',
+    exists (select 1 from pg_policy
+            where polrelid = to_regclass('public.post_chat_reflections')
+              and polname = 'post_chat_reflections_update_trainer')
+  union all select '0024', 'trigger post_chat_reflections_stamp_updated',
+    exists (select 1 from pg_trigger
+            where tgrelid = to_regclass('public.post_chat_reflections')
+              and tgname = 'post_chat_reflections_stamp_updated' and not tgisinternal)
 ) checks
 order by migration, item;

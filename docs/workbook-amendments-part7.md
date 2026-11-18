@@ -25,6 +25,12 @@ Standing reminder: a change goes to the per-part sources and both combined maste
 - **Interim, until item 11 is built:** PTs keep a lead on the 2-2-2 at Contacted, tap Log contact after each touch and put the next touch date in the notes. The text says automatic reminders are coming. Points 3, 4 and 5 of item 10 (the automatic close, the End communication button, portal reminders) get written once item 11 exists.
 - **Settled (Karl, 18 Nov 2026), option A:** the 2-2-2 is for leads who went quiet, and for leads who said not yet and agreed to a check-in. For went quiet: 2 days, 2 weeks, 2 months. For agreed to a check-in, the permission question is the first touch, then 2 weeks, then 2 months. No 2-day nudge after someone has just said not now, because it reads as not listening. Item 11.1 is superseded on this point: after "Agreed to check-in", the portal schedules the 2-week and 2-month reminders only.
 
+**Per-part masters rebuilt (18 Nov 2026).** All Part 7 changes applied to new copies, uploaded beside the originals for Karl to check and swap in:
+- `Part 7 - PT Manager Cheat Sheet (updated 18 Nov 2026).docx` in "02 Source - Manager Cheat Sheets"
+- `Part 7 - PT Workbook (updated 18 Nov 2026).docx` in "01 Source - PT Workbook"
+
+Untouched sections keep the master's own wording; changed sections use the new portal wording in the master's style. The document title line ("Fitaz Gym Personal Trainer Onboarding") is left for the whole-workbook rename (item 9). Tooling: `tools/workbook-masters/`. **Combined masters, PDFs and `.md`: deferred (Karl, 18 Nov 2026).** Karl will replace each part's section in both combined masters and regenerate the full PDFs and `.md` once every part of the workbook has been through his amendment pass, not part by part.
+
 **Masters:** the Drive connector can open the .docx masters but can't edit them, so the per-part sources, combined masters, PDFs and .md still need these changes made by hand. The portal text in `part7.ts` is the version to copy from.
 
 **Social Saturday (Karl, 17 Nov 2026), item 10.8:** the invite example uses Social Saturday, not First Friday. It's a free session for everyone, built to be inclusive, and the member can bring someone along so they feel more comfortable. Applied to the 2-week invite and the 2-2-2 bullet on 17 Nov, ahead of the rest of item 10.
@@ -394,6 +400,8 @@ Once built, update item 7's rewrite and the Part 6 "Tracking marketing performan
 - **Activity:** use the first option, "Think back to your most recent sales chat...". Every PT can do it today, and a PT who hasn't had a sales chat yet can run it on their consult or trial session.
 - **Make the reflection a standing habit in the text**, not a once-off activity: "Run these four questions after every sales chat. It takes two minutes."
 - **Portal form: later, and small.** Build it only after items 8 and 11, because those change how leads and statuses work and the form would hang off them. When it's built, make it optional and three taps, not four essays: which certainty was missing (emotional, logical, self-belief), where it stalled (a picklist), and one line on what to do differently. A compulsory form after every chat gets filled with "all good" by week three. A short one gives the PT Manager real patterns to coach on in the fortnightly sessions.
+
+**Built 18 Nov 2026 (Karl asked, with voice): migration `0023_post_chat_reflections.sql`.** An optional prompt at the top of the lead panel as soon as a lead moves on from Attended: three quick picks plus "what would you do differently", typed or dictated with the keyboard microphone (a browser Speak button was tried and dropped as too inaccurate; text only, no audio stored). Skip stops it asking again. Saved on the lead; the trainer sees their own, the PT Manager sees all, plus per-trainer patterns on `/admin/metrics`. Part 7's closing section and the masters' Post-Chat Reflection page now point to it; the printable sheet stays for anyone who prefers paper.
 
 **Portal idea (optional, for Karl to decide):** a short post-chat reflection form attached to each lead in the portal (what went well, where it stalled, which certainty was missing, what to do differently). Useful for the PT's own learning and for PT Manager coaching in the fortnightly development sessions.
 
