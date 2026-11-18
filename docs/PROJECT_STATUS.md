@@ -397,7 +397,16 @@ Zero means everything on that branch is already on production, whatever the
 table says. If what you find disagrees with the table, **the command is right**:
 fix the table in the same session rather than leaving it to mislead the next one.
 
-### Snapshot, 15 September 2026 (verified with the command above)
+### Snapshot, 18 November 2026 (verified with the command above)
+
+**Branches not in this table.** Besides `claude/practical-mayer-dujpqd`, which
+is the docs commit that made this edit, the command above also lists
+`ccr-9a0af25a-7urz50`, `ccr-a32f1d93-nm4hq5`, `claude/modest-tesla-anh612`,
+`claude/superpowers-setup-jkjgnn`, `claude/tender-gauss-hfm632` and
+`claude/weekly-fitness-standup-1h0mzj`, all carrying unmerged commits. They are
+deliberately not given rows here, because this session does not know what they
+are and a row guessing at a workstream is worse than no row. Whoever owns one:
+add it, or delete the branch.
 
 The three branches the August reconciliation left behind
 (`reconcile-database-security-deploy-01sf2h`, `security-merge-pending-parta`,
@@ -410,8 +419,7 @@ the commit history.
 |---|---|---|
 | `claude/docs-reconcile-live-state` | Branch-map reconciliation | **Merged.** Docs only. |
 | `claude/security-hardening-csv-ip-cron` | Security hardening (CSV/IP/cron) | **Merged** (PR #18). CSV formula-injection guard, IP-salt production guard, cron fail-closed + constant-time auth. Also added `docs/handoff-security-hardening.md` for the remaining items. |
-| `claude/practical-mayer-dujpqd` | PT setup checklist | **The build.** Migration `0017`, `/admin/setup`, `src/lib/setup.ts`, and the build plan. Migration applied to live and verified 14 Oct 2026. |
-| `claude/gymmaster-phase-1-pull-7yuxuy` | GymMaster integration | **3 unmerged.** Phase 1 pull scaffolding plus migrations `0007` and `0008`, which keep those numbers. |
+| `claude/gymmaster-phase-1-pull-7yuxuy` | GymMaster integration | **4 unmerged** (was 3; re-counted 18 Nov 2026). Phase 1 pull scaffolding plus migrations `0007` and `0008`, which keep those numbers. |
 | `claude/pt-team-onboarding-rw5awg` | PT team update email | **Merged.** The team update email and the login details email, from `docs/handoff-pt-team-update-email.md`. Both were sent on 12 August 2026; the files are kept as the record of what went out and as the template for the next trainer who joins. |
 | `claude/handoff-email-notifications-9m67a6` | Branded HTML notification emails | **Merged** (PR #4). Replaced the plain-text ops emails with branded HTML plus a dashboard link. |
 | `claude/gym-nurture-email-design-uw9nvu` | Member email series | **Merged** (PR #13 and #14, plus the August logo and template work). Emails 1 to 3, CMS-safe variants, brand assets, this doc. |
@@ -477,7 +485,10 @@ whole migration chain against a local Postgres 16.
 
 ## Outstanding / next up
 
-- ~~**PT setup checklist, tracked per trainer**~~ — **DONE, 14 Oct 2026.**
+- ~~**PT setup checklist, tracked per trainer**~~ — **DONE and LIVE, 14 Oct
+  2026.** Merged (PR #45) and deployed to production; Vercel reports the
+  deployment on the merge commit completed, and Karl walked the screens
+  through on the Vercel preview before merging, against the live database.
   Migration `0017` applied to live and verified. The paper operational
   checklist (contract, accounts, bond, Business Pack, uniform, systems access,
   profiles, certs, rent) is now an editable tick-off form at **`/admin/setup`**,
@@ -531,6 +542,17 @@ whole migration chain against a local Postgres 16.
     deliberately:** any trainer-facing view, a manager-editable item list, rent
     amounts, auto-ticking, a roster badge, a stall nudge in the daily digest,
     and a print view.
+  - **Take-up, read off live on 18 Nov 2026, a month after it shipped: one
+    checklist started, no items ticked, none completed.** Recorded because it
+    is the one number that decides whether this feature was worth building,
+    and because it is precisely the failure the screen was designed to make
+    visible: a setup checklist does not die by never being created, it dies by
+    being created and then never touched. Nobody has joined the roster since it
+    shipped, so there has been nothing to work through, and that is the
+    innocent reading. **Check this again when the next trainer starts.** If it
+    is still untouched after a real new starter has gone through, the tool is
+    not the thing that was needed, and the honest move is to say so rather than
+    to add the stall nudge and alert an unused screen at somebody.
 
 ### Batch 1 from the change list (opened 14 Oct 2026, decided 17 Nov 2026)
 
