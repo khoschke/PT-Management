@@ -15,7 +15,10 @@ import {
 } from "@/lib/types";
 import { SourceBadge, StatusBadge } from "./Badges";
 import ClockPill from "./ClockPill";
-import { allocateLead, updateLeadSource, updateLeadStatus, updateLeadNotes, logLeadContact, softDeleteLead, hardDeleteLead } from "../actions";
+import FollowUpPill from "./FollowUpPill";
+import FollowUpSection from "./FollowUpSection";
+import ConfirmCloseDialog, { type CloseReason } from "./ConfirmCloseDialog";
+import { allocateLead, closeLeadNotInterested, updateLeadSource, updateLeadStatus, updateLeadNotes, logLeadContact, softDeleteLead, hardDeleteLead } from "../actions";
 import type { LeadRow } from "../page";
 
 function formatDate(value: string | null) {
@@ -68,6 +71,21 @@ export default function LeadDetailPanel({
   const [isPending, startTransition] = useTransition();
   const [notes, setNotes] = useState(lead.notes ?? "");
   const [status, setStatus] = useState<LeadStatus>(lead.status);
+  // Follow-up buttons change the status on the server; keep the dropdown in
+  // step when the refreshed lead comes back.
+  const [syncedStatus, setSyncedStatus] = useState<LeadStatus>(lead.status);
+  if (lead.status !== syncedStatus) {
+    setSyncedStatus(lead.status);
+    setStatus(lead.status);
+  }
+  // Same for notes: closing a lead adds a note on the server.
+  const [syncedNotes, setSyncedNotes] = useState(lead.notes ?? "");
+  if ((lead.notes ?? "") !== syncedNotes) {
+    setSyncedNotes(lead.notes ?? "");
+    setNotes(lead.notes ?? "");
+  }
+  // Every close as Not interested is confirmed first (ConfirmCloseDialog).
+  const [closePrompt, setClosePrompt] = useState<{ preset: CloseReason | null } | null>(null);
   const [overrideTrainerId, setOverrideTrainerId] = useState(lead.allocated_trainer_id ?? "");
   const [error, setError] = useState<string | null>(null);
 
@@ -130,6 +148,7 @@ export default function LeadDetailPanel({
               <SourceBadge source={lead.lead_source} />
               <StatusBadge status={lead.status} />
               <ClockPill dueAt={lead.first_contact_due_at} firstContactedAt={lead.first_contacted_at} status={lead.status} />
+              <FollowUpPill lead={lead} />
             </div>
           </div>
           <button
@@ -282,6 +301,10 @@ export default function LeadDetailPanel({
               disabled={isPending}
               onChange={(e) => {
                 const next = e.target.value as LeadStatus;
+                if (next === "Not interested") {
+                  setClosePrompt({ preset: null });
+                  return;
+                }
                 setStatus(next);
                 runAction(() => updateLeadStatus(lead.id, next));
               }}
@@ -331,6 +354,14 @@ export default function LeadDetailPanel({
               </div>
             )}
           </section>
+
+          <FollowUpSection
+            lead={lead}
+            isManager={isManager}
+            isPending={isPending}
+            runAction={runAction}
+            onRequestClose={(preset) => setClosePrompt({ preset })}
+          />
 
           {/* Notes */}
           <section className="border-t border-black/5 pt-6">
@@ -405,6 +436,18 @@ export default function LeadDetailPanel({
           )}
         </div>
       </div>
+      {closePrompt && (
+        <ConfirmCloseDialog
+          leadName={lead.name}
+          preset={closePrompt.preset}
+          isPending={isPending}
+          onCancel={() => setClosePrompt(null)}
+          onConfirm={(reason) => {
+            setClosePrompt(null);
+            runAction(() => closeLeadNotInterested(lead.id, reason));
+          }}
+        />
+      )}
     </div>
   );
 }

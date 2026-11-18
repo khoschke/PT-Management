@@ -13,8 +13,21 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { emailEnabled, sendTrainerWeeklySummary, type WeeklySummaryLead } from "@/lib/email";
 import { isAuthorisedCronRequest } from "@/lib/cron";
 import { CLOSED_LEAD_STATUSES, type Lead, type Trainer } from "@/lib/types";
+import { getFollowUpState } from "@/lib/followUps";
 
-type LeadSlice = Pick<Lead, "id" | "name" | "status" | "allocated_trainer_id" | "allocated_at" | "last_contacted_at">;
+type LeadSlice = Pick<
+  Lead,
+  | "id"
+  | "name"
+  | "status"
+  | "allocated_trainer_id"
+  | "allocated_at"
+  | "last_contacted_at"
+  | "follow_up_step"
+  | "next_follow_up_at"
+  | "said_no_at"
+  | "permission_asked_at"
+>;
 
 export async function GET(request: Request) {
   if (!isAuthorisedCronRequest(request)) {
@@ -37,7 +50,9 @@ export async function GET(request: Request) {
 
   const { data: leads, error: leadError } = await supabase
     .from("leads")
-    .select("id, name, status, allocated_trainer_id, allocated_at, last_contacted_at")
+    .select(
+      "id, name, status, allocated_trainer_id, allocated_at, last_contacted_at, follow_up_step, next_follow_up_at, said_no_at, permission_asked_at",
+    )
     .is("deleted_at", null)
     .not("allocated_trainer_id", "is", null)
     .not("status", "in", `(${CLOSED_LEAD_STATUSES.map((s) => `"${s}"`).join(",")})`)
@@ -80,6 +95,11 @@ export async function GET(request: Request) {
         allocatedAt: l.allocated_at,
         lastContactedAt: l.last_contacted_at,
         statusSince: statusSince.get(l.id) ?? null,
+        // Due in the coming week: a 2-2-2 touch or a no to respond to.
+        followUp: (() => {
+          const f = getFollowUpState(l);
+          return f && f.urgency !== "later" ? f.label : null;
+        })(),
       }));
 
     try {

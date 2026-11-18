@@ -245,6 +245,7 @@ export async function sendManagerDailyDigest(
   approachingBreach: DigestLeadSummary[],
   breached: DigestLeadSummary[],
   ownLeadsAdded: { trainerName: string; count: number }[] = [],
+  timerCloses: string[] = [],
 ) {
   const client = getClient();
   if (!client) return;
@@ -254,6 +255,12 @@ export async function sendManagerDailyDigest(
     ownLeadsAdded.length === 0
       ? null
       : `New own leads: ${ownLeadsAdded.map((o) => `${o.trainerName} added ${o.count}`).join(", ")}`;
+
+  // Closed by the 48-hour timer since yesterday (item 11).
+  const timerLine =
+    timerCloses.length === 0
+      ? null
+      : `Closed by the 48-hour timer (no response to a no): ${timerCloses.join(", ")}. You can reopen these from the lead board.`;
 
   const sourceLabel = (source: DigestLeadSummary["source"]) =>
     source === "form" ? "form" : source === "unverified" ? "unverified" : source === "own" ? "own lead" : "flagged";
@@ -268,6 +275,7 @@ export async function sendManagerDailyDigest(
     "",
     textSection("New overnight", overnight),
     ...(ownLeadsLine ? [ownLeadsLine] : []),
+    ...(timerLine ? ["", timerLine] : []),
     "",
     textSection("Approaching the 48 hour mark", approachingBreach),
     "",
@@ -303,6 +311,7 @@ export async function sendManagerDailyDigest(
     </p>
     ${htmlSection("New overnight", overnight, "#111111")}
     ${ownLeadsLine ? `<p style="margin:-14px 0 22px;font-size:14px;color:#444444;">${esc(ownLeadsLine)}</p>` : ""}
+    ${timerLine ? `<p style="margin:0 0 22px;font-size:14px;font-weight:600;color:#b91c1c;">${esc(timerLine)}</p>` : ""}
     ${htmlSection("Approaching the 48 hour mark", approachingBreach, "#111111")}
     ${htmlSection("Already breached", breached, "#111111")}
     ${ctaButton()}
@@ -399,6 +408,9 @@ export interface WeeklySummaryLead {
   lastContactedAt: string | null;
   // When the lead moved into its current status, for the two flags below.
   statusSince: string | null;
+  // The 2-2-2 touch or no to respond to that's due in the coming week, if any
+  // ("2-week touch due Wed 25 Nov", "Respond to a no: 20h left").
+  followUp?: string | null;
 }
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -445,10 +457,12 @@ export function buildTrainerWeeklySummary(
   };
 
   const count = leads.length;
+  const dueCount = leads.filter((l) => l.followUp).length;
   const headline =
-    count === 0
+    (count === 0
       ? "No active leads this week."
-      : `You have ${count} active lead${count === 1 ? "" : "s"} assigned to you.`;
+      : `You have ${count} active lead${count === 1 ? "" : "s"} assigned to you.`) +
+    (dueCount > 0 ? ` Follow-ups due this week: ${dueCount}.` : "");
   const subject =
     count === 0 ? "Your PT leads this week: none active" : `Your PT leads this week: ${count} active`;
 
@@ -462,6 +476,7 @@ export function buildTrainerWeeklySummary(
     return [
       `- ${lead.name} (${lead.status})`,
       `  ${lastContactedLabel(lead)} · ${assignedLabel(lead)}`,
+      ...(lead.followUp ? [`  Follow-up: ${lead.followUp}`] : []),
       ...(flag ? [`  ${flag}`] : []),
     ].join("\n");
   });
@@ -484,6 +499,7 @@ export function buildTrainerWeeklySummary(
         <p style="margin:0;font-size:15px;font-weight:600;color:#111111;">${esc(lead.name)}
           <span style="font-weight:500;color:#666666;"> · ${esc(lead.status)}</span></p>
         <p style="margin:4px 0 0;font-size:13px;color:#666666;">${lastContactedLabel(lead)} · ${assignedLabel(lead)}</p>
+        ${lead.followUp ? `<p style="margin:4px 0 0;font-size:13px;font-weight:600;color:#4338ca;">Follow-up: ${esc(lead.followUp)}</p>` : ""}
         ${flag ? `<p style="margin:4px 0 0;font-size:13px;font-weight:600;color:#111111;">${esc(flag)}</p>` : ""}
       </td></tr>`;
     })
@@ -518,4 +534,125 @@ export async function sendTrainerWeeklySummary(
 
   const { error } = await client.emails.send({ from: FROM_ADDRESS, to: trainer.email, cc, subject, text, html });
   if (error) throw new Error(`Weekly summary to ${trainer.name} failed: ${error.message}`);
+}
+
+// ---------------------------------------------------------------------------
+// 2-2-2 follow-ups and the 48-hour clock on a no (Part 7 amendments, item 11)
+// ---------------------------------------------------------------------------
+
+export interface TimerClose {
+  leadName: string;
+  trainerName: string;
+  saidNoAt: string;
+  closedAt: string;
+}
+
+function brisbaneDateTime(iso: string): string {
+  return new Date(iso).toLocaleString("en-AU", {
+    timeZone: "Australia/Brisbane",
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
+// The PT Manager hears straight away when the 48-hour timer closes a lead, so
+// they can follow it up with the trainer, and reopen it if the trainer did ask
+// in time but didn't log it.
+export async function sendTimerCloseNotification(managerEmail: string, closes: TimerClose[]) {
+  const client = getClient();
+  if (!client || closes.length === 0) return;
+
+  const lines = closes.map(
+    (c) =>
+      `- ${c.leadName} (${c.trainerName}): no logged ${brisbaneDateTime(c.saidNoAt)}, window closed ${brisbaneDateTime(c.closedAt)}`,
+  );
+  const intro =
+    closes.length === 1
+      ? "The 48-hour window to respond to a no has closed on this lead, so the portal has closed it as Not interested."
+      : `The 48-hour window to respond to a no has closed on ${closes.length} leads, so the portal has closed them as Not interested.`;
+  const after =
+    "Worth a word with the trainer. If they did ask the permission question in time and just didn't update the portal, you can reopen the lead from its panel on the lead board.";
+
+  const text = [intro, "", ...lines, "", after, "", dashboardTextLine("Open the lead board:")].join("\n");
+  const html = layout(`
+    <p style="margin:0 0 6px;font-size:20px;font-weight:600;line-height:1.3;">48-hour window missed</p>
+    <p style="margin:0 0 16px;font-size:14px;line-height:1.5;color:#444444;">${esc(intro)}</p>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">${closes
+      .map(
+        (c) => `<tr><td style="padding:10px 0;border-top:1px solid #eeeeee;">
+          <p style="margin:0;font-size:15px;font-weight:600;color:#111111;">${esc(c.leadName)}
+            <span style="font-weight:500;color:#666666;"> · ${esc(c.trainerName)}</span></p>
+          <p style="margin:4px 0 0;font-size:13px;color:#666666;">No logged ${esc(brisbaneDateTime(c.saidNoAt))} · window closed ${esc(brisbaneDateTime(c.closedAt))}</p>
+        </td></tr>`,
+      )
+      .join("")}</table>
+    <p style="margin:16px 0 0;font-size:14px;line-height:1.5;color:#444444;">${esc(after)}</p>
+    ${ctaButton()}
+  `);
+
+  await client.emails.send({
+    from: FROM_ADDRESS,
+    to: managerEmail,
+    subject:
+      closes.length === 1
+        ? `48-hour window missed: ${closes[0].leadName}`
+        : `48-hour window missed on ${closes.length} leads`,
+    text,
+    html,
+  });
+}
+
+export interface FollowUpReminder {
+  leadName: string;
+  label: string;
+}
+
+// The short daily email a trainer gets only on days something is due: a
+// 2-2-2 touch, or a no to respond to within 48 hours.
+export async function sendTrainerFollowUpReminder(
+  trainer: Pick<Trainer, "name" | "email">,
+  items: FollowUpReminder[],
+) {
+  const client = getClient();
+  if (!client || !trainer.email || items.length === 0) return;
+
+  const firstName = trainer.name.split(" ")[0];
+  const headline = `You have ${items.length} follow-up${items.length === 1 ? "" : "s"} to do today.`;
+  const text = [
+    `Morning ${firstName}.`,
+    "",
+    headline,
+    "",
+    ...items.map((i) => `- ${i.leadName}: ${i.label}`),
+    "",
+    "Tap Done on each one in the portal once it's sent, and the next one is scheduled for you.",
+    "",
+    dashboardTextLine("Open your leads:"),
+  ].join("\n");
+  const html = layout(`
+    <p style="margin:0 0 6px;font-size:20px;font-weight:600;line-height:1.3;">Follow-ups today</p>
+    <p style="margin:0 0 16px;font-size:14px;line-height:1.5;color:#444444;">Morning ${esc(firstName)}. ${esc(headline)}</p>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">${items
+      .map(
+        (i) => `<tr><td style="padding:10px 0;border-top:1px solid #eeeeee;">
+          <p style="margin:0;font-size:15px;font-weight:600;color:#111111;">${esc(i.leadName)}</p>
+          <p style="margin:4px 0 0;font-size:13px;color:#4338ca;font-weight:600;">${esc(i.label)}</p>
+        </td></tr>`,
+      )
+      .join("")}</table>
+    <p style="margin:16px 0 0;font-size:14px;line-height:1.5;color:#444444;">Tap Done on each one in the portal once it's sent, and the next one is scheduled for you.</p>
+    ${ctaButton()}
+  `);
+
+  const { error } = await client.emails.send({
+    from: FROM_ADDRESS,
+    to: trainer.email,
+    subject: `Follow-ups today: ${items.length}`,
+    text,
+    html,
+  });
+  if (error) throw new Error(`Follow-up reminder to ${trainer.name} failed: ${error.message}`);
 }

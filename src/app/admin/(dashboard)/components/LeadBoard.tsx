@@ -11,6 +11,7 @@ import {
   type Trainer,
 } from "@/lib/types";
 import { getContactClock } from "@/lib/countdown";
+import { needsActionToday } from "@/lib/followUps";
 import { leadsToCsv, downloadCsv } from "@/lib/csv";
 import LeadCard from "./LeadCard";
 import LeadDetailPanel from "./LeadDetailPanel";
@@ -23,6 +24,7 @@ interface Filters {
   source: string;
   allocatedTrainerId: string;
   overdueOnly: boolean;
+  followUpsDue: boolean;
   showClosed: boolean;
 }
 
@@ -31,6 +33,7 @@ const DEFAULT_FILTERS: Filters = {
   source: "",
   allocatedTrainerId: "",
   overdueOnly: false,
+  followUpsDue: false,
   showClosed: false,
 };
 
@@ -59,6 +62,7 @@ export default function LeadBoard({
       if (!filters.showClosed && !filters.status && CLOSED_LEAD_STATUSES.includes(lead.status)) return false;
       if (filters.source && lead.lead_source !== filters.source) return false;
       if (filters.allocatedTrainerId && lead.allocated_trainer_id !== filters.allocatedTrainerId) return false;
+      if (filters.followUpsDue && !needsActionToday(lead)) return false;
       if (filters.overdueOnly) {
         const clock = getContactClock(lead.first_contact_due_at, lead.first_contacted_at, lead.status);
         if (clock.band !== "red") return false;
@@ -78,7 +82,12 @@ export default function LeadBoard({
   );
 
   const hasFilters = Boolean(
-    filters.status || filters.source || filters.allocatedTrainerId || filters.overdueOnly || filters.showClosed,
+    filters.status ||
+      filters.source ||
+      filters.allocatedTrainerId ||
+      filters.overdueOnly ||
+      filters.followUpsDue ||
+      filters.showClosed,
   );
 
   const selectClass =
@@ -169,6 +178,16 @@ export default function LeadBoard({
             className="sr-only"
           />
           Overdue only
+        </label>
+
+        <label className="press flex cursor-pointer items-center gap-1.5 rounded-full bg-fill px-4 py-2 text-sm font-medium text-foreground transition has-[:checked]:bg-foreground has-[:checked]:text-white has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-foreground">
+          <input
+            type="checkbox"
+            checked={filters.followUpsDue}
+            onChange={(e) => setFilters((f) => ({ ...f, followUpsDue: e.target.checked }))}
+            className="sr-only"
+          />
+          Follow-ups due
         </label>
 
         <label className="press flex cursor-pointer items-center gap-1.5 rounded-full bg-fill px-4 py-2 text-sm font-medium text-foreground transition has-[:checked]:bg-foreground has-[:checked]:text-white has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-foreground">

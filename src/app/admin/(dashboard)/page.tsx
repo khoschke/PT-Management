@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/lib/auth";
+import { closeExpiredLeads } from "@/lib/closeExpired";
 import type { Lead, LeadStatus, Trainer } from "@/lib/types";
 import LeadBoard from "./components/LeadBoard";
 
@@ -15,7 +16,15 @@ export interface LeadRow extends Lead {
 // Typed, so renaming a status breaks the build here instead of quietly dropping
 // those leads out of every trainer's load count. Attended counts: the
 // conversion conversation is still ahead of the trainer.
-const ACTIVE_LOAD_STATUSES: LeadStatus[] = ["New", "Allocated", "Contacted", "Comp. Booked", "Attended"];
+const ACTIVE_LOAD_STATUSES: LeadStatus[] = [
+  "New",
+  "Allocated",
+  "Contacted",
+  "Comp. Booked",
+  "Attended",
+  "Said no",
+  "Agreed to check-in",
+];
 
 export default async function AdminLeadBoardPage() {
   const user = await getCurrentUser();
@@ -34,6 +43,10 @@ export default async function AdminLeadBoardPage() {
   }
 
   const isManager = user?.profile?.role === "manager";
+
+  // Close anything past its deadline (a missed 48-hour window on a no, an
+  // unanswered permission question, a finished 2-2-2) before reading the board.
+  await closeExpiredLeads(supabase);
 
   const { data: leads } = await supabase
     .from("leads")

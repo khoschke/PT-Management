@@ -248,6 +248,10 @@ Once built, update item 7's rewrite and the Part 6 "Tracking marketing performan
    - the 2-month touch is done with no response (lead closes).
 9. Once built, update item 10's rewrite to describe the reminders, the 48-hour clock, the PT Manager notification and override as they actually work.
 
+**Built 18 Nov 2026 (migration `0022_follow_ups.sql`), to the approved spec `docs/spec-item-11-follow-ups.md`.** Two new statuses (Said no, Agreed to check-in) plus a recorded close reason instead of "Declined" and "Ended" statuses; option A timing; 7 days to answer a permission question asked by text; Unreachable 7 days after the 2-month reconnect; the PT Manager picks where a reopened lead goes; a daily trainer email only on days something's due. Item 10's interim "coming soon" lines in Part 7 are replaced with how it actually works (phone section, text section STOP line, lead process status table, 2-2-2 section, closing section).
+
+**Change after Karl's test (18 Nov 2026):** every close as Not interested (the status dropdown, End communication, "They said leave it there") now opens a confirmation pop-up that explains what happens (follow-ups and gym PT emails stop, nobody contacts them about PT again, only the PT Manager can undo it) and asks why. On confirm, a dated note goes on the lead: "Communication ended [date]: [reason]. Contact the PT Manager if this is a mistake." The panel stays open on the closed lead in every case.
+
 ### 12. Part 7: one page showing how leads flow through the portal (logged 15 Nov 2026)
 
 **Where:** Part 7 Making Sales, a new short page at the start of the part. PT portal and masters.

@@ -78,7 +78,20 @@ export async function GET(request: Request) {
     .filter((l) => l.clock.band === "red")
     .map((l) => ({ name: l.name, source: l.source, hoursRemaining: l.clock.hoursRemaining }));
 
-  await sendManagerDailyDigest(process.env.PT_MANAGER_EMAIL, overnight, approachingBreach, breached, ownLeadsAdded);
+  // Leads the 48-hour timer closed in the last day (item 11). The manager also
+  // got an email at the time; this is the daily record.
+  const timerCloses = leads
+    .filter((l) => l.closed_reason === "no_response_to_no" && l.closed_at && new Date(l.closed_at) >= oneDayAgo)
+    .map((l) => l.name);
+
+  await sendManagerDailyDigest(
+    process.env.PT_MANAGER_EMAIL,
+    overnight,
+    approachingBreach,
+    breached,
+    ownLeadsAdded,
+    timerCloses,
+  );
 
   return NextResponse.json({
     sent: true,
