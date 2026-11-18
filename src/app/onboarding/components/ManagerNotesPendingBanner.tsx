@@ -12,7 +12,7 @@ export function ManagerNotesPendingBanner({ hasAnyNotes }: { hasAnyNotes: boolea
       style={{ background: "var(--ob-amber-soft)", color: "var(--ob-amber)" }}
     >
       Coaching notes for this part are pending the PT Manager Cheat Sheet, which hasn&rsquo;t been
-      written yet &mdash; only the trainer&rsquo;s material below exists so far.
+      written yet. Only the trainer&rsquo;s material below exists so far.
     </div>
   );
 }

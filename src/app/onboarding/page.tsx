@@ -39,7 +39,7 @@ export default async function OnboardingOverviewPage() {
         </h1>
         <p className="mt-3 max-w-2xl text-[15px] leading-relaxed" style={{ color: "var(--ob-text-secondary)" }}>
           Ten parts, from the role itself through to building and running your business. Work through
-          them at your own pace — the activities save automatically as you go, and your four one-hour
+          them at your own pace. The activities save automatically as you go, and your four one-hour
           sessions with the PT Manager are yours to book whenever they&rsquo;re most useful.
         </p>
 

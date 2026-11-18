@@ -52,7 +52,7 @@ export function ActivityField({
           className="mt-2 rounded-xl px-3.5 py-2.5 text-[14px] italic"
           style={{ ...fieldStyle, color: "var(--ob-text-secondary)" }}
         >
-          Sign in as this trainer to answer &mdash; each PT&rsquo;s answers are theirs alone.
+          Sign in as this trainer to answer. Each PT&rsquo;s answers are theirs alone.
         </div>
       </div>
     );
@@ -98,7 +98,7 @@ export function ActivityField({
             : status === "saved"
               ? "Saved"
               : status === "error"
-                ? "Couldn't save — try again"
+                ? "Couldn't save. Try again."
                 : ""}
         </div>
       </div>
