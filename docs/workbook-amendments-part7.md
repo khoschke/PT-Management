@@ -18,6 +18,12 @@ Standing reminder: a change goes to the per-part sources and both combined maste
 - Item 15: Taylor's weekly total is $180 (2 x $80 + $20). It sits inside her attributed script, so it passes the figure rule. The general bullet uses "$X", with "including GST, if you charge it".
 - Checks passed: `tsc`, `eslint`, `npm run build`.
 
+**Batch 1b, items 7 and 10 in the portal (18 Nov 2026).**
+- **Item 7:** "The gym-provided lead process" rewritten around the three lead types (a table: who they are, how they reach you, how to open), the 48-hour rule for every type, the live portal statuses with their meanings, Log contact, the Monday email, and Unreachable versus Not interested. The old spreadsheet, "PT Lead Form", sample table and $21 promotion row are gone. Allocation rules kept as they were. The activity now asks which lead is closest to the 48-hour mark (same key, so saved answers stay). Interim line until item 8 is built: leads PTs find themselves can't be added by them yet.
+- **Item 10:** the 2-2-2 section now splits went quiet (2-2-2 runs) from said no (permission question once, within 48 hours; yes starts the 2-2-2, anything else is a STOP). STOP line on the 2-month reconnect only. Social Saturday invite. Named end point: after the 2-month touch with no reply, mark Unreachable. Frankie's example now models the permission question. New activity (same key).
+- **Interim, until item 11 is built:** PTs keep a lead on the 2-2-2 at Contacted, tap Log contact after each touch and put the next touch date in the notes. The text says automatic reminders are coming. Points 3, 4 and 5 of item 10 (the automatic close, the End communication button, portal reminders) get written once item 11 exists.
+- **Question for the item 11 spec:** item 10.2 says the permission question replaces the 2-day touch for a no, but item 11.1 schedules all three touches (2 days, 2 weeks, 2 months) after a yes. The copy follows 10.2 for now: after a yes, the next touch is the 2-week one.
+
 **Masters:** the Drive connector can open the .docx masters but can't edit them, so the per-part sources, combined masters, PDFs and .md still need these changes made by hand. The portal text in `part7.ts` is the version to copy from.
 
 **Social Saturday (Karl, 17 Nov 2026), item 10.8:** the invite example uses Social Saturday, not First Friday. It's a free session for everyone, built to be inclusive, and the member can bring someone along so they feel more comfortable. Applied to the 2-week invite and the 2-2-2 bullet on 17 Nov, ahead of the rest of item 10.
