@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { callerIsManager } from "@/lib/auth";
 import { sendTrainerAllocationEmail } from "@/lib/email";
-import { sweepLeadSchema } from "@/lib/validation";
+import { ownLeadSchema, sweepLeadSchema } from "@/lib/validation";
 import { MANUAL_LEAD_SOURCES, type LeadStatus, type ManualLeadSource } from "@/lib/types";
 import type { ActionResult, AddSweepLeadState } from "./state";
 
@@ -147,7 +147,7 @@ export async function updateLeadSource(leadId: string, source: string): Promise<
     .from("leads")
     .update({ lead_source: source as ManualLeadSource })
     .eq("id", leadId)
-    .neq("lead_source", "form");
+    .in("lead_source", [...MANUAL_LEAD_SOURCES]);
 
   if (error) return { ok: false, message: "Couldn't change the lead type. Please try again." };
 
@@ -208,6 +208,65 @@ export async function addSweepLead(
   if (error) {
     console.error("Manual lead insert failed", error);
     return { status: "error", message: "Something went wrong saving that lead. Please try again." };
+  }
+
+  revalidatePath("/admin");
+  return { status: "success" };
+}
+
+// A trainer adds a lead they found themselves (Part 7 amendments, item 8).
+// Everything goes through add_own_lead() in the database, which allocates the
+// lead to the caller and refuses a phone number already in the portal without
+// saying who has it. No allocation email: the trainer added it.
+export async function addOwnLead(
+  _prevState: AddSweepLeadState,
+  formData: FormData,
+): Promise<AddSweepLeadState> {
+  const parsed = ownLeadSchema.safeParse({
+    name: formData.get("name")?.toString() ?? "",
+    phone: formData.get("phone")?.toString() ?? "",
+    email: formData.get("email")?.toString() || undefined,
+    goals: formData.getAll("goals").map((g) => g.toString()),
+    found_via: formData.get("found_via")?.toString() ?? "",
+    found_via_other: formData.get("found_via_other")?.toString() || undefined,
+  });
+  if (!parsed.success) {
+    const fieldErrors: Record<string, string> = {};
+    for (const issue of parsed.error.issues) {
+      const key = issue.path[0]?.toString();
+      if (key && !fieldErrors[key]) fieldErrors[key] = issue.message;
+    }
+    return { status: "error", message: "Please check the highlighted fields.", fieldErrors };
+  }
+
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("add_own_lead", {
+    p_name: parsed.data.name,
+    p_phone: parsed.data.phone,
+    p_email: parsed.data.email || null,
+    p_goals: parsed.data.goals ?? [],
+    p_found_via: parsed.data.found_via,
+    p_found_via_other: parsed.data.found_via_other || null,
+  });
+
+  if (error) {
+    console.error("add_own_lead failed", error);
+    return { status: "error", message: "Something went wrong saving that lead. Please try again." };
+  }
+
+  const result = data as { ok: boolean; reason?: string } | null;
+  if (!result?.ok) {
+    if (result?.reason === "duplicate") {
+      return {
+        status: "error",
+        message: "This member's already in the portal. Check with the PT Manager.",
+        fieldErrors: { phone: "Already in the portal" },
+      };
+    }
+    if (result?.reason === "not_trainer") {
+      return { status: "error", message: "Only trainers can add their own leads." };
+    }
+    return { status: "error", message: "Please check the details and try again." };
   }
 
   revalidatePath("/admin");

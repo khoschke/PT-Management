@@ -166,6 +166,7 @@ export const part6: OnboardingPart = {
       heading: "Tracking marketing performance",
       body: [
         "If you don't measure it, you're guessing. Track new leads per week, consults booked and consult-to-client conversion, and where your leads came from. Avoid vanity numbers like follower counts. Set a baseline this month, a realistic target for next month, and review monthly.",
+        "For where your leads came from, use your PT portal. When you find someone yourself, add them with **Add my own lead** and pick where you found them: the gym floor, a referral, social media, or something else. They sit on your lead board next to the leads the gym gives you, so over time you can see which channels actually bring people in.",
       ],
       activities: [
         { key: "marketing-metrics-targets", prompt: "Pick 2-3 metrics to track and set a target for each from your current baseline.", multiline: true },

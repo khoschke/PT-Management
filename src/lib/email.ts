@@ -92,6 +92,7 @@ const ALLOCATION_SOURCE_TEXT: Record<Lead["lead_source"], string> = {
   form: "Filled in the form themselves, so this is a warm lead.",
   gymmaster_sweep:
     "Added by the PT Manager after a conversation, an email or a heads-up, so they've shown some interest. Check the notes for the context and mention it when you get in touch.",
+  own: "Found by a trainer themselves and passed to you by the PT Manager. Check the notes for the context.",
   unverified:
     "Unverified lead: a new member who hasn't asked about PT yet. They've had two of the gym's three welcome emails telling them a complimentary session comes with their membership, so this is a cold lead. Use the cold call or cold text from Part 7.",
 };
@@ -243,12 +244,19 @@ export async function sendManagerDailyDigest(
   overnight: DigestLeadSummary[],
   approachingBreach: DigestLeadSummary[],
   breached: DigestLeadSummary[],
+  ownLeadsAdded: { trainerName: string; count: number }[] = [],
 ) {
   const client = getClient();
   if (!client) return;
 
+  // "New own leads: Julie added 2" (item 8). Only shown when there are some.
+  const ownLeadsLine =
+    ownLeadsAdded.length === 0
+      ? null
+      : `New own leads: ${ownLeadsAdded.map((o) => `${o.trainerName} added ${o.count}`).join(", ")}`;
+
   const sourceLabel = (source: DigestLeadSummary["source"]) =>
-    source === "form" ? "form" : source === "unverified" ? "unverified" : "flagged";
+    source === "form" ? "form" : source === "unverified" ? "unverified" : source === "own" ? "own lead" : "flagged";
 
   const textSection = (title: string, leads: DigestLeadSummary[]) =>
     leads.length === 0
@@ -259,6 +267,7 @@ export async function sendManagerDailyDigest(
     "Morning. Here's where the PT leads stand.",
     "",
     textSection("New overnight", overnight),
+    ...(ownLeadsLine ? [ownLeadsLine] : []),
     "",
     textSection("Approaching the 48 hour mark", approachingBreach),
     "",
@@ -293,6 +302,7 @@ export async function sendManagerDailyDigest(
       Morning. Here's where the PT leads stand.
     </p>
     ${htmlSection("New overnight", overnight, "#111111")}
+    ${ownLeadsLine ? `<p style="margin:-14px 0 22px;font-size:14px;color:#444444;">${esc(ownLeadsLine)}</p>` : ""}
     ${htmlSection("Approaching the 48 hour mark", approachingBreach, "#111111")}
     ${htmlSection("Already breached", breached, "#111111")}
     ${ctaButton()}

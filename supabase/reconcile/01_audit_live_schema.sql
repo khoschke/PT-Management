@@ -390,5 +390,22 @@ from (
               and conname = 'goals_not_empty_for_form_leads'
               and pg_get_constraintdef(oid) like '%<>%form%'
               and pg_get_constraintdef(oid) not like '%gymmaster_sweep%')
+
+  -- 0021_own_leads -------------------------------------------------------------
+  -- The function is what trainers call, so it matters most, and anon must not
+  -- be able to run it.
+  union all select '0021', 'lead_source value own',
+    exists (select 1 from pg_enum e join pg_type t on t.oid = e.enumtypid
+            where t.typname = 'lead_source' and e.enumlabel = 'own')
+  union all select '0021', 'columns leads.found_via and found_via_other',
+    (select count(*) from pg_attribute
+      where attrelid = to_regclass('public.leads')
+        and attname in ('found_via', 'found_via_other') and not attisdropped) = 2
+  union all select '0021', 'function add_own_lead (authenticated only)',
+    to_regprocedure('public.add_own_lead(text,text,text,text[],lead_found_via,text)') is not null
+    and has_function_privilege('authenticated',
+          'public.add_own_lead(text,text,text,text[],lead_found_via,text)', 'execute')
+    and not has_function_privilege('anon',
+          'public.add_own_lead(text,text,text,text[],lead_found_via,text)', 'execute')
 ) checks
 order by migration, item;

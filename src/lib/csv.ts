@@ -3,7 +3,7 @@
 // so there's no need for a separate export endpoint.
 
 import { goalLabel } from "./goals";
-import { LEAD_SOURCE_LABELS } from "./types";
+import { LEAD_SOURCE_LABELS, foundViaLabel } from "./types";
 import type { LeadRow } from "@/app/admin/(dashboard)/page";
 
 const COLUMNS = [
@@ -19,6 +19,7 @@ const COLUMNS = [
   "Trainer requested",
   "Contact preference",
   "Source",
+  "Found via",
   "Allocated trainer",
   "Status",
   "Notes",
@@ -54,6 +55,7 @@ export function leadsToCsv(leads: LeadRow[]): string {
     lead.preferred_trainer?.name ?? "",
     lead.contact_preference ?? "",
     LEAD_SOURCE_LABELS[lead.lead_source].label,
+    foundViaLabel(lead) ?? "",
     lead.allocated_trainer?.name ?? "",
     lead.status,
     lead.notes ?? "",

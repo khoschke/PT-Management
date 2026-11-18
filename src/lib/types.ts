@@ -13,7 +13,10 @@ export type TrainerGender = "male" | "female";
 //   label changed.
 // - unverified: a new member who hasn't asked about PT, handed over around
 //   day 10 to 17 after two of the three nurture emails. The only "cold" type.
-export type LeadSource = "form" | "gymmaster_sweep" | "unverified";
+// - own: a lead a trainer found and added themselves (item 8, migration 0021).
+//   A trainer who picks someone up from the unverified list saves as
+//   `unverified` instead, so gym-provided and trainer-found leads stay apart.
+export type LeadSource = "form" | "gymmaster_sweep" | "unverified" | "own";
 
 // Sources the PT Manager can choose when adding a lead by hand. Form leads
 // only ever come from the public form.
@@ -30,7 +33,25 @@ export const LEAD_SOURCE_LABELS: Record<LeadSource, { label: string; hint: strin
     label: "Unverified (cold)",
     hint: "New member who hasn't asked about PT yet, after two of the three welcome emails",
   },
+  own: { label: "Own lead", hint: "Found and added by the trainer themselves" },
 };
+
+// Where a trainer found a lead they added themselves (`leads.found_via`).
+export type FoundVia = "gym_floor" | "referral" | "social_media" | "unverified_list" | "other";
+
+export const FOUND_VIA_OPTIONS: { value: FoundVia; label: string }[] = [
+  { value: "gym_floor", label: "Gym floor" },
+  { value: "referral", label: "Referral" },
+  { value: "social_media", label: "Social media" },
+  { value: "unverified_list", label: "Unverified lead list" },
+  { value: "other", label: "Other" },
+];
+
+export function foundViaLabel(lead: { found_via: FoundVia | null; found_via_other: string | null }): string | null {
+  if (!lead.found_via) return null;
+  if (lead.found_via === "other") return lead.found_via_other ? `Other: ${lead.found_via_other}` : "Other";
+  return FOUND_VIA_OPTIONS.find((o) => o.value === lead.found_via)?.label ?? null;
+}
 export type LeadStatus =
   | "New"
   | "Allocated"
@@ -85,6 +106,9 @@ export interface Lead {
   // Both kept current by a trigger (0019_lead_contact_dates.sql).
   allocated_at: string | null;
   last_contacted_at: string | null;
+  // Only on leads a trainer added themselves (0021_own_leads.sql).
+  found_via: FoundVia | null;
+  found_via_other: string | null;
   created_by: string | null;
   deleted_at: string | null;
 }
