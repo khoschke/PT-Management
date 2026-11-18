@@ -191,6 +191,8 @@ Once built, update item 7's rewrite and the Part 6 "Tracking marketing performan
 4. Link paths: change `/onboarding/` to `/workbook/` only with a permanent redirect from every old path to its new one, then test a few old links (including any in emails and calendar invites) to confirm they still land on the right page. Otherwise leave them alone.
 5. Leave file names alone.
 
+**Started 18 Nov 2026 (Karl asked, during the item 12 check):** the dashboard nav item "PT onboarding" now reads "PT Workbook", and so does the title in the workbook's own header. Everything else in this item (page titles, buttons, the home page's "12-week onboarding journey" line, the masters, link paths and redirects) is still to do in the whole-workbook pass.
+
 ### 10. The 2-2-2 rule: portal tracking, permission and opt-outs (logged 15 Nov 2026, updated same day)
 
 **Where:** Part 7 Making Sales, "The 2-2-2 rule for leads who don't convert": the intro, the three touches, the example messages, and the activity "Where will you track your 2-2-2 follow-ups so none slip through?". PT portal and masters.

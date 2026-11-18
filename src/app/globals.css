@@ -115,6 +115,14 @@ body {
   }
 }
 
+/* A row that scrolls sideways without showing a scrollbar (the dashboard nav). */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 .glass-header {
   background: color-mix(in srgb, var(--surface) 78%, transparent);
   backdrop-filter: saturate(180%) blur(20px);
