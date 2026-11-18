@@ -1,6 +1,9 @@
 # Fitaz Gym member email series
 
-**Status: live since 1 September 2026.** All three are sending from GymMaster off
+**Status: live since 1 September 2026, with the unsubscribe unverified.** See
+the merge tags section below: the claim that GymMaster supplies one was
+withdrawn on 18 November 2026 and nobody has checked a delivered email yet.
+ All three are sending from GymMaster off
 the member's own join date, and the unsubscribe is handled by GymMaster rather
 than by anything in these templates. What follows is written as a build note in
 places; read it as the record of how the series was put together and why, with
@@ -316,11 +319,20 @@ there, pointing at a `{{unsubscribe_url}}` placeholder, and it was removed on
 19 August 2026 because a visible link that goes nowhere is worse than none while
 testing.
 
-**GymMaster supplies the unsubscribe** as of 1 September 2026, which is what
-unblocked the send. So the templates deliberately carry none: adding one back
-would give a member two unsubscribe links pointing at different places, and the
+**GymMaster was understood to supply the unsubscribe** as of 1 September 2026,
+which is what unblocked the send, so the templates deliberately carry none:
+two unsubscribe links pointing at different places is worse than one, and the
 one that does not write to GymMaster's suppression list is the one that keeps
 sending them email.
+
+**That understanding is withdrawn as of 18 November 2026.** Karl does not
+recall seeing an unsubscribe link in a delivered email and is not confident one
+is there. **Nobody has checked**, and nothing in this repo can: these files are
+what GymMaster is given, not what it sends. Until a delivered email 1 has been
+opened and its footer read, assume the series may be going out with no
+unsubscribe at all. If it is missing, the decision above is reversed: an
+unsubscribe goes back into all three footers, and GymMaster still has to set
+the `List-Unsubscribe` header, which no template can carry.
 
 **This is a GymMaster dependency, not a solved problem in the markup.** If these
 templates are ever sent from anywhere else, the unsubscribe and the
@@ -563,11 +575,11 @@ still unticked is a live risk, not a launch task.
 
 - [ ] Render test across Gmail web, Gmail app, Apple Mail, Outlook desktop and
       Outlook.com, in both light and dark mode.
-- [x] **The unsubscribe exists.** Handled by GymMaster as of 1 September 2026,
-      and nothing goes back into the templates, see the merge tags section
-      above. **That it works is a separate, still-unticked item below**: until
-      somebody has unsubscribed on a seed record and watched emails 2 and 3 not
-      arrive, this is a link we believe in rather than one we have tested.
+- [ ] **Confirm an unsubscribe link exists at all.** Reopened 18 November 2026,
+      see the merge tags section above. Open a delivered email 1, read the
+      footer, and check the raw source for a `List-Unsubscribe` header. This was
+      ticked on 1 September on an assumption that has since been withdrawn, so
+      it is the first thing to settle, ahead of the end-to-end test below.
 - [ ] **Point the logo back at `pt.fitazgym.com` once this branch is deployed**,
       and restore the reversed logo for dark mode with it. See the table above.
 - [ ] **Confirm a `List-Unsubscribe` header is set.** That is a header, not
