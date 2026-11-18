@@ -163,6 +163,13 @@ The activity question no longer fits either. Each PT's own list already lives in
 - Unverified lead list (a PT picking up someone from the unverified list themselves)
 - Other
 
+**Design agreed (Karl, 18 Nov 2026), build after PR #49 merges:**
+- "Add my own lead" button on each PT's board. Name and phone required, email and goals optional, plus "Where did you find them?" (Gym floor, Referral, Social media, Unverified lead list, Other with a short text box).
+- The lead is allocated straight to that PT as Allocated, with the usual 48-hour clock. No allocation email.
+- A fourth lead type, **Own lead**, for every option except "Unverified lead list", which saves as Unverified. Keeps gym-provided and PT-generated leads apart in the numbers.
+- The PT Manager sees every PT-added lead, can reassign it, and gets a line in the daily digest ("New own leads: Julie added 2"), not an email per lead.
+- Duplicates: if the phone number is already in the portal, block the add with "This member's already in the portal. Check with the PT Manager." This doesn't reveal which trainer has them.
+
 Once built, update item 7's rewrite and the Part 6 "Tracking marketing performance" section to point PTs to the portal for their own leads too.
 
 ### 9. Rename "PT Onboarding" to "PT Workbook" (logged 15 Nov 2026, updated same day)
