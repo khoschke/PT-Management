@@ -67,7 +67,7 @@ export default async function OnboardingPartPage({
             className="mt-5 rounded-2xl px-4 py-3 text-[13px] leading-relaxed"
             style={{ background: "var(--ob-amber-soft)", color: "var(--ob-amber)" }}
           >
-            This part is a placeholder pending the source document — see the note below.
+            This part is a placeholder pending the source document. See the note below.
           </div>
         )}
 

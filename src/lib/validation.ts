@@ -4,6 +4,7 @@
 
 import { z } from "zod";
 import { GOAL_OPTIONS } from "./goals";
+import { MANUAL_LEAD_SOURCES } from "./types";
 
 const GOAL_CODES = GOAL_OPTIONS.map((g) => g.code) as [string, ...string[]];
 
@@ -48,13 +49,14 @@ export const leadFormSchema = z.object({
 
 export type LeadFormInput = z.infer<typeof leadFormSchema>;
 
-// Manual "add sweep lead" entry only requires name and phone.
+// Manual "Add lead" entry (Flagged or Unverified) only requires name and phone.
 export const sweepLeadSchema = leadFormSchema
   .partial()
   .extend({
     name: leadFormSchema.shape.name,
     phone: leadFormSchema.shape.phone,
     goals: z.array(z.enum(GOAL_CODES)).optional().default([]),
+    lead_source: z.enum(MANUAL_LEAD_SOURCES, { message: "Choose flagged or unverified" }),
     email: z
       .string()
       .trim()

@@ -3,7 +3,7 @@
 import { useActionState, useEffect } from "react";
 import { useFormStatus } from "react-dom";
 import { GOAL_OPTIONS } from "@/lib/goals";
-import type { Trainer } from "@/lib/types";
+import { LEAD_SOURCE_LABELS, MANUAL_LEAD_SOURCES, type Trainer } from "@/lib/types";
 import { addSweepLead } from "../actions";
 import { initialAddSweepLeadState } from "../state";
 
@@ -18,7 +18,7 @@ function SubmitButton() {
       disabled={pending}
       className="press w-full rounded-full bg-foreground px-4 py-3 text-sm font-semibold text-white disabled:opacity-50"
     >
-      {pending ? "Saving..." : "Save sweep lead"}
+      {pending ? "Saving..." : "Save lead"}
     </button>
   );
 }
@@ -50,9 +50,9 @@ export default function AddSweepLeadModal({
       >
         <div className="flex items-start justify-between">
           <div>
-            <h2 className="text-lg font-semibold tracking-tight text-foreground">Add sweep lead</h2>
+            <h2 className="text-lg font-semibold tracking-tight text-foreground">Add lead</h2>
             <p className="mt-1 text-sm text-secondary-label">
-              For a member found on the GymMaster sweep. Only name and phone are required, this is meant to be fast.
+              Choose the lead type, then add their details. Only name and phone are required, this is meant to be fast.
             </p>
           </div>
           <button
@@ -69,6 +69,23 @@ export default function AddSweepLeadModal({
           {state.status === "error" && state.message && (
             <div className="rounded-xl bg-red-50 px-3.5 py-2.5 text-sm text-red-700">{state.message}</div>
           )}
+
+          <fieldset>
+            <legend className="text-sm font-semibold text-foreground">Lead type</legend>
+            <div className="mt-1.5 grid gap-2 sm:grid-cols-2">
+              {MANUAL_LEAD_SOURCES.map((source) => (
+                <label
+                  key={source}
+                  className="press cursor-pointer rounded-2xl bg-fill px-3.5 py-3 ring-1 ring-transparent transition has-[:checked]:ring-2 has-[:checked]:ring-foreground"
+                >
+                  <input type="radio" name="lead_source" value={source} required className="sr-only" />
+                  <span className="block text-sm font-semibold text-foreground">{LEAD_SOURCE_LABELS[source].label}</span>
+                  <span className="mt-0.5 block text-xs text-secondary-label">{LEAD_SOURCE_LABELS[source].hint}</span>
+                </label>
+              ))}
+            </div>
+            {errors.lead_source && <p className="mt-1 text-xs text-red-600">{errors.lead_source}</p>}
+          </fieldset>
 
           <div>
             <label className="text-sm font-semibold text-foreground">Name</label>

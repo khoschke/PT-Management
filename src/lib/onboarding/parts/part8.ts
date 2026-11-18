@@ -16,7 +16,7 @@ export const part8: OnboardingPart = {
         { key: "first-90-days-actions", prompt: "What will you do in a new client's first 90 days to lock in the relationship? List three concrete actions.", multiline: true },
       ],
       workedExample:
-        "Taylor doesn't let Mel leave the consult without her first three weeks booked in. She texts after session one to see how Mel pulled up, sets a small win for week two (one full set of unassisted push-ups), and flags it the moment Mel hits it. By the time the early buzz fades, the rhythm is already there.",
+        "Taylor doesn't let Jane leave the consult without her first three weeks booked in. She texts after session one to see how Jane pulled up, sets a small win for week two (one full set of unassisted push-ups), and flags it the moment Jane hits it. By the time the early buzz fades, the rhythm is already there.",
       managerNote:
         "This is the section that pays for the whole part. New PTs obsess over getting clients and then lose them in the first three months without realising why. Push for specifics: not ‘communicate more’ but ‘text every Thursday’, not ‘set goals’ but ‘agree one win they'll feel by week three’.",
     },
@@ -37,7 +37,7 @@ export const part8: OnboardingPart = {
       heading: "Communicate regularly",
       body: [
         "A quick weekly check-in keeps motivation up and catches problems before they harden into reasons to quit. A good check-in celebrates a win, gives one useful tip, and opens the door for them to tell you what's actually going on.",
-        "“Hi Mel, solid week. Your deadlift set-up looked sharp on Thursday. How are the legs pulling up? Anything you want to hit harder next week?”",
+        "“Hi Jane, solid week. Your deadlift set-up looked sharp on Thursday. How are the legs pulling up? Anything you want to hit harder next week?”",
         "A check-in isn't being on call around the clock — set the boundary early (Part 4 covers channels and boundaries in full).",
       ],
       activities: [
@@ -82,7 +82,7 @@ export const part8: OnboardingPart = {
         { key: "added-value-resources", prompt: "List three added-value resources you could offer, all within your scope.", multiline: true },
       ],
       workedExample:
-        "For her FIFO clients, Taylor builds a bodyweight travel circuit they can run in a donga or a hotel room. For Mel's night shifts, she shares simple pre-shift fuelling tips and a ten-minute wind-down routine for sleeping in daylight. All general, all within scope, all genuinely useful.",
+        "For her FIFO clients, Taylor builds a bodyweight travel circuit they can run in a donga or a hotel room. For Jane's night shifts, she shares simple pre-shift fuelling tips and a ten-minute wind-down routine for sleeping in daylight. All general, all within scope, all genuinely useful.",
       managerNote:
         "Nutrition is the usual scope trap. ‘Eat more protein and vegetables, here's a simple plate guide’ is fine. A calorie-counted meal plan for a client with a medical condition is not. If a PT is unsure, the answer is always refer — and that referral is a value-add in itself.",
     },
@@ -107,7 +107,7 @@ export const part8: OnboardingPart = {
         },
       ],
       workedExample:
-        "Mel's quarterly check-in with Taylor: her stamina on shift is noticeably better and she says so, she gives honest feedback that the early sessions ran a touch long, and she mentions her roster's about to get heavier. Taylor spots the wobble, messages her that week, and they quietly shift her training schedule to fit the new roster before it ever becomes a reason to stop. No hard sell, just a problem solved early.",
+        "Jane's quarterly check-in with Taylor: her stamina on shift is noticeably better and she says so, she gives honest feedback that the early sessions ran a touch long, and she mentions her roster's about to get heavier. Taylor spots the wobble, messages her that week, and they quietly shift her training schedule to fit the new roster before it ever becomes a reason to stop. No hard sell, just a problem solved early.",
       managerNote:
         "The value here is catching drift early, so push PTs to actually read the answers and act on them, not file them away. A ‘the frequency's felt like a lot lately’ on a form is a client quietly telling you they're wobbling — the PT who follows up that week tends to keep them. Reviews are the highest-leverage, lowest-cost marketing a PT has, and most never ask: coach them to ask once when the client's buzzing, then set a yearly reminder for long-termers. Flag anyone tempted to offer a freebie for a review — that breaches Google's policy and it's off-brand.",
     },
@@ -131,7 +131,7 @@ export const part8: OnboardingPart = {
       heading: "Referrals as a retention tool",
       body: [
         "A referral isn't only new business — it's a retention signal. A client who refers has publicly committed to you, which deepens their own loyalty. Ask right after a win, and lean towards a value-add rather than a discount.",
-        "“Hi Mel, I've loved watching your progress. If you know someone who'd get something out of training, I'd be glad to look after them. As a thank you, I'll add a bonus mobility session to your next block.”",
+        "“Hi Jane, I've loved watching your progress. If you know someone who'd get something out of training, I'd be glad to look after them. As a thank you, I'll add a bonus mobility session to your next block.”",
       ],
       activities: [
         { key: "referral-ask-draft", prompt: "Draft a referral ask you'd send a happy client. Keep the thank-you value-add.", multiline: true },
@@ -143,7 +143,7 @@ export const part8: OnboardingPart = {
       heading: "Ending a client relationship cleanly",
       body: [
         "Not every relationship should last forever. Be direct and kind, don't ghost, acknowledge the journey, give a reason about fit not blame, point them somewhere useful, and honour the admin (final payment, cancellation terms, anything owed back).",
-        "“Mel, you've built a really solid base and I'm proud of the work you've done. I think you're at the point where a strength class or training solo with the odd check-in would serve you better than what I offer right now.”",
+        "“Jane, you've built a really solid base and I'm proud of the work you've done. I think you're at the point where a strength class or training solo with the odd check-in would serve you better than what I offer right now.”",
       ],
       activities: [
         { key: "clean-ending-steps", prompt: "How will you end a relationship cleanly? Note the steps you'd follow.", multiline: true },
@@ -157,7 +157,7 @@ export const part8: OnboardingPart = {
       heading: "Win-back: re-engaging lapsed clients",
       body: [
         "A lapsed client is warmer than a cold lead — they already know and trust you. Be clear who you're chasing (drifted off, not the ones you ended for cause). Lead with care, not a pitch. A couple of times a year, go back through your lapsed list and reconnect, treating re-entry as value-add (a complimentary catch-up), never a price cut.",
-        "“Hi Mel, you popped into my head this week, it's been a while. No agenda, just wondering how your training's been going. If you ever feel like getting back into it, the door's always open and the first catch-up's on me.”",
+        "“Hi Jane, you popped into my head this week, it's been a while. No agenda, just wondering how your training's been going. If you ever feel like getting back into it, the door's always open and the first catch-up's on me.”",
       ],
       activities: [
         { key: "winback-message-draft", prompt: "Draft a win-back message for a client who drifted off months ago.", multiline: true },

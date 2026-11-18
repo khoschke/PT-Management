@@ -86,15 +86,22 @@ function dashboardTextLine(prompt: string): string {
   return DASHBOARD_URL ? `${prompt} ${DASHBOARD_URL}` : prompt;
 }
 
+// What the trainer's allocation email says about where the lead came from. The
+// wording follows the workbook's three lead types (Part 7, item 7).
+const ALLOCATION_SOURCE_TEXT: Record<Lead["lead_source"], string> = {
+  form: "Filled in the form themselves, so this is a warm lead.",
+  gymmaster_sweep:
+    "Added by the PT Manager after a conversation, an email or a heads-up, so they've shown some interest. Check the notes for the context and mention it when you get in touch.",
+  unverified:
+    "Unverified lead: a new member who hasn't asked about PT yet. They've had two of the gym's three welcome emails telling them a complimentary session comes with their membership, so this is a cold lead. Use the cold call or cold text from Part 7.",
+};
+
 export async function sendTrainerAllocationEmail(trainer: Trainer, lead: Lead) {
   const client = getClient();
   if (!client || !trainer.email) return;
 
   const goalsText = lead.goals.length > 0 ? lead.goals.map(goalLabel).join(", ") : "Not stated";
-  const sourceText =
-    lead.lead_source === "form"
-      ? "Filled in the form themselves, so this is a warm lead."
-      : "Found on the GymMaster sweep, so this is a cold lead. They haven't opted in yet, go in accordingly.";
+  const sourceText = ALLOCATION_SOURCE_TEXT[lead.lead_source];
   const dueText = new Date(lead.first_contact_due_at).toLocaleString("en-AU", {
     timeZone: "Australia/Brisbane",
   });
@@ -240,7 +247,8 @@ export async function sendManagerDailyDigest(
   const client = getClient();
   if (!client) return;
 
-  const sourceLabel = (source: DigestLeadSummary["source"]) => (source === "form" ? "form" : "sweep");
+  const sourceLabel = (source: DigestLeadSummary["source"]) =>
+    source === "form" ? "form" : source === "unverified" ? "unverified" : "flagged";
 
   const textSection = (title: string, leads: DigestLeadSummary[]) =>
     leads.length === 0

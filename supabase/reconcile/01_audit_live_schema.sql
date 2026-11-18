@@ -377,5 +377,18 @@ from (
               and tgname = 'leads_stamp_contact_dates'
               and not tgisinternal)
 
+
+  -- 0020_unverified_lead_source ----------------------------------------------
+  -- The value alone isn't enough: with the old goals check still in place, an
+  -- unverified lead with no goals fails to insert. So both are checked.
+  union all select '0020', 'lead_source value unverified',
+    exists (select 1 from pg_enum e join pg_type t on t.oid = e.enumtypid
+            where t.typname = 'lead_source' and e.enumlabel = 'unverified')
+  union all select '0020', 'goals check keys off form only',
+    exists (select 1 from pg_constraint
+            where conrelid = to_regclass('public.leads')
+              and conname = 'goals_not_empty_for_form_leads'
+              and pg_get_constraintdef(oid) like '%<>%form%'
+              and pg_get_constraintdef(oid) not like '%gymmaster_sweep%')
 ) checks
 order by migration, item;
