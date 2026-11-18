@@ -17,6 +17,8 @@ repeat those.
 `julie@fit365.net.au`, Shahd Herbert `shahdherbert@gmail.com`, Michael Hammett
 `michael@puremomentum.com.au`
 
+**Saved as a Gmail draft on 19 Nov 2026**, with Karl's signature, ready to send.
+
 **Sign-off:** a new email, so "Cheers," and Karl's Gmail signature, with no name
 typed underneath.
 
