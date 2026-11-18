@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/lib/auth";
 import { closeExpiredLeads } from "@/lib/closeExpired";
-import type { Lead, LeadStatus, Trainer } from "@/lib/types";
+import type { Lead, LeadStatus, PostChatReflection, Trainer } from "@/lib/types";
 import LeadBoard from "./components/LeadBoard";
 
 export const dynamic = "force-dynamic";
@@ -11,6 +11,8 @@ export interface LeadRow extends Lead {
   allocated_trainer: Pick<Trainer, "id" | "name"> | null;
   preferred_trainer: Pick<Trainer, "id" | "name"> | null;
   status_history: { old_status: string | null; new_status: string; changed_at: string }[];
+  // At most one (unique on lead_id). RLS limits a trainer to their own.
+  post_chat_reflections: PostChatReflection[];
 }
 
 // Typed, so renaming a status breaks the build here instead of quietly dropping
@@ -51,7 +53,7 @@ export default async function AdminLeadBoardPage() {
   const { data: leads } = await supabase
     .from("leads")
     .select(
-      "*, allocated_trainer:trainers!leads_allocated_trainer_id_fkey(id,name), preferred_trainer:trainers!leads_preferred_trainer_id_fkey(id,name), status_history(old_status,new_status,changed_at)",
+      "*, allocated_trainer:trainers!leads_allocated_trainer_id_fkey(id,name), preferred_trainer:trainers!leads_preferred_trainer_id_fkey(id,name), status_history(old_status,new_status,changed_at), post_chat_reflections(*)",
     )
     .is("deleted_at", null)
     .order("created_at", { ascending: false })

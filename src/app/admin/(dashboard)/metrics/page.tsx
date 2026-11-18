@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/lib/auth";
 import { computeFunnelMetrics, rate, type FunnelLead, type StageCounts } from "@/lib/metrics";
-import { LEAD_SOURCE_LABELS } from "@/lib/types";
+import { LEAD_SOURCE_LABELS, REFLECTION_STALL_LABELS, type PostChatReflection } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
@@ -212,6 +212,34 @@ export default async function MetricsPage({ searchParams }: { searchParams: Prom
   const m = computeFunnelMetrics(rows);
   const o = m.overall;
 
+  // Post-chat reflections in the same date range (by when they were saved),
+  // per trainer, for coaching in the fortnightly sessions (item 18).
+  const { data: reflectionRows } = await supabase
+    .from("post_chat_reflections")
+    .select("*, trainer:trainers(name)")
+    .returns<(PostChatReflection & { trainer: { name: string } | null })[]>();
+  const inRange = (reflectionRows ?? []).filter((r) => {
+    const t = new Date(r.created_at).getTime();
+    return (range.fromTs === null || t >= range.fromTs) && (range.toTs === null || t <= range.toTs);
+  });
+  const byTrainer = new Map<string, ReflectionSummary>();
+  for (const r of inRange) {
+    const name = r.trainer?.name ?? "Unknown";
+    const s = byTrainer.get(name) ?? { name, saved: 0, skipped: 0, well: 0, mixed: 0, tough: 0, emotional: 0, logical: 0, selfBelief: 0, stalls: {} };
+    if (r.skipped) {
+      s.skipped++;
+    } else {
+      s.saved++;
+      if (r.feel) s[r.feel]++;
+      if (r.missing_certainty === "emotional") s.emotional++;
+      if (r.missing_certainty === "logical") s.logical++;
+      if (r.missing_certainty === "self_belief") s.selfBelief++;
+      if (r.stalled_at && r.stalled_at !== "nowhere") s.stalls[r.stalled_at] = (s.stalls[r.stalled_at] ?? 0) + 1;
+    }
+    byTrainer.set(name, s);
+  }
+  const reflectionSummaries = [...byTrainer.values()].sort((a, b) => a.name.localeCompare(b.name));
+
   return (
     <div>
       <h1 className="display-heading text-[28px] text-foreground">Lead funnel</h1>
@@ -314,6 +342,8 @@ export default async function MetricsPage({ searchParams }: { searchParams: Prom
             </section>
           )}
 
+          <ReflectionsSection summaries={reflectionSummaries} />
+
           <p className="mt-6 max-w-2xl text-xs leading-relaxed text-secondary-label">
             Leads are grouped by the date they came in. Counts read the full status history, not just a
             lead&rsquo;s current status. No-shows are booked leads that never reached Attended. The full
@@ -322,5 +352,78 @@ export default async function MetricsPage({ searchParams }: { searchParams: Prom
         </>
       )}
     </div>
+  );
+}
+
+interface ReflectionSummary {
+  name: string;
+  saved: number;
+  skipped: number;
+  well: number;
+  mixed: number;
+  tough: number;
+  emotional: number;
+  logical: number;
+  selfBelief: number;
+  stalls: Record<string, number>;
+}
+
+// Patterns from the trainers' post-chat reflections. The point is coaching:
+// "self-belief was missing in four of Julie's last six" is a conversation to
+// have, not a score. Individual reflections are on each lead's panel.
+function ReflectionsSection({ summaries }: { summaries: ReflectionSummary[] }) {
+  return (
+    <section className="mt-6 overflow-hidden rounded-2xl border border-black/5 bg-surface shadow-[0_1px_2px_rgba(0,0,0,0.03),0_2px_8px_rgba(0,0,0,0.04)]">
+      <div className="px-6 pt-5">
+        <h2 className="text-xs font-semibold uppercase tracking-wide text-secondary-label">Post-chat reflections</h2>
+        <p className="mt-1 text-sm text-secondary-label">
+          What trainers noticed after their sales chats, by when the reflection was saved. Open a lead to read its
+          reflection in full.
+        </p>
+      </div>
+      {summaries.length === 0 ? (
+        <p className="px-6 pb-5 pt-3 text-sm text-secondary-label/80">No reflections in this period yet.</p>
+      ) : (
+        <div className="mt-3 overflow-x-auto">
+          <table className="w-full min-w-[640px] text-sm">
+            <thead>
+              <tr className="text-left text-xs font-semibold uppercase tracking-wide text-secondary-label">
+                <th className="px-3 py-2 font-semibold">Trainer</th>
+                <th className="px-3 py-2 font-semibold">Saved</th>
+                <th className="px-3 py-2 font-semibold">Well / mixed / didn&rsquo;t land</th>
+                <th className="px-3 py-2 font-semibold">Missing: emotional</th>
+                <th className="px-3 py-2 font-semibold">Logical</th>
+                <th className="px-3 py-2 font-semibold">Self-belief</th>
+                <th className="px-3 py-2 font-semibold">Most common stall</th>
+              </tr>
+            </thead>
+            <tbody>
+              {summaries.map((s) => {
+                const top = Object.entries(s.stalls).sort((a, b) => b[1] - a[1])[0];
+                return (
+                  <tr key={s.name} className="border-t border-black/5">
+                    <td className="px-3 py-2.5 font-medium text-foreground">{s.name}</td>
+                    <td className="px-3 py-2.5 text-foreground">
+                      {s.saved}
+                      {s.skipped > 0 && <span className="text-secondary-label"> ({s.skipped} skipped)</span>}
+                    </td>
+                    <td className="px-3 py-2.5 text-foreground">
+                      {s.well} / {s.mixed} / {s.tough}
+                    </td>
+                    <td className="px-3 py-2.5 text-foreground">{s.emotional}</td>
+                    <td className="px-3 py-2.5 text-foreground">{s.logical}</td>
+                    <td className="px-3 py-2.5 text-foreground">{s.selfBelief}</td>
+                    <td className="px-3 py-2.5 text-foreground">
+                      {top ? `${REFLECTION_STALL_LABELS[top[0] as keyof typeof REFLECTION_STALL_LABELS]} (${top[1]})` : "None"}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+      <div className="h-5" />
+    </section>
   );
 }

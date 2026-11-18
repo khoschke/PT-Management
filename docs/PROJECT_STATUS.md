@@ -98,6 +98,7 @@ that said "applied" about a migration nobody had run.
 | `0020_unverified_lead_source.sql` | `lead_source` value `unverified`; goals check rewritten to `lead_source <> 'form' or ...` | Applied 18 Nov 2026 via the Supabase MCP, **before** PR #49 merged (the new Add lead form can save `unverified`, which fails without it; the old code is unaffected). Verified: `lead_source` is form, gymmaster_sweep, unverified; the goals check reads `lead_source <> 'form' or ...`; all 18 leads intact (15 form, 3 sweep, to be re-sorted by hand). |
 | `0021_own_leads.sql` | `lead_source` value `own`; `lead_found_via` enum; `leads.found_via` and `found_via_other`; `add_own_lead()` security definer function (trainers only, duplicate check on the last nine phone digits) | Applied 18 Nov 2026 via the Supabase MCP, before the item 8 PR merged. Additive: the old code never calls it. Tested first on a throwaway database (own and unverified-list saves, duplicates blocked, staff and anon refused). |
 | `0022_follow_ups.sql` | `lead_status` values Said no and Agreed to check-in; `lead_closed_reason`; follow-up columns on `leads`; `lead_reopens`; trigger `leads_apply_follow_up_rules`; functions `complete_follow_up`, `close_expired_leads`, `reopen_timer_close`; `record_status_history` stamps first contact on the two new statuses | Applied 18 Nov 2026 via the Supabase MCP, before the item 11 PR merged. Tested first on a throwaway database (every path in `docs/spec-item-11-follow-ups.md`). Safe with the old code: it never uses the new statuses, and the trigger only adds a schedule when a lead goes to Contacted. |
+| `0023_post_chat_reflections.sql` | `post_chat_reflections` (one per lead; skipped rows stop the prompt repeating); RLS: a trainer reads and adds only on their own leads, nobody edits, the manager reads all and deletes | Applied 18 Nov 2026 via the Supabase MCP, before the PR merged. Additive: the old code never reads it. Tested first on a throwaway database (own-lead insert, another trainer blocked, no edits, manager reads all, anon denied). |
 
 **The drift is closed and the hardening is deployed.** `0006` had never been
 applied despite this doc claiming it was, which left `/admin/compliance` and
@@ -123,7 +124,7 @@ have failed on a fresh setup. GymMaster keeps `0007/0008` untouched. `0010`, `00
 and `0012` are the trainer self-profile work; `0013` and `0014` are the staff
 development pathway, and `0015` is `contract_document_type`, merged via
 PR #27. `0016` is `stamp_first_contacted` and `0017` is `setup_checklist`.
-Anything new starts at **0023**.
+Anything new starts at **0024**.
 
 **Work out the next number from disk and from every branch, not from this
 line.** It said "starts at 0016" for a month after `0016` was taken, and a
@@ -475,6 +476,7 @@ anyway because `0004_trainer_am_pm.sql` merged with the availability work.
 | 0020 | `unverified_lead_source` | Third lead source (Part 7 amendments item 7, PR #49). **Applied to live — verified 18 Nov 2026.** Safe to re-run |
 | 0021 | `own_leads` | Trainers add their own leads (Part 7 amendments item 8). **Applied to live — verified 18 Nov 2026.** Safe to re-run |
 | 0022 | `follow_ups` | 2-2-2 reminders and the 48-hour clock on a no (Part 7 amendments item 11). **Applied to live — verified 18 Nov 2026.** Safe to re-run |
+| 0023 | `post_chat_reflections` | Post-chat reflections (Part 7 amendments item 18). **Applied to live — verified 18 Nov 2026.** Safe to re-run |
 
 Merge in that order and Supabase stays in step. GymMaster is deliberately in the
 middle rather than last: its numbers were already written and pushed, and moving
@@ -533,6 +535,14 @@ recorded against its item. **The portal side of Part 7 is done and live**
   adds a dated "Communication ended" note; the PT Manager's Reopen for timer
   closes only. The rules are enforced in the trigger
   `leads_apply_follow_up_rules`, not just the app.
+- **Post-chat reflections (`0023`, Karl, 18 Nov 2026):** when a lead moves on
+  from Attended, the allocated trainer gets an optional prompt at the top of
+  the lead panel: how it went, where it stalled, which certainty was missing,
+  and what they'd do differently, typed or spoken (the browser's own speech
+  recognition; only text is stored, never audio). Skip stops it asking again.
+  The PT Manager reads each one on the lead and sees per-trainer patterns on
+  `/admin/metrics`. Watch the skip rate: if most are skipped, the prompt is too
+  long or comes at the wrong moment.
 - **Masters:** the two per-part Part 7 masters are rebuilt and uploaded beside
   the originals as "(updated 18 Nov 2026)" copies for Karl to check and swap
   in (tooling and method: `tools/workbook-masters/`).

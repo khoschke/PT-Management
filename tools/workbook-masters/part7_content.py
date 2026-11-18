@@ -230,10 +230,10 @@ A(("S", "“Totally fine. Mind if I check in down the track, or would you rather
 A(("P", "Set the lead to Said no, and record their answer on the lead. Only start the 2-2-2 follow-up if they say yes to a check-in. Anything else is a STOP, and the lead closes."))
 A(("P", "**When they're undecided** (“I need to think about it”), agree a specific time to reconnect before they leave, then note it on their lead in the portal so it doesn't rely on memory:"))
 A(("S", "“Can I text you Thursday to see where you've landed?”"))
-A(("P", "Run a two-minute reflection after every chat, win or lose. There's a one-page Post-Chat Reflection sheet at the end of this part you can print and reuse."))
+A(("P", "Run a two-minute reflection after every chat, win or lose. The portal asks you straight after: when a lead moves on from Attended, a short reflection appears at the top of the lead. Tap your answers, and type or tap Speak to talk through what you'd do differently. It's optional, and only you and the PT Manager see it. If you'd rather use paper, there's a one-page Post-Chat Reflection sheet at the end of this part you can print and reuse."))
 A(("KEEP", 169, 172))  # every sale is practice, manager note, spacer
 A(("KEEP", 172, 175))  # page-break paragraph, "Post-Chat Reflection" heading, intro
-A(("P", "No sales chat yet? Run it on your most recent consult instead."))
+A(("P", "These are the same questions the portal asks after each sales chat. No sales chat yet? Run it on your most recent consult instead."))
 A(("ACT", "What went well?"))
 A(("ACT", "Where did it stall, if it did?"))
 A(("ACT", "Which certainty was missing: emotional, logical or self-belief?"))

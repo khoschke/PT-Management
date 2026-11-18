@@ -313,3 +313,57 @@ export interface TrainerSetupChecklistItem {
   updated_by: string | null;
   updated_at: string;
 }
+
+// ---------------------------------------------------------------------------
+// Post-chat reflections (0023_post_chat_reflections.sql)
+// ---------------------------------------------------------------------------
+
+export type ReflectionFeel = "well" | "mixed" | "tough";
+export type ReflectionStall =
+  | "nowhere"
+  | "engage"
+  | "frame"
+  | "summarise"
+  | "plan"
+  | "recommend"
+  | "price"
+  | "frequency"
+  | "other";
+export type ReflectionCertainty = "none" | "emotional" | "logical" | "self_belief";
+
+export interface PostChatReflection {
+  id: string;
+  lead_id: string;
+  trainer_id: string | null;
+  created_at: string;
+  skipped: boolean;
+  feel: ReflectionFeel | null;
+  stalled_at: ReflectionStall | null;
+  missing_certainty: ReflectionCertainty | null;
+  next_time: string | null;
+}
+
+export const REFLECTION_FEEL_LABELS: Record<ReflectionFeel, string> = {
+  well: "Went well",
+  mixed: "Mixed",
+  tough: "Didn't land",
+};
+
+export const REFLECTION_STALL_LABELS: Record<ReflectionStall, string> = {
+  nowhere: "It didn't",
+  engage: "Engage",
+  frame: "Frame",
+  summarise: "Summarise",
+  plan: "Plan",
+  recommend: "Recommend",
+  price: "The price",
+  frequency: "Twice a week",
+  other: "Somewhere else",
+};
+
+export const REFLECTION_CERTAINTY_LABELS: Record<ReflectionCertainty, string> = {
+  none: "None, all three were there",
+  emotional: "Emotional",
+  logical: "Logical",
+  self_belief: "Self-belief",
+};

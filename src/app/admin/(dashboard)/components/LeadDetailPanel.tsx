@@ -17,6 +17,7 @@ import { SourceBadge, StatusBadge } from "./Badges";
 import ClockPill from "./ClockPill";
 import FollowUpPill from "./FollowUpPill";
 import FollowUpSection from "./FollowUpSection";
+import PostChatReflection, { hadSalesChat } from "./PostChatReflection";
 import ConfirmCloseDialog, { type CloseReason } from "./ConfirmCloseDialog";
 import { allocateLead, closeLeadNotInterested, updateLeadSource, updateLeadStatus, updateLeadNotes, logLeadContact, softDeleteLead, hardDeleteLead } from "../actions";
 import type { LeadRow } from "../page";
@@ -167,6 +168,18 @@ export default function LeadDetailPanel({
 
         <div className="flex flex-col gap-7 px-6 py-6">
           {error && <div className="rounded-xl bg-red-50 px-3.5 py-2.5 text-sm text-red-700">{error}</div>}
+
+          {/* Offered first, as soon as the lead has moved on from a sales chat. */}
+          {lead.status !== "Attended" && hadSalesChat(lead.status_history ?? []) && (
+            <PostChatReflection
+              leadId={lead.id}
+              leadName={lead.name}
+              reflection={lead.post_chat_reflections?.[0] ?? null}
+              canAnswer={!isManager && !!lead.allocated_trainer_id}
+              isPending={isPending}
+              runAction={runAction}
+            />
+          )}
 
           {/* Submitted details */}
           <section>

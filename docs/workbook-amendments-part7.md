@@ -401,6 +401,8 @@ Once built, update item 7's rewrite and the Part 6 "Tracking marketing performan
 - **Make the reflection a standing habit in the text**, not a once-off activity: "Run these four questions after every sales chat. It takes two minutes."
 - **Portal form: later, and small.** Build it only after items 8 and 11, because those change how leads and statuses work and the form would hang off them. When it's built, make it optional and three taps, not four essays: which certainty was missing (emotional, logical, self-belief), where it stalled (a picklist), and one line on what to do differently. A compulsory form after every chat gets filled with "all good" by week three. A short one gives the PT Manager real patterns to coach on in the fortnightly sessions.
 
+**Built 18 Nov 2026 (Karl asked, with voice): migration `0023_post_chat_reflections.sql`.** An optional prompt at the top of the lead panel as soon as a lead moves on from Attended: three quick picks plus "what would you do differently", typed or spoken (Speak button, phone speech recognition, text only, no audio stored). Skip stops it asking again. Saved on the lead; the trainer sees their own, the PT Manager sees all, plus per-trainer patterns on `/admin/metrics`. Part 7's closing section and the masters' Post-Chat Reflection page now point to it; the printable sheet stays for anyone who prefers paper.
+
 **Portal idea (optional, for Karl to decide):** a short post-chat reflection form attached to each lead in the portal (what went well, where it stalled, which certainty was missing, what to do differently). Useful for the PT's own learning and for PT Manager coaching in the fortnightly development sessions.
 
 ## Done
