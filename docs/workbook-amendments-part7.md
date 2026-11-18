@@ -29,7 +29,7 @@ Standing reminder: a change goes to the per-part sources and both combined maste
 - `Part 7 - PT Manager Cheat Sheet (updated 18 Nov 2026).docx` in "02 Source - Manager Cheat Sheets"
 - `Part 7 - PT Workbook (updated 18 Nov 2026).docx` in "01 Source - PT Workbook"
 
-Untouched sections keep the master's own wording; changed sections use the new portal wording in the master's style. The document title line ("Fitaz Gym Personal Trainer Onboarding") is left for the whole-workbook rename (item 9). Tooling: `tools/workbook-masters/`. **Still to do:** the two combined masters (`Fitaz Gym PT Onboarding Workbook (Full).docx` and `... PT Manager Cheat Sheets (Full).docx`), then the PDFs and `.md`.
+Untouched sections keep the master's own wording; changed sections use the new portal wording in the master's style. The document title line ("Fitaz Gym Personal Trainer Onboarding") is left for the whole-workbook rename (item 9). Tooling: `tools/workbook-masters/`. **Combined masters, PDFs and `.md`: deferred (Karl, 18 Nov 2026).** Karl will replace each part's section in both combined masters and regenerate the full PDFs and `.md` once every part of the workbook has been through his amendment pass, not part by part.
 
 **Masters:** the Drive connector can open the .docx masters but can't edit them, so the per-part sources, combined masters, PDFs and .md still need these changes made by hand. The portal text in `part7.ts` is the version to copy from.
 

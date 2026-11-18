@@ -535,8 +535,15 @@ recorded against its item. **The portal side of Part 7 is done and live**
   `leads_apply_follow_up_rules`, not just the app.
 - **Masters:** the two per-part Part 7 masters are rebuilt and uploaded beside
   the originals as "(updated 18 Nov 2026)" copies for Karl to check and swap
-  in (tooling and method: `tools/workbook-masters/`). **Still to do:** the two
-  combined masters, then the PDFs and `.md`.
+  in (tooling and method: `tools/workbook-masters/`).
+- **Combined masters, PDFs and `.md`: deliberately deferred (Karl, 18 Nov
+  2026).** Karl is working through the workbook part by part and amending each
+  as he goes. **Once every part has been through that pass**, he will replace
+  each part's section in both combined masters (`Fitaz Gym PT Onboarding
+  Workbook (Full).docx` and `... PT Manager Cheat Sheets (Full).docx`) and
+  regenerate the full PDFs and `.md` in one go. Until then the combined masters
+  are expected to lag the per-part sources: don't treat that as drift, and
+  don't regenerate them part by part.
 - **Whole-workbook items, for their own thread:** 1 (em dashes in the other
   parts and the masters), 2 (avatar line), 3 (tracker copy link), 4 ("Fitaz"
   to "Fitaz Gym"), and the rest of 9 (the "PT Workbook" rename is done in the
