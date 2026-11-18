@@ -21,6 +21,7 @@ import PostChatReflection, { hadSalesChat } from "./PostChatReflection";
 import ConfirmCloseDialog, { type CloseReason } from "./ConfirmCloseDialog";
 import { allocateLead, closeLeadNotInterested, updateLeadSource, updateLeadStatus, updateLeadNotes, logLeadContact, softDeleteLead, hardDeleteLead } from "../actions";
 import type { LeadRow } from "../page";
+import { reflectionOf } from "@/lib/reflections";
 
 function formatDate(value: string | null) {
   if (!value) return "Not provided";
@@ -174,7 +175,7 @@ export default function LeadDetailPanel({
             <PostChatReflection
               leadId={lead.id}
               leadName={lead.name}
-              reflection={lead.post_chat_reflections?.[0] ?? null}
+              reflection={reflectionOf(lead)}
               canAnswer={!isManager && !!lead.allocated_trainer_id}
               isPending={isPending}
               runAction={runAction}

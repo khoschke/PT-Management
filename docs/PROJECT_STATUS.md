@@ -214,6 +214,12 @@ strength". Change it in that one file and it flows to both sides.
   filtered before any rule runs. Don't reason about availability from the field
   name; read `src/lib/allocation.ts`.
 
+- **A one-to-one embed comes back as an object, not a list.** PostgREST treats
+  a foreign key with a unique constraint as one-to-one, so
+  `post_chat_reflections(*)` on a lead returns one object. Reading it as an
+  array found nothing and made saved reflections look blank. Use
+  `reflectionOf()` (`src/lib/reflections.ts`); check the shape of any new embed
+  on a unique key.
 - **React resets a form after `<form action={...}>` runs.** On a server error
   (a duplicate, a typo) everything the user typed was wiped. The add-lead forms
   submit by hand through `useLeadForm`
@@ -540,8 +546,11 @@ recorded against its item. **The portal side of Part 7 is done and live**
 - **Post-chat reflections (`0023`, Karl, 18 Nov 2026):** when a lead moves on
   from Attended, the allocated trainer gets an optional prompt at the top of
   the lead panel: how it went, where it stalled, which certainty was missing,
-  and what they'd do differently, typed or spoken (the browser's own speech
-  recognition; only text is stored, never audio). Skip stops it asking again,
+  and what they'd do differently, typed or dictated with the keyboard's own
+  microphone (a browser Speak button was tried and dropped on 18 Nov 2026: the
+  browser's speech recognition was too inaccurate; a paid transcription
+  service is the upgrade path if PTs want it, with a privacy check first, as
+  the audio would include client details). Only text is stored. Skip stops it asking again,
   but the trainer can still add one later, and can edit a saved one (`0024`).
   The PT Manager reads each one on the lead and sees per-trainer patterns on
   `/admin/metrics`. Watch the skip rate: if most are skipped, the prompt is too

@@ -11,8 +11,10 @@ export interface LeadRow extends Lead {
   allocated_trainer: Pick<Trainer, "id" | "name"> | null;
   preferred_trainer: Pick<Trainer, "id" | "name"> | null;
   status_history: { old_status: string | null; new_status: string; changed_at: string }[];
-  // At most one (unique on lead_id). RLS limits a trainer to their own.
-  post_chat_reflections: PostChatReflection[];
+  // At most one (unique on lead_id), so PostgREST returns it as a single
+  // object, not a list. Use reflectionOf() rather than reading this directly.
+  // RLS limits a trainer to their own.
+  post_chat_reflections: PostChatReflection | PostChatReflection[] | null;
 }
 
 // Typed, so renaming a status breaks the build here instead of quietly dropping

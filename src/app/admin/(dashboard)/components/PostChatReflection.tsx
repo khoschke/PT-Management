@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   REFLECTION_CERTAINTY_LABELS,
   REFLECTION_FEEL_LABELS,
@@ -15,35 +15,13 @@ import { savePostChatReflection, skipPostChatReflection } from "../actions";
 // The post-chat reflection (Part 7 amendments, item 18; Karl, 18 Nov 2026).
 // Offered in the lead panel as soon as a lead moves on from Attended, so it's
 // asked while the chat is fresh. Optional: Skip saves a skipped row and it
-// isn't asked again. The last question can be spoken instead of typed, using
-// the phone's own speech recognition; only the text is saved, never audio.
+// isn't asked again, though the trainer can add one later or edit a saved one.
+// To talk instead of type, trainers use their keyboard's microphone: it's far
+// more accurate than the browser's own speech recognition, which was tried and
+// dropped (Karl, 18 Nov 2026). Only text is ever saved.
 
 type RunAction = (fn: () => Promise<{ ok: boolean; message?: string }>) => void;
 
-// The browser's speech recognition, which TypeScript's DOM types don't cover.
-interface SpeechResultEvent {
-  resultIndex: number;
-  results: ArrayLike<{ isFinal: boolean; 0: { transcript: string } }>;
-}
-interface Recognition {
-  lang: string;
-  continuous: boolean;
-  interimResults: boolean;
-  onresult: ((e: SpeechResultEvent) => void) | null;
-  onend: (() => void) | null;
-  onerror: (() => void) | null;
-  start: () => void;
-  stop: () => void;
-}
-type RecognitionCtor = new () => Recognition;
-
-const noopSubscribe = () => () => {};
-
-function getRecognition(): RecognitionCtor | null {
-  if (typeof window === "undefined") return null;
-  const w = window as unknown as { SpeechRecognition?: RecognitionCtor; webkitSpeechRecognition?: RecognitionCtor };
-  return w.SpeechRecognition ?? w.webkitSpeechRecognition ?? null;
-}
 
 const pill =
   "press cursor-pointer rounded-full bg-fill px-3 py-1.5 text-xs font-medium text-foreground transition has-[:checked]:bg-foreground has-[:checked]:text-white";
@@ -98,21 +76,9 @@ export default function PostChatReflection({
   const [nextTime, setNextTime] = useState("");
   const [editing, setEditing] = useState(false);
   const [justSaved, setJustSaved] = useState(false);
-  const [listening, setListening] = useState(false);
-  const [interim, setInterim] = useState("");
-  // False on the server, the real answer in the browser, so the first render
-  // matches and the Speak button appears once hydrated.
-  const speechSupported = useSyncExternalStore(
-    noopSubscribe,
-    () => !!getRecognition(),
-    () => false,
-  );
-  const recRef = useRef<Recognition | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
 
   const showForm = canAnswer && (!reflection || editing);
-
-  useEffect(() => () => recRef.current?.stop(), []);
 
   // The card sits at the top of the panel, often above where the trainer has
   // scrolled to change the status (Karl, 18 Nov 2026), so bring it into view
@@ -201,42 +167,6 @@ export default function PostChatReflection({
 
   if (!showForm) return null;
 
-  function toggleSpeech() {
-    if (listening) {
-      recRef.current?.stop();
-      return;
-    }
-    const Ctor = getRecognition();
-    if (!Ctor) return;
-    const rec = new Ctor();
-    rec.lang = "en-AU";
-    rec.continuous = true;
-    // Show words as they're heard, so the trainer can see it working and
-    // correct anything it got wrong.
-    rec.interimResults = true;
-    rec.onresult = (e) => {
-      let added = "";
-      let pending = "";
-      for (let i = e.resultIndex; i < e.results.length; i++) {
-        if (e.results[i].isFinal) added += e.results[i][0].transcript;
-        else pending += e.results[i][0].transcript;
-      }
-      setInterim(pending.trim());
-      if (added.trim()) setNextTime((t) => (t ? `${t.trimEnd()} ${added.trim()}` : added.trim()));
-    };
-    rec.onend = () => {
-      setListening(false);
-      setInterim("");
-    };
-    rec.onerror = () => {
-      setListening(false);
-      setInterim("");
-    };
-    recRef.current = rec;
-    rec.start();
-    setListening(true);
-  }
-
   return (
     <section ref={sectionRef} className="rounded-2xl bg-indigo-50 px-4 py-4 ring-1 ring-indigo-100">
       <h3 className="text-sm font-semibold text-foreground">
@@ -261,37 +191,15 @@ export default function PostChatReflection({
       <div className="mt-3">
         <div className="flex items-center justify-between gap-2">
           <span className="text-xs font-semibold text-foreground">What would you do differently next time?</span>
-          {speechSupported && (
-            <button
-              type="button"
-              onClick={toggleSpeech}
-              aria-pressed={listening}
-              className={`press flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold ${
-                listening ? "bg-red-600 text-white" : "bg-surface text-foreground ring-1 ring-black/10"
-              }`}
-            >
-              <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" aria-hidden>
-                <rect x="9" y="3" width="6" height="11" rx="3" />
-                <path d="M5 11a7 7 0 0 0 14 0M12 18v3" />
-              </svg>
-              {listening ? "Stop" : "Speak"}
-            </button>
-          )}
         </div>
         <textarea
           value={nextTime}
           onChange={(e) => setNextTime(e.target.value)}
           maxLength={2000}
           rows={3}
-          placeholder={speechSupported ? "Type, or tap Speak and talk it through." : "Type it, or use your keyboard's microphone to talk it through."}
+          placeholder="Type it, or tap the microphone on your keyboard and talk it through."
           className="mt-1.5 w-full rounded-xl border-none bg-surface px-3.5 py-2.5 text-sm text-foreground outline-none ring-1 ring-black/10 focus:ring-2 focus:ring-foreground"
         />
-        {listening && (
-          <p className="mt-1 text-xs text-red-700">
-            Listening{interim ? ": " : ". Tap Stop when you're done."}
-            {interim && <span className="italic text-secondary-label">{interim}</span>}
-          </p>
-        )}
       </div>
 
       <div className="mt-3 flex flex-wrap gap-2">
@@ -299,7 +207,6 @@ export default function PostChatReflection({
           type="button"
           disabled={isPending || !feel}
           onClick={() => {
-            recRef.current?.stop();
             runAction(async () => {
               const result = await savePostChatReflection(leadId, {
                 feel: feel as string,
