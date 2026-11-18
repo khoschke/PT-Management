@@ -555,6 +555,11 @@ recorded against its item. **The portal side of Part 7 is done and live**
   The PT Manager reads each one on the lead and sees per-trainer patterns on
   `/admin/metrics`. Watch the skip rate: if most are skipped, the prompt is too
   long or comes at the wrong moment.
+- **My numbers (18 Nov 2026):** trainers have their own Metrics tab
+  (`/admin/metrics`, nav "My numbers"), limited by RLS to their own leads and
+  reflections, with no team comparisons. The PT Manager's Metrics page has a
+  Trainer filter showing exactly what each trainer sees. Part 6's tracking
+  section points to it (its masters still need the line).
 - **Masters:** the two per-part Part 7 masters are rebuilt and uploaded beside
   the originals as "(updated 18 Nov 2026)" copies for Karl to check and swap
   in (tooling and method: `tools/workbook-masters/`).

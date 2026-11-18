@@ -167,6 +167,7 @@ export const part6: OnboardingPart = {
       body: [
         "If you don't measure it, you're guessing. Track new leads per week, consults booked and consult-to-client conversion, and where your leads came from. Avoid vanity numbers like follower counts. Set a baseline this month, a realistic target for next month, and review monthly.",
         "For where your leads came from, use your PT portal. When you find someone yourself, add them with **Add my own lead** and pick where you found them: the gym floor, a referral, social media, or something else. They sit on your lead board next to the leads the gym gives you, so over time you can see which channels actually bring people in.",
+        "Your **My numbers** tab in the portal does the counting for you: how many of your leads you contacted within 48 hours, booked, saw at their session and signed up, plus which of the channels you find leads through turn into clients. Use it to set your baseline this month and your target for next month. The comparison that matters is with your own last month, not with another trainer.",
       ],
       activities: [
         { key: "marketing-metrics-targets", prompt: "Pick 2-3 metrics to track and set a target for each from your current baseline.", multiline: true },

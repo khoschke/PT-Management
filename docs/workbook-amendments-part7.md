@@ -408,3 +408,14 @@ Once built, update item 7's rewrite and the Part 6 "Tracking marketing performan
 ## Done
 
 (nothing yet)
+
+## Added after the Part 7 pass
+
+### PT metrics tab, "My numbers" (built 18 Nov 2026, Karl asked)
+
+**Where:** the PT portal, plus Part 6 "Tracking marketing performance".
+
+- Trainers get a **My numbers** tab: the same Metrics page as the PT Manager's, limited by RLS to their own leads. Their 48-hour contact rate, booking, show and conversion rates (each with its count, so small numbers aren't misread), leads by type, leads they found by where, and their own reflection patterns in plain sentences. No leaderboard and no team averages, on purpose.
+- The PT Manager's Metrics page gets a **Trainer** filter, which shows exactly what that trainer sees.
+- Fix found while building it: the funnel now counts Said no and Agreed to check-in as contacted.
+- **Part 6 portal copy changed:** "Tracking marketing performance" points PTs to My numbers. **The Part 6 masters still need this line** when Karl reaches Part 6 in his part-by-part pass.
