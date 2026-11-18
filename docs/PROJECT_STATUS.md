@@ -17,7 +17,8 @@ leads/month. The full lead flow: `docs/pipeline-stage-definitions.md`.
 ## Live now
 
 - **Public form:** https://pt.fitazgym.com/pt-session
-- **Manager/trainer dashboard:** https://pt.fitazgym.com/admin
+- **Manager/trainer dashboard:** https://pt.fitazgym.com/admin (trainers also
+  have **My numbers** at `/admin/metrics`)
 - **PT Workbook** (was "PT onboarding", renamed in the nav and headings 18 Nov
   2026; the address is still `/onboarding`): https://pt.fitazgym.com/onboarding
 - The `pt-management-two.vercel.app` addresses still work and are what Vercel
@@ -453,7 +454,7 @@ the commit history.
 | `claude/availability-am-pm-model-yj1dby` | Trainer AM/PM availability | Merged. |
 | `claude/trainer-portal-handoff-doc-o0on8j` | Editable trainer pages (scoping) | Merged. Scoping note only; the build is the branch below. |
 | `claude/pt-onboarding-dashboard-9wwl17` | PT onboarding workbook | Merged and live. |
-| `claude/tender-gauss-hfm632` | Part 7 workbook rewrite; flagged, unverified and own lead types; 2-2-2 follow-ups and the 48-hour clock on a no | **Merged** (PRs #49, #51, #52, #53; migrations `0020` to `0022`). Still open in this thread: the Part 7 `.docx` masters. Details under Outstanding. |
+| `claude/tender-gauss-hfm632` | Part 7 workbook rewrite; flagged, unverified and own lead types; 2-2-2 follow-ups and the 48-hour clock on a no; post-chat reflections; My numbers; Part 6 pass | **Merged** (PRs #49, #51 to #55; migrations `0020` to `0024`). The Part 7 `.docx` masters are in Drive for Karl to swap in. Details under Outstanding. |
 | `claude/handoff-trainer-profiles-link-buudia` | Trainer profile links | Merged. |
 | `claude/project-pause-prevention-083n5y` | Supabase keep-alive cron | Merged and live. |
 
@@ -520,8 +521,17 @@ whole migration chain against a local Postgres 16.
 ### Part 7 workbook amendments (15 to 18 Nov 2026, branch `claude/tender-gauss-hfm632`)
 
 Karl's running list is `docs/workbook-amendments-part7.md`, with every decision
-recorded against its item. **The portal side of Part 7 is done and live**
-(PRs #49, #51, #52, #53).
+recorded against its item. **Everything below is merged and live** (PRs #49,
+#51, #52, #53, #54, #55; migrations `0020` to `0024`, all applied to live and
+verified). Karl tested each PR on its Vercel preview before merging.
+
+**In one paragraph, for the next session:** Part 7 of the workbook was
+rewritten around how leads now actually work. That meant building the portal
+to match: three lead types plus trainers' own leads, automated 2-2-2
+follow-ups with a 48-hour clock on a no, one confirmed way to close a lead as
+Not interested, an optional post-chat reflection, and a "My numbers" tab so
+each trainer sees their own funnel. Part 6 got its pass too. The Part 7 `.docx`
+masters are rebuilt in Drive; the combined masters wait for Karl's full pass.
 
 - **Workbook copy (`part6.ts`, `part7.ts`, `part8.ts`):** items 5, 6, 7, 10,
   12 to 18. Part 7 now opens with "How a lead moves through the portal", the
@@ -560,6 +570,23 @@ recorded against its item. **The portal side of Part 7 is done and live**
   reflections, with no team comparisons. The PT Manager's Metrics page has a
   Trainer filter showing exactly what each trainer sees. Part 6's tracking
   section points to it (its masters still need the line).
+- **Part 6 portal pass (PR #55):** "Tracking marketing performance" links to
+  each trainer's My numbers instead of the Client Journey Tracker, and says it
+  covers steps 1 to 7 of the journey map. All 27 em dashes rewritten (item 1),
+  the avatar line added (item 2), item 3 superseded. The Part 6 `.docx`
+  masters are untouched and pick this up in Karl's Part 6 pass. **Open
+  question:** steps 8 to 12 (onboarding to loyal client) aren't tracked in the
+  portal; decide whether the tracker stays as an optional tool for them or is
+  retired.
+- **Workbook links open in a new tab** (PR #55), so a trainer keeps their place
+  in the workbook. Only links to another workbook page stay in the same tab
+  (`src/app/onboarding/[part]/page.tsx`).
+- **Smaller portal changes from Karl's testing:** the add-lead forms show inline
+  errors, keep what was typed on an error and close only with the X
+  (`useLeadForm`); the dashboard header is solid and one line, with "PT
+  Workbook" in the nav; the lead panel header is solid; the grey "Contacted"
+  clock pill is hidden once first contact is made; the funnel counts Said no
+  and Agreed to check-in as contacted.
 - **Masters:** the two per-part Part 7 masters are rebuilt and uploaded beside
   the originals as "(updated 18 Nov 2026)" copies for Karl to check and swap
   in (tooling and method: `tools/workbook-masters/`).
@@ -571,11 +598,14 @@ recorded against its item. **The portal side of Part 7 is done and live**
   regenerate the full PDFs and `.md` in one go. Until then the combined masters
   are expected to lag the per-part sources: don't treat that as drift, and
   don't regenerate them part by part.
-- **Whole-workbook items, for their own thread:** 1 (em dashes in the other
-  parts and the masters), 2 (avatar line), 3 (tracker copy link), 4 ("Fitaz"
-  to "Fitaz Gym"), and the rest of 9 (the "PT Workbook" rename is done in the
-  nav and workbook headings; page titles, link paths with redirects and the
-  masters are not).
+- **Whole-workbook items, for their own thread:** 1 (em dashes: done in
+  Parts 6 and 7 and the workbook page text; Parts 1 to 5 and 8 to 10 and the
+  masters still have them), 4 ("Fitaz" to "Fitaz Gym": none left in Parts 6
+  and 7; the other parts and masters unchecked), and the rest of 9 (the "PT
+  Workbook" rename is done in the nav, the workbook header and the overview;
+  page titles elsewhere, the document title line in the masters, and link
+  paths with redirects are not). Items 2 and 3 are done (item 3 by the My
+  numbers link).
 - **Watch:**
   - Whether trainers actually press Done and record the permission answer. The
     timer closes are the signal: a run of them means the clock is being missed,
