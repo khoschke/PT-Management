@@ -309,35 +309,46 @@ export async function startFollowUps(leadId: string): Promise<ActionResult> {
   return { ok: true };
 }
 
-/** What happened with the permission question on a Said no lead. */
-export async function recordPermissionAnswer(
-  leadId: string,
-  answer: "yes" | "leave_it" | "asked_by_text",
-): Promise<ActionResult> {
+/** What happened with the permission question on a Said no lead. "Leave it"
+ *  goes through closeLeadNotInterested, so it gets the same confirm and note. */
+export async function recordPermissionAnswer(leadId: string, answer: "yes" | "asked_by_text"): Promise<ActionResult> {
   const supabase = await createClient();
   const update =
     answer === "yes"
       ? { status: "Agreed to check-in" as LeadStatus }
-      : answer === "leave_it"
-        ? { status: "Not interested" as LeadStatus, closed_reason: "declined", permission_asked_at: new Date().toISOString() }
-        : { permission_asked_at: new Date().toISOString() };
+      : { permission_asked_at: new Date().toISOString() };
   const { error } = await supabase.from("leads").update(update).eq("id", leadId).eq("status", "Said no");
   if (error) return { ok: false, message: dbMessage(error, "Couldn't save that. Please try again.") };
   revalidatePath("/admin");
   return { ok: true };
 }
 
-/** The prospect ended it: they replied STOP, or asked to be left alone. */
-export async function endCommunication(
+const CLOSE_NOTE_REASONS = {
+  ended_by_trainer: "they said no, or asked to be left alone",
+  replied_stop: "they replied STOP",
+  declined: "they said leave it there when asked about a check-in",
+} as const;
+
+/** Every close as Not interested (status dropdown, End communication, "They
+ *  said leave it there"), confirmed in a dialog first. Records the reason and
+ *  adds a dated note to the top of the lead's notes. */
+export async function closeLeadNotInterested(
   leadId: string,
-  reason: "replied_stop" | "ended_by_trainer",
+  reason: keyof typeof CLOSE_NOTE_REASONS,
 ): Promise<ActionResult> {
   const supabase = await createClient();
-  const { error } = await supabase
-    .from("leads")
-    .update({ status: "Not interested" as LeadStatus, closed_reason: reason })
-    .eq("id", leadId);
-  if (error) return { ok: false, message: dbMessage(error, "Couldn't end communication. Please try again.") };
+  const { data: lead } = await supabase.from("leads").select("notes, status").eq("id", leadId).single();
+  if (!lead) return { ok: false, message: "Couldn't find that lead." };
+
+  const date = new Date().toLocaleDateString("en-AU", { timeZone: "Australia/Brisbane", day: "numeric", month: "short", year: "numeric" });
+  const note = `Communication ended ${date}: ${CLOSE_NOTE_REASONS[reason]}. Contact the PT Manager if this is a mistake.`;
+  const notes = lead.notes ? `${note}\n\n${lead.notes}` : note;
+
+  const update: Record<string, unknown> = { status: "Not interested", closed_reason: reason, notes };
+  if (reason === "declined") update.permission_asked_at = new Date().toISOString();
+
+  const { error } = await supabase.from("leads").update(update).eq("id", leadId);
+  if (error) return { ok: false, message: dbMessage(error, "Couldn't close that lead. Please try again.") };
   revalidatePath("/admin");
   return { ok: true };
 }

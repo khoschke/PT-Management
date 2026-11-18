@@ -3,13 +3,8 @@
 import { useState } from "react";
 import { FOLLOW_UP_LABELS, formatShortDay, getFollowUpState } from "@/lib/followUps";
 import { CLOSED_LEAD_STATUSES, CLOSED_REASON_LABELS, type Lead } from "@/lib/types";
-import {
-  completeFollowUp,
-  endCommunication,
-  recordPermissionAnswer,
-  reopenTimerClose,
-  startFollowUps,
-} from "../actions";
+import { completeFollowUp, recordPermissionAnswer, reopenTimerClose, startFollowUps } from "../actions";
+import type { CloseReason } from "./ConfirmCloseDialog";
 
 // The lead panel's follow-up block (Part 7 amendments, item 11): the 2-2-2
 // touch that's due, the permission question on a no and its 48-hour clock,
@@ -31,11 +26,14 @@ export default function FollowUpSection({
   isManager,
   isPending,
   runAction,
+  onRequestClose,
 }: {
   lead: Lead;
   isManager: boolean;
   isPending: boolean;
   runAction: RunAction;
+  /** Opens the confirm dialog; every close as Not interested goes through it. */
+  onRequestClose: (preset: CloseReason | null) => void;
 }) {
   const [reopenTo, setReopenTo] = useState<"Agreed to check-in" | "Not interested">("Agreed to check-in");
   const [reopenReason, setReopenReason] = useState("");
@@ -101,6 +99,9 @@ export default function FollowUpSection({
           {lead.closed_at ? `, ${formatShortDay(new Date(lead.closed_at))}` : ""}.
           {lead.status === "Not interested" ? " Don't contact them about PT again." : ""}
         </p>
+        {!isManager && (
+          <p className="mt-1.5 text-xs text-secondary-label">If this was a mistake, contact the PT Manager.</p>
+        )}
       </section>
     );
   }
@@ -112,28 +113,10 @@ export default function FollowUpSection({
         Use this when they&apos;ve ended it. It closes the lead as Not interested and can&apos;t be undone.
       </p>
       <div className="mt-2 flex flex-wrap gap-2">
-        <button
-          type="button"
-          disabled={isPending}
-          onClick={() => {
-            if (window.confirm(`Record that ${lead.name} replied STOP? They won't be contacted about PT again.`)) {
-              runAction(() => endCommunication(lead.id, "replied_stop"));
-            }
-          }}
-          className={secondary}
-        >
+        <button type="button" disabled={isPending} onClick={() => onRequestClose("replied_stop")} className={secondary}>
           They replied STOP
         </button>
-        <button
-          type="button"
-          disabled={isPending}
-          onClick={() => {
-            if (window.confirm(`Record that ${lead.name} asked you to leave it there? They won't be contacted about PT again.`)) {
-              runAction(() => endCommunication(lead.id, "ended_by_trainer"));
-            }
-          }}
-          className={secondary}
-        >
+        <button type="button" disabled={isPending} onClick={() => onRequestClose("ended_by_trainer")} className={secondary}>
           They asked me to leave it
         </button>
       </div>
@@ -156,7 +139,7 @@ export default function FollowUpSection({
           <button type="button" disabled={isPending} onClick={() => runAction(() => recordPermissionAnswer(lead.id, "yes"))} className={primary}>
             They said yes to a check-in
           </button>
-          <button type="button" disabled={isPending} onClick={() => runAction(() => recordPermissionAnswer(lead.id, "leave_it"))} className={secondary}>
+          <button type="button" disabled={isPending} onClick={() => onRequestClose("declined")} className={secondary}>
             They said leave it there
           </button>
           <button type="button" disabled={isPending} onClick={() => runAction(() => recordPermissionAnswer(lead.id, "asked_by_text"))} className={secondary}>
@@ -176,7 +159,7 @@ export default function FollowUpSection({
           <button type="button" disabled={isPending} onClick={() => runAction(() => recordPermissionAnswer(lead.id, "yes"))} className={primary}>
             They said yes to a check-in
           </button>
-          <button type="button" disabled={isPending} onClick={() => runAction(() => recordPermissionAnswer(lead.id, "leave_it"))} className={secondary}>
+          <button type="button" disabled={isPending} onClick={() => onRequestClose("declined")} className={secondary}>
             They said leave it there
           </button>
         </div>
