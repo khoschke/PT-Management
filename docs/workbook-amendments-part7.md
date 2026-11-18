@@ -419,3 +419,14 @@ Once built, update item 7's rewrite and the Part 6 "Tracking marketing performan
 - The PT Manager's Metrics page gets a **Trainer** filter, which shows exactly what that trainer sees.
 - Fix found while building it: the funnel now counts Said no and Agreed to check-in as contacted.
 - **Part 6 portal copy changed:** "Tracking marketing performance" points PTs to My numbers. **The Part 6 masters still need this line** when Karl reaches Part 6 in his part-by-part pass.
+
+### Part 6 portal pass (18 Nov 2026, Karl asked once My numbers was confirmed)
+
+**Where:** `src/lib/onboarding/parts/part6.ts`. Portal only; the Part 6 masters pick these up in Karl's Part 6 pass.
+
+- **Item 1, Part 6:** all 27 em dashes rewritten (commas, colons, full stops). The 3Ps labels and the channel list now use a bold lead-in with a colon. Activity keys unchanged.
+- **Item 2:** the avatar section now says the avatar won't describe every client, and is the one person you picture when you write.
+- **Item 3: superseded.** The Client Journey Tracker link is replaced with a link to the trainer's **My numbers** tab (`/admin/metrics`), so the copy-link change isn't needed in the portal. Part 6 now says My numbers covers steps 1 to 7 of the journey map (the lead side); steps 8 to 12 (onboarding to loyal client) aren't tracked in the portal.
+- **Manager notes:** the tracking note and the journey map note point the PT Manager to the Trainer filter on Metrics instead of the tracker's dashboard.
+- **Item 4:** no bare "Fitaz" in Part 6.
+- Worth deciding later: whether the Client Journey Tracker stays as an optional tool for steps 8 to 12, or is retired. The example sheet still exists in Drive, view-only.
