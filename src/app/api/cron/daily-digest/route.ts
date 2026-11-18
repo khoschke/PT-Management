@@ -33,9 +33,30 @@ export async function GET(request: Request) {
   const now = new Date();
   const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
-  const overnight = leads
-    .filter((lead) => new Date(lead.created_at) >= oneDayAgo)
-    .map((lead) => ({ name: lead.name, hoursRemaining: 0, source: lead.lead_source }));
+  const newLeads = leads.filter((lead) => new Date(lead.created_at) >= oneDayAgo);
+  const overnight = newLeads.map((lead) => ({ name: lead.name, hoursRemaining: 0, source: lead.lead_source }));
+
+  // Leads trainers added themselves overnight, counted per trainer (item 8).
+  // found_via is only ever set by add_own_lead(), so it marks them whichever
+  // source they saved as (own, or unverified from the unverified list).
+  const ownByTrainer = new Map<string, number>();
+  for (const lead of newLeads) {
+    if (lead.found_via && lead.allocated_trainer_id) {
+      ownByTrainer.set(lead.allocated_trainer_id, (ownByTrainer.get(lead.allocated_trainer_id) ?? 0) + 1);
+    }
+  }
+  let ownLeadsAdded: { trainerName: string; count: number }[] = [];
+  if (ownByTrainer.size > 0) {
+    const { data: trainers } = await supabase
+      .from("trainers")
+      .select("id, name")
+      .in("id", [...ownByTrainer.keys()])
+      .returns<{ id: string; name: string }[]>();
+    ownLeadsAdded = [...ownByTrainer.entries()].map(([id, count]) => ({
+      trainerName: trainers?.find((t) => t.id === id)?.name.split(" ")[0] ?? "A trainer",
+      count,
+    }));
+  }
 
   const uncontacted = leads.filter((lead) => !lead.first_contacted_at);
 
@@ -57,7 +78,7 @@ export async function GET(request: Request) {
     .filter((l) => l.clock.band === "red")
     .map((l) => ({ name: l.name, source: l.source, hoursRemaining: l.clock.hoursRemaining }));
 
-  await sendManagerDailyDigest(process.env.PT_MANAGER_EMAIL, overnight, approachingBreach, breached);
+  await sendManagerDailyDigest(process.env.PT_MANAGER_EMAIL, overnight, approachingBreach, breached, ownLeadsAdded);
 
   return NextResponse.json({
     sent: true,

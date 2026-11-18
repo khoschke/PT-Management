@@ -9,6 +9,7 @@ import {
   LEAD_STATUSES,
   MANUAL_LEAD_SOURCES,
   STATUS_DEFINITIONS,
+  foundViaLabel,
   type LeadStatus,
   type Trainer,
 } from "@/lib/types";
@@ -162,6 +163,7 @@ export default function LeadDetailPanel({
                 value={lead.time_preference ? PREFERENCE_LABELS[lead.time_preference] : "No preference stated"}
               />
               <Detail label="Trainer requested" value={lead.preferred_trainer?.name ?? "No preference stated"} />
+              {foundViaLabel(lead) && <Detail label="Found via" value={foundViaLabel(lead) as string} />}
             </dl>
 
             <div className="mt-4">
@@ -250,7 +252,7 @@ export default function LeadDetailPanel({
 
           {/* Lead type: hand-added leads only. Set it before allocating, because the
               allocation email tells the trainer what kind of lead it is. */}
-          {isManager && lead.lead_source !== "form" && (
+          {isManager && (MANUAL_LEAD_SOURCES as readonly string[]).includes(lead.lead_source) && (
             <section className="border-t border-black/5 pt-6">
               <h3 className="text-xs font-semibold uppercase tracking-wide text-secondary-label">Lead type</h3>
               <select

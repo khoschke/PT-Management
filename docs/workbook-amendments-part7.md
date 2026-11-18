@@ -174,6 +174,8 @@ The activity question no longer fits either. Each PT's own list already lives in
 
 Once built, update item 7's rewrite and the Part 6 "Tracking marketing performance" section to point PTs to the portal for their own leads too.
 
+**Built 18 Nov 2026 (branch `claude/tender-gauss-hfm632`, migration `0021_own_leads.sql`, not yet applied).** As designed above. The Part 7 lead process section and the Part 6 "Tracking marketing performance" section now point PTs to Add my own lead. Tested on a throwaway database: own and unverified-list saves, the 48-hour clock, duplicates blocked (including a +61 number and a lead who had opted out), "Other" needs a description, staff and anon refused.
+
 ### 9. Rename "PT Onboarding" to "PT Workbook" (logged 15 Nov 2026, updated same day)
 
 **Where:** Every visible title and label: PT portal headings, buttons, navigation and page titles, plus the titles inside the workbook documents. PT portal and masters.

@@ -1,17 +1,14 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
-import { useFormStatus } from "react-dom";
 import { GOAL_OPTIONS } from "@/lib/goals";
 import { LEAD_SOURCE_LABELS, MANUAL_LEAD_SOURCES, type Trainer } from "@/lib/types";
 import { addSweepLead } from "../actions";
-import { initialAddSweepLeadState } from "../state";
+import { blank, useLeadForm } from "./useLeadForm";
 
 const inputClass =
   "mt-1.5 w-full rounded-xl border-none bg-fill px-3.5 py-2.5 text-sm text-foreground outline-none ring-1 ring-transparent transition focus:ring-2 focus:ring-foreground";
 
-function SubmitButton() {
-  const { pending } = useFormStatus();
+function SubmitButton({ pending }: { pending: boolean }) {
   return (
     <button
       type="submit"
@@ -32,21 +29,24 @@ export default function AddSweepLeadModal({
   onClose: () => void;
   onSaved: () => void;
 }) {
-  const [state, formAction] = useActionState(addSweepLead, initialAddSweepLeadState);
-  const errors = state.fieldErrors ?? {};
-
-  useEffect(() => {
-    if (state.status === "success") onSaved();
-  }, [state.status, onSaved]);
+  const { formRef, onSubmit, errors, message, isPending } = useLeadForm(addSweepLead, onSaved, (fd) => {
+    const e: Record<string, string> = {};
+    if (!fd.get("lead_source")) e.lead_source = "Choose flagged or unverified";
+    if (blank(fd, "name")) e.name = "Add their name";
+    if (blank(fd, "phone")) e.phone = "Add their phone number";
+    return e;
+  });
 
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 p-4 backdrop-blur-[2px] animate-[fadeIn_180ms_ease-out]"
-      onClick={onClose}
     >
+      {/* No click-outside close on purpose: a stray click or an autofill popup
+          shouldn't throw away a half-typed lead. The X is the only way out. */}
       <div
+        role="dialog"
+        aria-modal="true"
         className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-3xl bg-surface p-6 shadow-2xl animate-[scaleIn_200ms_cubic-bezier(0.2,0.8,0.2,1)] sm:p-7"
-        onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start justify-between">
           <div>
@@ -65,12 +65,14 @@ export default function AddSweepLeadModal({
           </button>
         </div>
 
-        <form action={formAction} className="mt-5 flex flex-col gap-4">
-          {state.status === "error" && state.message && (
-            <div className="rounded-xl bg-red-50 px-3.5 py-2.5 text-sm text-red-700">{state.message}</div>
+        <form ref={formRef} onSubmit={onSubmit} noValidate className="mt-5 flex flex-col gap-4">
+          {message && (
+            <div data-form-message role="alert" className="rounded-xl bg-red-50 px-3.5 py-2.5 text-sm text-red-700">
+              {message}
+            </div>
           )}
 
-          <fieldset>
+          <fieldset data-field="lead_source">
             <legend className="text-sm font-semibold text-foreground">Lead type</legend>
             <div className="mt-1.5 grid gap-2 sm:grid-cols-2">
               {MANUAL_LEAD_SOURCES.map((source) => (
@@ -78,7 +80,7 @@ export default function AddSweepLeadModal({
                   key={source}
                   className="press cursor-pointer rounded-2xl bg-fill px-3.5 py-3 ring-1 ring-transparent transition has-[:checked]:ring-2 has-[:checked]:ring-foreground"
                 >
-                  <input type="radio" name="lead_source" value={source} required className="sr-only" />
+                  <input type="radio" name="lead_source" value={source} className="sr-only" />
                   <span className="block text-sm font-semibold text-foreground">{LEAD_SOURCE_LABELS[source].label}</span>
                   <span className="mt-0.5 block text-xs text-secondary-label">{LEAD_SOURCE_LABELS[source].hint}</span>
                 </label>
@@ -87,20 +89,20 @@ export default function AddSweepLeadModal({
             {errors.lead_source && <p className="mt-1 text-xs text-red-600">{errors.lead_source}</p>}
           </fieldset>
 
-          <div>
+          <div data-field="name">
             <label className="text-sm font-semibold text-foreground">Name</label>
-            <input name="name" type="text" required autoFocus className={inputClass} />
+            <input name="name" type="text" className={inputClass} />
             {errors.name && <p className="mt-1 text-xs text-red-600">{errors.name}</p>}
           </div>
 
-          <div>
+          <div data-field="phone">
             <label className="text-sm font-semibold text-foreground">Phone</label>
-            <input name="phone" type="tel" required placeholder="04XX XXX XXX" className={inputClass} />
+            <input name="phone" type="tel" placeholder="04XX XXX XXX" className={inputClass} />
             {errors.phone && <p className="mt-1 text-xs text-red-600">{errors.phone}</p>}
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <div>
+            <div data-field="email">
               <label className="text-sm font-semibold text-foreground">Email</label>
               <input name="email" type="email" className={inputClass} />
               {errors.email && <p className="mt-1 text-xs text-red-600">{errors.email}</p>}
@@ -169,7 +171,7 @@ export default function AddSweepLeadModal({
             <input name="contact_preference" type="text" className={inputClass} />
           </div>
 
-          <SubmitButton />
+          <SubmitButton pending={isPending} />
         </form>
       </div>
     </div>

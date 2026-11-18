@@ -9,7 +9,9 @@ export function SourceBadge({ source }: { source: LeadSource }) {
       ? "bg-foreground text-white"
       : source === "unverified"
         ? "bg-fill text-secondary-label ring-1 ring-inset ring-black/10"
-        : "bg-fill text-foreground";
+        : source === "own"
+          ? "bg-surface text-foreground ring-1 ring-inset ring-foreground/40"
+          : "bg-fill text-foreground";
   return (
     <span className={`${badgeBase} ${style}`} title={hint}>
       {label}

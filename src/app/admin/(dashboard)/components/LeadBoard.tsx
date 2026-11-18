@@ -15,6 +15,7 @@ import { leadsToCsv, downloadCsv } from "@/lib/csv";
 import LeadCard from "./LeadCard";
 import LeadDetailPanel from "./LeadDetailPanel";
 import AddSweepLeadModal from "./AddSweepLeadModal";
+import AddOwnLeadModal from "./AddOwnLeadModal";
 import type { LeadRow } from "../page";
 
 interface Filters {
@@ -48,6 +49,7 @@ export default function LeadBoard({
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
   const [showAddSweepLead, setShowAddSweepLead] = useState(false);
+  const [showAddOwnLead, setShowAddOwnLead] = useState(false);
 
   const filteredLeads = useMemo(() => {
     return leads.filter((lead) => {
@@ -103,6 +105,15 @@ export default function LeadBoard({
               className="press rounded-full bg-foreground px-4 py-2 text-sm font-semibold text-white outline-none transition focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               Add lead
+            </button>
+          )}
+          {!isManager && (
+            <button
+              type="button"
+              onClick={() => setShowAddOwnLead(true)}
+              className="press rounded-full bg-foreground px-4 py-2 text-sm font-semibold text-white outline-none transition focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            >
+              Add my own lead
             </button>
           )}
         </div>
@@ -228,6 +239,15 @@ export default function LeadBoard({
           onClose={() => setShowAddSweepLead(false)}
           onSaved={() => {
             setShowAddSweepLead(false);
+            router.refresh();
+          }}
+        />
+      )}
+      {showAddOwnLead && (
+        <AddOwnLeadModal
+          onClose={() => setShowAddOwnLead(false)}
+          onSaved={() => {
+            setShowAddOwnLead(false);
             router.refresh();
           }}
         />

@@ -70,3 +70,21 @@ export const sweepLeadSchema = leadFormSchema
   });
 
 export type SweepLeadInput = z.infer<typeof sweepLeadSchema>;
+
+// A trainer adding a lead they found themselves (item 8). The database
+// function add_own_lead() checks all of this again, plus duplicates.
+export const ownLeadSchema = z
+  .object({
+    name: leadFormSchema.shape.name,
+    phone: leadFormSchema.shape.phone,
+    email: sweepLeadSchema.shape.email,
+    goals: z.array(z.enum(GOAL_CODES)).optional().default([]),
+    found_via: z.enum(["gym_floor", "referral", "social_media", "unverified_list", "other"], {
+      message: "Choose where you found them",
+    }),
+    found_via_other: z.string().trim().max(200).optional(),
+  })
+  .refine((v) => v.found_via !== "other" || (v.found_via_other ?? "").length > 0, {
+    message: "Say where you found them",
+    path: ["found_via_other"],
+  });

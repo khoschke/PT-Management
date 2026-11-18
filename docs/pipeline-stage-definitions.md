@@ -84,6 +84,13 @@ The terms the workbook uses for where a lead comes from (Part 7 amendments,
   the lead panel's "Lead type" control. Set it before allocating: the trainer's
   allocation email says which type it is.
 
+- **Own lead:** found and added by a trainer themselves with **Add my own lead**
+  (migration `0021`). Source `own`, with `found_via` saying where: gym floor,
+  referral, social media or other. A trainer who picks someone up from the
+  unverified list saves as `unverified`, with `found_via` = unverified list.
+  Allocated straight to that trainer as Allocated, so the 48 hour clock runs.
+  A phone number already in the portal is refused, without saying who has it.
+
 Every type flows through the same stages and statuses above.
 
 ## The metrics this gives you
@@ -122,6 +129,9 @@ update to this document.
   every type (Part 7 amendments item 7).
 
 ## Change log
+
+- **18 Nov 2026:** Own leads (`0021`). Trainers add leads they found
+  themselves; the PT Manager's daily digest counts them per trainer.
 
 - **18 Nov 2026:** "Sweep" renamed **Flagged** in the portal and the workbook
   (Karl). The word came from the original "GymMaster sweep", when the PT
