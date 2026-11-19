@@ -8,6 +8,15 @@ either: searching the raw source finds the phrase only twice, both inside
 SMTP2GO's DKIM signed-header list, which names headers it would sign if they
 were there. They are not there. See the merge tags section below.
 
+**These templates were pasted into GymMaster on 19 November 2026**, by Karl,
+carrying the official logo, the reconciled copy, the "nobody shows you" fix and
+the reworded email 2 preheader. So the repo and the live emails are in step for
+the first time since the copy was edited inside GymMaster. **Not yet verified by
+a test send:** a CMS paste is exactly where this template family has been
+mangled before, which is why the CMS-safe variants exist at all, so the logo
+rendering from `pt.fitazgym.com` and the buttons holding their position are
+worth one send to a real inbox before this is called done.
+
 **These files were reconciled to what GymMaster actually sends on 19 November
 2026.** Karl and Danny had rewritten copy inside GymMaster, so for a while the
 live emails and these templates were different emails. The templates now carry
