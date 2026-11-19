@@ -30,26 +30,36 @@
 
           <!-- ============================================================
                MASTHEAD
-               TEMPORARY IMAGE HOST. This points at Designmodo's CDN, which is
-               already serving this exact file to members through the Postcards
-               onboarding email, so it resolves today. Our own copy at
-               pt.fitazgym.com/brand/ is the one to use, and it 404s until the
-               email branch is deployed. Swap it back then, and restore the
-               reversed logo for dark mode with it.
+               OUR OWN HOST, as of 19 November 2026. This used to point at
+               Designmodo's CDN, a stopgap from August while our copy was not
+               deployed. It is deployed, so the borrowed host is gone and
+               nothing here depends on a third party's project any more.
 
-               The file on the CDN is a 2000x500 canvas holding a 1924x251
-               mark, so it is half empty. The box is sized 240x60 to make the
-               mark itself land at 30px tall, which is why the height looks
-               generous against the artwork.
+               THE BOX CHANGED WITH THE FILE, and it had to. The CDN file was a
+               2000x500 canvas holding a 1924x251 mark, so half of it was empty
+               padding, which is why the box was 240x60 (4:1) to land the mark
+               at 30px tall. fitaz-gym-logo-email.png is 1600x236 with no
+               padding, so 240x60 would squash it. The box is now 230x34, which
+               is that file's own 6.8:1 ratio and keeps the rendered mark the
+               same width it was before.
 
-               Because there is no reversed copy on that CDN, dark mode gets a
-               white plate behind the logo instead of a swapped image: a black
-               mark on the near black canvas we switch to would vanish.
+               fitaz-gym-logo-email.png is the deliberate email lockup, looser
+               tracking and a bigger chip so it survives at inbox size. See
+               docs/brand-assets.md. It is still a Liberation Sans trace rather
+               than the faithful vector, which is a known imperfection, not an
+               accident: nothing has re-cut the email lockup from the official
+               artwork yet.
+
+               Dark mode gets a white plate behind the logo rather than a
+               swapped white image, because a black mark on the near black
+               canvas would vanish. Note the plate only exists here: the
+               CMS-safe variants carry no <style> block, so no dark mode rule of
+               any kind reaches a GymMaster send.
                ============================================================ -->
           <tr>
             <td align="center" style="text-align:center; padding:36px 40px 0 40px;">
               <a href="https://fitazgym.com" target="_blank" rel="noopener" style="text-decoration:none;">
-                <img src="https://s1.designmodo.com/postcards/image-1742259265784-61d271ee.png" width="240" height="60" alt="Fitaz Gym" style="display:block; width:240px; height:60px; border:0; margin:0 auto;" />
+                <img src="https://pt.fitazgym.com/brand/fitaz-gym-logo-email.png" width="230" height="34" alt="Fitaz Gym" style="display:block; width:230px; height:34px; border:0; margin:0 auto;" />
               </a>
             </td>
           </tr>

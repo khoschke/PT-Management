@@ -538,34 +538,42 @@ That same property is what makes the table trick above work. Being immune to
 `text-align` is a problem when you want a table centred and a feature when a
 host stylesheet is forcing everything left.
 
-## Where the images come from, and which host is temporary
+## Where the images come from
 
 | URL | Live? |
 |---|---|
-| `s1.designmodo.com/postcards/image-1742259265784-61d271ee.png` | **Yes.** The masthead logo, temporarily |
+| `pt.fitazgym.com/brand/fitaz-gym-logo-email.png` | **Yes.** The masthead logo, ours since 19 November 2026 |
 | `pt.fitazgym.com/email/icon-facebook.png` | **Yes.** Already on the deployed branch |
 | `pt.fitazgym.com/email/icon-instagram.png` | **Yes.** Already on the deployed branch |
 
-**The logo is on Designmodo's CDN on purpose, and it is temporary.** It was
-pointed at `pt.fitazgym.com/brand/fitaz-gym-logo-official.png` first, which is
-where it belongs, and that 404s: the file exists only on the email branch, so
-GymMaster rendered a broken image and the alt text. Designmodo is already
-serving that exact file to members through the Postcards onboarding email, so it
-resolves today and needs nothing deployed.
+**Every image is now on our own host.** The masthead spent August to November on
+Designmodo's CDN, a stopgap taken because our own copy only existed on the
+unmerged email branch and 404d inside GymMaster. The branch deployed, so the
+borrowed host is gone and nothing in these templates depends on a third party's
+Postcards project staying where it is.
 
-**Swap it back once the email branch ships.** Depending on a Designmodo project
-for an email GymMaster sends is a thread nobody will remember is there: if the
-Postcards project is deleted or reorganised, the logo breaks in every send.
+**The box changed with the file, and had to.** The CDN file was a 2000x500
+canvas holding a 1924x251 mark, half of it transparent padding, which is why the
+box was 240x60: at 4:1 the mark itself landed 30px tall. `fitaz-gym-logo-email.png`
+is 1600x236 with no padding, so the same box would have squashed it to 71% of
+its height. The box is now **230x34**, that file's own 6.8:1, which keeps the
+rendered mark the width it has always been. **A future change of logo file is a
+change of box**, so measure the file rather than reusing these numbers.
 
-Two things follow from the CDN file being the padded one:
+**`fitaz-gym-logo-email.png` is the deliberate email lockup**, looser tracking
+and a bigger chip so it stays legible at inbox size, documented in
+`docs/brand-assets.md`. It is still a Liberation Sans trace rather than the
+faithful vector that the app now uses, which is a known imperfection: nothing
+has re-cut the email lockup from the official artwork yet. Worth doing when
+somebody is next in the brand files, not worth blocking anything on.
 
-- **The box is 240x60, not 230x30.** That canvas is 2000x500 holding a 1924x251
-  mark, so it is half empty. Sizing the box at 240x60 lands the mark itself at
-  30px tall. The padding is transparent, so the extra height does not show.
-- **Dark mode gets a white plate rather than a reversed logo.** There is no
-  reversed copy on that CDN, and a black mark on the near black canvas we
-  deliberately switch to would vanish. `public/email/fitaz-gym-logo-white.png`
-  is ready for when the swap comes back.
+**Dark mode gets a white plate rather than a reversed logo**, because a black
+mark on the near black canvas would vanish. Two things to know about that:
+`public/brand/fitaz-gym-logo-email-white.png` exists if a swapped image is ever
+wanted instead, and **the plate only exists in these templates**. The CMS-safe
+variants carry no `<style>` block at all, so no dark mode rule of any kind, plate
+or image swap, survives into a GymMaster send. Any dark mode fix for GymMaster
+has to be something that works with no stylesheet.
 
 ## The send checklist
 
@@ -580,8 +588,10 @@ still unticked is a live risk, not a launch task.
       footer, and check the raw source for a `List-Unsubscribe` header. This was
       ticked on 1 September on an assumption that has since been withdrawn, so
       it is the first thing to settle, ahead of the end-to-end test below.
-- [ ] **Point the logo back at `pt.fitazgym.com` once this branch is deployed**,
-      and restore the reversed logo for dark mode with it. See the table above.
+- [x] **Point the logo back at `pt.fitazgym.com`.** Done 19 November 2026, with
+      the box resized to match the unpadded file. See the table above. The
+      reversed logo for dark mode did not come with it, because no dark mode
+      rule survives the CMS-safe conversion.
 - [ ] **Confirm a `List-Unsubscribe` header is set.** That is a header, not
       markup, so it cannot come from the template. GymMaster has to add it.
 - [ ] Confirm the logo and the two social icons load from `pt.fitazgym.com`,
