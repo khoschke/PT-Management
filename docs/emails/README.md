@@ -9,13 +9,16 @@ SMTP2GO's DKIM signed-header list, which names headers it would sign if they
 were there. They are not there. See the merge tags section below.
 
 **These templates were pasted into GymMaster on 19 November 2026**, by Karl,
-carrying the official logo, the reconciled copy, the "nobody shows you" fix and
-the reworded email 2 preheader. So the repo and the live emails are in step for
-the first time since the copy was edited inside GymMaster. **Not yet verified by
-a test send:** a CMS paste is exactly where this template family has been
-mangled before, which is why the CMS-safe variants exist at all, so the logo
-rendering from `pt.fitazgym.com` and the buttons holding their position are
-worth one send to a real inbox before this is called done.
+and **verified against three delivered test sends the same day.** What the
+delivered HTML confirms: the masthead is
+`pt.fitazgym.com/brand/fitaz-gym-logo-official.png` at 230x30, so the borrowed
+host is gone; both buttons survived as `<table align="center">` with the
+padding on a `<td bgcolor>`, which is the exact thing that broke in August; the
+"Takes about two minutes" caption kept its centring; and the copy and subject
+lines are the reconciled ones, typo included. Email 3's subject was changed to
+"Karl, Last Week to Claim Your Session" at the same time.
+
+**One thing the paste lost: the preheader.** See below. Everything else landed.
 
 **These files were reconciled to what GymMaster actually sends on 19 November
 2026.** Karl and Danny had rewritten copy inside GymMaster, so for a while the
@@ -611,6 +614,48 @@ carry no `<style>` block at all, so no dark mode rule of any kind, plate or imag
 swap, survives into a GymMaster send. Any dark mode fix for GymMaster has to work
 with no stylesheet.
 
+## The preheader does not survive a GymMaster paste
+
+**Found 19 November 2026.** Each template opens with a hidden `<div>` carrying
+the preview line that an inbox shows next to the subject. It is in the CMS-safe
+files, and it is **not** in the emails GymMaster delivered after the 19 November
+paste. The delivered HTML starts at `<div lang="en-AU">`, so the hidden div was
+stripped.
+
+**GymMaster can carry it, which is the useful part.** The copies that were in
+there before that paste delivered the preheader intact, confirmed in the raw
+source of a test send from earlier the same day. So this is not a platform
+limit, it is about how the HTML gets in: a visual editor drops a
+`display:none` block, a raw HTML or source view keeps it. If GymMaster offers a
+preview text or preheader field alongside the subject, that is the cleanest
+home for the line anyway.
+
+**What it costs while it is missing.** The inbox falls back to the first text it
+finds, which is the eyebrow and the headline, so email 3 previews as "Seven days
+left Your first session closes in seven days". That is repetition of the subject
+rather than the extra information the preheader slot exists for. Not a disaster,
+and not nothing: it is the second most read line in the email.
+
+**Check it after every paste**, by sending one to a real inbox and reading the
+grey preview text in the list view before opening the email. It is invisible
+from inside the template.
+
+## Two things GymMaster adds on the way out
+
+Neither is a problem, both are worth knowing before someone treats them as a
+fault.
+
+**Every link is rewritten to a `track.smtp2go.net` redirect**, and an invisible
+open-tracking pixel is appended. That is GymMaster's click and open tracking, so
+the numbers in its reporting are real. It also means the `?utm_` advice further
+up this file is redundant unless you want the data in Google Analytics as well.
+
+**`rel="noopener"` comes back as `rel="noopener noreferrer"`.** This file
+explains further up why `noreferrer` was deliberately left off: it strips the
+referrer and makes email traffic show as direct. That decision is now moot.
+GymMaster adds it anyway, and the tracking redirect above would have obscured
+the referrer regardless. Do not spend time trying to restore it.
+
 ## The send checklist
 
 Written before the first send and kept, because most of it applies to every send
@@ -619,6 +664,9 @@ still unticked is a live risk, not a launch task.
 
 - [ ] Render test across Gmail web, Gmail app, Apple Mail, Outlook desktop and
       Outlook.com, in both light and dark mode.
+- [ ] **Read the preview text in the inbox list**, not just the open email. The
+      preheader was stripped by the 19 November 2026 paste and nobody would see
+      that from inside GymMaster. See the section above.
 - [ ] **Confirm an unsubscribe link exists at all.** Reopened 18 November 2026,
       see the merge tags section above. Open a delivered email 1, read the
       footer, and check the raw source for a `List-Unsubscribe` header. This was
