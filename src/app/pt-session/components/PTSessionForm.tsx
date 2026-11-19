@@ -2,7 +2,7 @@
 
 import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
-import { GOAL_OPTIONS } from "@/lib/goals";
+import { optionsInGroup } from "@/lib/goals";
 import { submitLead } from "../actions";
 import { initialLeadFormState } from "../state";
 
@@ -225,7 +225,7 @@ export default function PTSessionForm({ trainers }: { trainers: Trainer[] }) {
           <legend className={labelClass}>What are you looking to achieve?</legend>
           <p className="mt-1 text-sm text-secondary-label">Choose at least one</p>
           <div className="mt-3 flex flex-wrap gap-2">
-            {GOAL_OPTIONS.map((goal) => (
+            {optionsInGroup("goal", { includeOther: true }).map((goal) => (
               <label
                 key={goal.code}
                 className={`press cursor-pointer rounded-full bg-fill px-4 py-2.5 text-sm font-medium text-foreground transition has-[:checked]:bg-foreground has-[:checked]:text-white ${selectableFocus}`}
@@ -256,6 +256,31 @@ export default function PTSessionForm({ trainers }: { trainers: Trainer[] }) {
           )}
           <FieldError message={errors.goals} />
         </fieldset>
+
+        {/* 5b. Who they are, and how they want to be coached. Optional, and
+            matched against the same tags on the trainer's profile. */}
+        {(
+          [
+            { group: "who", legend: "Does any of this describe you?" },
+            { group: "how", legend: "Anything you'd like from your coaching?" },
+          ] as const
+        ).map(({ group, legend }) => (
+          <fieldset key={group}>
+            <legend className={labelClass}>{legend}</legend>
+            <p className="mt-1 text-sm text-secondary-label">Optional. It helps us match you with the right trainer.</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {optionsInGroup(group).map((tag) => (
+                <label
+                  key={tag.code}
+                  className={`press cursor-pointer rounded-full bg-fill px-4 py-2.5 text-sm font-medium text-foreground transition has-[:checked]:bg-foreground has-[:checked]:text-white ${selectableFocus}`}
+                >
+                  <input type="checkbox" name="goals" value={tag.code} className="sr-only" />
+                  {tag.memberLabel ?? tag.label}
+                </label>
+              ))}
+            </div>
+          </fieldset>
+        ))}
 
         {/* 6. Current exercise */}
         <div>

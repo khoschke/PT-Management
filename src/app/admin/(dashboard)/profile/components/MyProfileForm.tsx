@@ -69,19 +69,20 @@ export default function MyProfileForm({ trainer }: { trainer: Trainer }) {
         <label className="text-sm font-semibold text-foreground">Specialties</label>
         <p className="mt-0.5 text-xs text-secondary-label">
           These aren&rsquo;t just for show. New leads are matched to trainers on these tags, so ticking one makes you
-          more likely to be suggested for a member chasing that goal.
+          more likely to be suggested for a member who ticks the same tag on the request form.
         </p>
         <SpecialtyPicker selected={trainer.specialties} />
       </div>
 
       <div className="mt-4">
         <label htmlFor="bio" className="text-sm font-semibold text-foreground">
-          About me
+          How a member should hear about you
         </label>
         <p className="mt-0.5 text-xs text-secondary-label">
-          Anything the tags don&rsquo;t cover, e.g. boxing, kettlebells, pre/post-natal, rehab, certifications, how you
-          coach. The PT Manager sees this when allocating leads.
+          Two or three sentences: who you work best with, what you help them do, and how you work. Include anything
+          the tags above don&rsquo;t cover, like pre/post natal, rehab, boxing, kettlebells or your certifications.
         </p>
+        <p className="mt-0.5 text-xs italic text-secondary-label">This is what front of house and members see.</p>
         <textarea
           id="bio"
           name="bio"

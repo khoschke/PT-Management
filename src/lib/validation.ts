@@ -3,7 +3,7 @@
 // database.
 
 import { z } from "zod";
-import { GOAL_OPTIONS } from "./goals";
+import { GOAL_OPTIONS, isGoalTag } from "./goals";
 import { MANUAL_LEAD_SOURCES } from "./types";
 
 const GOAL_CODES = GOAL_OPTIONS.map((g) => g.code) as [string, ...string[]];
@@ -36,9 +36,11 @@ export const leadFormSchema = z.object({
     .string()
     .refine((val) => !Number.isNaN(Date.parse(val)), "Enter a valid date")
     .refine((val) => new Date(val) <= new Date(), "Date of birth can't be in the future"),
+  // One list carries goals and the who/how tags (see goals.ts), but the form
+  // still needs at least one actual goal.
   goals: z
     .array(z.enum(GOAL_CODES))
-    .min(1, "Choose at least one goal"),
+    .refine((codes) => codes.some(isGoalTag), "Choose at least one goal"),
   goal_other: z.string().trim().max(300).optional().nullable(),
   current_exercise: z.string().trim().max(500).optional().nullable(),
   gender_preference: z.enum(["male", "female", "no_preference"]).optional().nullable(),

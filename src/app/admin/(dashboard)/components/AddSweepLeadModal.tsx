@@ -1,6 +1,6 @@
 "use client";
 
-import { GOAL_OPTIONS } from "@/lib/goals";
+import SpecialtyPicker from "./SpecialtyPicker";
 import { LEAD_SOURCE_LABELS, MANUAL_LEAD_SOURCES, type Trainer } from "@/lib/types";
 import { addSweepLead } from "../actions";
 import { blank, useLeadForm } from "./useLeadForm";
@@ -119,18 +119,8 @@ export default function AddSweepLeadModal({
           </div>
 
           <div>
-            <label className="text-sm font-semibold text-foreground">Goals</label>
-            <div className="mt-1.5 flex flex-wrap gap-1.5">
-              {GOAL_OPTIONS.filter((g) => g.code !== "other").map((goal) => (
-                <label
-                  key={goal.code}
-                  className="press cursor-pointer rounded-full bg-fill px-3 py-1.5 text-xs font-medium text-foreground transition has-[:checked]:bg-foreground has-[:checked]:text-white"
-                >
-                  <input type="checkbox" name="goals" value={goal.code} className="sr-only" />
-                  {goal.label}
-                </label>
-              ))}
-            </div>
+            <label className="text-sm font-semibold text-foreground">Tags</label>
+            <SpecialtyPicker name="goals" />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
