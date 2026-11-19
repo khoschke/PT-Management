@@ -1,10 +1,12 @@
 # Fitaz Gym member email series
 
-**Status: live since 1 September 2026, with the unsubscribe unverified.** See
-the merge tags section below: the claim that GymMaster supplies one was
-withdrawn on 18 November 2026, and on 19 November Karl confirmed from three
-delivered test sends that **there is no unsubscribe link in the footer of any
-of the three.**
+**Status: live since 1 September 2026, and sending with no unsubscribe of any
+kind.** Settled on 19 November 2026 from three delivered test sends and their
+raw headers, so this is checked rather than assumed. There is **no unsubscribe
+link in the footer** of any of the three, and **no `List-Unsubscribe` header**
+either: searching the raw source finds the phrase only twice, both inside
+SMTP2GO's DKIM signed-header list, which names headers it would sign if they
+were there. They are not there. See the merge tags section below.
 
 **These files were reconciled to what GymMaster actually sends on 19 November
 2026.** Karl and Danny had rewritten copy inside GymMaster, so for a while the
@@ -339,14 +341,25 @@ two unsubscribe links pointing at different places is worse than one, and the
 one that does not write to GymMaster's suppression list is the one that keeps
 sending them email.
 
-**That understanding is withdrawn as of 18 November 2026.** Karl does not
-recall seeing an unsubscribe link in a delivered email and is not confident one
-is there. **Nobody has checked**, and nothing in this repo can: these files are
-what GymMaster is given, not what it sends. Until a delivered email 1 has been
-opened and its footer read, assume the series may be going out with no
-unsubscribe at all. If it is missing, the decision above is reversed: an
-unsubscribe goes back into all three footers, and GymMaster still has to set
-the `List-Unsubscribe` header, which no template can carry.
+**That understanding was wrong, and it is now settled the other way.** Karl
+sent all three to himself on 19 November 2026 and checked the raw source. There
+is no unsubscribe link in any footer and no `List-Unsubscribe` header. The
+series has therefore been sending marketing mail to members since 1 September
+with no way out at all.
+
+**So the decision above is reversed: an unsubscribe has to go back into these
+templates.** Two separate things are missing and only one of them can be fixed
+here.
+
+1. **A visible link in the footer.** Ours to put back, and it needs somewhere
+   to point. GymMaster's own unsubscribe merge tag is the right target if one
+   exists; nobody has found it yet, and GymMaster support is the fastest route
+   to an answer. A `mailto:` to a monitored inbox is the fallback, and it is
+   only honest if somebody actually actions what arrives.
+2. **The `List-Unsubscribe` header.** Not ours at all. It is a header, not
+   markup, so no template can carry it, and GymMaster has to set it. This is
+   the one Gmail and Yahoo expect from bulk senders, and its absence is why a
+   member who wants out has nothing to click except Report spam.
 
 **This is a GymMaster dependency, not a solved problem in the markup.** If these
 templates are ever sent from anywhere else, the unsubscribe and the

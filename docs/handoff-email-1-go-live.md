@@ -9,10 +9,12 @@ this, then `docs/emails/README.md` for the emails themselves.
 day 10 and email 3 on day 30, from GymMaster, timed off their own join date.
 
 The last blocker was the unsubscribe, which was recorded as handled by
-GymMaster. **That is no longer a safe assumption.** Karl withdrew it on
-18 November 2026: he does not recall seeing an unsubscribe link in a delivered
-email and is not confident one is there. See the item in section 2 below, which
-is reopened.
+GymMaster. **It is not, and that is now confirmed rather than suspected.** Karl
+sent all three emails to himself on 19 November 2026 and read the raw source:
+no unsubscribe link in any footer, and no `List-Unsubscribe` header. The series
+has been sending to members since 1 September with no way out. See the item in
+section 2 below, which is reopened and is the most important thing on this
+note.
 
 Two things follow from going live, and they are the live work now:
 

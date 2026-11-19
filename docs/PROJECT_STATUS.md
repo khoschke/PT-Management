@@ -345,22 +345,22 @@ send checklist in `docs/emails/README.md`.
   GymMaster's own `{58:Member First Name}` syntax, and `{{expiry_date}}` is gone
   because GymMaster cannot do the date arithmetic, so the deadline is worded
   relatively instead. Details in `docs/handoff-email-1-go-live.md`.
-- **The unsubscribe is UNVERIFIED, and this is the open risk on the series.**
-  It was recorded here on 1 September as handled by GymMaster, which is what
-  released the send. **Karl withdrew that on 18 November 2026: he does not
-  recall seeing an unsubscribe link and is not confident one is there.** Nobody
-  has looked at a delivered email since, and Karl is not on the member list, so
-  nothing in this repo or in his inbox can settle it. Until somebody opens a
-  delivered email 1 and looks at the footer, treat the series as **sending
-  marketing mail to members with no confirmed unsubscribe**, which is a
-  compliance problem rather than a nicety. The templates in `docs/emails/` carry
-  no unsubscribe of their own, by a decision that assumed GymMaster's existed.
-  **If it turns out GymMaster does not supply one, that decision has to be
-  reversed** and an unsubscribe plus a `List-Unsubscribe` header put back,
-  before the next send rather than after it. **Karl is establishing the answer
-  himself first** (18 November 2026) rather than handing the question to Danny,
-  so this one sits with him. It is also the one item on the series that a move
-  off GymMaster does not retire: it is live while mail is going out.
+- **There is NO unsubscribe, and this is the open risk on the series.**
+  Confirmed by Karl on 19 November 2026, from three test sends and their raw
+  headers: no link in any footer, and no `List-Unsubscribe` header either. It
+  had been recorded here on 1 September as handled by GymMaster, which is what
+  released the send; that was wrong. **The series has been sending marketing
+  mail to members with no way out since 1 September**, which is a compliance
+  problem rather than a nicety, and the reason a member who wants out has
+  nothing to click but Report spam.
+  **Two things have to go back, and only one is ours.** A visible link in the
+  footer is ours, and needs a target: GymMaster's own unsubscribe merge tag if
+  one exists, which nobody has found and GymMaster support is the fastest way
+  to settle, or a monitored `mailto:` as a fallback that only works if somebody
+  actions it. The `List-Unsubscribe` header is a header rather than markup, so
+  no template can carry it and GymMaster has to set it.
+  It is also the one item on the series that a move off GymMaster does not
+  retire: it is live for as long as mail goes out, on whatever platform.
 - **The suppression loop is the live process gap.** Confirmed by Karl,
   18 November 2026: the PTs are keeping lead status current, and the weak link
   is downstream of them. A status change on the board does nothing on its own.
@@ -985,10 +985,18 @@ Reminders only. Each gets scoped and built in its own session.
   portal, versus feeding GymMaster directly, which is adjacent to
   `docs/handoff-gymmaster-integration.md`. The reasoning behind the manual
   version is in `docs/emails/README.md`, "Who to leave out of emails 2 and 3".
-- **Settle whether the member emails carry an unsubscribe**, then act on the
-  answer. See the member email series section above. This is ahead of everything
-  else on the series, because it is a compliance question rather than an
-  improvement.
+- ~~**Settle whether the member emails carry an unsubscribe**~~ — **settled,
+  19 November 2026: they do not.** What replaces it is **put one back**, per the
+  member email series section above. Ahead of everything else on the series,
+  because it is a compliance matter rather than an improvement, and unlike the
+  rest of the GymMaster work it does not get retired by a platform move.
+- **Ask GymMaster two questions**, both raised by the unsubscribe finding and
+  neither answerable from this repo. Does GymMaster provide an unsubscribe
+  merge tag for bulk email, and will it set a `List-Unsubscribe` header? And
+  separately, can it send from a `fitazgym.com` address instead of
+  `no-reply@gymmasteronline.com`? The second is parked with Danny as of
+  19 November 2026, since it affects every gym email he sets up, not just these
+  three.
 
 - **PT prospect interview system** in the PT Manager area. STAR method has been
   suggested; approach to be agreed when it is scoped.
