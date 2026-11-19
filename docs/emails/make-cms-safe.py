@@ -143,8 +143,27 @@ def convert(src: str) -> str:
     return h
 
 
+def body_only(h: str) -> str:
+    """Strip the document wrapper, leaving what goes inside <body>.
+
+    For pasting into GymMaster's code view. The <head> is not just redundant
+    there, it leaks: on 19 November 2026 a paste of the whole document put our
+    <title> at the top of GymMaster's generated plain-text alternative, above
+    the preheader. Nothing renders differently without the wrapper, because the
+    canvas colour is painted by the outer table, which carries both a
+    background-color and a bgcolor, not by the <body> tag.
+    """
+    m = re.search(r'<body[^>]*>(.*)</body>', h, flags=re.S)
+    if not m:
+        raise SystemExit("no <body> found, so there is nothing to strip")
+    return m.group(1).strip() + "\n"
+
+
 if __name__ == '__main__':
-    src, dst = sys.argv[1], sys.argv[2]
+    args = [a for a in sys.argv[1:] if a != '--body']
+    src, dst = args[0], args[1]
     out = convert(open(src).read())
+    if '--body' in sys.argv:
+        out = body_only(out)
     open(dst, 'w').write(out)
-    print(f"{dst}: {len(out)} bytes")
+    print(f"{dst}: {len(out)} bytes{' (body only)' if '--body' in sys.argv else ''}")

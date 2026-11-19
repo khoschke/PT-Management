@@ -8,8 +8,13 @@ this, then `docs/emails/README.md` for the emails themselves.
 **The series is sending.** New members are getting email 1 on day 1, email 2 on
 day 10 and email 3 on day 30, from GymMaster, timed off their own join date.
 
-The last blocker was the unsubscribe, and **GymMaster handles it**. That closes
-the open item in section 2 below and, with it, the send.
+The last blocker was the unsubscribe, which was recorded as handled by
+GymMaster. **It is not, and that is now confirmed rather than suspected.** Karl
+sent all three emails to himself on 19 November 2026 and read the raw source:
+no unsubscribe link in any footer, and no `List-Unsubscribe` header. The series
+has been sending to members since 1 September with no way out. See the item in
+section 2 below, which is reopened and is the most important thing on this
+note.
 
 Two things follow from going live, and they are the live work now:
 
@@ -94,8 +99,22 @@ sender. It is fine for proving the flow internally and nothing else.
 The platform is decided, but three things still have to be **checked inside
 GymMaster** before a real send, because the emails assume them:
 
-- ~~**There is currently no unsubscribe link.**~~ **Resolved, 1 September 2026:
-  GymMaster handles the unsubscribe.** The club template stopped being used on
+- **The unsubscribe. REOPENED 18 November 2026, and the most important open
+  item on this note.** It was closed on 1 September on the understanding that
+  GymMaster supplies one, and the series was released to send on that basis.
+  Karl has since said he does not recall seeing it and is not confident it is
+  there. Nothing in this repo can answer it: the templates carry none by
+  design, the `docs/emails/` files are what we hand GymMaster rather than what
+  GymMaster delivers, and Karl is not on the member list, so his own inbox has
+  no copy to check. **Somebody has to look at a delivered email.** Fastest
+  route: add yourself or a spare address as a member in GymMaster so the day 1
+  email fires, then open it and scroll to the footer. Also open the raw source
+  (in Gmail, the three dots then Show original) and search for
+  `List-Unsubscribe`, which is a header rather than anything visible, and only
+  GymMaster can set it. **If either is missing, the series is sending marketing
+  mail to members without a way out**, and the fix is to put an unsubscribe and
+  the header back, which means reversing the decision below. The original note
+  follows. The club template stopped being used on
   19 August 2026, so the templates carry their own footer with the socials, the
   address and a permission line, and the placeholder unsubscribe was taken out
   the same day because a dead link is worse than none. The gap is now filled on

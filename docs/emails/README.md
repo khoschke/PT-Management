@@ -1,6 +1,35 @@
 # Fitaz Gym member email series
 
-**Status: live since 1 September 2026.** All three are sending from GymMaster off
+**Status: live since 1 September 2026, and sending with no unsubscribe of any
+kind.** Settled on 19 November 2026 from three delivered test sends and their
+raw headers, so this is checked rather than assumed. There is **no unsubscribe
+link in the footer** of any of the three, and **no `List-Unsubscribe` header**
+either: searching the raw source finds the phrase only twice, both inside
+SMTP2GO's DKIM signed-header list, which names headers it would sign if they
+were there. They are not there. See the merge tags section below.
+
+**These templates were pasted into GymMaster on 19 November 2026**, by Karl,
+and **verified against three delivered test sends the same day.** What the
+delivered HTML confirms: the masthead is
+`pt.fitazgym.com/brand/fitaz-gym-logo-official.png` at 230x30, so the borrowed
+host is gone; both buttons survived as `<table align="center">` with the
+padding on a `<td bgcolor>`, which is the exact thing that broke in August; the
+"Takes about two minutes" caption kept its centring; and the copy and subject
+lines are the reconciled ones, typo included. Email 3's subject was changed to
+"Karl, Last Week to Claim Your Session" at the same time.
+
+**The preheader is live too, as of the 05:05 re-paste**, with its
+`display:none` intact in the delivered HTML, so it feeds the inbox preview and
+stays out of the body. The method that works is below.
+
+**These files were reconciled to what GymMaster actually sends on 19 November
+2026.** Karl and Danny had rewritten copy inside GymMaster, so for a while the
+live emails and these templates were different emails. The templates now carry
+the live wording, which matters more than it sounds: anyone who had pasted
+these in would have silently reverted their edits. **If the copy is edited in
+GymMaster again, reconcile it back here**, or this file goes back to describing
+an email nobody receives.
+ All three are sending from GymMaster off
 the member's own join date, and the unsubscribe is handled by GymMaster rather
 than by anything in these templates. What follows is written as a build note in
 places; read it as the record of how the series was put together and why, with
@@ -234,32 +263,36 @@ and two templates means two things to keep in sync.
 
 ## Subject lines
 
-**Email 1**, using the gym's own words from `/pt-session`:
+**These live in GymMaster, not in these files.** What follows is the record of
+what is set there, rewritten by Karl and Danny in November 2026. All three now
+open on the member's first name and use title case, which is a change of voice
+from the originals and a deliberate one.
 
-> **{58:Member First Name}, your first session is on us**
+| | Live subject | Was |
+|---|---|---|
+| Email 1 | **{58:Member First Name}, Your First Session is on us!** | {58:Member First Name}, your first session is on us |
+| Email 2 | **{58:Member First Name}, Motivation is not the Problem** | Most people run out of plan, not motivation |
+| Email 3 | **{58:Member First Name}, Last Week to Claim Your Session** | Your complimentary session closes in seven days |
 
-Test against:
+**Email 3's subject needs changing in GymMaster.** It currently reads
+"Still Time to Grab Your Free Session". Karl's call on 19 November 2026 was to
+get the word "free" out of the emails and the subject lines, so the row above is
+what it should say, not what it says today. Anything that keeps the deadline and
+drops "free" works; this one keeps their new voice and says the same thing.
 
-- *Your first PT session is already included* — entitlement framing, no name.
-- *One thing to sort before your first workout* — curiosity plus urgency.
-- *We just need to know one thing* — shortest, highest curiosity, weakest clarity.
+**Why "free" is out**, since it will be tempting to put back: the body copy
+never says free either. The session is framed as something the member already
+owns, because a free fitness offer invites the question of what the catch is,
+and the answer a member assumes is a hard sell. "Included with your membership"
+does the same job without triggering it. This is the reasoning behind the
+entitlement framing described further up this file.
 
-**Email 2:**
+Do not use anything for email 2 that reads as a reminder about email 1. The
+whole point of that one is that it opens on a different subject.
 
-> **Most people run out of plan, not motivation**
-
-Test against *{58:Member First Name}, week two is the tricky one* and *The same three
-machines*. Do not use anything that reads as a reminder about email 1. The whole
-point of this one is that it opens on a different subject.
-
-**Email 3:**
-
-> **Your complimentary session closes in seven days**
-
-Test against *Seven days left* and *Last call on your first session*. A named
-date would be harder to defer than a relative one, but GymMaster cannot do the
-date arithmetic, so "seven days" is what we have. It is always true, because
-the email only ever fires on day 30.
+For email 3, a named date would be harder to defer than a relative one, but
+GymMaster cannot do the date arithmetic, so "seven days" in the body is what we
+have. It stays true because the email only ever fires on day 30.
 
 Send from a person, not a department: `Karl at Fitaz Gym`. Set `Reply-To` to a
 monitored inbox, because the email explicitly invites replies.
@@ -316,11 +349,31 @@ there, pointing at a `{{unsubscribe_url}}` placeholder, and it was removed on
 19 August 2026 because a visible link that goes nowhere is worse than none while
 testing.
 
-**GymMaster supplies the unsubscribe** as of 1 September 2026, which is what
-unblocked the send. So the templates deliberately carry none: adding one back
-would give a member two unsubscribe links pointing at different places, and the
+**GymMaster was understood to supply the unsubscribe** as of 1 September 2026,
+which is what unblocked the send, so the templates deliberately carry none:
+two unsubscribe links pointing at different places is worse than one, and the
 one that does not write to GymMaster's suppression list is the one that keeps
 sending them email.
+
+**That understanding was wrong, and it is now settled the other way.** Karl
+sent all three to himself on 19 November 2026 and checked the raw source. There
+is no unsubscribe link in any footer and no `List-Unsubscribe` header. The
+series has therefore been sending marketing mail to members since 1 September
+with no way out at all.
+
+**So the decision above is reversed: an unsubscribe has to go back into these
+templates.** Two separate things are missing and only one of them can be fixed
+here.
+
+1. **A visible link in the footer.** Ours to put back, and it needs somewhere
+   to point. GymMaster's own unsubscribe merge tag is the right target if one
+   exists; nobody has found it yet, and GymMaster support is the fastest route
+   to an answer. A `mailto:` to a monitored inbox is the fallback, and it is
+   only honest if somebody actually actions what arrives.
+2. **The `List-Unsubscribe` header.** Not ours at all. It is a header, not
+   markup, so no template can carry it, and GymMaster has to set it. This is
+   the one Gmail and Yahoo expect from bulk senders, and its absence is why a
+   member who wants out has nothing to click except Report spam.
 
 **This is a GymMaster dependency, not a solved problem in the markup.** If these
 templates are ever sent from anywhere else, the unsubscribe and the
@@ -526,34 +579,93 @@ That same property is what makes the table trick above work. Being immune to
 `text-align` is a problem when you want a table centred and a feature when a
 host stylesheet is forcing everything left.
 
-## Where the images come from, and which host is temporary
+## Where the images come from
 
 | URL | Live? |
 |---|---|
-| `s1.designmodo.com/postcards/image-1742259265784-61d271ee.png` | **Yes.** The masthead logo, temporarily |
+| `pt.fitazgym.com/brand/fitaz-gym-logo-official.png` | **Yes.** The masthead logo, ours since 19 November 2026 |
 | `pt.fitazgym.com/email/icon-facebook.png` | **Yes.** Already on the deployed branch |
 | `pt.fitazgym.com/email/icon-instagram.png` | **Yes.** Already on the deployed branch |
 
-**The logo is on Designmodo's CDN on purpose, and it is temporary.** It was
-pointed at `pt.fitazgym.com/brand/fitaz-gym-logo-official.png` first, which is
-where it belongs, and that 404s: the file exists only on the email branch, so
-GymMaster rendered a broken image and the alt text. Designmodo is already
-serving that exact file to members through the Postcards onboarding email, so it
-resolves today and needs nothing deployed.
+**Every image is now on our own host.** The masthead spent August to November on
+Designmodo's CDN, a stopgap taken because our own copy only existed on the
+unmerged email branch and 404d inside GymMaster. The branch deployed, so the
+borrowed host is gone and nothing in these templates depends on a third party's
+Postcards project staying where it is.
 
-**Swap it back once the email branch ships.** Depending on a Designmodo project
-for an email GymMaster sends is a thread nobody will remember is there: if the
-Postcards project is deleted or reorganised, the logo breaks in every send.
+**The masthead is the official mark**, `fitaz-gym-logo-official.png`, the real
+artwork rather than a trace of it. It briefly pointed at
+`fitaz-gym-logo-email.png`, a looser-tracked lockup built for inbox legibility,
+and that file was a Liberation Sans trace made before the real artwork existed.
+It read as visibly wrong, mostly in the gap between the wordmark and the chip.
+Karl's call on 19 November 2026 was to use the real mark here and delete the
+traces, which are gone from the repo. The argument for the email lockup was that
+the official mark would close up at 30px. It does not.
 
-Two things follow from the CDN file being the padded one:
+**The box is 230x30, and a change of file is a change of box.** The official
+raster is 1924x251, cropped to the ink, so 230x30 is its own ratio and lands the
+mark 30px tall. The old 240x60 existed only because the file behind it then was
+a 2000x500 canvas half full of transparent padding. Measure whatever file you
+point at rather than reusing numbers from this file.
 
-- **The box is 240x60, not 230x30.** That canvas is 2000x500 holding a 1924x251
-  mark, so it is half empty. Sizing the box at 240x60 lands the mark itself at
-  30px tall. The padding is transparent, so the extra height does not show.
-- **Dark mode gets a white plate rather than a reversed logo.** There is no
-  reversed copy on that CDN, and a black mark on the near black canvas we
-  deliberately switch to would vanish. `public/email/fitaz-gym-logo-white.png`
-  is ready for when the swap comes back.
+**Dark mode gets a white plate rather than a reversed logo**, because a black
+mark on the near black canvas would vanish. `public/email/fitaz-gym-logo-white.png`
+is the reversed official lockup if a swapped image is ever wanted instead. Note
+though that **the plate only exists in these templates**: the CMS-safe variants
+carry no `<style>` block at all, so no dark mode rule of any kind, plate or image
+swap, survives into a GymMaster send. Any dark mode fix for GymMaster has to work
+with no stylesheet.
+
+## The preheader, and the one way to paste it that works
+
+**Settled on 19 November 2026, after getting it wrong twice in a morning.**
+
+Each template opens with a hidden `<div>` carrying the preview line an inbox
+shows beside the subject. **GymMaster's visual editor does not honour
+`display:none`**, so the moment you switch code view off, that line appears as
+stray text at the top of the email and looks exactly like a paste gone wrong.
+It is not: a real inbox hides it. Deleting it on sight is the reasonable
+reaction and is what happened on the first paste, which is why the first set of
+test sends had no preview line.
+
+**What works, confirmed in the delivered HTML:**
+
+> Paste in code view, save from code view, and **never switch the editor to
+> preview**. The block survives with its `display:none` intact.
+
+Switching to preview is the step that breaks it, not the paste and not
+GymMaster's sanitiser. The templates carry this warning in a comment directly
+above the block, because code view is where the next person meets it.
+
+**Check it in a real inbox afterwards, both halves:** the grey preview line
+beside the subject in the list view, and that the text is **not** at the top of
+the opened email. If it is visible in the body, take it out. A stray line there
+is worse than no preview line.
+
+## Two things GymMaster adds on the way out
+
+Neither is a problem, both are worth knowing before someone treats them as a
+fault.
+
+**Every link is rewritten to a `track.smtp2go.net` redirect**, and an invisible
+open-tracking pixel is appended. That is GymMaster's click and open tracking, so
+the numbers in its reporting are real. It also means the `?utm_` advice further
+up this file is redundant unless you want the data in Google Analytics as well.
+
+**The pasted `<head>` comes through, and its `<title>` lands in the plain text
+part.** The 05:05 paste included the whole document rather than the body, so
+the delivered HTML carries a nested `<html><head>` with our metas and title.
+Mail clients ignore it and the email renders correctly, but GymMaster's
+generated plain-text alternative now opens with the title string, "Your first
+session closes in seven days", before the preheader. Harmless, and only seen by
+someone reading the text part. **On the next paste, start from `<body>`** and
+it goes away. Not worth a paste of its own.
+
+**`rel="noopener"` comes back as `rel="noopener noreferrer"`.** This file
+explains further up why `noreferrer` was deliberately left off: it strips the
+referrer and makes email traffic show as direct. That decision is now moot.
+GymMaster adds it anyway, and the tracking redirect above would have obscured
+the referrer regardless. Do not spend time trying to restore it.
 
 ## The send checklist
 
@@ -563,13 +675,18 @@ still unticked is a live risk, not a launch task.
 
 - [ ] Render test across Gmail web, Gmail app, Apple Mail, Outlook desktop and
       Outlook.com, in both light and dark mode.
-- [x] **The unsubscribe exists.** Handled by GymMaster as of 1 September 2026,
-      and nothing goes back into the templates, see the merge tags section
-      above. **That it works is a separate, still-unticked item below**: until
-      somebody has unsubscribed on a seed record and watched emails 2 and 3 not
-      arrive, this is a link we believe in rather than one we have tested.
-- [ ] **Point the logo back at `pt.fitazgym.com` once this branch is deployed**,
-      and restore the reversed logo for dark mode with it. See the table above.
+- [ ] **Read the preview text in the inbox list**, not just the open email.
+      There is currently no preheader, deliberately, see the section above. If
+      one is ever restored, this is the only place it can be checked.
+- [ ] **Confirm an unsubscribe link exists at all.** Reopened 18 November 2026,
+      see the merge tags section above. Open a delivered email 1, read the
+      footer, and check the raw source for a `List-Unsubscribe` header. This was
+      ticked on 1 September on an assumption that has since been withdrawn, so
+      it is the first thing to settle, ahead of the end-to-end test below.
+- [x] **Point the logo back at `pt.fitazgym.com`.** Done 19 November 2026, at
+      the official mark with the box resized to 230x30 to match it. See the
+      table above. The reversed logo for dark mode did not come with it, because
+      no dark mode rule survives the CMS-safe conversion.
 - [ ] **Confirm a `List-Unsubscribe` header is set.** That is a header, not
       markup, so it cannot come from the template. GymMaster has to add it.
 - [ ] Confirm the logo and the two social icons load from `pt.fitazgym.com`,

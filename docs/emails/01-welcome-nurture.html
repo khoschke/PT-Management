@@ -99,7 +99,23 @@
 <body class="d-bg-canvas" style="margin:0; padding:0; width:100%; background-color:#f5f5f7;">
 
   <!-- Preheader. Shows next to the subject in the inbox, then disappears.
-       Deliberately adds new information rather than repeating the subject. -->
+       Deliberately adds new information rather than repeating the subject.
+
+       READ THIS BEFORE DELETING IT IN GYMMASTER. Turn code view off and
+       GymMaster's visual editor shows this line as stray text at the top of
+       the email, because that editor does not honour display:none. A real
+       inbox does: in the test sends of 19 November 2026 the line showed as
+       the grey preview text beside the subject and did not appear in the body
+       at all. It looks like a mistake in the editor and is not one.
+
+       It was deleted on 19 November 2026 for exactly that reason, which is
+       fair enough, and the cost is that the inbox now previews the eyebrow
+       and headline instead, repeating the subject. If you put it back, paste
+       it in code view, save without switching to the visual editor, then send
+       one to a real inbox and check two things: the preview line beside the
+       subject, and that the text is NOT visible at the top of the opened
+       email. If it is visible there, take it out. A stray line in the body is
+       worse than no preview line. -->
   <div style="display:none; font-size:1px; line-height:1px; max-height:0; max-width:0; opacity:0; overflow:hidden; mso-hide:all; font-family:sans-serif;">
     Two minutes to claim it. Tell us your goals and we will match you with the right trainer.
     &#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;
@@ -119,26 +135,39 @@
 
           <!-- ============================================================
                MASTHEAD
-               TEMPORARY IMAGE HOST. This points at Designmodo's CDN, which is
-               already serving this exact file to members through the Postcards
-               onboarding email, so it resolves today. Our own copy at
-               pt.fitazgym.com/brand/ is the one to use, and it 404s until the
-               email branch is deployed. Swap it back then, and restore the
-               reversed logo for dark mode with it.
+               THE OFFICIAL MARK, on our own host, as of 19 November 2026.
+               Two changes landed together here, and both matter.
 
-               The file on the CDN is a 2000x500 canvas holding a 1924x251
-               mark, so it is half empty. The box is sized 240x60 to make the
-               mark itself land at 30px tall, which is why the height looks
-               generous against the artwork.
+               The host. This pointed at Designmodo's CDN from August, a
+               stopgap while our own copy was not deployed. It is deployed, so
+               nothing here depends on a third party's project any more.
 
-               Because there is no reversed copy on that CDN, dark mode gets a
-               white plate behind the logo instead of a swapped image: a black
-               mark on the near black canvas we switch to would vanish.
+               The file. It briefly pointed at fitaz-gym-logo-email.png, a
+               looser-tracked lockup built for inbox legibility, which was a
+               Liberation Sans trace made before Karl supplied the real
+               artwork. It read as visibly off, most of all in the gap between
+               the wordmark and the chip, which the trace set about four times
+               too wide. Karl's call on 19 November 2026: use the real mark in
+               the emails and delete the traces, which are now gone from the
+               repo.
+
+               The box is 230x30. fitaz-gym-logo-official.png is 1924x251,
+               cropped to the ink with no padding, so 230x30 is its own ratio
+               to within a rounding error and lands the mark 30px tall, which
+               is the size this masthead has always rendered at. If the file
+               ever changes, measure it and resize the box with it: the old
+               240x60 existed only because the file behind it was half empty.
+
+               Dark mode gets a white plate behind the logo rather than a
+               swapped white image, because a black mark on the near black
+               canvas would vanish. Note the plate only exists here: the
+               CMS-safe variants carry no <style> block, so no dark mode rule of
+               any kind reaches a GymMaster send.
                ============================================================ -->
           <tr>
             <td align="center" class="sm-px-24 d-plate" style="text-align:center; padding:36px 40px 0 40px;">
               <a href="https://fitazgym.com" target="_blank" rel="noopener" style="text-decoration:none;">
-                <img src="https://s1.designmodo.com/postcards/image-1742259265784-61d271ee.png" width="240" height="60" alt="Fitaz Gym" style="display:block; width:240px; height:60px; border:0; margin:0 auto;" />
+                <img src="https://pt.fitazgym.com/brand/fitaz-gym-logo-official.png" width="230" height="30" alt="Fitaz Gym" style="display:block; width:230px; height:30px; border:0; margin:0 auto;" />
               </a>
             </td>
           </tr>
@@ -168,11 +197,11 @@
               </h1>
 
               <p class="sm-lead d-text-secondary" style="margin:22px 0 0 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:18px; line-height:29px; font-weight:400; color:#6e6e73;">
-                Welcome to Fitaz Gym, {58:Member First Name}. Your PT consultation and starter
-                session came with your membership, so there is nothing to pay and
-                nothing to sign up for. All that is left is to tell us what you are
-                chasing, so we can put you with the right trainer instead of
-                whoever happens to be free.
+                Hi {58:Member First Name}, welcome to Fitaz Gym. We just wanted to let you
+                know that a complimentary PT consultation and starter session is
+                included with your membership! There is nothing to pay and nothing
+                to sign up for. All you need to do is tell us what you're chasing
+                and we'll put you with the right trainer to help achieve your goals.
               </p>
             </td>
           </tr>
@@ -279,12 +308,12 @@
                 <tr>
                   <td style="padding:28px 28px 28px 28px; border-radius:16px;">
                     <p class="d-text" style="margin:0 0 10px 0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:18px; line-height:25px; font-weight:600; letter-spacing:-0.3px; color:#1d1d1f;">
-                      It is not a sales pitch.
+                      It's not a sales pitch.
                     </p>
                     <p class="d-text-secondary" style="margin:0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:16px; line-height:26px; color:#6e6e73;">
-                      It is a real session. You will set your goals, learn your way
-                      around the floor and the gear, and walk out with a plan you can
-                      run on your own. If you want to keep training with your trainer
+                      It's a real session. You can set your goals, learn your way
+                      around the gym floor and leave knowing exactly what to focus on
+                      first. If you want to keep training with your trainer
                       afterwards, great. If you would rather crack on solo, that is
                       completely fine too. Plenty of members do exactly that.
                     </p>

@@ -3,13 +3,41 @@
 The official Fitaz Gym artwork lives in this repo, and there is now a faithful
 vector of it. An older set of Liberation Sans traces predates both.
 
+**There are four files and no decisions left.** The Liberation Sans traces were
+deleted on 19 November 2026, which is the short version of most of this
+document: anything below describing a choice between a trace and the real mark
+is history.
+
 | | |
 |---|---|
-| `public/brand/fitaz-gym-logo.svg` | **The mark. Use this.** A faithful vector, traced from the official artwork below. Sharp-apex A, rounded chip, correct proportions. This is what the app now renders. |
+| `public/brand/fitaz-gym-logo.svg` | **The mark. Use this.** A faithful vector, traced from the official artwork below. Sharp-apex A, rounded chip, correct proportions. This is what the app renders. |
 | `public/brand/fitaz-gym-logo-white.svg` | Same mark, reversed for dark backgrounds. |
-| `public/brand/fitaz-gym-logo-official.png` | The real raster logo the vector was traced from. Black lockup, transparent, 1924 x 251. |
+| `public/brand/fitaz-gym-logo-official.png` | **The raster master, and what email uses.** The real logo the vector was traced from. Black lockup, transparent, 1924 x 251. Email clients do not render SVG reliably, so the member templates point at this. |
+| `public/email/fitaz-gym-logo-white.png` | The same official lockup reversed, 1924 x 251. Raster, for the same reason. |
 | `public/brand/source/fitaz-gym-logo-official.pdf` | The file Karl supplied, unmodified. |
-| `public/brand/fitaz-gym-logo-email*.svg` / `.png`, and the old `-official`-less `.png` | **Older Liberation Sans traces.** Superseded, see below. |
+| `public/brand/source/postcards-header-logo.png` | Karl's Postcards upload, 2000 x 500, the artwork inside a half-empty canvas. The raster master was cropped from this. |
+
+## The traces are gone (19 November 2026)
+
+Deleted: `fitaz-gym-logo-email.svg` / `.png` and their `-white` twins,
+`fitaz-gym-logo.png` and `fitaz-gym-logo-white.png`, and `public/logo-fitaz.svg`.
+
+**Why, and it is worth reading before anyone restores one from git.** The email
+trace was still in use as late as 19 November 2026, when it went into the member
+nurture masthead and Karl spotted immediately that it looked wrong. It did: the
+measurements further down this file put the gap between the wordmark and the
+chip at about four times where it belongs, on top of the Liberation Sans
+letterforms. The trap was not that the file was bad, it was that the filename
+read like the right answer. `fitaz-gym-logo-email.png` is exactly what you reach
+for when you want a logo for an email.
+
+So the fix was not better documentation, it was removing the wrong files. The
+official raster is legible at 30px, which was the only argument the email lockup
+ever had, so nothing was lost with them.
+
+**If a looser email lockup is ever genuinely wanted**, cut it from the official
+artwork rather than resurrecting a trace. Everything below the geometry heading
+describes how the old ones were built, which is the starting point.
 
 ## The faithful vector (added 27 August 2026)
 
@@ -157,56 +185,65 @@ the next person to go looking will pick it for the same reason we did.
 
 ![The two marks](brand-logo-comparison.png)
 
-## The traces: which one, if you need one
+## The traces: what they were (all deleted)
 
-Everything below describes the old Liberation Sans traced marks. The faithful
-vector (`fitaz-gym-logo.svg`, section near the top) now supersedes them for the
-brand mark; the notes here survive because the **email** variants are still these
-traces, and because the history is worth keeping. These sit on
-`public/logo-fitaz.svg`: tight 0.066em tracking on FITAZ, a small GYM chip hung
-at the top right rather than centred. Their chip proportions are the ones the
-table above marks as wrong, which is exactly why the brand mark was re-traced.
+Everything from here down describes the old Liberation Sans traced marks, which
+**no longer exist in the repo**. It is kept because it records how they were
+built and how they differed, which is what anyone re-cutting a lockup from the
+official artwork would need. Nothing here is a live option.
 
-| File | Use |
+They were derived from `public/logo-fitaz.svg`, itself deleted: tight 0.066em
+tracking on FITAZ, a small GYM chip hung at the top right rather than centred.
+Their chip proportions are the ones the table below marks as wrong, which is
+exactly why the brand mark was re-traced, and eventually why they went.
+
+| File, all deleted | What it was |
 |---|---|
-| `fitaz-gym-logo.svg` | **No longer a trace.** This filename now holds the faithful vector. |
-| `fitaz-gym-logo.png` / `fitaz-gym-logo-white.png` | Old Liberation Sans raster traces. Reference only. |
-| `fitaz-gym-logo-email.svg` / `.png` | **Email headers only.** Still a Liberation Sans trace. See below. |
+| `fitaz-gym-logo.svg` | **Not a trace, and still here.** This filename now holds the faithful vector. |
+| `fitaz-gym-logo.png` / `fitaz-gym-logo-white.png` | Liberation Sans raster traces of the tight brand lockup. |
+| `fitaz-gym-logo-email.svg` / `.png` | The looser email lockup, same wrong letterforms. |
 | `fitaz-gym-logo-email-white.svg` / `.png` | Same, reversed. |
 
-All have a **transparent background**, so they sit on any colour. The PNGs are
-1600px wide RGBA with antialiased edges, not a white box. The SVGs scale to any
-size.
+They had a **transparent background** and the PNGs were 1600px wide RGBA with
+antialiased edges, not a white box.
 
-## Why there is a separate email mark
+## Why there used to be a separate email mark
 
 The email header uses a deliberately different lockup: FITAZ tracked three times
 looser at 0.200em, and a chip roughly 90% of the cap height rather than 60%,
 centred rather than hung at the top.
 
-That is not a second brand. It is the same mark adjusted to survive being about
-30px tall in an inbox, where the brand mark's tight tracking closes up and its
-small chip stops being legible. Anywhere the mark is bigger than an email
-header, the brand mark is the right one.
+That was not a second brand. It was the same mark adjusted to survive being
+about 30px tall in an inbox, where the brand mark's tight tracking was expected
+to close up and its small chip to stop being legible.
 
-Do not introduce a third variant. If a new context needs something in between,
-change one of these two rather than adding to the set.
+**That expectation was never tested against the real artwork, and it does not
+hold.** Rendered at 30px, the official mark reads cleanly, chip included, which
+is why the member emails now use it and the email lockup is gone. Keep this
+section in mind rather than acting on it: if a future context really cannot take
+the official mark, re-cut from it rather than adding a variant back.
 
 ## What "traced" means here
 
-`public/logo-fitaz.svg`, the original, sets the wordmark in **live text**
-(`<text>` elements asking for Helvetica Neue). That renders correctly only on a
-machine that has the font. Anywhere else it silently falls back to something
-else, and the letter spacing and weight shift with it.
+`public/logo-fitaz.svg`, the original and now also deleted, set the wordmark in
+**live text** (`<text>` elements asking for Helvetica Neue). That renders
+correctly only on a machine that has the font. Anywhere else it silently falls
+back to something else, and the letter spacing and weight shift with it. It is
+the reason every other file here was outlined, and the reason none of them
+should ever be rebuilt from live text again.
 
 These have the letterforms converted to **outlines**: every character is a
 filled path, so there is no font to be missing and the mark is identical
 everywhere. That is what makes them safe to hand to a printer, drop into a deck,
 or upload to a platform you do not control.
 
-Keep the original around. Outlines cannot be re-typeset, so if the wordmark ever
-needs different spacing or a different string, edit `logo-fitaz.svg` and
-re-trace rather than trying to edit the paths.
+**The old advice here was to keep the original around** so the wordmark could be
+re-typeset, since outlines cannot be. That is superseded: the typeface in
+`logo-fitaz.svg` was Helvetica Neue standing in for a face we never identified,
+so re-typesetting from it would only ever have produced another approximation.
+The real artwork is the master now. If the wordmark ever needs different spacing
+or a different string, it comes from the Canva design the artwork was set in,
+named in the section above, not from a file in here.
 
 ## Two things worth knowing
 
