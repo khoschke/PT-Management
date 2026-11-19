@@ -123,12 +123,12 @@ GymMaster** before a real send, because the emails assume them:
   back**: a second one means two, pointing at different places. If these
   templates are ever sent from anywhere other than GymMaster, the unsubscribe and
   the `List-Unsubscribe` header have to come from that platform instead.
-- **The header logo is on a borrowed host.** It points at Designmodo's CDN,
-  because our own copy at `pt.fitazgym.com/brand/` only exists on the email
-  branch and 404d in GymMaster. Designmodo already serves that file to members
-  through the Postcards onboarding email, so it works today. **Point it back
-  once the branch is deployed**, and restore the reversed logo for dark mode
-  with it. The two social icons predate all this and already resolve.
+- ~~**The header logo is on a borrowed host.**~~ **Done, 19 November 2026.**
+  The masthead now points at `pt.fitazgym.com/brand/fitaz-gym-logo-official.png`,
+  our own host, and the box was resized to that file's own ratio at the same
+  time. The Designmodo CDN was a stopgap taken in August while the file existed
+  only on an unmerged branch; it is retired, so nothing here needs pointing
+  back. The two social icons predate all of it and have always resolved.
 - **A suppression list that is honoured.** So an unsubscribe on email 1 actually
   stops emails 2 and 3.
 - **Which domain it sends from.** If GymMaster sends from its own infrastructure,
@@ -158,9 +158,14 @@ get skipped:
   email is lying to members in writing.
 - **The templates carry their own header and footer again.** The masthead is
   the official logo served from `pt.fitazgym.com/brand/`, and the footer holds
-  the socials, the address, the permission line and the unsubscribe. Check the
-  images actually load from that host, and that the unsubscribe placeholder has
-  been replaced with a real token.
+  the socials, the address and a permission line. Check the images load from
+  that host.
+  **The footer holds no unsubscribe link**, and this bullet claimed otherwise
+  until 19 November 2026. There is no placeholder to replace: the placeholder
+  was deleted in August, nothing went back in its place, and the series has
+  been sending without one ever since. That is the open risk on the series, not
+  a checklist item to tick here. See the unsubscribe entry above and
+  `docs/PROJECT_STATUS.md`.
 - **Suppression before each send of emails 2 and 3.** See
   `docs/emails/README.md`. Both are written so that reaching the wrong person is
   awkward rather than wrong, but suppression is still the thing that keeps them
