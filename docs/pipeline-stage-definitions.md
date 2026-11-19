@@ -22,7 +22,9 @@ code change.
 | 3. Complimentary session | **Comp. Booked** | A date is locked in for the complimentary session. | Trainer | No |
 | | **Attended** | The session happened, decision pending. | Trainer | No |
 | 4. Decision | **Converted** | They have signed up to paid PT. | Trainer | Yes |
-| | **Not interested** | They said no. | Trainer | Yes |
+| | **Said no** | They said no or not right now. The 48-hour clock to ask the permission question is running. | Trainer | No |
+| | **Agreed to check-in** | They said yes to a check-in down the track. On the 2-2-2. | Trainer | No |
+| | **Not interested** | They said no, or opted out. Never contacted again about PT. The reason is recorded in `closed_reason`. | Trainer, or the portal | Yes |
 
 **There is no "no-show" status, on purpose.** Someone who books and doesn't
 turn up is either rebooked (they stay Comp. Booked) or closed out (Not
@@ -63,6 +65,26 @@ conversion conversation is still ahead.
 | A trainer taps **Log contact** | `last_contacted_at` is stamped with no status change. An Allocated lead also moves to Contacted. | `logLeadContact` |
 | Every morning, 7am Brisbane | The PT Manager's daily digest: new overnight, approaching 48 hours, breached. | `/api/cron/daily-digest` |
 | Every Monday, 7am Brisbane | Each active trainer gets their own active leads, never-contacted first, with the 7 day flags. The PT Manager is CC'd. | `/api/cron/weekly-trainer-summary` |
+
+## Follow-ups and the 48-hour clock on a no (`0022`)
+
+The full design is `docs/spec-item-11-follow-ups.md`. In short:
+
+- **Went quiet:** first contact (Allocated to Contacted) schedules the 2-day
+  nudge, then 2 weeks, then 2 months. The trainer taps Done on each.
+- **Said no:** a 48-hour clock to log the permission question. Yes goes to
+  Agreed to check-in (2-week touch, then 2-month reconnect). Leave it closes as
+  Not interested (declined). Asked by text gives 7 days for an answer.
+- **Automatic closes** (`close_expired_leads()`, run by the daily follow-ups
+  cron and on every board load): a missed 48-hour window (Not interested,
+  no_response_to_no, PT Manager emailed), no answer in 7 days (Not interested,
+  declined), and 7 days after the 2-month reconnect (Unreachable, no_reply).
+- **End communication:** the trainer records a STOP or a "leave it there".
+- **Reopen:** the PT Manager only, timer closes only, with a reason, logged in
+  `lead_reopens`. Opt-outs can never be reopened; the trigger enforces it.
+- **Reminders:** board pills and a "Follow-ups due" filter, a daily trainer
+  email only on days something's due (`/api/cron/follow-ups`), a follow-up line
+  in the Monday email, and timer closes in the manager's daily digest.
 
 ## Lead types
 
@@ -108,8 +130,9 @@ All of these come from `status_history`, with no extra statuses needed:
 
 Live at `/admin/metrics` (manager-only), computed from `status_history` on each
 load (`src/lib/metrics.ts`): the headline rates as stat tiles with their
-denominators, a monochrome funnel, and a by-lead-type breakdown. A rate counts
-whether a lead ever reached a stage, not its current status.
+denominators, a monochrome funnel, a by-lead-type breakdown, and a cohort
+date-range filter (leads grouped by when they came in). A rate counts whether a
+lead ever reached a stage, not its current status.
 
 ## Open: possible future sub-stages (not built)
 
@@ -132,6 +155,9 @@ update to this document.
   every type (Part 7 amendments item 7).
 
 ## Change log
+
+- **18 Nov 2026:** Follow-ups (`0022`): Said no and Agreed to check-in, closed
+  reasons, the 2-2-2 schedule, automatic closes and the PT Manager's reopen.
 
 - **18 Nov 2026:** Own leads (`0021`). Trainers add leads they found
   themselves; the PT Manager's daily digest counts them per trainer.

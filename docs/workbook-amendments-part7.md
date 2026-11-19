@@ -25,6 +25,12 @@ Standing reminder: a change goes to the per-part sources and both combined maste
 - **Interim, until item 11 is built:** PTs keep a lead on the 2-2-2 at Contacted, tap Log contact after each touch and put the next touch date in the notes. The text says automatic reminders are coming. Points 3, 4 and 5 of item 10 (the automatic close, the End communication button, portal reminders) get written once item 11 exists.
 - **Settled (Karl, 18 Nov 2026), option A:** the 2-2-2 is for leads who went quiet, and for leads who said not yet and agreed to a check-in. For went quiet: 2 days, 2 weeks, 2 months. For agreed to a check-in, the permission question is the first touch, then 2 weeks, then 2 months. No 2-day nudge after someone has just said not now, because it reads as not listening. Item 11.1 is superseded on this point: after "Agreed to check-in", the portal schedules the 2-week and 2-month reminders only.
 
+**Per-part masters rebuilt (18 Nov 2026).** All Part 7 changes applied to new copies, uploaded beside the originals for Karl to check and swap in:
+- `Part 7 - PT Manager Cheat Sheet (updated 18 Nov 2026).docx` in "02 Source - Manager Cheat Sheets"
+- `Part 7 - PT Workbook (updated 18 Nov 2026).docx` in "01 Source - PT Workbook"
+
+Untouched sections keep the master's own wording; changed sections use the new portal wording in the master's style. The document title line ("Fitaz Gym Personal Trainer Onboarding") is left for the whole-workbook rename (item 9). Tooling: `tools/workbook-masters/`. **Combined masters, PDFs and `.md`: deferred (Karl, 18 Nov 2026).** Karl will replace each part's section in both combined masters and regenerate the full PDFs and `.md` once every part of the workbook has been through his amendment pass, not part by part.
+
 **Masters:** the Drive connector can open the .docx masters but can't edit them, so the per-part sources, combined masters, PDFs and .md still need these changes made by hand. The portal text in `part7.ts` is the version to copy from.
 
 **Social Saturday (Karl, 17 Nov 2026), item 10.8:** the invite example uses Social Saturday, not First Friday. It's a free session for everyone, built to be inclusive, and the member can bring someone along so they feel more comfortable. Applied to the 2-week invite and the 2-2-2 bullet on 17 Nov, ahead of the rest of item 10.
@@ -191,6 +197,8 @@ Once built, update item 7's rewrite and the Part 6 "Tracking marketing performan
 4. Link paths: change `/onboarding/` to `/workbook/` only with a permanent redirect from every old path to its new one, then test a few old links (including any in emails and calendar invites) to confirm they still land on the right page. Otherwise leave them alone.
 5. Leave file names alone.
 
+**Started 18 Nov 2026 (Karl asked, during the item 12 check):** the dashboard nav item "PT onboarding" now reads "PT Workbook", and so does the title in the workbook's own header. The workbook overview now reads "Fitaz Gym · Personal Trainer Workbook" with the heading "The PT Workbook, at a glance" (manager view) or "Your PT Workbook" (trainer view, was "Your 12-week onboarding journey"). Everything else in this item (page titles, buttons, the masters, link paths and redirects) is still to do in the whole-workbook pass.
+
 ### 10. The 2-2-2 rule: portal tracking, permission and opt-outs (logged 15 Nov 2026, updated same day)
 
 **Where:** Part 7 Making Sales, "The 2-2-2 rule for leads who don't convert": the intro, the three touches, the example messages, and the activity "Where will you track your 2-2-2 follow-ups so none slip through?". PT portal and masters.
@@ -248,6 +256,10 @@ Once built, update item 7's rewrite and the Part 6 "Tracking marketing performan
    - the 2-month touch is done with no response (lead closes).
 9. Once built, update item 10's rewrite to describe the reminders, the 48-hour clock, the PT Manager notification and override as they actually work.
 
+**Built 18 Nov 2026 (migration `0022_follow_ups.sql`), to the approved spec `docs/spec-item-11-follow-ups.md`.** Two new statuses (Said no, Agreed to check-in) plus a recorded close reason instead of "Declined" and "Ended" statuses; option A timing; 7 days to answer a permission question asked by text; Unreachable 7 days after the 2-month reconnect; the PT Manager picks where a reopened lead goes; a daily trainer email only on days something's due. Item 10's interim "coming soon" lines in Part 7 are replaced with how it actually works (phone section, text section STOP line, lead process status table, 2-2-2 section, closing section).
+
+**Change after Karl's test (18 Nov 2026):** every close as Not interested (the status dropdown, End communication, "They said leave it there") now opens a confirmation pop-up that explains what happens (follow-ups and gym PT emails stop, nobody contacts them about PT again, only the PT Manager can undo it) and asks why. On confirm, a dated note goes on the lead: "Communication ended [date]: [reason]. Contact the PT Manager if this is a mistake." The panel stays open on the closed lead in every case.
+
 ### 12. Part 7: one page showing how leads flow through the portal (logged 15 Nov 2026)
 
 **Where:** Part 7 Making Sales, a new short page at the start of the part. PT portal and masters.
@@ -257,6 +269,8 @@ Once built, update item 7's rewrite and the Part 6 "Tracking marketing performan
 **Decision (Karl, 15 Nov 2026):** Go ahead.
 
 **Fix:** Add one short page at the start of Part 7 showing how a lead moves through the system: the three lead types (warm, sweep, unverified), first contact and the 48-hour rule, the permission question on a no (and its 48-hour limit), the 2-2-2 follow-ups, opt-outs, and booking or conversion, all as they work in the portal. Then have each later section point to that page instead of re-describing the process, so the next system change means updating one page.
+
+**Built 18 Nov 2026.** New first section in Part 7, "How a lead moves through the portal": the four lead types (warm, flagged, unverified, own), first contact within 48 hours, the three paths (book, go quiet and the 2-2-2, say no and the permission question with its 48-hour window), opt-outs, and reminders. "The gym-provided lead process" and the 2-2-2 section's portal paragraph now point to it instead of re-describing the flow. No activity, so no new activity key.
 
 ### 13. "Creating certainty: emotional and logical" needs a rewrite (logged 15 Nov 2026)
 
@@ -387,8 +401,32 @@ Once built, update item 7's rewrite and the Part 6 "Tracking marketing performan
 - **Make the reflection a standing habit in the text**, not a once-off activity: "Run these four questions after every sales chat. It takes two minutes."
 - **Portal form: later, and small.** Build it only after items 8 and 11, because those change how leads and statuses work and the form would hang off them. When it's built, make it optional and three taps, not four essays: which certainty was missing (emotional, logical, self-belief), where it stalled (a picklist), and one line on what to do differently. A compulsory form after every chat gets filled with "all good" by week three. A short one gives the PT Manager real patterns to coach on in the fortnightly sessions.
 
+**Built 18 Nov 2026 (Karl asked, with voice): migration `0023_post_chat_reflections.sql`.** An optional prompt at the top of the lead panel as soon as a lead moves on from Attended: three quick picks plus "what would you do differently", typed or dictated with the keyboard microphone (a browser Speak button was tried and dropped as too inaccurate; text only, no audio stored). Skip stops it asking again. Saved on the lead; the trainer sees their own, the PT Manager sees all, plus per-trainer patterns on `/admin/metrics`. Part 7's closing section and the masters' Post-Chat Reflection page now point to it; the printable sheet stays for anyone who prefers paper.
+
 **Portal idea (optional, for Karl to decide):** a short post-chat reflection form attached to each lead in the portal (what went well, where it stalled, which certainty was missing, what to do differently). Useful for the PT's own learning and for PT Manager coaching in the fortnightly development sessions.
 
 ## Done
 
 (nothing yet)
+
+## Added after the Part 7 pass
+
+### PT metrics tab, "My numbers" (built 18 Nov 2026, Karl asked)
+
+**Where:** the PT portal, plus Part 6 "Tracking marketing performance".
+
+- Trainers get a **My numbers** tab: the same Metrics page as the PT Manager's, limited by RLS to their own leads. Their 48-hour contact rate, booking, show and conversion rates (each with its count, so small numbers aren't misread), leads by type, leads they found by where, and their own reflection patterns in plain sentences. No leaderboard and no team averages, on purpose.
+- The PT Manager's Metrics page gets a **Trainer** filter, which shows exactly what that trainer sees.
+- Fix found while building it: the funnel now counts Said no and Agreed to check-in as contacted.
+- **Part 6 portal copy changed:** "Tracking marketing performance" points PTs to My numbers. **The Part 6 masters still need this line** when Karl reaches Part 6 in his part-by-part pass.
+
+### Part 6 portal pass (18 Nov 2026, Karl asked once My numbers was confirmed)
+
+**Where:** `src/lib/onboarding/parts/part6.ts`. Portal only; the Part 6 masters pick these up in Karl's Part 6 pass.
+
+- **Item 1, Part 6:** all 27 em dashes rewritten (commas, colons, full stops). The 3Ps labels and the channel list now use a bold lead-in with a colon. Activity keys unchanged.
+- **Item 2:** the avatar section now says the avatar won't describe every client, and is the one person you picture when you write.
+- **Item 3: superseded.** The Client Journey Tracker link is replaced with a link to the trainer's **My numbers** tab (`/admin/metrics`), so the copy-link change isn't needed in the portal. Part 6 now says My numbers covers steps 1 to 7 of the journey map (the lead side); steps 8 to 12 (onboarding to loyal client) aren't tracked in the portal.
+- **Manager notes:** the tracking note and the journey map note point the PT Manager to the Trainer filter on Metrics instead of the tracker's dashboard.
+- **Item 4:** no bare "Fitaz" in Part 6.
+- Worth deciding later: whether the Client Journey Tracker stays as an optional tool for steps 8 to 12, or is retired. The example sheet still exists in Drive, view-only.

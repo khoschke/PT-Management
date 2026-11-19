@@ -37,9 +37,18 @@ export function PartStatusControl({
               type="button"
               disabled={isPending}
               onClick={() => {
+                const previous = status;
                 setStatus(opt.value);
                 startTransition(async () => {
-                  await setPartStatus(partNumber, opt.value);
+                  // A failed request (a dropped connection, a suspended tab)
+                  // would otherwise reject uncaught and take the page down.
+                  // Put the old status back so the control shows what is saved.
+                  try {
+                    const result = await setPartStatus(partNumber, opt.value);
+                    if (!result.ok) setStatus(previous);
+                  } catch {
+                    setStatus(previous);
+                  }
                 });
               }}
               className="rounded-full px-3 py-1.5 transition-colors disabled:opacity-60"

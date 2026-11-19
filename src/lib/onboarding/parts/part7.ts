@@ -8,6 +8,29 @@ export const part7: OnboardingPart = {
     "You can be the best coach in the building and still go broke if nobody signs up. This part is about the conversation that turns interest into clients, minus the slimy bit. It sits in the Convert phase of the client journey mapped in Part 6.",
   sections: [
     {
+      heading: "How a lead moves through the portal",
+      body: [
+        "Before the scripts and the sales chat, here's the whole journey of a lead in one place. The sections after this zoom in on each step. When the process changes, this page changes first.",
+        "**1. A lead reaches you.** There are four kinds. Each one lands on your lead board in the PT portal.",
+        "| | **Who they are** |\n| --- | --- |\n| **Warm (form)** | Asked about PT themselves through the gym's form. |\n| **Flagged** | Added by the PT Manager after a conversation, an email or a heads-up. They've shown some interest. |\n| **Unverified (cold)** | A new member who hasn't asked about PT. They reach you around day 10 to 17, after two of the gym's three welcome emails. |\n| **Own lead** | Someone you found yourself and added with **Add my own lead**. |",
+        "**2. First contact within 48 hours**, whatever the kind. Once you've reached out, set the lead to **Contacted**, whether or not they replied.",
+        "**3. Then one of three things happens.**",
+        "- **They book.** Comp. Booked, then Attended once the session happens, then Converted or Not interested once they decide.",
+        "- **They go quiet.** The 2-2-2 runs itself: a nudge at 2 days, a touch at 2 weeks, a reconnect at 2 months. Tap **Done** after each one. A week after the reconnect with no reply, the lead closes as Unreachable.",
+        "- **They say no.** Set **Said no**. You have 48 hours to ask once: “Mind if I check in down the track, or would you rather I leave it there?” A yes goes to **Agreed to check-in** and the 2-2-2 picks up at the 2-week touch. A “leave it” or no answer closes the lead. Miss the 48 hours and the portal closes it for you and lets the PT Manager know.",
+        "**4. Opt-outs are final.** A STOP, a “leave it there,” or picking **Not interested** closes the lead after a confirm, with a note saying why. Nobody contacts them about PT again. The one exception is a lead the portal closed because the 48-hour window on a no was missed: the PT Manager can reopen that one if it was a mistake.",
+        "**5. You don't have to remember any of it.** Your board shows what's due on each lead, a short email lands on any morning something's due, and your Monday email lists the week.",
+      ],
+      links: [
+        {
+          label: "Your lead board in the PT portal",
+          url: "/admin",
+        },
+      ],
+      managerNote:
+        "Walk new PTs through this page with their lead board open next to it, ideally with a test lead they can click through: Contacted, Done, Said no, the permission answer. Five minutes of clicking beats reading it twice. When the process changes, update this page first, then the sections that point to it.",
+    },
+    {
       heading: "Sales mindset: helping not hustling",
       body: [
         "Sales isn't a personality you switch on. It's a conversation where someone gets clear on how you can help them. If you're a good coach, you already have most of the skills: you care about people, understand behaviour change, keep people accountable, and have grit.",
@@ -46,7 +69,7 @@ export const part7: OnboardingPart = {
         "> “[Trainer] is actually the best fit for what you're after. I'll get back to you within 48 hours with a couple of times that work for them.”",
         "**When they say no thanks.** Plenty will, and that's fine. Don't take it personally and don't argue the point. Ask one permission question, there and then, while you're still on the call:",
         "> “No worries at all, [Name]. Mind if I check in down the track, or would you rather I leave it there?”",
-        "If they're happy for you to check in, they go onto your 2-2-2 follow-up (see the 2-2-2 rule, below). If they say leave it, thank them, finish the call warmly, and mark them Not interested in the portal, so they're also left out of the gym's remaining PT emails. That's a STOP: no further contact about PT. Ask once only, and never as a separate follow-up later. A respectful no today keeps the door open, and keeps the gym's name good even if they never train with you.",
+        "Thank them and finish the call warmly either way. Then set the lead to **Said no** in the portal and record their answer: **They said yes to a check-in** puts them on the 2-2-2 (see the 2-2-2 rule, below), and **They said leave it there** closes the lead. That's a STOP: no further contact about PT, and the gym's remaining PT emails stop too. Ask once only, and never as a separate follow-up later. A respectful no today keeps the door open, and keeps the gym's name good even if they never train with you.",
       ],
       activities: [
         { key: "cold-call-opener", prompt: "Write your cold-call opener in your own words. Say it out loud until it stops sounding like a script.", multiline: true },
@@ -67,7 +90,7 @@ export const part7: OnboardingPart = {
         "**Referral text**",
         "> “Hey [Name], it's [Your Name] from Fitaz Gym. [Friend] trains with me and mentioned you might be keen. Happy to get you in for a complimentary session and see if we're a good fit. What's your week looking like? Reply STOP to opt out.”",
         "Notice every one ends with an easy either/or, not “let me know if you're interested.” “Earlier or later in the week” is a softer ask than “yes or no,” and it gets a reply.",
-        "**Why every first text ends with “Reply STOP to opt out.”** These texts promote a service, so under the Spam Act 2003 they count as commercial messages, even though the session is free and it's one text to one person. Each one has to say who it's from (your name and Fitaz Gym) and give the person a way to opt out. Put the line on every first-contact text. You don't need it on every reply once you're in a conversation. If someone replies STOP, that's the end: no further contact about PT, by text or any other way. Mark them Not interested in the portal the same day.",
+        "**Why every first text ends with “Reply STOP to opt out.”** These texts promote a service, so under the Spam Act 2003 they count as commercial messages, even though the session is free and it's one text to one person. Each one has to say who it's from (your name and Fitaz Gym) and give the person a way to opt out. Put the line on every first-contact text. You don't need it on every reply once you're in a conversation. If someone replies STOP, that's the end: no further contact about PT, by text or any other way. Open the lead the same day and tap **They replied STOP** under End communication.",
       ],
       activities: [
         { key: "cold-text-draft", prompt: "Draft your cold-lead first text. Cut it until it's four sentences or fewer, plus the opt-out line.", multiline: true },
@@ -78,7 +101,7 @@ export const part7: OnboardingPart = {
     {
       heading: "The gym-provided lead process",
       body: [
-        "Most of your early leads won't come from your own marketing. They'll come from the gym, through the PT portal. There are three kinds, and knowing which one you've got tells you how to open.",
+        "Most of your early leads won't come from your own marketing. They'll come from the gym, through the PT portal. How a lead moves through the portal (at the start of this part) has the whole journey. This section is the detail: the three kinds the gym sends you, how to open with each, and what the statuses mean.",
         "| | **Who they are** | **How they reach you** | **How to open** |\n| --- | --- | --- | --- |\n| **Warm (form)** | Asked about PT themselves through the gym's form, for a specific trainer or PT in general. | Allocated to you in the portal, with their goals, preferred times and any trainer request. | Warm call or text. They asked, so you're booking a time, not selling a session. |\n| **Flagged** | Added by the PT Manager after a conversation on the floor, an email, or a heads-up from front of house. They've shown interest or been flagged for a reason. | Allocated to you in the portal, with the context in the notes. | Warm. Mention whatever got them flagged. |\n| **Unverified (cold)** | A new member who hasn't asked about PT. | Allocated to you around day 10 to 17 of their membership, after two of the gym's three welcome emails. | The cold call or cold text above. |",
         "- When a lead is allocated to you, you get an email and it appears on your lead board in the portal.",
         "- Make first contact within **48 hours**, whatever the lead type. Call, text or email, whatever suits your system. The goal is to book the complimentary session. The board shows where each lead sits against the clock.",
@@ -86,7 +109,7 @@ export const part7: OnboardingPart = {
         "- Followed up without changing the status? Tap **Log contact**, so the date still counts.",
         "- Every Monday morning you get an email listing your active leads, never-contacted first.",
         "- Hit a problem, or a lead you can't take? Let the PT Manager know, so they can pass it to another trainer.",
-        "| Status | Means |\n| --- | --- |\n| **Contacted** | You've reached out (call, text or email), whether or not they replied. |\n| **Comp. Booked** | A date is locked in for the complimentary session. |\n| **Attended** | The session happened, decision pending. Move it on once they decide. |\n| **Converted** | They've signed up to paid PT. |\n| **Not interested** | They said no, or opted out. |\n| **Unreachable** | You tried and never got a reply. |",
+        "| Status | Means |\n| --- | --- |\n| **Contacted** | You've reached out (call, text or email), whether or not they replied. |\n| **Comp. Booked** | A date is locked in for the complimentary session. |\n| **Attended** | The session happened, decision pending. Move it on once they decide. |\n| **Converted** | They've signed up to paid PT. |\n| **Said no** | They said no or not right now. You have 48 hours to ask the permission question (see the 2-2-2 rule). |\n| **Agreed to check-in** | They said yes to a check-in, so they're on the 2-2-2. |\n| **Not interested** | They said no, or opted out. Never contacted again about PT. |\n| **Unreachable** | You tried and never got a reply. |",
         "Two habits keep the numbers honest. **Tick through every step that happened**, even when two happen at once: someone who signs up at the end of their session goes Attended, then Converted. And **use Unreachable, not Not interested, when you simply couldn't reach them.** Unreachable leads stay in the gym's welcome emails on purpose, because someone who never picks up is exactly who those emails are for. Not interested is for someone who actually said no.",
         "Keep the status current. It's how the PT Manager sees what's working and where leads get stuck, and it decides who keeps getting the gym's PT emails. If someone told you no and then gets an email saying their session is about to close, it looks like nobody's talking to each other.",
         "Leads are allocated on workload, not seniority. Newer trainers get a fair run, either by volume or by the warmer leads, unless another trainer is clearly the better fit. If a member asks for a specific trainer, that comes first. After that it's about matching the right PT to the member, then the PT Manager's call.",
@@ -114,7 +137,7 @@ export const part7: OnboardingPart = {
         "**They said no.** “No thanks,” “not for me,” “not right now.” A no is treated the same as a STOP: no follow-ups unless they agree to them. So reply once, in the same conversation, with the permission question:",
         "> “Totally fine. Mind if I check in down the track, or would you rather I leave it there?”",
         "- If they say yes to a check-in, they go onto the 2-2-2 below, and every touch is one they agreed to.",
-        "- If they say leave it there, or don't answer, that's a STOP. Mark them Not interested in the portal and leave it there.",
+        "- If they say leave it there, or don't answer, that's a STOP and the lead closes.",
         "- Ask once. The permission question is part of the no conversation, never a separate follow-up later.",
         "**You have 48 hours to ask.** From the moment a no comes in, you've got 48 hours to send the permission question. After that, asking would be pestering, so the window closes and the lead is treated as a STOP. 48 hours is the outer limit, not the target: if the no comes on the phone or face to face, ask there and then.",
         "**The three touches**",
@@ -130,8 +153,8 @@ export const part7: OnboardingPart = {
         "> “Hey [Name], we've got Social Saturday coming up, a free session that's open to everyone, relaxed vibe and a good crew. You're welcome to bring a friend along too. Want me to save you both a spot?”",
         "**2-month reconnect**",
         "> “Hey [Name], it's [Your Name] from Fitaz Gym, been a while. No pressure at all, just wondering how you've been going with your training. If you ever want that complimentary session, the offer still stands. Reply STOP to opt out.”",
-        "**When it ends.** After the 2-month touch with no reply, the lead closes: mark them Unreachable. And any of these ends everything straight away: a STOP, a “leave it there,” no answer to the permission question, or a missed 48-hour window on a no. Mark them Not interested, and don't contact them about PT again.",
-        "**Keeping track in the portal.** While a lead is on the 2-2-2, leave their status at Contacted, tap Log contact after each touch, and put the date of the next touch in their notes. Your Monday email lists every active lead, so none slip off the radar. Automatic reminders for each touch are coming to the portal.",
+        "**When it ends.** After the 2-month reconnect, if nothing changes for a week, the portal closes the lead as Unreachable. And any of these ends everything straight away: a STOP, a “leave it there,” no answer to the permission question within a week, or a missed 48-hour window on a no. The lead closes as Not interested, and they're never contacted about PT again.",
+        "**How the portal runs it.** The timing is handled for you (see How a lead moves through the portal, at the start of this part). On each lead: tap **Done** after each touch, set **Said no** when someone says no, then record their answer: **They said yes to a check-in**, **They said leave it there**, or **Asked by text, waiting**. If you did ask in time but missed updating the portal and the timer closes the lead, tell the PT Manager: they can reopen it. When a prospect ends it themselves, use **End communication** on the lead.",
         "This maps to step 6 of the client journey, Follow-Up. It's the step most PTs skip, and it's where a big chunk of your conversions actually live.",
         "Each touch should feel like a person who remembers them, not an automated sequence. If it ever feels like you're nagging, you've made it about you. Make it about them and it stays welcome.",
       ],
@@ -251,10 +274,10 @@ export const part7: OnboardingPart = {
         "**When they say yes,** make the next step dead easy. Confirm the day and time of their first paid session. Send your agreement and payment setup straight after the yes, and the PT Waiver Form link if it isn't already done. Then tell them exactly what happens next. A clear next step is the difference between a “yes” and a “yes” that actually shows up.",
         "**When it's a clear no,** thank them and ask your one permission question:",
         "> “Totally fine. Mind if I check in down the track, or would you rather I leave it there?”",
-        "Only start the 2-2-2 follow-up if they say yes to a check-in. Anything else is a STOP: mark them Not interested in the portal and leave it there.",
+        "Set the lead to Said no, and record their answer on the lead. Only start the 2-2-2 follow-up if they say yes to a check-in. Anything else is a STOP, and the lead closes.",
         "**When they're undecided** (“I need to think about it”), agree a specific time to reconnect before they leave, then note it on their lead in the portal so it doesn't rely on memory:",
         "> “Can I text you Thursday to see where you've landed?”",
-        "**Run a two-minute reflection after every sales chat,** win or lose. Four questions:",
+        "**Run a two-minute reflection after every sales chat,** win or lose. The portal asks you straight after: when a lead moves on from Attended, a short reflection appears at the top of the lead. Tap your answers, then type what you'd do differently, or tap the microphone on your keyboard and talk it through. It's optional, and only you and the PT Manager see it. The four questions:",
         "- What went well?",
         "- Where did it stall, if it did?",
         "- Which certainty was missing: emotional, logical or self-belief?",

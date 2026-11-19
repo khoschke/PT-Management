@@ -107,18 +107,25 @@ export default async function OnboardingPartPage({
 
             {section.links && section.links.length > 0 && (
               <div className="mt-4 flex flex-col gap-1.5">
-                {section.links.map((link) => (
+                {section.links.map((link) => {
+                  // Everything opens in a new tab so the trainer keeps their
+                  // place in the workbook (Karl, 18 Nov 2026), including portal
+                  // pages like My numbers. Only links to another workbook page
+                  // stay in the same tab.
+                  const newTab = !link.url.startsWith("/onboarding");
+                  return (
                   <a
                     key={link.url}
                     href={link.url}
-                    target={link.url.startsWith("/") ? undefined : "_blank"}
-                    rel={link.url.startsWith("/") ? undefined : "noopener noreferrer"}
+                    target={newTab ? "_blank" : undefined}
+                    rel={newTab ? "noopener noreferrer" : undefined}
                     className="text-[13px] font-medium underline-offset-2 hover:underline"
                     style={{ color: "var(--ob-accent)" }}
                   >
                     {link.label} ↗
                   </a>
-                ))}
+                  );
+                })}
               </div>
             )}
 

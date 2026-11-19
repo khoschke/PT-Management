@@ -56,7 +56,7 @@ export async function updateLeadStatus(leadId: string, status: LeadStatus): Prom
   const supabase = await createClient();
   const { error } = await supabase.from("leads").update({ status }).eq("id", leadId);
 
-  if (error) return { ok: false, message: "Couldn't update that status. Please try again." };
+  if (error) return { ok: false, message: dbMessage(error, "Couldn't update that status. Please try again.") };
 
   revalidatePath("/admin");
   return { ok: true };
@@ -271,4 +271,163 @@ export async function addOwnLead(
 
   revalidatePath("/admin");
   return { status: "success" };
+}
+
+// ---------------------------------------------------------------------------
+// 2-2-2 follow-ups and the 48-hour clock on a no (Part 7 amendments, item 11).
+// The database enforces the rules (0022_follow_ups.sql): a timer close can't be
+// undone by a trainer, and a lead that opted out can't be reopened. These
+// actions pass its messages straight through.
+// ---------------------------------------------------------------------------
+
+function dbMessage(error: { message?: string } | null, fallback: string): string {
+  const msg = error?.message ?? "";
+  return /48-hour timer|opted out|PT Manager can reopen/.test(msg) ? msg : fallback;
+}
+
+/** The due 2-2-2 touch has been sent: log it and schedule the next one. */
+export async function completeFollowUp(leadId: string): Promise<ActionResult> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("complete_follow_up", { p_lead_id: leadId });
+  if (error) return { ok: false, message: "Couldn't log that follow-up. Please try again." };
+  if (!(data as { ok: boolean } | null)?.ok) return { ok: false, message: "There's no follow-up due on this lead." };
+  revalidatePath("/admin");
+  return { ok: true };
+}
+
+/** Starts the 2-2-2 for a lead that was contacted before follow-ups existed. */
+export async function startFollowUps(leadId: string): Promise<ActionResult> {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("leads")
+    .update({ follow_up_step: 1, next_follow_up_at: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString() })
+    .eq("id", leadId)
+    .eq("status", "Contacted")
+    .is("follow_up_step", null);
+  if (error) return { ok: false, message: "Couldn't start the follow-ups. Please try again." };
+  revalidatePath("/admin");
+  return { ok: true };
+}
+
+/** What happened with the permission question on a Said no lead. "Leave it"
+ *  goes through closeLeadNotInterested, so it gets the same confirm and note. */
+export async function recordPermissionAnswer(leadId: string, answer: "yes" | "asked_by_text"): Promise<ActionResult> {
+  const supabase = await createClient();
+  const update =
+    answer === "yes"
+      ? { status: "Agreed to check-in" as LeadStatus }
+      : { permission_asked_at: new Date().toISOString() };
+  const { error } = await supabase.from("leads").update(update).eq("id", leadId).eq("status", "Said no");
+  if (error) return { ok: false, message: dbMessage(error, "Couldn't save that. Please try again.") };
+  revalidatePath("/admin");
+  return { ok: true };
+}
+
+const CLOSE_NOTE_REASONS = {
+  ended_by_trainer: "they said no, or asked to be left alone",
+  replied_stop: "they replied STOP",
+  declined: "they said leave it there when asked about a check-in",
+} as const;
+
+/** Every close as Not interested (status dropdown, End communication, "They
+ *  said leave it there"), confirmed in a dialog first. Records the reason and
+ *  adds a dated note to the top of the lead's notes. */
+export async function closeLeadNotInterested(
+  leadId: string,
+  reason: keyof typeof CLOSE_NOTE_REASONS,
+): Promise<ActionResult> {
+  const supabase = await createClient();
+  const { data: lead } = await supabase.from("leads").select("notes, status").eq("id", leadId).single();
+  if (!lead) return { ok: false, message: "Couldn't find that lead." };
+
+  const date = new Date().toLocaleDateString("en-AU", { timeZone: "Australia/Brisbane", day: "numeric", month: "short", year: "numeric" });
+  const note = `Communication ended ${date}: ${CLOSE_NOTE_REASONS[reason]}. Contact the PT Manager if this is a mistake.`;
+  const notes = lead.notes ? `${note}\n\n${lead.notes}` : note;
+
+  const update: Record<string, unknown> = { status: "Not interested", closed_reason: reason, notes };
+  if (reason === "declined") update.permission_asked_at = new Date().toISOString();
+
+  const { error } = await supabase.from("leads").update(update).eq("id", leadId);
+  if (error) return { ok: false, message: dbMessage(error, "Couldn't close that lead. Please try again.") };
+  revalidatePath("/admin");
+  return { ok: true };
+}
+
+/** PT Manager only: reopen a lead the 48-hour timer closed. */
+export async function reopenTimerClose(
+  leadId: string,
+  newStatus: "Agreed to check-in" | "Not interested",
+  reason: string,
+): Promise<ActionResult> {
+  if (!(await callerIsManager())) {
+    return { ok: false, message: "Only the PT Manager can reopen a lead." };
+  }
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("reopen_timer_close", {
+    p_lead_id: leadId,
+    p_new_status: newStatus,
+    p_reason: reason,
+  });
+  if (error) return { ok: false, message: "Couldn't reopen that lead. Please try again." };
+  const result = data as { ok: boolean; reason?: string } | null;
+  if (!result?.ok) {
+    return {
+      ok: false,
+      message: result?.reason === "reason_required" ? "Add a short reason for reopening." : "That lead can't be reopened.",
+    };
+  }
+  revalidatePath("/admin");
+  return { ok: true };
+}
+
+// ---------------------------------------------------------------------------
+// Post-chat reflections (0023, 0024). Optional, one per lead, editable by its trainer.
+// ---------------------------------------------------------------------------
+
+const FEELS = ["well", "mixed", "tough"] as const;
+const STALLS = ["nowhere", "engage", "frame", "summarise", "plan", "recommend", "price", "frequency", "other"] as const;
+const CERTAINTIES = ["none", "emotional", "logical", "self_belief"] as const;
+
+export async function savePostChatReflection(
+  leadId: string,
+  input: { feel: string; stalledAt: string | null; missingCertainty: string | null; nextTime: string },
+): Promise<ActionResult> {
+  if (!(FEELS as readonly string[]).includes(input.feel)) return { ok: false, message: "Pick how it went." };
+  if (input.stalledAt && !(STALLS as readonly string[]).includes(input.stalledAt)) return { ok: false, message: "Pick where it stalled." };
+  if (input.missingCertainty && !(CERTAINTIES as readonly string[]).includes(input.missingCertainty)) {
+    return { ok: false, message: "Pick which certainty was missing." };
+  }
+  const nextTime = input.nextTime.trim().slice(0, 2000) || null;
+
+  const supabase = await createClient();
+  const { data: lead } = await supabase.from("leads").select("allocated_trainer_id").eq("id", leadId).single();
+  if (!lead?.allocated_trainer_id) return { ok: false, message: "This lead isn't allocated to a trainer." };
+
+  const answers = {
+    skipped: false,
+    feel: input.feel,
+    stalled_at: input.stalledAt,
+    missing_certainty: input.missingCertainty,
+    next_time: nextTime,
+  };
+  // One per lead: edit it if it's there (including a skipped one), else add it.
+  const { data: existing } = await supabase.from("post_chat_reflections").select("id").eq("lead_id", leadId).maybeSingle();
+  const { error } = existing
+    ? await supabase.from("post_chat_reflections").update(answers).eq("id", existing.id)
+    : await supabase.from("post_chat_reflections").insert({ lead_id: leadId, trainer_id: lead.allocated_trainer_id, ...answers });
+  if (error) return { ok: false, message: "Couldn't save your reflection. Please try again." };
+  revalidatePath("/admin");
+  return { ok: true };
+}
+
+export async function skipPostChatReflection(leadId: string): Promise<ActionResult> {
+  const supabase = await createClient();
+  const { data: lead } = await supabase.from("leads").select("allocated_trainer_id").eq("id", leadId).single();
+  if (!lead?.allocated_trainer_id) return { ok: false, message: "This lead isn't allocated to a trainer." };
+  const { error } = await supabase
+    .from("post_chat_reflections")
+    .insert({ lead_id: leadId, trainer_id: lead.allocated_trainer_id, skipped: true });
+  if (error && error.code !== "23505") return { ok: false, message: "Couldn't skip it. Please try again." };
+  revalidatePath("/admin");
+  return { ok: true };
 }

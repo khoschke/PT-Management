@@ -26,6 +26,15 @@ const STAGE_INDEX: Record<string, number> = Object.fromEntries(
 );
 
 const CONTACTED = STAGE_INDEX["Contacted"];
+
+// Off the line, but they mean first contact happened: someone can say no on the
+// very first call (0022_follow_ups.sql). Without this, a lead that went
+// Allocated to Said no was missing from "contacted" and the booking rate.
+const IMPLIES_CONTACTED: Record<string, number> = {
+  "Said no": CONTACTED,
+  "Agreed to check-in": CONTACTED,
+};
+const stageOf = (status: string): number | undefined => STAGE_INDEX[status] ?? IMPLIES_CONTACTED[status];
 const BOOKED = STAGE_INDEX["Comp. Booked"];
 const ATTENDED = STAGE_INDEX["Attended"];
 const CONVERTED = STAGE_INDEX["Converted"];
@@ -64,17 +73,19 @@ export interface FunnelMetrics {
   timeToConvert: { medianDays: number | null; count: number };
 }
 
-// The source order the breakdown table reads in: warm first, then flagged, then
-// cold. Only sources that actually appear are returned, in this order.
-const SOURCE_ORDER: LeadSource[] = ["form", "gymmaster_sweep", "unverified"];
+// The order the by-source breakdown reads in: warm form, then flagged, then
+// cold unverified, then trainer-added own leads. Any value outside this list
+// (there shouldn't be one) still appears, after these, so the rows always sum
+// to the total.
+const SOURCE_ORDER: LeadSource[] = ["form", "gymmaster_sweep", "unverified", "own"];
 
 // The furthest linear stage a lead ever reached, as an index into STAGE_ORDER,
 // or -1 if it never reached even New (it always has). Reads the current status
 // and every status_history entry, and takes the highest.
 function maxStage(lead: FunnelLead): number {
-  let max = STAGE_INDEX[lead.status] ?? -1;
+  let max = stageOf(lead.status) ?? -1;
   for (const h of lead.status_history) {
-    const i = STAGE_INDEX[h.new_status];
+    const i = stageOf(h.new_status);
     if (i !== undefined && i > max) max = i;
   }
   return max;
@@ -117,9 +128,9 @@ export function computeFunnelMetrics(leads: FunnelLead[]): FunnelMetrics {
   const overall = countStages(leads);
 
   // Group by the source value actually present, so an unexpected one (anything
-  // outside the three documented types) still shows rather than vanishing from
-  // the breakdown while remaining in the total. Documented sources lead, in
-  // funnel order; anything else follows, alphabetically.
+  // outside the known types) still shows rather than vanishing from the
+  // breakdown while remaining in the total. Known sources lead, in funnel
+  // order; anything else follows, alphabetically.
   const present = Array.from(new Set(leads.map((l) => l.lead_source as string)));
   const rank = (s: string) => {
     const i = SOURCE_ORDER.indexOf(s as LeadSource);

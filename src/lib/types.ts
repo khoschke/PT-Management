@@ -36,6 +36,18 @@ export const LEAD_SOURCE_LABELS: Record<LeadSource, { label: string; hint: strin
   own: { label: "Own lead", hint: "Found and added by the trainer themselves" },
 };
 
+// Why a lead ended for good (0022). Only no_response_to_no, the 48-hour
+// timer's close, can be reopened, and only by the PT Manager.
+export type ClosedReason = "replied_stop" | "declined" | "ended_by_trainer" | "no_response_to_no" | "no_reply";
+
+export const CLOSED_REASON_LABELS: Record<ClosedReason, string> = {
+  replied_stop: "Replied STOP",
+  declined: "Declined",
+  ended_by_trainer: "Ended by trainer",
+  no_response_to_no: "No response to a no in 48 hours",
+  no_reply: "No reply after the 2-month reconnect",
+};
+
 // Where a trainer found a lead they added themselves (`leads.found_via`).
 export type FoundVia = "gym_floor" | "referral" | "social_media" | "unverified_list" | "other";
 
@@ -59,6 +71,8 @@ export type LeadStatus =
   | "Comp. Booked"
   | "Attended"
   | "Converted"
+  | "Said no"
+  | "Agreed to check-in"
   | "Not interested"
   | "Unreachable";
 export type GenderPreference = "male" | "female" | "no_preference";
@@ -106,6 +120,13 @@ export interface Lead {
   // Both kept current by a trigger (0019_lead_contact_dates.sql).
   allocated_at: string | null;
   last_contacted_at: string | null;
+  // The 2-2-2 and the 48-hour clock on a no (0022_follow_ups.sql).
+  closed_reason: ClosedReason | null;
+  closed_at: string | null;
+  said_no_at: string | null;
+  permission_asked_at: string | null;
+  follow_up_step: number | null;
+  next_follow_up_at: string | null;
   // Only on leads a trainer added themselves (0021_own_leads.sql).
   found_via: FoundVia | null;
   found_via_other: string | null;
@@ -170,6 +191,8 @@ export const LEAD_STATUSES: LeadStatus[] = [
   "Comp. Booked",
   "Attended",
   "Converted",
+  "Said no",
+  "Agreed to check-in",
   "Not interested",
   "Unreachable",
 ];
@@ -186,7 +209,9 @@ export const STATUS_DEFINITIONS: Record<LeadStatus, string> = {
   "Comp. Booked": "A date is locked in for the complimentary session.",
   Attended: "Session happened, decision pending. Move to Converted or Not interested once they decide.",
   Converted: "They have signed up to paid PT.",
-  "Not interested": "They said no.",
+  "Said no": "They said no or not right now. Ask the permission question within 48 hours.",
+  "Agreed to check-in": "They said yes to a check-in down the track. They're on the 2-2-2.",
+  "Not interested": "They said no, or opted out. Don't contact them about PT again.",
   Unreachable: "You tried and never got a reply. They stay in the member email flow.",
 };
 
@@ -288,3 +313,58 @@ export interface TrainerSetupChecklistItem {
   updated_by: string | null;
   updated_at: string;
 }
+
+// ---------------------------------------------------------------------------
+// Post-chat reflections (0023_post_chat_reflections.sql)
+// ---------------------------------------------------------------------------
+
+export type ReflectionFeel = "well" | "mixed" | "tough";
+export type ReflectionStall =
+  | "nowhere"
+  | "engage"
+  | "frame"
+  | "summarise"
+  | "plan"
+  | "recommend"
+  | "price"
+  | "frequency"
+  | "other";
+export type ReflectionCertainty = "none" | "emotional" | "logical" | "self_belief";
+
+export interface PostChatReflection {
+  id: string;
+  lead_id: string;
+  trainer_id: string | null;
+  created_at: string;
+  skipped: boolean;
+  feel: ReflectionFeel | null;
+  stalled_at: ReflectionStall | null;
+  missing_certainty: ReflectionCertainty | null;
+  next_time: string | null;
+  updated_at: string | null;
+}
+
+export const REFLECTION_FEEL_LABELS: Record<ReflectionFeel, string> = {
+  well: "Went well",
+  mixed: "Mixed",
+  tough: "Didn't land",
+};
+
+export const REFLECTION_STALL_LABELS: Record<ReflectionStall, string> = {
+  nowhere: "It didn't",
+  engage: "Engage",
+  frame: "Frame",
+  summarise: "Summarise",
+  plan: "Plan",
+  recommend: "Recommend",
+  price: "The price",
+  frequency: "Twice a week",
+  other: "Somewhere else",
+};
+
+export const REFLECTION_CERTAINTY_LABELS: Record<ReflectionCertainty, string> = {
+  none: "None, all three were there",
+  emotional: "Emotional",
+  logical: "Logical",
+  self_belief: "Self-belief",
+};
