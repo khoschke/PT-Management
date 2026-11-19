@@ -1,0 +1,46 @@
+name: CI
+
+# The checks CLAUDE.md asks for before a push, plus the unit tests, run on
+# every pull request and every push so none of them can be forgotten. Nothing
+# here touches Supabase, Resend or the deployed site, and the build needs no
+# secrets: every route renders on demand, so nothing is prerendered.
+
+on:
+  pull_request:
+  push:
+    branches: ["**"]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Typecheck, lint, test, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      # Cheapest first, so an obvious failure reports in about a minute rather
+      # than after a full Next build.
+      - name: Typecheck
+        run: npx tsc --noEmit
+
+      - name: Lint
+        run: npx eslint src
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Build
+        run: npm run build

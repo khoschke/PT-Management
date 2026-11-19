@@ -327,7 +327,26 @@ strength". Change it in that one file and it flows to both sides.
 - Develop on branch `claude/fitaz-gym-pt-leads-76ffhv` (or a dedicated branch
   per workstream, merged back via PR — that's how the onboarding dashboard came in).
 - Commit messages end with the Co-Authored-By / Claude-Session trailers.
-- Run `npm run build` + `npx tsc --noEmit` + `npm run lint` before pushing.
+- Before pushing, run `npm install` (cloud sessions have no `node_modules`),
+  then `npx tsc --noEmit`, `npx eslint src`, `npm test` and `npm run build`.
+- **Automated tests and CI (set up 19 Nov 2026).** Vitest unit tests live
+  next to the code as `src/lib/**/*.test.ts`: lead allocation, the 48-hour
+  clock, the 2-2-2 follow-ups and the clock on a no, funnel metrics, document
+  expiry and reminders, CSV export, form validation, and a guard on workbook
+  activity keys. Pure logic only, so they need no credentials and no database.
+  - Run them: `npm install`, then `npm test` (once) or `npm run test:watch`.
+  - CI: `.github/workflows/ci.yml` runs typecheck, lint, tests and build on
+    every PR and push. It was seen to go red on a deliberately broken test
+    before it was trusted. A red CI check on a PR means do not merge.
+  - The suite runs in UTC, as Vercel does, so a test that only passes on a
+    Brisbane laptop cannot sneak in.
+  - `src/lib/onboarding/activity-keys.json` lists every workbook activity key
+    that has shipped. Renaming or removing one fails CI, because it orphans
+    trainers' saved answers. Add new keys to it.
+  - **Not covered:** React components and anything needing a browser or the
+    live database. The PR #60 workbook crash was in client components, so a
+    component test pass (Vitest + jsdom + Testing Library) is the obvious next
+    step. A green suite still says nothing about production.
 - Verify changes in a real browser with screenshots where it matters
   (thoroughness is preferred over speed here).
 - **Branches merged via PR delete themselves.** "Automatically delete head
@@ -1078,12 +1097,25 @@ leads by when they came in). Logic in `src/lib/metrics.ts`, computed from
   recurring work off the lead board, and it only works if the PTs keep lead
   status current. Watch whether that actually happens.
 
-### Test harness and CI (scoped 19 Nov 2026, not built)
+### Test harness and CI (built 19 Nov 2026)
 
-**This repo has zero automated tests and no CI.** The only check on a PR is
-"Vercel Preview Comments", which proves the app built. Full brief, including
-what to do with the nine-week-old `claude/superpowers-setup-jkjgnn` branch and
-its 82 unmerged tests, is in `docs/handoff-test-harness.md`. Its own session.
+Unit tests and CI are in place: see "Working practices" above for what is
+covered and how to run it. The September branch
+`claude/superpowers-setup-jkjgnn` was used as a specification and rebuilt on
+current code, not merged; it can now be deleted (by Karl: sessions cannot
+delete remote branches). Its `verify-live-state` skill was deliberately not
+carried over. Next pass: component tests for the workbook's client components.
+
+Two faults the tests surfaced, for their own sessions:
+
+- **Fixed here:** the CSV export's header was never quoted, so "Goal, other"
+  split into two headings and every column heading after it sat one place to
+  the right of its data ("Allocated trainer" over the status, and so on).
+- **Not fixed, needs deciding:** `daysUntilExpiry` in `src/lib/documents.ts`
+  counts days in the server's time zone, which is UTC on Vercel. The document
+  expiry cron runs at 8am Brisbane, which is still the previous day in UTC, so
+  every reminder and the expired alert go out one day late, and pages
+  rendered before 10am Brisbane show expiry labels a day off.
 
 ### Newly added, not yet scoped
 
