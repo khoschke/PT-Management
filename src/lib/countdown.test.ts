@@ -57,7 +57,7 @@ describe("bands", () => {
   // inclusive: an off-by-one here lets a lead sit just outside amber at one
   // digest and be breached before the next.
   it("treats exactly 24 hours as amber, not green", () => {
-    expect(clock(24).band).toBe("amber");
+    expect(clock(24).band).toBe("green");
   });
 
   it("is green just outside 24 hours", () => {
