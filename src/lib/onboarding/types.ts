@@ -3,10 +3,10 @@
 // different things: only the *lens* changes (manager notes shown or hidden),
 // never the underlying material.
 //
-// Before editing any part file, read the "Never publish commercial terms into
-// trainer-facing content" rule in CLAUDE.md. Everything below is read by
-// self-employed trainers: prices, rates and business models are examples of
-// what has worked for others, never requirements or Fitaz Gym policy.
+// Before editing any part file, read "The figure rule" in CLAUDE.md.
+// Everything below is read by self-employed trainers: prices, rates and
+// business models are examples of what has worked for others, never
+// requirements or Fitaz Gym policy.
 
 export interface OnboardingActivity {
   /** Stable slug, unique within a part. Persisted as onboarding_responses.activity_key. */
