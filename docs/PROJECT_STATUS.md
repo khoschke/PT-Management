@@ -659,6 +659,20 @@ masters are rebuilt in Drive; the combined masters wait for Karl's full pass.
   regenerate the full PDFs and `.md` in one go. Until then the combined masters
   are expected to lag the per-part sources: don't treat that as drift, and
   don't regenerate them part by part.
+- **Unverified lead import (change list Batch 2, 19 Nov 2026).** The PT
+  Manager uploads GymMaster's weekly New Members report at `/admin/import`
+  ("Import unverified" on the lead board) after email 2. It previews every
+  row, skips anyone already in the portal by phone (last nine digits) or
+  email, whatever their status and including removed leads, so form
+  responders and opt-outs can't come back in, and suggests a trainer per lead
+  (taking leads, lightest load, counted as it goes). Nothing saves until
+  Import. Leads land as Unverified and Allocated, with the join date and
+  membership in the notes, and each trainer gets one email listing their new
+  leads (`sendTrainerUnverifiedBatchEmail`). No migration. Tested on a
+  throwaway database (manager insert, allocation stamps, trainer sees and
+  works it, trainer refused) and against the real 1 to 7 Nov report (9 rows,
+  1 already in the portal). **Still open:** retiring the Google Sheet once its
+  existing leads are moved across, which needs Karl's go-ahead.
 - **Em dash sweep (change list Batch 0, 19 Nov 2026).** Every em dash, spaced
   en dash and dash entity is gone from the repo: workbook Parts 1 to 5 and 8 to
   10, all portal UI copy and email subjects, code comments, docs and migration

@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/lib/auth";
 import { closeExpiredLeads } from "@/lib/closeExpired";
-import type { Lead, LeadStatus, PostChatReflection, Trainer } from "@/lib/types";
+import { ACTIVE_LOAD_STATUSES, type Lead, type PostChatReflection, type Trainer } from "@/lib/types";
 import LeadBoard from "./components/LeadBoard";
 
 export const dynamic = "force-dynamic";
@@ -16,19 +16,6 @@ export interface LeadRow extends Lead {
   // RLS limits a trainer to their own.
   post_chat_reflections: PostChatReflection | PostChatReflection[] | null;
 }
-
-// Typed, so renaming a status breaks the build here instead of quietly dropping
-// those leads out of every trainer's load count. Attended counts: the
-// conversion conversation is still ahead of the trainer.
-const ACTIVE_LOAD_STATUSES: LeadStatus[] = [
-  "New",
-  "Allocated",
-  "Contacted",
-  "Comp. Booked",
-  "Attended",
-  "Said no",
-  "Agreed to check-in",
-];
 
 export default async function AdminLeadBoardPage() {
   const user = await getCurrentUser();

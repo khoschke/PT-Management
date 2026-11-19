@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -107,6 +108,14 @@ export default function LeadBoard({
           >
             Export CSV
           </button>
+          {isManager && (
+            <Link
+              href="/admin/import"
+              className="press rounded-full bg-fill px-4 py-2 text-sm font-semibold text-foreground outline-none transition hover:bg-fill/70 focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            >
+              Import unverified
+            </Link>
+          )}
           {isManager && (
             <button
               type="button"

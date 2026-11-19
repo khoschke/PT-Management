@@ -230,6 +230,20 @@ export const AWAITING_CONTACT_STATUSES: LeadStatus[] = ["New", "Allocated"];
 // that has waited longer than ATTENDED_DECISION_DAYS for an outcome, and a
 // Comp. Booked lead booked longer than COMP_BOOKED_CHECK_DAYS ago, whose
 // session has most likely happened or been missed by then.
+// The statuses that count towards a trainer's current lead load, for the
+// allocation tiebreak. Typed, so renaming a status breaks the build instead of
+// quietly dropping those leads out of every load count. Attended counts: the
+// conversion conversation is still ahead of the trainer.
+export const ACTIVE_LOAD_STATUSES: LeadStatus[] = [
+  "New",
+  "Allocated",
+  "Contacted",
+  "Comp. Booked",
+  "Attended",
+  "Said no",
+  "Agreed to check-in",
+];
+
 export const CLOSED_LEAD_STATUSES: LeadStatus[] = [
   "Converted",
   "Not interested",
