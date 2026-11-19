@@ -1,5 +1,12 @@
 # GymMaster logo host email (to Danny)
 
+> **Never sent, and superseded on 19 November 2026.** Karl decided to paste the
+> corrected templates into GymMaster himself rather than hand the job over, so
+> the ask in this email no longer exists. The questions that did need Danny are
+> in `docs/gymmaster-questions-email.md`. Kept because the explanation of why a
+> borrowed image host is a risk is the clearest version written down, and the
+> next person who has to explain it to someone non-technical can lift it.
+
 A short internal email from Karl to Danny asking him to replace the three member
 nurture templates inside GymMaster with ready-made copies, so the masthead logo
 is served from `pt.fitazgym.com` rather than from Designmodo's CDN.
