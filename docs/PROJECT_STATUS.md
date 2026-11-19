@@ -1078,6 +1078,13 @@ leads by when they came in). Logic in `src/lib/metrics.ts`, computed from
   recurring work off the lead board, and it only works if the PTs keep lead
   status current. Watch whether that actually happens.
 
+### Test harness and CI (scoped 19 Nov 2026, not built)
+
+**This repo has zero automated tests and no CI.** The only check on a PR is
+"Vercel Preview Comments", which proves the app built. Full brief, including
+what to do with the nine-week-old `claude/superpowers-setup-jkjgnn` branch and
+its 82 unmerged tests, is in `docs/handoff-test-harness.md`. Its own session.
+
 ### Newly added, not yet scoped
 
 Reminders only. Each gets scoped and built in its own session.
