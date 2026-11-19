@@ -90,7 +90,7 @@ exception when duplicate_object then null;
 end $$;
 
 -- ---------------------------------------------------------------------------
--- setup_checklist_items — the template
+-- setup_checklist_items: the template
 -- ---------------------------------------------------------------------------
 
 create table if not exists setup_checklist_items (
@@ -164,7 +164,7 @@ on conflict (key) do update set
 -- item_id, which is stable, so editing a label never orphans anything.
 
 -- ---------------------------------------------------------------------------
--- trainer_setup_checklists — the header, one row per trainer
+-- trainer_setup_checklists: the header, one row per trainer
 -- ---------------------------------------------------------------------------
 -- start_date deliberately does NOT go on `trainers`. That table is read by
 -- anon for the public form's trainer picker, its grants are column-level, and
@@ -192,7 +192,7 @@ comment on column trainer_setup_checklists.start_date is
   'Drives the rent ramp the setup screen renders. The ramp is week ranges and percentages computed from this date; no amounts are stored anywhere.';
 
 -- ---------------------------------------------------------------------------
--- trainer_setup_checklist_items — the ticks
+-- trainer_setup_checklist_items: the ticks
 -- ---------------------------------------------------------------------------
 -- A missing row means pending, the same way a missing onboarding_part_status
 -- row means not_started. Rows are written on first tick.

@@ -3,7 +3,7 @@
 -- 0011 refused to let a trainer untick both Morning and Evening, on the stated
 -- grounds that it would drop them out of allocation. That reasoning was wrong.
 -- Availability was never a gate: `suggestTrainer` scored it as +5 and nothing
--- more, the pool was every active trainer, and ties broke on lowest lead load —
+-- more, the pool was every active trainer, and ties broke on lowest lead load,
 -- so a trainer with both slots off would have kept receiving leads, and a light
 -- book would have made them *more* likely to win a tie.
 --
@@ -15,7 +15,7 @@
 --     pool before any rule runs, so they are never suggested.
 --   * The public form's trainer picker (src/app/pt-session/page.tsx) hides them,
 --     so a member cannot request them by name while they are paused.
---   * The manager can still allocate to a paused trainer by hand — the pause is
+--   * The manager can still allocate to a paused trainer by hand; the pause is
 --     a default, not a lock, and the roster labels them so it is visible.
 --
 -- The column restriction from 0010/0011 is unchanged: a trainer still edits

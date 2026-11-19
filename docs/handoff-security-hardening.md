@@ -1,7 +1,7 @@
-# Security Hardening — SHIPPED, 12 August 2026
+# Security Hardening: SHIPPED, 12 August 2026
 
 > **All items below are built, deployed and verified against live.** This note is
-> now the record of what was found and why each fix looks the way it does — read
+> now the record of what was found and why each fix looks the way it does. Read
 > it before changing any of this, not as a to-do list.
 >
 > `0009_public_access_hardening.sql` is applied to the live project, both parts,
@@ -21,28 +21,28 @@ fresh session. **Read the caveat below before trusting any finding.**
 The sweep was performed on the `claude/custom-domain-dns-setup-v45oc6` branch,
 which had forked from production long before and was ~50 commits behind. Some
 findings were already fixed in production (e.g. the trainer `availability` enum
-was replaced by `available_am`/`available_pm` booleans — see
-`handoff-availability-am-pm.md`; branded HTML emails already link the dashboard).
+was replaced by `available_am`/`available_pm` booleans (see
+`handoff-availability-am-pm.md`); branded HTML emails already link the dashboard).
 
 **So: re-validate every item below against *current* production before building.
-Do not port code from the stale branch — re-apply fresh.** That branch is parked
-and must not be merged (its real deliverable — pt.fitazgym.com + email — is
+Do not port code from the stale branch. Re-apply fresh.** That branch is parked
+and must not be merged (its real deliverable, pt.fitazgym.com + email, is
 already live).
 
-## Already done — do NOT redo (branch `claude/security-hardening-csv-ip-cron`, PR to production)
+## Already done: do NOT redo (branch `claude/security-hardening-csv-ip-cron`, PR to production)
 
-- **CSV formula injection** — `src/lib/csv.ts` now prefixes a quote on cells
+- **CSV formula injection:** `src/lib/csv.ts` now prefixes a quote on cells
   starting with `= + - @` so a member-typed lead field can't run as a formula in
   the manager's spreadsheet export.
-- **IP salt** — `src/lib/ip.ts` now throws in production if `IP_HASH_SALT` is
+- **IP salt:** `src/lib/ip.ts` now throws in production if `IP_HASH_SALT` is
   unset (keeps the dev fallback locally).
-- **Cron auth** — `src/app/api/cron/daily-digest/route.ts` now fails closed when
+- **Cron auth:** `src/app/api/cron/daily-digest/route.ts` now fails closed when
   `CRON_SECRET` is unset and uses a constant-time compare.
 
-## Status: items 1–4 built on `claude/security-hardening-validation-0ry4cz`
+## Status: items 1 to 4 built on `claude/security-hardening-validation-0ry4cz`
 
 Every finding below was re-validated against production (`claude/fitaz-gym-pt-leads-76ffhv`,
-merge 2c95593) before anything was written. **All four still applied** — none had
+merge 2c95593) before anything was written. **All four still applied**: none had
 been quietly fixed since the stale sweep. The trainer `email` column was still
 readable with the anon key, `status_history_select_trainer` still had no
 `deleted_at` clause, `leads_insert_public_form` still gave anon a direct INSERT,
@@ -52,27 +52,27 @@ Built, plus the fresh findings from the "also review" pass below:
 `supabase/migrations/0009_public_access_hardening.sql`, `src/lib/cron.ts`,
 `src/lib/auth.ts` (`callerIsManager`), and the actions/routes that use them.
 
-### Deploy runbook — the ordering is not optional
+### Deploy runbook: the ordering is not optional
 
 `0009_public_access_hardening.sql` is split into PART A and PART B for this.
 
 1. **Reconcile the live DB first.** `0006_trainer_documents.sql` is not on the
    live database, and PART A rewrites a policy on a table `0006` creates, so
    PART A cannot fully run until that is fixed. This is a hard prerequisite, not
-   a nicety — it is what the first attempt died on.
+   a nicety. It is what the first attempt died on.
 2. **Run PART A** in the Supabase SQL editor. Safe against the currently
    deployed code: it only adds `submit_form_lead` and tightens grants/policies
    the public form doesn't depend on. The old insert path keeps working.
 3. **Merge to `claude/fitaz-gym-pt-leads-76ffhv`** and let Vercel deploy. The
    form now calls the RPC.
 4. **Run PART B.** This drops anon's direct INSERT on `leads` and revokes
-   `check_form_rate_limit`. Running it before step 3 takes the live form down —
-   the old code would have neither path.
+   `check_form_rate_limit`. Running it before step 3 takes the live form down,
+   as the old code would have neither path.
 
 After PART A, check the public form still submits. After PART B, check it again,
 and confirm `…/rest/v1/trainers?select=email` with the anon key now 403s.
 
-**`supabase/reconcile/README.md` is the executable version of this list** — same
+**`supabase/reconcile/README.md` is the executable version of this list**, with the same
 ordering, with the audit query, the rollback SQL and the per-step verification
 filled in. Follow that; this section is the summary.
 
@@ -92,7 +92,7 @@ Verify first: check the current public form query
 grant only if a page genuinely needs more (prefer a dedicated view over the base
 table). Managers/trainers use the `authenticated` role and are unaffected.
 
-### 2. Public form rate-limit bypass (Low–Med)
+### 2. Public form rate-limit bypass (Low to Med)
 The app enforces the 8-per-10-min limit before inserting, but `anon` also has a
 direct `INSERT` policy on `leads`, so a script can POST straight to the REST API
 and skip it. Fix: a `security definer` `submit_form_lead(...)` RPC that enforces
@@ -115,10 +115,10 @@ The manager-only dashboard + trainer actions rely solely on RLS. Add explicit
 `role === 'manager'` guards to the manager-only actions (allocate, soft/hard
 delete, add sweep lead, trainer create/edit/active) so a future RLS change can't
 silently open them. Leave status/note updates to RLS (trainers use them on their
-own leads). **Re-apply against current `actions.ts` files** — they changed for
+own leads). **Re-apply against current `actions.ts` files**, as they changed for
 the AM/PM availability work.
 
-## Migration numbering — settled at `0009`
+## Migration numbering: settled at `0009`
 
 This work is **`0009_public_access_hardening.sql`**.
 
@@ -126,11 +126,11 @@ It was briefly numbered `0005`, the slot `PROJECT_STATUS.md` had reserved, on th
 reasoning that the four blocks were independent of each other. They are not
 independent of `0006`: block 3 rewrites the `trainer_documents_insert` policy, and
 `trainer_documents` is created by `0006`. As `0005` it runs *before* the table
-exists and fails on any fresh setup. That is not hypothetical — it is how the
+exists and fails on any fresh setup. That is not hypothetical. It is how the
 live-DB drift was discovered, when PART A died on
 `42P01: relation "trainer_documents" does not exist`.
 
-So it sits after `0006`, at `0009`. **`0005` is retired, not reserved** — don't
+So it sits after `0006`, at `0009`. **`0005` is retired, not reserved**, so don't
 fill it. **No collision with GymMaster:** it keeps its existing
 `0007_gymmaster_lead_source.sql` / `0008_gymmaster_sync.sql`, unchanged. Anything
 new starts at `0010`.
@@ -138,27 +138,27 @@ new starts at `0010`.
 ## How it was applied
 
 Applied 12 Aug 2026 as steps 3 and 5 of the reconciliation runbook,
-**`supabase/reconcile/README.md`** — audit the live schema, apply the missing
+**`supabase/reconcile/README.md`**: audit the live schema, apply the missing
 `0006`, then PART A → deploy → PART B, verifying at each step. PART B removes
 anon's direct insert on `leads`, so running it before the code that calls
 `submit_form_lead()` was deployed would have taken the public form down.
 
 **If you ever re-apply this to a fresh project**, keep that ordering. And note
-that a fresh setup runs the whole file top to bottom in one go, which is fine —
-the two-part split only matters when there is already a live form running the
+that a fresh setup runs the whole file top to bottom in one go, which is fine.
+The two-part split only matters when there is already a live form running the
 old code.
 
-## Also review (new code the original sweep never saw) — DONE
+## Also review (new code the original sweep never saw): DONE
 
 Reviewed against production. Findings and what was done:
 
-- **Branded HTML emails (`src/lib/email.ts`) — clean.** Every lead-supplied
+- **Branded HTML emails (`src/lib/email.ts`): clean.** Every lead-supplied
   interpolation in both HTML bodies goes through `esc()`: name, phone, email,
   goals, contact preference, due date, and the digest's lead names. `esc()`
-  doesn't escape `'`, which is correct here — nothing lands in a single-quoted
+  doesn't escape `'`, which is correct here, as nothing lands in a single-quoted
   attribute; the one attribute interpolation is `href="${esc(DASHBOARD_URL)}"`,
   and that's env config, not user input. The document emails are text-only.
-- **Trainer documents — one real finding, fixed in 0009.** The
+- **Trainer documents: one real finding, fixed in 0009.** The
   `trainer_documents_insert` policy constrained `trainer_id` and `uploaded_by`
   but not `status`, so a trainer posting straight at the REST API with the
   public key could insert their own document as `status='verified'` and sign off
@@ -166,30 +166,30 @@ Reviewed against production. Findings and what was done:
   `verified_at`/`rejection_reason` on the trainer branch, and pins `file_path`
   to the trainer's own storage folder. `verifyDocument`/`rejectDocument` also
   gained explicit manager checks.
-- **Keep-alive cron — real finding, fixed.** The digest was hardened in the last
+- **Keep-alive cron: real finding, fixed.** The digest was hardened in the last
   pass, but `keepalive` and `document-expiry` were left on the old
   `authHeader !== \`Bearer ${process.env.CRON_SECRET}\`` compare. Both fail
   **open** when `CRON_SECRET` is unset (a literal `Bearer undefined` header gets
   in) and both leak the secret to a timing attack. All three now share
   `isAuthorisedCronRequest` in `src/lib/cron.ts`.
-- **Password change — real finding, fixed.** `supabase.auth.updateUser({password})`
+- **Password change: real finding, fixed.** `supabase.auth.updateUser({password})`
   doesn't ask for the old password, so anyone reaching an unlocked signed-in
   browser could take the account over. The form now requires the current
   password and verifies it on a throwaway client (`persistSession: false`, so a
   failed attempt can't clobber the real session cookies).
-- **Manager-assisted email change (`staff/actions.ts`) — clean.** Every action
+- **Manager-assisted email change (`staff/actions.ts`): clean.** Every action
   there already checks `callerIsManager()` before touching the service-role
   client, collision-checks the new address, and blocks self-revocation. Now
   imports the shared helper instead of a local copy.
-- **GymMaster phase 1 (unmerged branch) — two findings, NOT fixed here.** Left
+- **GymMaster phase 1 (unmerged branch): two findings, NOT fixed here.** Left
   for that branch so this one stays reviewable:
   1. `src/app/api/cron/gymmaster-sync/route.ts` has the same fail-open cron
      auth. It should use `isAuthorisedCronRequest` from `src/lib/cron.ts`.
   2. `src/lib/gymmaster/client.ts` puts the API key in the query string
      (`url.searchParams.set("api_key", apiKey)`), which lands in proxy and
-     access logs. Move it to a header once the real auth scheme is confirmed —
+     access logs. Move it to a header once the real auth scheme is confirmed;
      it's already flagged `TODO(gymmaster-docs)`.
-- **Member nurture email series — clean.** Static HTML in `docs/emails/`, no
+- **Member nurture email series: clean.** Static HTML in `docs/emails/`, no
   interpolation of anything this app holds; merge tags are resolved by
   GymMaster, not here.
 

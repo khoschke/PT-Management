@@ -9,7 +9,7 @@
 # `42P01: relation "trainer_documents" does not exist`.
 #
 # Needs a local Postgres 16 server binary. No network, no Supabase project, no
-# credentials — it builds its own cluster in a temp directory and deletes it.
+# credentials: it builds its own cluster in a temp directory and deletes it.
 #
 #   ./supabase/reconcile/local_migration_check.sh
 #

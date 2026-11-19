@@ -4,7 +4,7 @@
 
 Two small, self-contained tasks.
 
-## Task 1 — Import the real trainer roster
+## Task 1: Import the real trainer roster
 
 A ready-to-run script exists: `supabase/seed_real_trainers.sql`. It inserts the
 five real PTs (Dylan Heycox, Julie Manners, Shahd Herbert, Karl Hoschke, Michael
@@ -24,7 +24,7 @@ Hammett) with emails, specialty tags, and bios.
   receive his own allocated leads, link his manager login to his trainer row via
   the Staff screen / `profiles.trainer_id`.
 
-## Task 2 — Let each user change their own password
+## Task 2: Let each user change their own password
 
 Right now passwords can only be set by an admin (in Supabase, or when created on
 the `/admin/staff` screen). Add a self-service "change my password" spot that any
@@ -37,7 +37,7 @@ signed-in user (manager OR trainer) can use.
   `src/app/admin/(dashboard)/layout.tsx` (visible to everyone, not just managers).
 - Page shows the user's email + role, and a **Change password** form
   (new password + confirm; min 8 chars; check they match).
-- Server action in `account/actions.ts` (`"use server"` — remember: only async
+- Server action in `account/actions.ts` (`"use server"`; remember: only async
   functions exported; form-state object goes in `account/state.ts`). Use the
   **session-scoped** server client (`@/lib/supabase/server`), NOT the admin
   client:
@@ -47,7 +47,7 @@ signed-in user (manager OR trainer) can use.
   const { error } = await supabase.auth.updateUser({ password: newPassword });
   ```
 
-  This changes the *currently logged-in* user's own password securely — no admin
+  This changes the *currently logged-in* user's own password securely, with no admin
   privileges, no other user affected.
 - Mirror the existing form patterns (see `login/` and `staff/` for structure,
   styling classes, and the `useActionState` + `state.ts` split).
@@ -56,7 +56,7 @@ signed-in user (manager OR trainer) can use.
 
 ### Gotchas (from PROJECT_STATUS.md)
 
-- "use server" files export only async functions — put the initial form-state
+- "use server" files export only async functions. Put the initial form-state
   object in a sibling `state.ts`.
 - Run `npm run build` + `tsc --noEmit` + `lint`, then verify in a browser
   (sign in, change password, sign out, sign back in with the new one) before

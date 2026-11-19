@@ -1,11 +1,11 @@
 # Handoff: Editable Trainer Pages (the "trainer portal" idea)
 
-> **BUILT, 7 September 2026 — this note is now a record, not a task.**
+> **BUILT, 7 September 2026. This note is now a record, not a task.**
 > Delivered on `claude/trainer-profiles-self-editable-jqnn96`: internal only,
 > bio + specialties + AM/PM availability, no photo, no Shopify feed.
 >
 > - **Screen:** `/admin/profile`, "My profile" in the dashboard nav. Shown to
->   any login with a linked `trainer_id` — which is what the real data needed,
+>   any login with a linked `trainer_id`, which is what the real data needed,
 >   because Karl's login is `role = trainer`, not `manager`, and the three
 >   `manager` logins have no trainer row of their own.
 > - **Database:** migrations `0010_trainer_self_profile.sql` and
@@ -20,15 +20,15 @@
 >   grounds that it would drop a trainer out of allocation. That was wrong:
 >   availability was never a filter, only a `+5` score in `suggestTrainer`, and
 >   because ties break on lowest lead load an empty-booked trainer would have
->   won *more* often. `0012` lifts the block and makes the pause real —
+>   won *more* often. `0012` lifts the block and makes the pause real:
 >   `suggestTrainer` filters paused trainers out before rule 1, and the public
 >   form's picker hides them so a member can't request someone whose book is
 >   full. The manager can still allocate to a paused trainer by hand, and the
 >   roster labels them "Paused, not taking new leads".
 > - **The watch-out below was right, and a plain `update` policy was not
 >   enough.** RLS is row-level, so the policy on its own would also have let a
->   trainer flip their own `active` or repoint their `email` — the address lead
->   allocation notifications go to. The trigger is what narrows the write to
+>   trainer flip their own `active` or repoint their `email` (the address lead
+>   allocation notifications go to). The trigger is what narrows the write to
 >   bio and specialties. It compares the whole row as jsonb minus those two
 >   keys, so a column added to `trainers` later is protected by default.
 > - **Verified against live**, as a real signed-in trainer, in rolled-back
@@ -44,8 +44,8 @@
 > - **Two safeguards on the pause**, because its consequence is invisible once
 >   set. Both forms warn live, as the second chip comes off and before anything
 >   is saved. And a paused trainer gets a standing banner on every page of the
->   authed app, with a one-click way back, for as long as they stay paused —
->   the likelier failure is not a mis-click but pausing in a flat-out week and
+>   authed app, with a one-click way back, for as long as they stay paused.
+>   The likelier failure is not a mis-click but pausing in a flat-out week and
 >   forgetting for a month, and only the standing reminder catches that. A
 >   confirm() dialog was considered and rejected: this repo reserves those for
 >   irreversible actions (permanent delete, revoking access), and a modal fires
@@ -66,11 +66,11 @@ then states the decisions, scope, and definition of done.
 
 ## The vision (captured faithfully)
 
-Each of the five PTs gets their **own page they can edit themselves** — a profile
+Each of the five PTs gets their **own page they can edit themselves**: a profile
 that's actually theirs to keep current, rather than something the PT Manager
 updates on their behalf. The picture in the owner's words: a trainer logs in,
-opens their page, and edits it — photo, bio, specialties, whatever represents
-them — and the change is live without going through Karl.
+opens their page, and edits it (photo, bio, specialties, whatever represents
+them), and the change is live without going through Karl.
 
 That's the whole idea, and it's a good one. Two things make it more than
 cosmetic:
@@ -83,8 +83,8 @@ cosmetic:
 
 ## Reality check: "one mother MCP hosted through Shopify"
 
-The vision came wrapped in an architecture framing — *"it's all one mother MCP,
-hosted through Shopify"* — that's worth untangling before anyone builds against
+The vision came wrapped in an architecture framing, *"it's all one mother MCP,
+hosted through Shopify"*, that's worth untangling before anyone builds against
 it, because it doesn't match how this system is actually put together. None of
 this changes whether the feature is a good idea; it changes *where* and *how*
 it gets built.
@@ -93,12 +93,12 @@ it gets built.
   call tools. Nothing here is an MCP server, and this feature doesn't need one.
   What we have is an ordinary **Next.js web app** (App Router + TypeScript +
   Tailwind). "One mother MCP" is best read as "one single app that everything
-  hangs off" — and *that* part is true: there is one app, and the trainer pages
+  hangs off", and *that* part is true: there is one app, and the trainer pages
   would live inside it.
 - **It isn't hosted through Shopify.** The app runs on **Vercel**, with
   **Supabase** (Postgres + Auth + Row Level Security) behind it. Shopify hosts a
   *different* thing: the gym's marketing website at `fitazgym.com`. The only
-  point of contact between the two is DNS — we're pointing `pt.fitazgym.com` at
+  point of contact between the two is DNS: we're pointing `pt.fitazgym.com` at
   Vercel via a CNAME added in Shopify's domain settings (see
   `docs/handoff-custom-domain.md`). Shopify never runs our code, never sees our
   database, and never serves these pages.
@@ -106,29 +106,29 @@ it gets built.
   means the app *will* answer at a `fitazgym.com` subdomain, and the gym already
   has trainer profiles on its Shopify site
   (`fitazgym.com/pages/personal-trainers`, which the public form currently just
-  links out to — see `docs/handoff-trainer-profiles-link.md`). So there are two
+  links out to; see `docs/handoff-trainer-profiles-link.md`). So there are two
   places today that show trainers, and they're on two different platforms. The
   editable pages, if built, would be **our app on Vercel**, not the Shopify page.
 
 The one-sentence version to give the owner: *"It'll be one thing to log into, and
-it'll live at a fitazgym.com address — but it's our own app on Vercel and
+it'll live at a fitazgym.com address, but it's our own app on Vercel and
 Supabase, separate from the Shopify website, not something running inside
 Shopify."*
 
 ## Decisions (settled with Karl, 2026-08-04)
 
 The open questions have been answered. This is now a scoped, buildable
-workstream — the decisions below are the spec.
+workstream; the decisions below are the spec.
 
-1. **Internal, not public.** The trainer portal is an **internal** tool — seen
+1. **Internal, not public.** The trainer portal is an **internal** tool, seen
    only inside the logged-in app by the trainer themselves and the manager. It is
    *not* a member-facing marketing page. The public already reach trainer info
    another way: the public expression-of-interest form links out to the gym's
    own website. So there is **no public view route, no vanity URLs, no
-   `active=false`-hides-a-public-page question** — all of that is out of scope.
+   `active=false`-hides-a-public-page question**. All of that is out of scope.
 2. **Both edit.** A trainer edits their **own** profile (self-service), and the
    manager retains the ability to edit **everyone's** (the existing roster
-   editor). Not either/or — both paths stay.
+   editor). Not either/or: both paths stay.
 3. **Bio + specialties only, for now.** No photo in this pass. That deliberately
    dodges the one costly new capability (image upload/storage), so this becomes a
    small, contained build. Photo can come later as its own increment if wanted.
@@ -136,7 +136,7 @@ workstream — the decisions below are the spec.
    thinking is that the internal portal becomes the place trainers keep their
    bio/specialties current, and that data eventually **feeds** the gym's public
    Shopify `personal-trainers` page (rather than running as a second, drifting
-   copy). Not decided firmly, and **not part of this build** — feeding Shopify is
+   copy). Not decided firmly, and **not part of this build**. Feeding Shopify is
    a separate integration (writing to Shopify) to scope on its own. For now, just
    don't design the internal portal in a way that would make a future feed
    awkward. Nothing else about this build depends on it.
@@ -152,9 +152,9 @@ workstream — the decisions below are the spec.
   also manager-only.
 - **A trainer who logs in** lands on `/admin` seeing only their own allocated
   leads (enforced by RLS, not just UI), plus the `/onboarding` workbook. **There
-  is no trainer-editable surface today** — that's exactly the gap this fills.
+  is no trainer-editable surface today**, and that's exactly the gap this fills.
 - **The public form links out** to the gym's Shopify trainer page rather than
-  rendering trainers itself — a deliberate past decision to avoid maintaining
+  rendering trainers itself, a deliberate past decision to avoid maintaining
   profiles in two places (`docs/handoff-trainer-profiles-link.md`). If we now
   build editable pages in-app, revisit that decision: option (A) above could make
   the link point *into* our app instead of out to Shopify, which finally kills
@@ -162,33 +162,33 @@ workstream — the decisions below are the spec.
 
 ## Scope
 
-With the decisions above, this is a small, contained build — no photos, no public
+With the decisions above, this is a small, contained build: no photos, no public
 routes.
 
 - **Let a trainer edit their own row.** New self-service surface (e.g.
   `/admin/profile` or a "My page" tab in the authed app) where a logged-in
   trainer edits *their own* `bio` and `specialties`. The heavy lifting is an RLS
   policy letting a trainer `update` the `trainers` row where
-  `id = their profile.trainer_id` — mirroring how `leads` already scopes
+  `id = their profile.trainer_id`, mirroring how `leads` already scopes
   per-trainer. Managers keep the existing roster editor for everyone (that path
   already exists and stays).
 - **Editable fields: `bio` + `specialties` only.** *(Superseded 7 Sep 2026:
   AM/PM availability was added at Karl's request after he tested the first cut.
   See the note at the top.)* Both columns already exist on
-  the `trainers` table — no schema change for the fields themselves, just the new
+  the `trainers` table, with no schema change for the fields themselves, just the new
   RLS `update` policy and the self-service UI. No photo, no new columns this pass.
-- **No public view route.** Internal only — the profile is rendered inside the
+- **No public view route.** Internal only: the profile is rendered inside the
   logged-in app for the trainer and manager, nothing served to the public.
 - **Later, separately:** a photo field (needs Supabase Storage) and/or feeding
-  the Shopify public page — each its own scoped increment, not this build.
+  the Shopify public page, each its own scoped increment, not this build.
 
 ## Watch-outs
 
 - **RLS is the whole ballgame for self-service.** A trainer must be able to edit
   their own row and *no one else's*. Get the `update` policy right at the
-  database level (scoped to `profile.trainer_id`), the way `leads` already is —
-  don't rely on hiding the form.
-- **Photos are out of scope this pass** — deliberately, because no image
+  database level (scoped to `profile.trainer_id`), the way `leads` already is.
+  Don't rely on hiding the form.
+- **Photos are out of scope this pass**, deliberately, because no image
   upload/storage exists yet (it'd mean Supabase Storage, an upload flow, size/type
   limits). If it comes back later, budget for it as its own increment; don't let
   it creep into this build.
@@ -196,21 +196,21 @@ routes.
   the monochrome, light-mode `/admin` look (tokens in `src/app/globals.css`), not
   the themed `/onboarding` layer and not a new third style. Mirror the existing
   roster/account form markup.
-- **`specialties` drives allocation.** It's not just display copy — editing it
+- **`specialties` drives allocation.** It's not just display copy: editing it
   changes who gets suggested for which lead. Fine for a trainer to edit, but say
   so in the UI so they understand a change here affects lead matching.
 - **No outbound network in this build workspace.** Same as everywhere in this
   repo: build, deploy to Vercel, verify on the live site.
 
-## Still open (not blockers — decide while building)
+## Still open (not blockers; decide while building)
 
 The big questions are settled; these are small ones the builder can resolve
 sensibly without another round with Karl:
 
-- **Where the self-service surface lives** — a dedicated "My profile / My page"
+- **Where the self-service surface lives**: a dedicated "My profile / My page"
   tab, or folded into the existing `/admin/account` screen (which already does
   self-service password). Either is fine; pick what reads cleanest.
-- **Exact `specialties` editing UX** — same tag picker the manager roster uses,
+- **Exact `specialties` editing UX**: same tag picker the manager roster uses,
   reused for the trainer's own row. Reuse, don't reinvent.
 
 ## Definition of done
@@ -220,6 +220,6 @@ self-service screen inside `/admin`; the change is enforced per-trainer by an RL
 `update` policy (a trainer can update only the `trainers` row matching their
 `profile.trainer_id`, and no other); the edit shows up wherever trainer info is
 used (roster, allocation matching); and the **manager** can still edit everyone
-via the existing roster editor. Internal only — nothing new is served to the
+via the existing roster editor. Internal only: nothing new is served to the
 public. Photo and any Shopify feed are explicitly *not* part of this and come
 later as separate increments.

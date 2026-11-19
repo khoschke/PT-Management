@@ -81,8 +81,8 @@ export function canSeeCoachingNotes(role: AppRole | null | undefined): boolean {
 }
 
 // Defence in depth for the manager-only server actions. RLS is still the real
-// gate — these actions run as the signed-in user, so the database refuses a
-// trainer's write regardless — but an explicit role check means a future change
+// gate (these actions run as the signed-in user, so the database refuses a
+// trainer's write regardless), but an explicit role check means a future change
 // to a policy can't quietly turn "allocate a lead" or "delete a lead" into
 // something any signed-in trainer can do. Status and note updates deliberately
 // don't use this: trainers use those on their own leads.

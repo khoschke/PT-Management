@@ -53,7 +53,7 @@ export default function MyProfileForm({ trainer }: { trainer: Trainer }) {
       <div className="mt-4">
         <label className="text-sm font-semibold text-foreground">Availability</label>
         <p className="mt-0.5 text-xs text-secondary-label">
-          The times you take sessions. Leads are matched to this, so keep it honest — if you stop taking evenings,
+          The times you take sessions. Leads are matched to this, so keep it honest. If you stop taking evenings,
           untick Evening and you&rsquo;ll stop being suggested for members who want one. Untick both and you&rsquo;re
           paused: you come off the list members pick from and you won&rsquo;t be suggested for new leads, which is the
           one to use when your book is full. Your existing leads stay with you, and the PT Manager can still allocate

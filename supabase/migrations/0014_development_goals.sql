@@ -34,7 +34,7 @@
 --
 -- This is not decoration. The first version errored with
 -- `type "development_goal_status" already exists` on a second run, which tells
--- you nothing about whether the FIRST run finished — the failing statement is
+-- you nothing about whether the FIRST run finished: the failing statement is
 -- the first one in the file either way. A migration you cannot safely re-run
 -- turns "did this apply?" into a guess, and this project has already lost days
 -- to exactly that guess with 0006. Run

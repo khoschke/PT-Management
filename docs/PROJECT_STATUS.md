@@ -1,4 +1,4 @@
-# Fitaz Gym PT Leads — Project Status
+# Fitaz Gym PT Leads: Project Status
 
 The single source of truth for where this project is up to. Read this first in
 any new session, then the workstream-specific handoff note for your task.
@@ -28,12 +28,12 @@ leads/month. The full lead flow: `docs/pipeline-stage-definitions.md`.
 ## Stack & hosting
 
 - **Next.js 16** (App Router, Turbopack) + TypeScript + Tailwind v4.
-- **Supabase** — Postgres, Auth, Row Level Security. Project ref `fbzearypwpjcyrmdivsz`.
-- **Resend** — the lead notification emails (trainer allocation, manager daily digest, manager new-lead alert). **LIVE** and sending from `noreply@mail.fitazgym.com` (confirmed 4 Aug 2026 by a real trainer allocation email landing in the inbox). Georgio added the DNS records. **DNS lives at CrazyDomains (Dreamscape), not Shopify** (confirmed 5 Aug 2026); fitazgym.com is connected to Shopify but not bought through it, so the zone is elsewhere. The SPF record had a copy-paste error early on but **has since been corrected** (confirmed 11 Aug 2026 in the CrazyDomains DNS panel): `send.mail.fitazgym.com` now reads `v=spf1 include:amazonses.com ~all` and is Active, alongside the Active `resend._domainkey` DKIM record. SPF and DKIM both pass.
-- **Vercel** — hosting + crons in `vercel.json`: daily follow-ups (closes and trainer reminders), daily manager digest, Monday trainer summary, document expiry, Supabase keep-alive. Hobby (free) plan, so each cron runs once a day at most and lands somewhere within its hour.
-- **GitHub:** `khoschke/pt-management`. Active branch: `claude/fitaz-gym-pt-leads-76ffhv` (this is also Vercel's production branch — pushing to it auto-deploys).
+- **Supabase**: Postgres, Auth, Row Level Security. Project ref `fbzearypwpjcyrmdivsz`.
+- **Resend**: the lead notification emails (trainer allocation, manager daily digest, manager new-lead alert). **LIVE** and sending from `noreply@mail.fitazgym.com` (confirmed 4 Aug 2026 by a real trainer allocation email landing in the inbox). Georgio added the DNS records. **DNS lives at CrazyDomains (Dreamscape), not Shopify** (confirmed 5 Aug 2026); fitazgym.com is connected to Shopify but not bought through it, so the zone is elsewhere. The SPF record had a copy-paste error early on but **has since been corrected** (confirmed 11 Aug 2026 in the CrazyDomains DNS panel): `send.mail.fitazgym.com` now reads `v=spf1 include:amazonses.com ~all` and is Active, alongside the Active `resend._domainkey` DKIM record. SPF and DKIM both pass.
+- **Vercel**: hosting + crons in `vercel.json`: daily follow-ups (closes and trainer reminders), daily manager digest, Monday trainer summary, document expiry, Supabase keep-alive. Hobby (free) plan, so each cron runs once a day at most and lands somewhere within its hour.
+- **GitHub:** `khoschke/pt-management`. Active branch: `claude/fitaz-gym-pt-leads-76ffhv` (this is also Vercel's production branch; pushing to it auto-deploys).
 
-## Environment variables (names only — values live in Vercel + local .env.local)
+## Environment variables (names only; values live in Vercel + local .env.local)
 
 Set and working: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 (a new-style `sb_publishable_…` key), `SUPABASE_SERVICE_ROLE_KEY` (a new-style
@@ -44,7 +44,7 @@ set to `https://pt.fitazgym.com` so recovery and email-change links point at the
 custom domain rather than whichever host served the request. Nothing on
 production reads it today, so setting it early is harmless.
 
-`RESEND_API_KEY`, `NOTIFICATIONS_FROM_EMAIL`, and `CRON_SECRET` are all set —
+`RESEND_API_KEY`, `NOTIFICATIONS_FROM_EMAIL`, and `CRON_SECRET` are all set, so
 email is fully live. Both the trainer allocation email and the manager daily
 digest (Vercel cron) are confirmed sending from the branded
 `noreply@mail.fitazgym.com` sender. See `docs/handoff-email-notifications.md`.
@@ -55,17 +55,17 @@ digest (Vercel cron) are confirmed sending from the branded
 columns and how they join, verified against the live database. Read that for
 the shape of the schema, and this section for what is applied where.
 
-> **This list drifted once. Do not trust it — verify it.**
+> **This list drifted once. Do not trust it. Verify it.**
 > On 12 Aug 2026 this section claimed `0006_trainer_documents.sql` was applied
 > to live. It was not, and `/admin/compliance` and `/admin/documents` were
 > broken in production as a result. The list is a claim; the evidence is
 > `supabase/reconcile/01_audit_live_schema.sql`, a read-only query that reports
 > PRESENT/MISSING for every migration's objects. **Run it before you assert
 > anything about the live schema, and update the status column below from what
-> it returns — not from what you expect it to say.**
+> it returns, not from what you expect it to say.**
 
 Migrations live in `supabase/migrations/`. Status column set from an audit run,
-verified row by row against the live project — not asserted.
+verified row by row against the live project, not asserted.
 
 **Last verified in full: 14 October 2026.** Every row in this table was
 checked against the live database by running
@@ -83,23 +83,23 @@ that said "applied" about a migration nobody had run.
 
 | Migration | What it adds | On live? |
 |---|---|---|
-| `0001_init.sql` | trainers, leads, status_history, profiles, rate_limit_log, RLS, triggers | Applied — verified |
-| `0002_onboarding.sql` | onboarding_responses, onboarding_part_status, RLS | Applied — verified |
-| `0003_trainer_bio.sql` | free-text `bio` column on trainers | Applied — verified |
-| `0004_trainer_am_pm.sql` | independent AM/PM trainer availability | Applied — verified |
-| `0006_trainer_documents.sql` | PT compliance documents, expiry reminders, `trainer-documents` Storage bucket | Applied 12 Aug 2026 — verified, incl. bucket + storage policies. Upload/view/delete exercised end to end on the live site. |
+| `0001_init.sql` | trainers, leads, status_history, profiles, rate_limit_log, RLS, triggers | Applied, verified |
+| `0002_onboarding.sql` | onboarding_responses, onboarding_part_status, RLS | Applied, verified |
+| `0003_trainer_bio.sql` | free-text `bio` column on trainers | Applied, verified |
+| `0004_trainer_am_pm.sql` | independent AM/PM trainer availability | Applied, verified |
+| `0006_trainer_documents.sql` | PT compliance documents, expiry reminders, `trainer-documents` Storage bucket | Applied 12 Aug 2026, verified, incl. bucket + storage policies. Upload/view/delete exercised end to end on the live site. |
 | `0007`, `0008` | GymMaster (`gymmaster_lead_source`, `gymmaster_sync`) | Not applied; unmerged branch |
-| `0009_public_access_hardening.sql` | trainer-email column grants, status_history soft-delete guard, trainer_documents self-verify guard, `submit_form_lead` RPC | Applied 12 Aug 2026 — **both parts, verified** |
-| `0010_trainer_self_profile.sql` | per-trainer self-edit of `bio`/`specialties`: `trainers_select_self` + `trainers_update_self` policies, `guard_trainer_self_update` column-guard trigger | Applied 7 Sep 2026 — verified, incl. the guard exercised both ways against live |
-| `0011_trainer_self_availability.sql` | widens the self-edit guard to `available_am`/`available_pm` | Applied 7 Sep 2026 — verified both ways against live |
-| `0012_trainer_pause_leads.sql` | lifts 0011's both-slots-off block so it means "not taking new leads"; grants anon read on the two availability columns so the public picker can hide paused PTs | Applied 8 Sep 2026 — verified against live, incl. anon still blocked from `email` |
-| `0013_staff_role.sql` | `staff` on the `app_role` enum, the `my_role()` helper, and the three lead/history policies rewritten off `not is_manager()` | Applied 8 Sep 2026 — verified against live |
-| `0014_development_goals.sql` | `development_goals` and `development_notes`, with no manager write policy on goals | Applied 8 Sep 2026 — verified against live, incl. the ownership rule |
-| `0015_contract_document_type.sql` | "PT Contract" built-in compliance document type | Applied 8 Sep 2026 — verified against live (`contract` row present) |
-| `0016_stamp_first_contacted.sql` | widens `record_status_history()` so `first_contacted_at` is stamped on Booked/Completed, not only Contacted, plus a backfill | Applied — verified against live 14 Oct 2026 (trigger body mentions Booked). **This row was missing from this table entirely** until 14 Oct 2026, while the migration was on live and in the audit query. Exactly the drift the warning above is about, in the other direction. |
-| `0017_setup_checklist.sql` | PT setup checklist: `setup_checklist_items` (18 seeded), `trainer_setup_checklists`, `trainer_setup_checklist_items`, `setup_item_state` enum, manager-only RLS | Applied 14 Oct 2026 — verified against live, all 8 audit rows PRESENT, and the RLS exercised as a real trainer, a real staff member and a real manager. **Applied in four pieces, not one** — see the note below. |
-| `0018_lead_status_funnel.sql` | lead statuses: Booked renamed Comp. Booked, Completed renamed Attended, Converted added; `record_status_history()` rewritten to match | Applied 17 Nov 2026 via the Supabase MCP, straight after PR #46 deployed — verified: full audit 62 PRESENT (only 0007/0008 missing, as expected), counts carried across (Comp. Booked 2, Attended 10, Contacted 5, Unreachable 1), all status history intact. |
-| `0019_lead_contact_dates.sql` | `leads.allocated_at` and `leads.last_contacted_at`, kept current by the `leads_stamp_contact_dates` trigger, backfilled from `status_history` | Applied 17 Nov 2026 via the Supabase MCP, straight after PR #47 deployed — verified: both columns and the trigger present, all 18 leads backfilled with both dates. |
+| `0009_public_access_hardening.sql` | trainer-email column grants, status_history soft-delete guard, trainer_documents self-verify guard, `submit_form_lead` RPC | Applied 12 Aug 2026, **both parts, verified** |
+| `0010_trainer_self_profile.sql` | per-trainer self-edit of `bio`/`specialties`: `trainers_select_self` + `trainers_update_self` policies, `guard_trainer_self_update` column-guard trigger | Applied 7 Sep 2026, verified, incl. the guard exercised both ways against live |
+| `0011_trainer_self_availability.sql` | widens the self-edit guard to `available_am`/`available_pm` | Applied 7 Sep 2026, verified both ways against live |
+| `0012_trainer_pause_leads.sql` | lifts 0011's both-slots-off block so it means "not taking new leads"; grants anon read on the two availability columns so the public picker can hide paused PTs | Applied 8 Sep 2026, verified against live, incl. anon still blocked from `email` |
+| `0013_staff_role.sql` | `staff` on the `app_role` enum, the `my_role()` helper, and the three lead/history policies rewritten off `not is_manager()` | Applied 8 Sep 2026, verified against live |
+| `0014_development_goals.sql` | `development_goals` and `development_notes`, with no manager write policy on goals | Applied 8 Sep 2026, verified against live, incl. the ownership rule |
+| `0015_contract_document_type.sql` | "PT Contract" built-in compliance document type | Applied 8 Sep 2026, verified against live (`contract` row present) |
+| `0016_stamp_first_contacted.sql` | widens `record_status_history()` so `first_contacted_at` is stamped on Booked/Completed, not only Contacted, plus a backfill | Applied, verified against live 14 Oct 2026 (trigger body mentions Booked). **This row was missing from this table entirely** until 14 Oct 2026, while the migration was on live and in the audit query. Exactly the drift the warning above is about, in the other direction. |
+| `0017_setup_checklist.sql` | PT setup checklist: `setup_checklist_items` (18 seeded), `trainer_setup_checklists`, `trainer_setup_checklist_items`, `setup_item_state` enum, manager-only RLS | Applied 14 Oct 2026, verified against live, all 8 audit rows PRESENT, and the RLS exercised as a real trainer, a real staff member and a real manager. **Applied in four pieces, not one.** See the note below. |
+| `0018_lead_status_funnel.sql` | lead statuses: Booked renamed Comp. Booked, Completed renamed Attended, Converted added; `record_status_history()` rewritten to match | Applied 17 Nov 2026 via the Supabase MCP, straight after PR #46 deployed, verified: full audit 62 PRESENT (only 0007/0008 missing, as expected), counts carried across (Comp. Booked 2, Attended 10, Contacted 5, Unreachable 1), all status history intact. |
+| `0019_lead_contact_dates.sql` | `leads.allocated_at` and `leads.last_contacted_at`, kept current by the `leads_stamp_contact_dates` trigger, backfilled from `status_history` | Applied 17 Nov 2026 via the Supabase MCP, straight after PR #47 deployed, verified: both columns and the trigger present, all 18 leads backfilled with both dates. |
 | `0020_unverified_lead_source.sql` | `lead_source` value `unverified`; goals check rewritten to `lead_source <> 'form' or ...` | Applied 18 Nov 2026 via the Supabase MCP, **before** PR #49 merged (the new Add lead form can save `unverified`, which fails without it; the old code is unaffected). Verified: `lead_source` is form, gymmaster_sweep, unverified; the goals check reads `lead_source <> 'form' or ...`; all 18 leads intact (15 form, 3 sweep, to be re-sorted by hand). |
 | `0021_own_leads.sql` | `lead_source` value `own`; `lead_found_via` enum; `leads.found_via` and `found_via_other`; `add_own_lead()` security definer function (trainers only, duplicate check on the last nine phone digits) | Applied 18 Nov 2026 via the Supabase MCP, before the item 8 PR merged. Additive: the old code never calls it. Tested first on a throwaway database (own and unverified-list saves, duplicates blocked, staff and anon refused). |
 | `0022_follow_ups.sql` | `lead_status` values Said no and Agreed to check-in; `lead_closed_reason`; follow-up columns on `leads`; `lead_reopens`; trigger `leads_apply_follow_up_rules`; functions `complete_follow_up`, `close_expired_leads`, `reopen_timer_close`; `record_status_history` stamps first contact on the two new statuses | Applied 18 Nov 2026 via the Supabase MCP, before the item 11 PR merged. Tested first on a throwaway database (every path in `docs/spec-item-11-follow-ups.md`). Safe with the old code: it never uses the new statuses, and the trigger only adds a schedule when a lead goes to Contacted. |
@@ -110,13 +110,13 @@ that said "applied" about a migration nobody had run.
 applied despite this doc claiming it was, which left `/admin/compliance` and
 `/admin/documents` erroring in production. Both work again, with an upload,
 view and delete exercised end to end. `0009` then went in either side of the
-code deploy, and two real leads were submitted through the live public form —
+code deploy, and two real leads were submitted through the live public form:
 one before PART B removed anon's direct insert, one after.
 
 Confirmed from outside with the public key on 12 Aug 2026:
 `…/rest/v1/trainers?select=email` returns `42501 permission denied`, while
-`…/rest/v1/trainers?select=id,name` still lists the five PTs — the public
-form's trainer picker, which had to keep working.
+`…/rest/v1/trainers?select=id,name` still lists the five PTs (the public
+form's trainer picker, which had to keep working).
 
 `check_form_rate_limit` still exists but is no longer executable by `anon` or
 `authenticated`, and nothing calls it. `submit_form_lead` does the rate limiting
@@ -125,7 +125,7 @@ is inert either way.
 
 `0005` is permanently unused. It was held for the hardening migration, which has
 since been renumbered to `0009` because it rewrites a policy on
-`trainer_documents` and therefore has to run *after* `0006` — as `0005` it would
+`trainer_documents` and therefore has to run *after* `0006`. As `0005` it would
 have failed on a fresh setup. GymMaster keeps `0007/0008` untouched. `0010`, `0011`
 and `0012` are the trainer self-profile work; `0013` and `0014` are the staff
 development pathway, and `0015` is `contract_document_type`, merged via
@@ -139,25 +139,25 @@ The folder is necessary but not sufficient: `git ls-remote` the branches and
 check their `supabase/migrations/` too, because `0007`/`0008` are reserved by
 an unmerged branch and that is exactly how a collision gets written.
 
-`0009`'s two-part structure is spent — both parts are on live. It only ever
+`0009`'s two-part structure is spent: both parts are on live. It only ever
 mattered because a running form was mid-flight between the old insert path and
 the new RPC; a fresh project runs the file top to bottom in one go. The runbook
 that executed it, `supabase/reconcile/README.md`, is now a record.
 
 **What is not spent is the audit query.** `supabase/reconcile/01_audit_live_schema.sql`
 is read-only and takes seconds. Run it before stating what is on the live
-database — including before and after merging GymMaster's `0007`/`0008`, which
+database, including before and after merging GymMaster's `0007`/`0008`, which
 are the next migrations that will sit in `supabase/migrations/` looking applied
 when they are not. **Nothing applies migrations automatically.**
 
 **A session with the Supabase MCP connected can now do this itself** (new,
-7 Sep 2026 — this is how `0010` was applied and verified). The MCP reaches the
+7 Sep 2026; this is how `0010` was applied and verified). The MCP reaches the
 live project over its own channel, so `apply_migration` and `execute_sql` work
 even though the workspace still has no outbound network to Supabase (the
 `curl`-fails-to-supabase.co gotcha below is unchanged and still true of the app
 itself). That means a build session can apply a migration, run the audit query,
 and test RLS as a real signed-in user without waiting on a human at the SQL
-editor. **Test RLS inside `begin; … rollback;`** — set
+editor. **Test RLS inside `begin; … rollback;`**: set
 `request.jwt.claims` to a real `profiles.id` and `set local role authenticated`
 to become that user, then roll the whole thing back. That is what caught the
 `PUBLIC`-grant bug in `0010`'s revoke. If the MCP is not connected, a human at
@@ -182,7 +182,7 @@ during that one apply:
 So: **after any timeout, query the catalog before doing anything else.** Never
 re-run blind and never assume either outcome. This is survivable only because
 every migration in this project is idempotent, which is the whole argument for
-that rule — `0014`'s header makes it on different grounds and they compound.
+that rule. `0014`'s header makes it on different grounds and they compound.
 Prefer `execute_sql`, a statement or two at a time, for policy and grant DDL.
 
 Roles live in `profiles` (`manager` / `trainer`). Managers see/allocate all
@@ -198,7 +198,7 @@ Michael Hammett. Specialties captured via the shared goal tags + free-text bio.
 ## Goal / specialty taxonomy
 
 `src/lib/goals.ts` holds ONE shared list used by both the public form ("what
-results do you want to achieve?") and trainer specialties — this is what powers
+results do you want to achieve?") and trainer specialties. This is what powers
 allocation matching. It mirrors the Kinetic Hustl waiver form plus "Increase
 strength". Change it in that one file and it flows to both sides.
 
@@ -207,14 +207,14 @@ strength". Change it in that one file and it flows to both sides.
 - `/admin` and `/pt-session` are deliberately **monochrome black-and-white**
   (brand), Apple-inspired, light-mode only. Tokens in `src/app/globals.css`.
 - `/onboarding` is a separate visual layer (`.onboarding-scope`) with its own
-  light/dark theme — intentionally distinct from the ops tool.
+  light/dark theme, intentionally distinct from the ops tool.
 
 ## Hard-won gotchas (don't relearn these)
 
 - **Trainer availability was never a filter on allocation, until 0012.** Until
   then `suggestTrainer` scored AM/PM as `+5` and nothing more: the pool was every
   active trainer and ties broke on lowest lead load, so a trainer with no
-  availability ticked still received leads — and an empty book made them *more*
+  availability ticked still received leads, and an empty book made them *more*
   likely to win a tie. Both slots off now means "not taking new leads" and is
   filtered before any rule runs. Don't reason about availability from the field
   name; read `src/lib/allocation.ts`.
@@ -243,7 +243,7 @@ strength". Change it in that one file and it flows to both sides.
 - **Vercel auto-deploy can silently stall.** If a push doesn't appear in
   Deployments, push again (an empty commit works) to re-trigger.
 - **This build workspace has no outbound network** to Supabase, Google,
-  GymMaster, etc. You cannot reach *those services* from here — build, deploy,
+  GymMaster, etc. You cannot reach *those services* from here. Build, deploy,
   and verify on the live site (which is not network-restricted). **This does
   not mean nothing can be tested**: see the Postgres entry below, which covers
   migrations and RLS without any network at all. **That includes
@@ -259,7 +259,7 @@ strength". Change it in that one file and it flows to both sides.
   (`auth.users`, `auth.uid()`, the `anon` / `authenticated` / `service_role`
   roles, `storage.buckets`, `storage.objects`, `storage.foldername()`), then
   apply `supabase/migrations/*.sql` in order. **Run it as the `postgres` OS
-  user** — `initdb` refuses to run as root, which is the one thing that makes
+  user**: `initdb` refuses to run as root, which is the one thing that makes
   this look impossible at first.
   This is worth doing for every migration, and it is not just a syntax check:
   you can `set role authenticated`, `set_config('request.jwt.claim.sub', …)`
@@ -274,7 +274,7 @@ strength". Change it in that one file and it flows to both sides.
   8 Sep 2026 to confirm `0013`, `0014` and `0015`, and to establish that
   `auth.users` has never sent a recovery email. The Resend and GitHub MCP
   servers reach their live services the same way. **Check with these before
-  concluding something cannot be verified from a build session** — the
+  concluding something cannot be verified from a build session**. The
   no-outbound-network note above is about `curl`, not about the MCP tools.
 - **A migration in `supabase/migrations/` is not proof it ran on live.** Nothing
   applies migrations automatically; a human pastes them into the Supabase SQL
@@ -296,7 +296,7 @@ strength". Change it in that one file and it flows to both sides.
   New/Allocated as done (`src/lib/countdown.ts`, `AWAITING_CONTACT_STATUSES` in
   `src/lib/types.ts`). This also corrects the board's overdue count, the "Overdue
   only" filter, and the daily digest email, which shared the same logic. The
-  board/clock fix needed no migration — it reads status. **Migration
+  board/clock fix needed no migration; it reads status. **Migration
   `0016_stamp_first_contacted.sql`** then follows up on the stored data: the
   status trigger now stamps `first_contacted_at` on Booked/Completed too (not just
   "Contacted"), and the migration backfills existing leads from the earliest
@@ -306,7 +306,7 @@ strength". Change it in that one file and it flows to both sides.
 - **Closed leads hide from the lead board by default.** Completed / Not interested
   / Unreachable (`CLOSED_LEAD_STATUSES`) drop off the default view so the board is a
   live "work to do" list; a "Show closed" toggle (or picking a closed status in the
-  filter) brings them back. Nothing is deleted — soft delete stays reserved for
+  filter) brings them back. Nothing is deleted. Soft delete stays reserved for
   actually removing a lead (spam, duplicate, removal request).
 - **Password show/hide toggle.** Every password field (login, the Account
   change-password form, and the Staff add-manager / add-trainer-login temp-password
@@ -325,7 +325,7 @@ strength". Change it in that one file and it flows to both sides.
   workbook content is hand-authored and must never be regenerated, the migration
   discipline, and the check to run before reporting a fault in a source document.
 - Develop on branch `claude/fitaz-gym-pt-leads-76ffhv` (or a dedicated branch
-  per workstream, merged back via PR — that's how the onboarding dashboard came in).
+  per workstream, merged back via PR; that's how the onboarding dashboard came in).
 - Commit messages end with the Co-Authored-By / Claude-Session trailers.
 - Run `npm run build` + `npx tsc --noEmit` + `npm run lint` before pushing.
 - Verify changes in a real browser with screenshots where it matters
@@ -333,7 +333,7 @@ strength". Change it in that one file and it flows to both sides.
 - **Branches merged via PR delete themselves.** "Automatically delete head
   branches" was turned on 2 Sep 2026, so the branch map should stay honest by
   itself from here. Two things it does *not* cover: a branch merged directly
-  rather than through a PR, and any branch abandoned without merging — those
+  rather than through a PR, and any branch abandoned without merging. Those
   still have to be deleted by hand, and their rows removed from the map.
 - **A Claude session cannot delete a remote branch.** Every attempt in this repo
   has been refused by GitHub with a 403, and the GitHub MCP server has no
@@ -435,7 +435,7 @@ the right answer. Four files remain, listed at the top of `docs/brand-assets.md`
 **This is the primary mark in use.** The earlier Liberation Sans trace that once
 carried the `fitaz-gym-logo.svg` filename is gone, replaced by the faithful
 vector. That merged with `claude/apple-design-pass-ymnm14`, which has since been
-deleted — there is no longer a competing trace anywhere, so nothing needs
+deleted. There is no longer a competing trace anywhere, so nothing needs
 guarding on a future merge.
 
 **The re-trace is now done.** The old note here asked for the mark to be
@@ -528,7 +528,7 @@ anyway because `0004_trainer_am_pm.sql` merged with the availability work.
 | Number | Migration | Branch |
 |---|---|---|
 | 0004 | `trainer_am_pm` | merged, on production |
-| 0005 | — | permanently unused (see below) |
+| 0005 | (none) | permanently unused (see below) |
 | 0006 | `trainer_documents` | merged; **applied to live 12 Aug 2026, verified** |
 | 0007, 0008 | `gymmaster_lead_source`, `gymmaster_sync` | `gymmaster-phase-1-pull-7yuxuy` (already numbered correctly, no renumber needed) |
 | 0009 | `public_access_hardening` | merged; **applied to live 12 Aug 2026, both parts, verified** |
@@ -536,17 +536,17 @@ anyway because `0004_trainer_am_pm.sql` merged with the availability work.
 | 0011 | `trainer_self_availability` | applied to live 7 Sep 2026, verified |
 | 0012 | `trainer_pause_leads` | applied to live 8 Sep 2026, verified |
 | 0013 | `staff_role` | staff pathway (PR #28). **Applied to live 8 Sep 2026.** Run it whole; safe to re-run |
-| 0014 | `development_goals` | development goals (PR #28). **Applied to live 8 Sep 2026 — verified** (enum, both relations, RLS on both, all 6 policies, composite FK). Safe to re-run |
-| 0015 | `contract_document_type` | "PT Contract" document type (PR #27). **Applied to live — verified 8 Sep 2026** (the `contract` row is in `document_types`). Safe to re-run |
-| 0016 | `stamp_first_contacted` | lead first-contact stamping (PR #43). **Applied to live — verified 14 Oct 2026.** Safe to re-run |
-| 0017 | `setup_checklist` | PT setup checklist. **Applied to live — verified 14 Oct 2026.** Safe to re-run, and it had to be |
-| 0018 | `lead_status_funnel` | Batch 1 status cleanup. **Applied to live — verified 17 Nov 2026.** Safe to re-run |
-| 0019 | `lead_contact_dates` | Batch 1 weekly email dates. **Applied to live — verified 17 Nov 2026.** Safe to re-run |
-| 0020 | `unverified_lead_source` | Third lead source (Part 7 amendments item 7, PR #49). **Applied to live — verified 18 Nov 2026.** Safe to re-run |
-| 0021 | `own_leads` | Trainers add their own leads (Part 7 amendments item 8). **Applied to live — verified 18 Nov 2026.** Safe to re-run |
-| 0022 | `follow_ups` | 2-2-2 reminders and the 48-hour clock on a no (Part 7 amendments item 11). **Applied to live — verified 18 Nov 2026.** Safe to re-run |
-| 0023 | `post_chat_reflections` | Post-chat reflections (Part 7 amendments item 18). **Applied to live — verified 18 Nov 2026.** Safe to re-run |
-| 0024 | `reflection_edits` | Trainers can edit their own reflections. **Applied to live — verified 18 Nov 2026.** Safe to re-run |
+| 0014 | `development_goals` | development goals (PR #28). **Applied to live 8 Sep 2026, verified** (enum, both relations, RLS on both, all 6 policies, composite FK). Safe to re-run |
+| 0015 | `contract_document_type` | "PT Contract" document type (PR #27). **Applied to live, verified 8 Sep 2026** (the `contract` row is in `document_types`). Safe to re-run |
+| 0016 | `stamp_first_contacted` | lead first-contact stamping (PR #43). **Applied to live, verified 14 Oct 2026.** Safe to re-run |
+| 0017 | `setup_checklist` | PT setup checklist. **Applied to live, verified 14 Oct 2026.** Safe to re-run, and it had to be |
+| 0018 | `lead_status_funnel` | Batch 1 status cleanup. **Applied to live, verified 17 Nov 2026.** Safe to re-run |
+| 0019 | `lead_contact_dates` | Batch 1 weekly email dates. **Applied to live, verified 17 Nov 2026.** Safe to re-run |
+| 0020 | `unverified_lead_source` | Third lead source (Part 7 amendments item 7, PR #49). **Applied to live, verified 18 Nov 2026.** Safe to re-run |
+| 0021 | `own_leads` | Trainers add their own leads (Part 7 amendments item 8). **Applied to live, verified 18 Nov 2026.** Safe to re-run |
+| 0022 | `follow_ups` | 2-2-2 reminders and the 48-hour clock on a no (Part 7 amendments item 11). **Applied to live, verified 18 Nov 2026.** Safe to re-run |
+| 0023 | `post_chat_reflections` | Post-chat reflections (Part 7 amendments item 18). **Applied to live, verified 18 Nov 2026.** Safe to re-run |
+| 0024 | `reflection_edits` | Trainers can edit their own reflections. **Applied to live, verified 18 Nov 2026.** Safe to re-run |
 
 Merge in that order and Supabase stays in step. GymMaster is deliberately in the
 middle rather than last: its numbers were already written and pushed, and moving
@@ -554,7 +554,7 @@ the hardening migration was free by comparison.
 
 **Why the hardening migration is `0009` and not `0005`.** It rewrites the
 `trainer_documents_insert` policy, and that table is created by `0006`. Numbered
-`0005` it would run before the table existed and fail on any fresh setup — which
+`0005` it would run before the table existed and fail on any fresh setup, which
 is precisely how the live-DB drift surfaced. It has to sit after `0006`, and
 `0009` was the first free slot that left GymMaster's `0007/0008` alone. `0005` is
 now retired rather than reserved: don't fill it.
@@ -659,9 +659,24 @@ masters are rebuilt in Drive; the combined masters wait for Karl's full pass.
   regenerate the full PDFs and `.md` in one go. Until then the combined masters
   are expected to lag the per-part sources: don't treat that as drift, and
   don't regenerate them part by part.
-- **Whole-workbook items, for their own thread:** 1 (em dashes: done in
-  Parts 6 and 7 and the workbook page text; Parts 1 to 5 and 8 to 10 and the
-  masters still have them), 4 ("Fitaz" to "Fitaz Gym": none left in Parts 6
+- **Em dash sweep (change list Batch 0, 19 Nov 2026).** Every em dash, spaced
+  en dash and dash entity is gone from the repo: workbook Parts 1 to 5 and 8 to
+  10, all portal UI copy and email subjects, code comments, docs and migration
+  comments (622 in 65 files). The staff preview showed them because the
+  activity prompts had them typed in; there is no markdown typographer in the
+  pipeline (`Prose.tsx` is hand-rolled), so `--` was never the cause. The live
+  database's content tables, functions and comments are clean; 3 of 116 PT
+  answers in `onboarding_responses` contain one and were left alone, as they
+  are the trainers' own words. **The Drive masters were already clean**: all 20
+  per-part sources and both combined `.md` files have none, so the dashes were
+  portal drift from the condensation, and no master needed rebuilding.
+  **Guard:** `tools/check-no-em-dashes.mjs` runs as `prebuild`, so a Vercel
+  deploy fails if one comes back (also `npm run check:dashes`). Empty values
+  that used to show as a dash now read "n/a". Change log line for the combined
+  masters at Karl's next regeneration: "November 2026. Removed all em dashes
+  from the workbook masters and the PT portal."
+- **Whole-workbook items, for their own thread:** 1 (em dashes: **done
+  everywhere, 19 Nov 2026**, see "Em dash sweep" below), 4 ("Fitaz" to "Fitaz Gym": none left in Parts 6
   and 7; the other parts and masters unchecked), and the rest of 9 (the "PT
   Workbook" rename is done in the nav, the workbook header and the overview;
   page titles elsewhere, the document title line in the masters, and link
@@ -676,7 +691,7 @@ masters are rebuilt in Drive; the combined masters wait for Karl's full pass.
   - The daily follow-up email adds Resend volume. The free tier is 100 a day,
     which this gym is nowhere near, but the limit is real.
 
-- ~~**PT setup checklist, tracked per trainer**~~ — **DONE and LIVE, 14 Oct
+- ~~**PT setup checklist, tracked per trainer**~~: **DONE and LIVE, 14 Oct
   2026.** Merged (PR #45) and deployed to production; Vercel reports the
   deployment on the merge commit completed, and Karl walked the screens
   through on the Vercel preview before merging, against the live database.
@@ -922,7 +937,7 @@ leads by when they came in). Logic in `src/lib/metrics.ts`, computed from
 - **Still training at 3 and 6 months.** That's retention, which is really
   client management rather than lead tracking.
 
-- ~~**Staff development pathway**~~ — **DONE, 8 Sep 2026.** Merged (PR #28),
+- ~~**Staff development pathway**~~: **DONE, 8 Sep 2026.** Merged (PR #28),
   migrations `0013` and `0014` applied to live, and walked through end to end
   on the live site. Gym staff working towards
   becoming a PT get a login, the full onboarding workbook with saving progress,
@@ -960,7 +975,7 @@ leads by when they came in). Logic in `src/lib/metrics.ts`, computed from
     breaks. All three now check `my_role() = 'trainer'`.
   - Full detail, including the two decisions Karl made and why, in
     `docs/handoff-staff-development-pathway.md`.
-- ~~**Send the PT team the portal profiles briefing**~~ — **SENT 19 September
+- ~~**Send the PT team the portal profiles briefing**~~: **SENT 19 September
   2026.** The four PTs now know they can edit their own bio, specialties and
   AM/PM availability, that specialties drive which leads get suggested to them,
   that both slots off pauses them when their book is full, and that they can
@@ -969,47 +984,47 @@ leads by when they came in). Logic in `src/lib/metrics.ts`, computed from
   **The standing job it creates:** nothing tells the manager when a PT pauses.
   If two pause in the same week, leads quietly concentrate on the rest. The
   Trainers screen labels a paused trainer "Paused, not taking new leads", so it
-  is a glance during the weekly review rather than anything to build — unless
+  is a glance during the weekly review rather than anything to build, unless
   pausing turns out to be common, in which case a count on the lead board is the
   next increment.
 
-- **GymMaster integration** — see `docs/handoff-gymmaster-integration.md`.
+- **GymMaster integration**: see `docs/handoff-gymmaster-integration.md`.
   **Phase 1 scaffolding already exists unmerged** on
   `claude/gymmaster-phase-1-pull-7yuxuy`.
-- ~~**Apple-grade design pass**~~ — **DONE.** Merged and deployed from
+- ~~**Apple-grade design pass**~~: **DONE.** Merged and deployed from
   `claude/apple-design-pass-ymnm14`. The superseded wordmark trace it carried was
   discarded in favour of the `public/brand/` marks.
-- ~~**PT compliance documents with expiry reminders**~~ — **DONE and working.**
+- ~~**PT compliance documents with expiry reminders**~~: **DONE and working.**
   Code merged (PR #8) and deployed; migration `0006` applied to live 12 Aug 2026,
   which is what finally made `/admin/compliance` and `/admin/documents` usable.
   Upload, view and delete confirmed against the live Storage bucket. The feature
   had been shipped-but-broken since it merged, purely because the migration was
   never run.
-- ~~**Branded HTML notification emails**~~ — **DONE.** Merged (PR #4) on
+- ~~**Branded HTML notification emails**~~: **DONE.** Merged (PR #4) on
   `claude/handoff-email-notifications-9m67a6`. The plain-text trainer and digest
   emails are now branded HTML with a dashboard link, live in production.
-- ~~**Reconcile the live database**~~ — **DONE, 12 Aug 2026.** `0006` had never
+- ~~**Reconcile the live database**~~: **DONE, 12 Aug 2026.** `0006` had never
   been applied to live despite this doc saying so; it is now, verified, and
   `/admin/compliance` and `/admin/documents` work again. The audit query that
   found it lives in `supabase/reconcile/` and should be re-run whenever anyone
   needs to state what is on live.
-- ~~**Security hardening**~~ — **DONE, 12 Aug 2026.** CSV injection, IP salt and
-  digest-cron auth landed earlier (PR #18). The DB half —
+- ~~**Security hardening**~~: **DONE, 12 Aug 2026.** CSV injection, IP salt and
+  digest-cron auth landed earlier (PR #18). The DB half (
   `0009_public_access_hardening.sql`: anon column grants on trainers, the
   `status_history` soft-delete guard, the `trainer_documents` self-verify guard,
-  the `submit_form_lead` RPC — is applied, both parts, and verified against live.
+  the `submit_form_lead` RPC) is applied, both parts, and verified against live.
   Explicit manager checks and the shared cron auth helper (`src/lib/cron.ts`)
   deployed with it. Findings and rationale in
   `docs/handoff-security-hardening.md`. The old `custom-domain-dns-setup-v45oc6`
-  branch stays **parked — do not merge it**; these fixes were re-done fresh.
-- ~~**Email notifications**~~ — **DONE.** Live and sending from
+  branch stays **parked: do not merge it**; these fixes were re-done fresh.
+- ~~**Email notifications**~~: **DONE.** Live and sending from
   `noreply@mail.fitazgym.com`. SPF and DKIM both pass (the earlier SPF typo has
   been corrected).
-- ~~**Get the member nurture series sending**~~ — **DONE, 1 September 2026.**
+- ~~**Get the member nurture series sending**~~: **DONE, 1 September 2026.**
   Sending from GymMaster on days 1, 10 and 30 off each member's join date, with
   the unsubscribe handled by GymMaster. `docs/handoff-email-1-go-live.md` is now
   a record rather than a task, apart from its last item: telling the PTs.
-- ~~**Self-service auth (forgot-password + change-email)**~~ — **DONE. Both
+- ~~**Self-service auth (forgot-password + change-email)**~~: **DONE. Both
   halves live and verified.** **FORGOT-PASSWORD IS LIVE AND VERIFIED,
   10 Sep 2026.** Merged via PRs #31, #33 and #34. A locked-out
   trainer reset their own password on the live site with no admin involved,
@@ -1030,11 +1045,11 @@ leads by when they came in). Logic in `src/lib/metrics.ts`, computed from
   strands anyone. Verified against live the same day: no row in `auth.users`
   carries a non-zero `email_change_confirm_status` or a pending `email_change`,
   so the stale `khoschke+trainer@gmail.com` pending badge from the 10 Sep run is
-  gone too. **Self-service auth is done** — forgot-password and change-email
+  gone too. **Self-service auth is done**: forgot-password and change-email
   both live and both verified.
   (Built on `claude/forgot-password-change-email-gl4lca`, which auto-deleted on
   merge. An older `claude/self-service-password-change-3ydtqu` branch used to sit
-  in the map above and was a different thing entirely — superseded hardening code,
+  in the map above and was a different thing entirely: superseded hardening code,
   not this work. Its PR #21 was closed and the branch deleted on 19 Sep 2026.)
   It took **six separate faults** to get here, each invisible until something was
   measured. The full account, and the technique that found each, is in
@@ -1044,7 +1059,7 @@ leads by when they came in). Logic in `src/lib/metrics.ts`, computed from
     never worth re-typing; mint a fresh one. Four days went to a wrong SMTP
     password that had been reported as working and never tested.
   - **Supabase matches `redirectTo` against the Redirect URLs allowlist as a
-    whole string, query string included, and a miss is silent** — the redirect is
+    whole string, query string included, and a miss is silent**: the redirect is
     dropped, the Site URL is used instead, and the email still sends, with a link
     to the wrong place. Proven with two emails differing only in that parameter.
   - **Site URL matters well beyond one feature.** It was left on the Supabase
@@ -1069,29 +1084,29 @@ leads by when they came in). Logic in `src/lib/metrics.ts`, computed from
   touch nothing else. The emails are byte-identical, Gmail collapses them into one
   thread, and each new request kills the last link. Delete the thread and start
   with exactly one.
-  - **Forgot-password** — "Forgot password?" on `/admin/login` →
+  - **Forgot-password**: "Forgot password?" on `/admin/login` →
     `/admin/forgot-password` → emailed link → `/admin/auth/callback` →
     `/admin/reset-password`. (`docs/handoff-forgot-password.md` remains superseded.)
-  - **Change-email** — a "change my email" form on `/admin/account`, gated on the
+  - **Change-email**: a "change my email" form on `/admin/account`, gated on the
     current password, sending a confirmation link to the new address. (Managers
     can still change anyone's sign-in email immediately from the Staff screen via
     the admin client, no confirmation email needed. That path is unaffected and
     stays as the fallback.)
-- ~~**Availability as AM + PM (not "both")**~~ — **DONE, and has been for some
+- ~~**Availability as AM + PM (not "both")**~~: **DONE, and has been for some
   time.** Migration `0004_trainer_am_pm.sql` replaced the old three-way enum
   with independent `available_am` / `available_pm` booleans, the branch merged,
   and the trainer portal and the `0012` pause are both built on top of it. This
   sat in the outstanding list until 19 Sep 2026 purely because nobody struck it
   out. `docs/handoff-availability-am-pm.md` is history, not a task.
-- ~~**Custom web address**~~ — **DONE.** `pt.fitazgym.com` is live over HTTPS. DNS
-  records live at **CrazyDomains (Dreamscape), not Shopify** — fitazgym.com is
+- ~~**Custom web address**~~: **DONE.** `pt.fitazgym.com` is live over HTTPS. DNS
+  records live at **CrazyDomains (Dreamscape), not Shopify**: fitazgym.com is
   connected to Shopify but its DNS zone is at CrazyDomains, which is where all
   records were added. `docs/handoff-custom-domain.md` is now history, not a task.
-- ~~**Editable trainer pages**~~ — **DONE and live, merged 8 Sep 2026** (PR #26),
+- ~~**Editable trainer pages**~~: **DONE and live, merged 8 Sep 2026** (PR #26),
   from `claude/trainer-profiles-self-editable-jqnn96`. A trainer edits their own
   bio, specialties **and AM/PM availability** at `/admin/profile` ("My profile"
   in the nav); the manager's roster editor is untouched and still edits
-  everyone. Migrations `0010`-`0012` are **applied to live and verified** — a
+  everyone. Migrations `0010`-`0012` are **applied to live and verified**: a
   trainer can change only their own row, and only those four columns. Internal
   only, no photo, no Shopify feed, otherwise as scoped. Scope grew twice at
   Karl's request after he tested on the Vercel preview: AM/PM availability
@@ -1102,11 +1117,11 @@ leads by when they came in). Logic in `src/lib/metrics.ts`, computed from
   standing banner on every page until they undo it.
   `docs/handoff-trainer-portal.md` is now a record.
 
-- ~~**Email the PT team about everything built so far**~~ — **DONE.** Sent
+- ~~**Email the PT team about everything built so far**~~: **DONE.** Sent
   12 August 2026, along with the four individual login emails. The record is
   `docs/pt-team-update-email.md` and `docs/pt-login-details-email.md`, kept as
   the template for the next trainer who joins.
-- ~~**Brief the PTs on the live nurture flow**~~ — **DONE, sent 2 Sep 2026**,
+- ~~**Brief the PTs on the live nurture flow**~~: **DONE, sent 2 Sep 2026**,
   ahead of the first leads under the new flow reaching their boards.
   `docs/pt-nurture-flow-briefing-email.md` is kept as the record of what went
   out. It explains the three member emails and the day 37 expiry, how leads
@@ -1150,7 +1165,7 @@ Reminders only. Each gets scoped and built in its own session.
   portal, versus feeding GymMaster directly, which is adjacent to
   `docs/handoff-gymmaster-integration.md`. The reasoning behind the manual
   version is in `docs/emails/README.md`, "Who to leave out of emails 2 and 3".
-- ~~**Settle whether the member emails carry an unsubscribe**~~ — **settled,
+- ~~**Settle whether the member emails carry an unsubscribe**~~: **settled,
   19 November 2026: they do not.** What replaces it is **put one back**, per the
   member email series section above. Ahead of everything else on the series,
   because it is a compliance matter rather than an improvement, and unlike the
@@ -1167,7 +1182,7 @@ Reminders only. Each gets scoped and built in its own session.
   suggested; approach to be agreed when it is scoped.
 - **Ezidebit connected to the PT Manager dashboard via an MCP, reading live.**
   Georgio's request, raised in the rents thread on 3 August 2026. Read only.
-- **Two sign-up capture questions — parked, not dropped** (Karl, 21 Sep 2026).
+- **Two sign-up capture questions: parked, not dropped** (Karl, 21 Sep 2026).
   Both belong to one conversation with Danny and Georgio about what front of
   house asks a new member at sign-up, and neither is worth building or
   requesting before that conversation happens.
@@ -1175,8 +1190,8 @@ Reminders only. Each gets scoped and built in its own session.
     9 September recap to Dylan. This is the member-level source tag the pipeline
     design depends on: without it, conversion rate by source cannot be
     calculated, which is the whole reason for tracking sources.
-  - **PT interest at sign-up, asked as a three-way question** — "yes I'd like to
-    get started" / "I'd like to know more first" / "not right now" — with a yes
+  - **PT interest at sign-up, asked as a three-way question**: "yes I'd like to
+    get started" / "I'd like to know more first" / "not right now", with a yes
     or a maybe walked through the comp session request form at the desk rather
     than sent a link. Designed in full in the 10 September pipeline draft to
     Dylan, including why the link version fails.
@@ -1200,7 +1215,7 @@ Reminders only. Each gets scoped and built in its own session.
   **This makes the GymMaster tagging work a prerequisite, not a nice-to-have.**
   Raise both questions together when the sign-up conversation is next on the
   table.
-- **PT client tagging in GymMaster** — in flight, waiting on Danny (21 Sep 2026).
+- **PT client tagging in GymMaster**: in flight, waiting on Danny (21 Sep 2026).
   There is currently no reliable way to tell who is actually training with a PT,
   which blocks every PT metric worth having, including PT clients as a
   percentage of membership.
@@ -1210,7 +1225,7 @@ Reminders only. Each gets scoped and built in its own session.
   are not. Meanwhile most clients who came through the gym are on Base or
   Ultimate, so they are PT clients and do not look like it.
   **Asked of Danny:** three member tags in GymMaster, which he has confirmed it
-  supports — currently training with a PT (yes/no), which trainer, and
+  supports: currently training with a PT (yes/no), which trainer, and
   previously trained but no longer does. The third is also the best
   re-engagement list in the gym, so it is kept rather than cleared.
   **Where the truth comes from:** the trainers, not the database. Karl confirms
@@ -1239,7 +1254,7 @@ Reminders only. Each gets scoped and built in its own session.
   record the trainer can read. Karl's own observations about a trainer belong
   in `docs/pt-development-coaching-notes.md`, which is private to him. Do not
   merge the two.
-- **Karl's onboarding into Georgio's new gym system** — agreed in principle,
+- **Karl's onboarding into Georgio's new gym system**: agreed in principle,
   undated (9 Nov 2026). Georgio wants a long conversation with Karl about AI
   and integrating the gym's systems so its processes run more smoothly. It is
   happening after an operation Georgio is due to have, so there is no date and

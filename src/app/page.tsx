@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
 
 // Normally just a doorway to the public form. It also has to catch emailed
-// auth links, because Supabase falls back to the project's Site URL — this
-// root — whenever a link has no usable redirect of its own. Any link generated
+// auth links, because Supabase falls back to the project's Site URL (this
+// root) whenever a link has no usable redirect of its own. Any link generated
 // before `redirectTo` was set correctly, and any flow that defaults to the
 // Site URL, lands here rather than at /admin/auth/callback.
 //

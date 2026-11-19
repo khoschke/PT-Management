@@ -1,8 +1,8 @@
 "use server";
 
 // Sets a new password at the end of the forgot-password flow. Deliberately
-// does not ask for the current password — the whole point is that the user
-// doesn't have it — so it is gated on the recovery marker cookie instead,
+// does not ask for the current password (the whole point is that the user
+// doesn't have it), so it is gated on the recovery marker cookie instead,
 // which only /admin/auth/callback can set and only after verifying a code from
 // a real recovery email.
 

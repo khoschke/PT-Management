@@ -17,7 +17,7 @@ export const AUTH_FLOW_COOKIE = "pt-auth-flow";
 export type AuthFlow = "recovery" | "email_change";
 
 // Comfortably longer than the hour a Supabase link stays valid would be
-// pointless — the link dies first. This just has to outlive the walk to the
+// pointless: the link dies first. This just has to outlive the walk to the
 // inbox.
 export const AUTH_FLOW_COOKIE_MAX_AGE = 60 * 60;
 
@@ -28,7 +28,7 @@ export const AUTH_FLOW_COOKIE_MAX_AGE = 60 * 60;
 // Why a marker at all: exchanging a recovery link gives the user an ordinary
 // session, indistinguishable from a normal sign-in. Without this cookie,
 // /admin/reset-password would let *anyone* already signed in set a new password
-// without knowing the current one — which is exactly the hole the Account
+// without knowing the current one, which is exactly the hole the Account
 // screen's current-password check exists to close.
 //
 // The cookie is httpOnly and only ever written by the callback route, after a

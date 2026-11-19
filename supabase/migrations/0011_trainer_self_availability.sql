@@ -41,7 +41,7 @@ begin
   end if;
 
   if not (new.available_am or new.available_pm) then
-    raise exception 'Choose at least one — mornings, evenings, or both.'
+    raise exception 'Choose at least one: mornings, evenings, or both.'
       using errcode = '23514';
   end if;
 

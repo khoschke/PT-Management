@@ -38,20 +38,20 @@ approximation, not the official mark.
 
 ## Scope & priority order
 
-1. **The public form (`/pt-session`)** — first impression, member-facing, and
+1. **The public form (`/pt-session`)**: first impression, member-facing, and
    polish here lifts completion rate. Do this first and set the bar.
-2. **The lead board + detail panel (`/admin`)** — the daily driver.
+2. **The lead board + detail panel (`/admin`)**: the daily driver.
 3. **Trainers, Staff screens.**
 4. Login.
 
 ## Constraints (respect the existing decisions)
 
 - `/admin` and `/pt-session` stay **monochrome black-and-white** (brand). Elevate
-  within that constraint — restraint is the point, not adding colour.
+  within that constraint. Restraint is the point, not adding colour.
 - Design tokens live in `src/app/globals.css`. Extend the system; don't scatter
   one-off values.
 - **Leave the `/onboarding` area's separate `.onboarding-scope` theme alone**
-  unless asked — it's an intentionally distinct visual layer with its own
+  unless asked. It's an intentionally distinct visual layer with its own
   light/dark palette.
 - Keep Australian English, no em dashes in user-facing copy.
 
@@ -59,12 +59,12 @@ approximation, not the official mark.
 
 - Move screen by screen; refine the shared components (buttons, inputs, cards,
   badges, pills) so improvements compound.
-- **Verify every change in a real browser and screenshot it** (mobile + desktop)
-  — thoroughness is explicitly preferred here over speed.
+- **Verify every change in a real browser and screenshot it** (mobile + desktop).
+  Thoroughness is explicitly preferred here over speed.
 - `npm run build` + `tsc --noEmit` + `lint` clean before every push.
 
 ## Definition of done
 
 Each screen reads as one considered system: confident hierarchy, consistent
-spacing/type, purposeful motion, and polished states — the kind of quality that
+spacing/type, purposeful motion, and polished states: the kind of quality that
 would survive a review by an Apple design lead.

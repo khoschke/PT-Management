@@ -320,7 +320,7 @@ export async function promoteStaffToTrainer(userId: string): Promise<ActionResul
 
 // Manager-assisted email change. Updates a staff member's sign-in email with
 // the service-role client and email_confirm: true, so the change takes effect
-// immediately without the usual confirmation email — handy while email sending
+// immediately without the usual confirmation email, handy while email sending
 // is still off. This changes the login (auth) email only, not a trainer's
 // roster contact email (that's edited on the Trainers screen).
 const changeEmailSchema = z.string().trim().email("Enter a valid email address").max(320);

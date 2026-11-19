@@ -97,7 +97,7 @@ export function toDocumentListItem(
     id: doc.id,
     typeLabel,
     customLabel: doc.custom_label,
-    displayName: doc.custom_label ? `${typeLabel} — ${doc.custom_label}` : typeLabel,
+    displayName: doc.custom_label ? `${typeLabel}: ${doc.custom_label}` : typeLabel,
     fileName: doc.file_name,
     status: doc.status,
     rejectionReason: doc.rejection_reason,

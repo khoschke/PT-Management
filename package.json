@@ -4,9 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node tools/check-no-em-dashes.mjs",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "check:dashes": "node tools/check-no-em-dashes.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.3",

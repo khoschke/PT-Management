@@ -1,7 +1,7 @@
 "use server";
 
 // Sends a Supabase Auth password-recovery email. Runs on the session-scoped
-// server client so the PKCE code verifier lands in this browser's cookies —
+// server client so the PKCE code verifier lands in this browser's cookies;
 // the emailed link is then exchanged for a session in /admin/auth/callback.
 
 import { cookies } from "next/headers";
@@ -44,7 +44,7 @@ export async function requestPasswordReset(
   });
 
   // Supabase answers 200 for an address with no account and sends nothing, so
-  // an error here is never "that email doesn't exist" — it's rate limiting or
+  // an error here is never "that email doesn't exist". It's rate limiting or
   // the mail transport failing. Surface those honestly rather than claiming we
   // sent something we didn't: a reset screen that lies about sending an email
   // leaves a locked-out trainer waiting on a message that will never arrive.

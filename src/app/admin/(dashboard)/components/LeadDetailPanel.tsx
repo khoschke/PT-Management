@@ -269,7 +269,7 @@ export default function LeadDetailPanel({
                   {activeTrainers.map((t) => (
                     <option key={t.id} value={t.id}>
                       {t.name} ({trainerLoads[t.id] ?? 0} active)
-                      {isAcceptingLeads(t) ? "" : " — paused"}
+                      {isAcceptingLeads(t) ? "" : " (paused)"}
                     </option>
                   ))}
                 </select>

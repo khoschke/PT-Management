@@ -5,16 +5,16 @@
 ## The goal
 
 Today a trainer's availability is a **single choice**: Morning (`AM`), Evening
-(`PM`), or Both (`both`) — a Postgres enum `trainer_availability` defined in
+(`PM`), or Both (`both`): a Postgres enum `trainer_availability` defined in
 `supabase/migrations/0001_init.sql` as `enum ('AM', 'PM', 'both')`.
 
 Karl wants availability expressed as **AM and PM as independent options** rather
-than a single "Both" bucket — i.e. a trainer can be available AM, PM, or both, by
+than a single "Both" bucket, i.e. a trainer can be available AM, PM, or both, by
 selecting the slots that apply instead of picking a combined "both" value.
 
 ## Decide the approach first (this is the key call for the new thread)
 
-**Option 1 — UI only, keep the DB as-is (lowest risk).**
+**Option 1: UI only, keep the DB as-is (lowest risk).**
 Keep the enum `('AM','PM','both')`. Change only the Trainers form
 (`TrainerFields.tsx`) from a single `<select>` to **two checkboxes (AM, PM)**.
 On save, derive the stored value: both checked → `'both'`, one checked → that
@@ -22,7 +22,7 @@ value, none → validation error. Allocation logic and existing data are untouch
 - Pro: no migration, no data backfill, allocation code unchanged.
 - Con: the data model still has the `'both'` concept under the hood.
 
-**Option 2 — Model AM and PM as two booleans (cleaner data model).**
+**Option 2: Model AM and PM as two booleans (cleaner data model).**
 Replace the single enum column with `available_am boolean` and
 `available_pm boolean` (or a `text[]`/set). This makes "AM and PM as independent
 options" literal in the database.
@@ -38,20 +38,20 @@ he means before building.
 
 Search: `grep -rn "availability" src/ supabase/`
 
-- `supabase/migrations/0001_init.sql` — the enum + column default (`'both'`).
-- `src/lib/types.ts` — the `Trainer` type's `availability` field.
-- `src/app/admin/(dashboard)/trainers/components/TrainerFields.tsx` — the form
+- `supabase/migrations/0001_init.sql`: the enum + column default (`'both'`).
+- `src/lib/types.ts`: the `Trainer` type's `availability` field.
+- `src/app/admin/(dashboard)/trainers/components/TrainerFields.tsx`: the form
   control to change (select → checkboxes).
-- `src/app/admin/(dashboard)/trainers/components/TrainerRoster.tsx` — how it's
+- `src/app/admin/(dashboard)/trainers/components/TrainerRoster.tsx`: how it's
   displayed in the roster.
-- `src/app/admin/(dashboard)/trainers/actions.ts` — server-side validation/parse
+- `src/app/admin/(dashboard)/trainers/actions.ts`: server-side validation/parse
   of the submitted value.
-- `src/lib/allocation.ts` — **matching logic**: line ~58 does
+- `src/lib/allocation.ts`: **matching logic**: line ~58 does
   `trainer.availability === "both" || trainer.availability === lead.time_preference`.
-  This is the important one to keep correct — the allocation suggestion uses
+  This is the important one to keep correct, as the allocation suggestion uses
   availability to score trainers against the lead's `time_preference`.
-- `supabase/seed.sql` and `supabase/seed_real_trainers.sql` — seed values.
-- `src/lib/onboarding/parts/part2.ts`, `part4.ts` — check whether these reference
+- `supabase/seed.sql` and `supabase/seed_real_trainers.sql`: seed values.
+- `src/lib/onboarding/parts/part2.ts`, `part4.ts`: check whether these reference
   trainer availability (they surfaced in the grep) and update if so.
 
 ## If you choose Option 2 (migration path)
@@ -69,7 +69,7 @@ Search: `grep -rn "availability" src/ supabase/`
 
 ## Gotchas
 
-- Whichever option, **keep allocation matching working** — that's the feature
+- Whichever option, **keep allocation matching working**, since that's the feature
   availability actually feeds. Re-verify a lead with an AM preference still
   suggests an AM-available trainer.
 - Enum changes in Postgres are awkward to reverse; prefer adding new columns and

@@ -14,8 +14,8 @@
 // "Paused" is a trainer with neither AM nor PM ticked, set by the trainer
 // themselves on /admin/profile when their book is full. It has to be applied
 // before rule 1, not as a score: availability is only worth +5 in rule 3, so
-// scoring it would leave a paused trainer in the running and — because rule 4
-// favours the lightest book — actually make an empty-booked one MORE likely to
+// scoring it would leave a paused trainer in the running and (because rule 4
+// favours the lightest book) actually make an empty-booked one MORE likely to
 // win. The manager can still allocate to them by hand; this only stops the
 // system suggesting them.
 

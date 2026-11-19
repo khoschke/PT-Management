@@ -15,7 +15,7 @@ const AUTH_ERRORS: Record<string, string> = {
   // email-change confirmations, and calling one of those a reset is confusing
   // at exactly the moment the user is already confused.
   expired:
-    "That link has expired or has already been used. If you asked for more than one email, only the newest link works — check for a later one, or start again below.",
+    "That link has expired or has already been used. If you asked for more than one email, only the newest link works. Check for a later one, or start again below.",
   verify:
     "We couldn't verify that link. Open it in the same browser you requested it from, or request a new one below.",
 };
@@ -24,7 +24,7 @@ const AUTH_ERRORS: Record<string, string> = {
 // a user who has just been signed out by the flow itself.
 const AUTH_NOTICES: Record<string, string> = {
   "email-change-half":
-    "Confirmed from this address. For security, an email change has to be confirmed from BOTH addresses — open the link in your other inbox to finish it. Your sign-in email doesn't change until then, so sign in with your current one.",
+    "Confirmed from this address. For security, an email change has to be confirmed from BOTH addresses. Open the link in your other inbox to finish it. Your sign-in email doesn't change until then, so sign in with your current one.",
 };
 
 const inputClass =

@@ -92,7 +92,7 @@ function sourceLabel(source: string): string {
 }
 
 function pct(value: number | null): string {
-  return value === null ? "—" : `${Math.round(value * 100)}%`;
+  return value === null ? "n/a" : `${Math.round(value * 100)}%`;
 }
 
 // A headline number with its own denominator underneath, so a 1-of-1 reads as
@@ -366,7 +366,7 @@ export default async function MetricsPage({ searchParams }: { searchParams: Prom
             />
             <Tile
               label="Time to convert"
-              value={m.timeToConvert.medianDays === null ? "—" : `${Math.round(m.timeToConvert.medianDays)}d`}
+              value={m.timeToConvert.medianDays === null ? "n/a" : `${Math.round(m.timeToConvert.medianDays)}d`}
               sub={
                 m.timeToConvert.count === 0
                   ? "No conversions yet"

@@ -37,7 +37,7 @@ export const SETUP_STATE_LABEL: Record<SetupItemState, string> = {
 // their PT contract, and CLAUDE.md says to point at the contract rather than
 // restate it.
 //
-// The paper form's final row reads "13+ (100% — confirm with Karl)". It is
+// The paper form's final row reads "13+ (100%, confirm with Karl)". It is
 // rendered as "Full rent" instead, which is true, needs no confirmation, and
 // states no figure.
 

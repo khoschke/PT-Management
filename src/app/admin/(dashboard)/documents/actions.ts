@@ -163,7 +163,7 @@ export async function uploadDocument(
       .select("name")
       .eq("id", trainerId)
       .maybeSingle<Pick<Trainer, "name">>();
-    const label = customLabel ? `${docType.label} — ${customLabel}` : docType.label;
+    const label = customLabel ? `${docType.label}: ${customLabel}` : docType.label;
     await sendDocumentUploadedManagerNotification(process.env.PT_MANAGER_EMAIL, {
       trainerName: trainer?.name ?? "A trainer",
       documentLabel: label,
@@ -198,7 +198,7 @@ export async function deleteDocument(documentId: string) {
 }
 
 // Manager marks a document verified. RLS restricts the update to managers, and
-// the explicit check here means that's stated in both places — a trainer must
+// the explicit check here means that's stated in both places: a trainer must
 // never be able to sign off their own compliance document.
 export async function verifyDocument(documentId: string) {
   if (!(await callerIsManager())) return { ok: false };

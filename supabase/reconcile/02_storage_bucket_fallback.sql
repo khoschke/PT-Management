@@ -1,5 +1,5 @@
 -- ===========================================================================
--- Storage fallback for 0006_trainer_documents.sql — run ONLY if needed.
+-- Storage fallback for 0006_trainer_documents.sql. Run ONLY if needed.
 -- ===========================================================================
 --
 -- `0006_trainer_documents.sql` already creates the `trainer-documents` bucket

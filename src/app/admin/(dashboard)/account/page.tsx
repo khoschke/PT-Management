@@ -24,7 +24,7 @@ export default async function AccountPage() {
         <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
           <dt className="font-semibold text-foreground">Email</dt>
           <dd className="text-secondary-label">
-            {user.email ?? "—"}
+            {user.email ?? "n/a"}
             {user.newEmail && (
               <span className="ml-2 rounded-full bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-800">
                 {user.newEmail} pending

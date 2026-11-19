@@ -7,8 +7,8 @@
 >
 > **Nothing works on live until two migrations are applied by hand**, in order:
 >
-> 1. `0013_staff_role.sql` — run it whole.
-> 2. `0014_development_goals.sql` — run it whole.
+> 1. `0013_staff_role.sql`: run it whole.
+> 2. `0014_development_goals.sql`: run it whole.
 >
 > An earlier version of this note said `0013` needed a two-part run. It does
 > not; see the file's own header for why the enum rule does not apply to it.
@@ -316,35 +316,35 @@ not only at the staff member.
 
 Files added:
 
-- `supabase/migrations/0013_staff_role.sql` — the enum value, `my_role()`, and
+- `supabase/migrations/0013_staff_role.sql`: the enum value, `my_role()`, and
   the three rewritten policies. **Two parts, not yet run on live.**
-- `supabase/migrations/0014_development_goals.sql` — `development_goals` and
+- `supabase/migrations/0014_development_goals.sql`: `development_goals` and
   `development_notes` with the ownership RLS. One part, not yet run on live.
-- `src/lib/development.ts` — `MAX_ACTIVE_GOALS`, the status labels and classes,
+- `src/lib/development.ts`: `MAX_ACTIVE_GOALS`, the status labels and classes,
   and the empty-state prompts.
 - `src/app/admin/(dashboard)/development/actions.ts`, `state.ts` and
   `components/DevelopmentProfile.tsx`.
-- `src/lib/staff.ts` — `getStaffTrainerIds`, `listStaff`, `workbookPercent`.
+- `src/lib/staff.ts`: `getStaffTrainerIds`, `listStaff`, `workbookPercent`.
   This is where "who is staff" is answered, from `profiles.role` alone.
 - `src/app/admin/(dashboard)/development/page.tsx` and `[trainerId]/page.tsx`.
 
 Files changed:
 
-- `src/lib/types.ts` — `AppRole` gains `"staff"`.
-- `src/lib/auth.ts` — `worksThroughWorkbook()`, the app-side counterpart to the
+- `src/lib/types.ts`: `AppRole` gains `"staff"`.
+- `src/lib/auth.ts`: `worksThroughWorkbook()`, the app-side counterpart to the
   RLS fix. Use it instead of comparing to `"trainer"`.
-- `src/app/onboarding/page.tsx`, `[part]/page.tsx`, `actions.ts` — staff get the
+- `src/app/onboarding/page.tsx`, `[part]/page.tsx`, `actions.ts`: staff get the
   progress-saving workbook. The `isTrainer` flag on both pages was renamed
   `savesProgress`, because a variable named for one role is exactly how staff
   got locked out in the first place.
-- `src/app/admin/(dashboard)/layout.tsx` — nav per role, plus a Development link
+- `src/app/admin/(dashboard)/layout.tsx`: nav per role, plus a Development link
   for managers.
-- `src/app/admin/(dashboard)/page.tsx` — staff are redirected off the lead board.
-- `staff/actions.ts` — `addStaffLogin`, `promoteStaffToTrainer`.
-- `staff/page.tsx`, `staff/components/StaffManager.tsx` — the staff role, the
+- `src/app/admin/(dashboard)/page.tsx`: staff are redirected off the lead board.
+- `staff/actions.ts`: `addStaffLogin`, `promoteStaffToTrainer`.
+- `staff/page.tsx`, `staff/components/StaffManager.tsx`: the staff role, the
   add form and the promote button.
-- `trainers/page.tsx` — staff filtered out of the PT roster.
-- `compliance/page.tsx` — staff kept in, tagged "Development".
+- `trainers/page.tsx`: staff filtered out of the PT roster.
+- `compliance/page.tsx`: staff kept in, tagged "Development".
 
 `/admin/development` serves two screens off one route: a manager gets the list
 of everyone on the pathway, anyone else gets their own profile. **Trainers get
@@ -386,7 +386,7 @@ the policies exercised as real signed-in users via `set role authenticated` and
 | Full chain `0001`-`0014` from scratch, each file one transaction | applies clean |
 | `0013` run whole rather than in two parts | succeeds (the two-part instruction was wrong) |
 | Staff member with a lead allocated to their trainer row | sees **0 leads** |
-| Same, with the policy reverted to `not is_manager()` | **sees the lead** — the hole was real |
+| Same, with the policy reverted to `not is_manager()` | **sees the lead** (the hole was real) |
 | Trainer sees their own leads | 1, the right one |
 | Staff saves a workbook answer and a part status | both save |
 | Staff uploads a document | saves, lands as `pending` |

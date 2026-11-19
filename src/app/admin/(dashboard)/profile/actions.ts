@@ -67,7 +67,7 @@ export async function updateMyProfile(
 
   const supabase = await createClient();
   // Selecting the row back is what makes "Saved" honest. An update that RLS
-  // matches to no row is not an error, it just changes nothing — so without
+  // matches to no row is not an error, it just changes nothing, so without
   // this a trainer whose row had gone would be told their profile saved.
   const { data: saved, error } = await supabase
     .from("trainers")

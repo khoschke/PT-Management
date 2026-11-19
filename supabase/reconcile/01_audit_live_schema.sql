@@ -1,9 +1,9 @@
 -- ===========================================================================
--- Live schema audit — run this FIRST, in the Supabase SQL editor.
+-- Live schema audit. Run this FIRST, in the Supabase SQL editor.
 -- ===========================================================================
 --
 -- Read-only. Creates nothing, changes nothing. Safe to run any time, and it is
--- the only trustworthy answer to "which migrations are actually on live?" —
+-- the only trustworthy answer to "which migrations are actually on live?":
 -- `docs/PROJECT_STATUS.md` drifted out of step once (it listed 0006 as applied
 -- when it was not), so the doc is a claim and this query is the evidence.
 --
@@ -39,8 +39,8 @@
 -- `alter table ... enable row level security` and executes it against
 -- production.
 --
--- The warning is a false positive — a SELECT over catalog views cannot create
--- anything — but a read-only audit should not put anyone in the position of
+-- The warning is a false positive (a SELECT over catalog views cannot create
+-- anything), but a read-only audit should not put anyone in the position of
 -- declining a safety prompt on a live database. So this version reads
 -- pg_catalog directly (`pg_attribute`, `pg_policy`) and uses the privilege
 -- functions. The only remaining occurrence of the word "table" is inside the
@@ -48,7 +48,7 @@
 --
 -- Keep it that way. If you extend this file, use `pg_catalog`, not
 -- `information_schema`, and label items "relation X" rather than "table X".
--- And if the editor warns anyway: **Run without RLS** is the correct button —
+-- And if the editor warns anyway: **Run without RLS** is the correct button:
 -- it runs the query verbatim. Never "Run and enable RLS" from this file.
 --
 -- The privilege checks are also more honest this way: has_column_privilege()
@@ -138,7 +138,7 @@ from (
             where polrelid = to_regclass('storage.objects')
               and polname = 'trainer documents delete')
 
-  -- 0007 / 0008 GymMaster (unmerged branch — expected MISSING) -------------
+  -- 0007 / 0008 GymMaster (unmerged branch, expected MISSING) -------------
   union all select '0007', 'lead_source value gymmaster_api',
     exists (select 1 from pg_enum e join pg_type t on t.oid = e.enumtypid
             where t.typname = 'lead_source' and e.enumlabel = 'gymmaster_api')

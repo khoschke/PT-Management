@@ -1,12 +1,12 @@
-# Handoff: Custom Domain (pt.fitazgym.com) — ✅ DONE (history)
+# Handoff: Custom Domain (pt.fitazgym.com): ✅ DONE (history)
 
-> **✅ COMPLETE (11 Aug 2026). This is a record, not a task — do not re-do it.**
+> **✅ COMPLETE (11 Aug 2026). This is a record, not a task. Do not re-do it.**
 > pt.fitazgym.com is live over HTTPS and is the address to use/share. Email also
 > sends from `mail.fitazgym.com`.
 >
 > **One correction to the note below:** the DNS is **NOT** in Shopify. fitazgym.com
 > is a third-party domain *connected* to Shopify but its DNS zone lives at
-> **CrazyDomains (Dreamscape)** — that's where all records were added (the `pt`
+> **CrazyDomains (Dreamscape)**, and that's where all records were added (the `pt`
 > CNAME to Vercel, and the Resend `mail` records). Shopify's "add domain" flow is
 > a trap: it tries to point `pt` at the Shopify store. If any future subdomain
 > work is needed, edit DNS at **CrazyDomains**, not Shopify. The steps below are
@@ -26,11 +26,11 @@ Shopify website) stays exactly as it is and is not affected.
 
 ## Who does what
 
-- **Vercel side:** the PT Manager (Karl) has access — add the domain there.
+- **Vercel side:** the PT Manager (Karl) has access, so add the domain there.
 - **Shopify DNS side:** the gym owner controls this. Karl has emailed Georgio to
   ask whether Georgio adds the record himself (Karl sends exact values) or grants
   Karl Shopify admin access to add it. Confirm which before proceeding.
-- **This build workspace can't do any of it** — Vercel and Shopify are both
+- **This build workspace can't do any of it**: Vercel and Shopify are both
   dashboard actions. This thread's job is to guide the steps, produce the exact
   DNS record, and do any small code follow-ups.
 
