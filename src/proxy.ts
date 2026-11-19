@@ -1,6 +1,7 @@
 // Refreshes the Supabase session on every request and keeps signed-out
-// visitors out of /admin. The dashboard itself still checks role server
-// side, this just stops an anonymous visitor loading the page at all.
+// visitors out of /admin and the /onboarding workbook. The pages themselves
+// still check role server side, this just stops an anonymous visitor loading
+// them at all.
 
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
@@ -69,6 +70,10 @@ export async function proxy(request: NextRequest) {
 
   const path = request.nextUrl.pathname;
   const isAdminRoute = path.startsWith("/admin");
+  // The workbook needs the same session refresh as the dashboard. Without it a
+  // trainer who leaves the workbook open for over an hour comes back to an
+  // expired token that no server component is allowed to renew.
+  const isWorkbookRoute = path === "/onboarding" || path.startsWith("/onboarding/");
 
   // Signed-out staff have to be able to reach these: the sign-in screen and
   // the "email me a reset link" screen. The callback returned earlier, above.
@@ -80,7 +85,7 @@ export async function proxy(request: NextRequest) {
   // screen is where a signed-in user changes their own password.
   const isSignedOutOnlyRoute = SIGNED_OUT_ONLY_ADMIN_ROUTES.has(path);
 
-  if (isAdminRoute && !isPublicRoute && !user) {
+  if ((isAdminRoute || isWorkbookRoute) && !isPublicRoute && !user) {
     const loginUrl = new URL("/admin/login", request.url);
     loginUrl.searchParams.set("redirectTo", path);
     return NextResponse.redirect(loginUrl);
@@ -94,5 +99,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/admin/:path*", "/onboarding", "/onboarding/:path*"],
 };
