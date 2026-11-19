@@ -414,8 +414,13 @@ Do not report a branch as unmerged on the strength of it. Run this first:
 
 ```sh
 git fetch origin
+# Cloud sessions clone this repo shallow, which breaks the count below: a
+# branch merged before the cutoff reads as unmerged because its ancestry is
+# truncated. Unshallow first, or every "Merged" row looks wrong.
+git rev-parse --is-shallow-repository | grep -qx true && git fetch --unshallow origin
 PROD=origin/claude/fitaz-gym-pt-leads-76ffhv
 for b in $(git ls-remote --heads origin | sed 's|.*refs/heads/||' | grep -v fitaz-gym-pt-leads | sort); do
+  git rev-parse -q --verify "origin/$b" >/dev/null || continue
   n=$(git rev-list --count $PROD..origin/$b)
   printf "%-46s %s\n" "$b" "$([ "$n" = 0 ] && echo merged || echo "$n unmerged")"
 done
@@ -425,13 +430,22 @@ Zero means everything on that branch is already on production, whatever the
 table says. If what you find disagrees with the table, **the command is right**:
 fix the table in the same session rather than leaving it to mislead the next one.
 
-### Snapshot, 18 November 2026 (verified with the command above)
+**Unless you skipped the unshallow.** Then the command is wrong, loudly and in
+the alarming direction. On 19 November 2026 it reported ten merged branches as
+carrying 5 to 30 unmerged commits each, every one of them a false reading from
+a shallow clone. A session that had trusted it would have rewritten ten correct
+rows into a panic. Run `git rev-parse --is-shallow-repository` before you
+believe a single "unmerged".
 
-**Branches not in this table.** Besides `claude/practical-mayer-dujpqd`, which
-is the docs commit that made this edit, the command above also lists
-`ccr-9a0af25a-7urz50`, `ccr-a32f1d93-nm4hq5`, `claude/modest-tesla-anh612`,
-`claude/superpowers-setup-jkjgnn` and `claude/weekly-fitness-standup-1h0mzj`,
-all carrying unmerged commits. They are
+### Snapshot, 19 November 2026 (verified with the command above, on a full clone)
+
+Every row in the table below was checked and every one was already right. The
+only correction this pass needed was to the command itself, above.
+
+**Branches not in this table.** The command also lists `ccr-9a0af25a-7urz50`,
+`ccr-a32f1d93-nm4hq5`, `claude/modest-tesla-anh612`,
+`claude/superpowers-setup-jkjgnn`, `claude/weekly-fitness-standup-1h0mzj` and
+`claude/pt-email-nurture-flow-t2e5e7`, all carrying unmerged commits. They are
 deliberately not given rows here, because this session does not know what they
 are and a row guessing at a workstream is worse than no row. Whoever owns one:
 add it, or delete the branch.
@@ -439,9 +453,11 @@ add it, or delete the branch.
 The three branches the August reconciliation left behind
 (`reconcile-database-security-deploy-01sf2h`, `security-merge-pending-parta`,
 `security-hardening-validation-0ry4cz`) have been deleted, along with
-`apple-design-pass-ymnm14` and `pt-email-nurture-flow-t2e5e7`. Their rows are
+`apple-design-pass-ymnm14` and `claude/practical-mayer-dujpqd`. Their rows are
 removed: a merged branch that no longer exists is noise here, and its record is
-the commit history.
+the commit history. `claude/pt-email-nurture-flow-t2e5e7` was on that list on
+18 November and is back on the remote with four unmerged commits, so it is
+named above instead.
 
 | Branch / thread | Workstream | State |
 |---|---|---|
@@ -455,6 +471,7 @@ the commit history.
 | `claude/availability-am-pm-model-yj1dby` | Trainer AM/PM availability | Merged. |
 | `claude/trainer-portal-handoff-doc-o0on8j` | Editable trainer pages (scoping) | Merged. Scoping note only; the build is the branch below. |
 | `claude/pt-onboarding-dashboard-9wwl17` | PT onboarding workbook | Merged and live. |
+| `claude/pt-onboarding-workbook-updates-xmrtqs` | Onboarding workbook content changes, and the figure rule | **Merged** (PRs #27, #30, #32, #58). The 33-change spec from the source `.docx`, the manager-view gate, the scripts and tables Parts 2, 3, 4, 7 and 9 had condensed away, and `CLAUDE.md`. Closed 19 November 2026. |
 | `claude/tender-gauss-hfm632` | Part 7 workbook rewrite; flagged, unverified and own lead types; 2-2-2 follow-ups and the 48-hour clock on a no; post-chat reflections; My numbers; Part 6 pass | **Merged** (PRs #49, #51 to #55; migrations `0020` to `0024`). The Part 7 `.docx` masters are in Drive for Karl to swap in. Details under Outstanding. |
 | `claude/handoff-trainer-profiles-link-buudia` | Trainer profile links | Merged. |
 | `claude/project-pause-prevention-083n5y` | Supabase keep-alive cron | Merged and live. |
