@@ -94,7 +94,7 @@ export function suggestTrainer(
   }
   if (winner.goalOverlap.length > 0) {
     reasonParts.push(
-      `shares ${winner.goalOverlap.length} goal${winner.goalOverlap.length > 1 ? "s" : ""} (${winner.goalOverlap
+      `shares ${winner.goalOverlap.length} tag${winner.goalOverlap.length > 1 ? "s" : ""} (${winner.goalOverlap
         .map(goalLabel)
         .join(", ")})`,
     );

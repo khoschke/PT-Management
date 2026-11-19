@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { GOAL_OPTIONS } from "@/lib/goals";
+import SpecialtyPicker from "./SpecialtyPicker";
 import { FOUND_VIA_OPTIONS } from "@/lib/types";
 import { addOwnLead } from "../actions";
 import { blank, useLeadForm } from "./useLeadForm";
@@ -127,19 +127,9 @@ export default function AddOwnLeadModal({ onClose, onSaved }: { onClose: () => v
 
           <div>
             <label className="text-sm font-semibold text-foreground">
-              Goals <span className="font-normal text-secondary-label">(optional)</span>
+              Tags <span className="font-normal text-secondary-label">(optional)</span>
             </label>
-            <div className="mt-1.5 flex flex-wrap gap-1.5">
-              {GOAL_OPTIONS.filter((g) => g.code !== "other").map((goal) => (
-                <label
-                  key={goal.code}
-                  className="press cursor-pointer rounded-full bg-fill px-3 py-1.5 text-xs font-medium text-foreground transition has-[:checked]:bg-foreground has-[:checked]:text-white"
-                >
-                  <input type="checkbox" name="goals" value={goal.code} className="sr-only" />
-                  {goal.label}
-                </label>
-              ))}
-            </div>
+            <SpecialtyPicker name="goals" />
           </div>
 
           <SubmitButton pending={isPending} />

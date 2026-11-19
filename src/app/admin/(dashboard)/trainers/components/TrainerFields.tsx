@@ -52,11 +52,12 @@ export default function TrainerFields({
       </div>
 
       <div className="mt-3">
-        <label className="text-sm font-semibold text-foreground">More about this trainer</label>
+        <label className="text-sm font-semibold text-foreground">How a member should hear about you</label>
         <p className="mt-0.5 text-xs text-secondary-label">
-          Free text for anything the tags above don&rsquo;t cover, e.g. boxing, kettlebells, pre/post-natal, rehab,
-          certifications, coaching style.
+          Two or three sentences: who you work best with, what you help them do, and how you work. Include anything
+          the tags above don&rsquo;t cover, like pre/post natal, rehab, boxing, kettlebells or your certifications.
         </p>
+        <p className="mt-0.5 text-xs italic text-secondary-label">This is what front of house and members see.</p>
         <textarea
           name="bio"
           rows={3}
