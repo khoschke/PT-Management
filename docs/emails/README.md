@@ -18,9 +18,9 @@ padding on a `<td bgcolor>`, which is the exact thing that broke in August; the
 lines are the reconciled ones, typo included. Email 3's subject was changed to
 "Karl, Last Week to Claim Your Session" at the same time.
 
-**The preheader is not in the live emails**, removed by hand during the paste
-rather than lost by it. See below for why, and why the editor made it look like
-a fault. Everything else landed.
+**The preheader is live too, as of the 05:05 re-paste**, with its
+`display:none` intact in the delivered HTML, so it feeds the inbox preview and
+stays out of the body. The method that works is below.
 
 **These files were reconciled to what GymMaster actually sends on 19 November
 2026.** Karl and Danny had rewritten copy inside GymMaster, so for a while the
@@ -616,38 +616,31 @@ carry no `<style>` block at all, so no dark mode rule of any kind, plate or imag
 swap, survives into a GymMaster send. Any dark mode fix for GymMaster has to work
 with no stylesheet.
 
-## The preheader, and why it is not in the live emails
+## The preheader, and the one way to paste it that works
 
-**It was deleted deliberately on 19 November 2026, and the reason is worth
-knowing before anyone restores it.**
+**Settled on 19 November 2026, after getting it wrong twice in a morning.**
 
 Each template opens with a hidden `<div>` carrying the preview line an inbox
 shows beside the subject. **GymMaster's visual editor does not honour
-`display:none`**, so with code view turned off the line appears as stray text at
-the top of the email, looking exactly like a paste gone wrong. Karl saw that and
-removed it, which is the sane reaction to what the editor was showing.
+`display:none`**, so the moment you switch code view off, that line appears as
+stray text at the top of the email and looks exactly like a paste gone wrong.
+It is not: a real inbox hides it. Deleting it on sight is the reasonable
+reaction and is what happened on the first paste, which is why the first set of
+test sends had no preview line.
 
-**The editor was lying.** In the test sends from earlier the same day, the
-copies that still carried the block delivered it correctly: the line showed as
-the grey preview text beside the subject, and did not appear in the body. Raw
-source of those messages confirms it. So the only place that text was ever
-visible was inside GymMaster.
+**What works, confirmed in the delivered HTML:**
 
-**What it costs, now it is gone.** The inbox falls back to the first text it
-finds, which is the eyebrow and the headline, so email 3 previews as "Seven days
-left Your first session closes in seven days". That repeats the subject instead
-of adding to it, in the second most read line in the email. Worth fixing, not
-worth a special trip.
+> Paste in code view, save from code view, and **never switch the editor to
+> preview**. The block survives with its `display:none` intact.
 
-**If you restore it**, paste in code view, save without switching to the visual
-editor, then send one to a real inbox and check both halves: the preview line
-beside the subject, and that the text is **not** visible at the top of the
-opened email. If it shows in the body, take it out again. A stray line there is
-worse than no preview line. A preview text or preheader field in GymMaster,
-beside the subject, would be a better home than the template if one exists.
+Switching to preview is the step that breaks it, not the paste and not
+GymMaster's sanitiser. The templates carry this warning in a comment directly
+above the block, because code view is where the next person meets it.
 
-**The templates now carry this warning in a comment above the block**, since
-code view is exactly where the next person will meet it.
+**Check it in a real inbox afterwards, both halves:** the grey preview line
+beside the subject in the list view, and that the text is **not** at the top of
+the opened email. If it is visible in the body, take it out. A stray line there
+is worse than no preview line.
 
 ## Two things GymMaster adds on the way out
 
@@ -658,6 +651,15 @@ fault.
 open-tracking pixel is appended. That is GymMaster's click and open tracking, so
 the numbers in its reporting are real. It also means the `?utm_` advice further
 up this file is redundant unless you want the data in Google Analytics as well.
+
+**The pasted `<head>` comes through, and its `<title>` lands in the plain text
+part.** The 05:05 paste included the whole document rather than the body, so
+the delivered HTML carries a nested `<html><head>` with our metas and title.
+Mail clients ignore it and the email renders correctly, but GymMaster's
+generated plain-text alternative now opens with the title string, "Your first
+session closes in seven days", before the preheader. Harmless, and only seen by
+someone reading the text part. **On the next paste, start from `<body>`** and
+it goes away. Not worth a paste of its own.
 
 **`rel="noopener"` comes back as `rel="noopener noreferrer"`.** This file
 explains further up why `noreferrer` was deliberately left off: it strips the
