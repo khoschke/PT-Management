@@ -157,6 +157,62 @@ export async function sendTrainerAllocationEmail(trainer: Trainer, lead: Lead) {
   });
 }
 
+// One email per trainer per import of the GymMaster new members report, listing
+// every unverified lead they were given, instead of one email per lead. The
+// 48-hour clock is the same for all of them because they came in together.
+export async function sendTrainerUnverifiedBatchEmail(trainer: Trainer, leads: Lead[]) {
+  const client = getClient();
+  if (!client || !trainer.email || leads.length === 0) return;
+
+  const count = leads.length;
+  const plural = count === 1 ? "lead" : "leads";
+  const dueText = new Date(leads[0].first_contact_due_at).toLocaleString("en-AU", {
+    timeZone: "Australia/Brisbane",
+  });
+
+  const text = [
+    `You've been allocated ${count} new unverified ${plural}.`,
+    "",
+    ALLOCATION_SOURCE_TEXT.unverified,
+    "",
+    ...leads.map((lead) => `- ${lead.name}, ${lead.phone}${lead.email ? `, ${lead.email}` : ""}`),
+    "",
+    `First contact is due within 48 hours (by ${dueText}).`,
+    "",
+    dashboardTextLine("Open the dashboard to see them."),
+  ].join("\n");
+
+  const rows = leads
+    .map(
+      (lead) => `<tr>
+      <td style="padding:8px 0;border-bottom:1px solid #eeeeee;font-size:14px;color:#111111;vertical-align:top;">${esc(lead.name)}</td>
+      <td style="padding:8px 0;border-bottom:1px solid #eeeeee;font-size:14px;color:#444444;vertical-align:top;text-align:right;">${esc(lead.phone)}</td>
+    </tr>`,
+    )
+    .join("");
+
+  const html = layout(`
+    <p style="margin:0 0 6px;font-size:20px;font-weight:600;line-height:1.3;">${count} new unverified ${plural}</p>
+    <p style="margin:0 0 20px;font-size:14px;line-height:1.5;color:#444444;">${esc(ALLOCATION_SOURCE_TEXT.unverified)}</p>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #eeeeee;">
+      ${rows}
+    </table>
+    <p style="margin:20px 0 0;font-size:13px;line-height:1.5;color:#777777;">
+      First contact is due within 48 hours
+      (by <strong style="color:#111111;">${esc(dueText)}</strong>).
+    </p>
+    ${ctaButton()}
+  `);
+
+  await client.emails.send({
+    from: FROM_ADDRESS,
+    to: trainer.email,
+    subject: `${count} new unverified ${plural}`,
+    text,
+    html,
+  });
+}
+
 interface NewLeadAlertParams {
   name: string;
   phone: string;
