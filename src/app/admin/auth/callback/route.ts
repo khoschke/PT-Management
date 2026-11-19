@@ -3,8 +3,8 @@
 //
 // The URL carries no query string of ours, deliberately. Supabase matches
 // `redirectTo` against the Redirect URLs allowlist as a whole string, and a
-// near miss is silent — it discards the redirect and falls back to the Site URL
-// rather than erroring — so anything we'd want to pass travels in a cookie set
+// near miss is silent (it discards the redirect and falls back to the Site URL
+// rather than erroring), so anything we'd want to pass travels in a cookie set
 // when the email was sent. See src/lib/recovery-session.ts.
 //
 // Two link shapes are handled. The default email templates use
@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
   // needs nothing from this browser, so it survives being opened on a phone,
   // in another browser, or after anything has disturbed the cookie jar. The
   // PKCE `code` path needs the code verifier this browser stored when the email
-  // was sent, and is the fragile one — it is kept only so links already in
+  // was sent, and is the fragile one. It is kept only so links already in
   // people's inboxes, and any flow still on the default templates, keep working.
   if (tokenHash && type) {
     const { data, error } = await supabase.auth.verifyOtp({ type, token_hash: tokenHash });
@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
     const lower = errorMessage.toLowerCase();
 
     // "code verifier should be non-empty" is supabase-js refusing locally,
-    // before any network call, because this browser has no PKCE verifier —
+    // before any network call, because this browser has no PKCE verifier:
     // a different device, or something cleared the cookie. It is emphatically
     // not an expired link, and telling the user it was sends them round the
     // loop requesting fresh emails that fail the same way.
@@ -85,14 +85,14 @@ export async function GET(request: NextRequest) {
   }
 
   // Which flow was this? A token_hash link states its own type. A PKCE link
-  // doesn't, so we fall back to the cookie set when the email went out — which
+  // doesn't, so we fall back to the cookie set when the email went out, which
   // is on this browser already, since PKCE needs its code verifier here too.
   const flow = type ?? request.cookies.get(AUTH_FLOW_COOKIE)?.value;
   const isRecovery = flow === "recovery";
 
   // An email change is not necessarily finished just because this link
-  // verified. With Supabase's "Secure email change" on — it is on for this
-  // project, and it is the default — BOTH the old and the new address get a
+  // verified. With Supabase's "Secure email change" on (it is on for this
+  // project, and it is the default), BOTH the old and the new address get a
   // link and both have to be clicked. The first confirmation records 1 of 2
   // and hands back **no session**.
   //

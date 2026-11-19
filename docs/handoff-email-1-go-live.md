@@ -69,7 +69,7 @@ and chase them; do not try to answer them from this repo.
 ### 0. The SPF record. ✅ Fixed (11 August 2026).
 
 The SPF value that first went into DNS on 4 August 2026 had a copy-paste error
-(`v=spf1 include: v=spf1 include:amazonses.com ~all` — the prefix doubled and
+(`v=spf1 include: v=spf1 include:amazonses.com ~all`: the prefix doubled and
 the first `include:` empty, which made the record invalid). **This has since
 been corrected.** The `send.mail` TXT record in the CrazyDomains (Dreamscape)
 zone now reads, exactly:
@@ -79,7 +79,7 @@ v=spf1 include:amazonses.com ~all
 ```
 
 and shows Active, alongside the Active `resend._domainkey.mail` DKIM record.
-SPF and DKIM both pass — no action left here. (Kept as a record; nothing to do.)
+SPF and DKIM both pass, so no action is left here. (Kept as a record; nothing to do.)
 
 ### 1. Verified sending domain on `fitazgym.com`
 

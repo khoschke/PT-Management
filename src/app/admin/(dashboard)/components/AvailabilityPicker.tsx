@@ -10,7 +10,7 @@ import { focusRingWithin } from "./ui";
 // The chips track their own state so the caller can warn about the pause
 // BEFORE it's saved. Unticking both is a real setting ("not taking new
 // leads"), not an error, but it's the one change here with a consequence you
-// can't see afterwards — so it's worth saying out loud at the moment it's
+// can't see afterwards, so it's worth saying out loud at the moment it's
 // about to happen. `pauseWarning` is the caller's wording for that.
 export default function AvailabilityPicker({
   defaults,

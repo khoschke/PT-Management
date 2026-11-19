@@ -2,7 +2,7 @@
 
 // Self-service password change. This uses the session-scoped server client
 // (NOT the admin/service-role client), so it can only ever change the password
-// of the user who is currently signed in — never anyone else's.
+// of the user who is currently signed in, never anyone else's.
 
 import { cookies } from "next/headers";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
@@ -160,7 +160,7 @@ export async function changeEmail(
   const siteUrl = await getSiteUrl();
   const { error } = await supabase.auth.updateUser(
     { email: newEmail },
-    // Bare URL — see the note in the forgot-password action. A query string
+    // Bare URL: see the note in the forgot-password action. A query string
     // here fails the Redirect URLs allowlist match, silently.
     { emailRedirectTo: `${siteUrl}/admin/auth/callback` },
   );
@@ -194,6 +194,6 @@ export async function changeEmail(
 
   return {
     status: "success",
-    message: `Confirmation links sent to ${newEmail} and to ${user.email}. Both have to be clicked — your sign-in email changes only once they are. Keep using ${user.email} until then.`,
+    message: `Confirmation links sent to ${newEmail} and to ${user.email}. Both have to be clicked. Your sign-in email changes only once they are. Keep using ${user.email} until then.`,
   };
 }

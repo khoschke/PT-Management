@@ -95,7 +95,7 @@ export async function GET(request: Request) {
     if (!decision.send) continue;
 
     const typeLabel = doc.document_type?.label ?? "Document";
-    const label = doc.custom_label ? `${typeLabel} — ${doc.custom_label}` : typeLabel;
+    const label = doc.custom_label ? `${typeLabel}: ${doc.custom_label}` : typeLabel;
 
     await sendDocumentExpiryReminder([doc.trainer?.email, managerEmail], {
       trainerName: doc.trainer?.name ?? "A trainer",

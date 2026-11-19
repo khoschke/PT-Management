@@ -47,18 +47,20 @@ Untouched sections keep the master's own wording; changed sections use the new p
 
 ### 1. Remove all em dashes (logged 1 Nov 2026, widened 15 Nov 2026)
 
+**DONE 19 Nov 2026** (change list Batch 0). Portal and repo swept clean, with a build guard against regressions. Every per-part source and both combined `.md` masters in Drive were checked and already had none. Details in `docs/PROJECT_STATUS.md`, "Em dash sweep".
+
 **Where:** The whole workbook: PT portal, per-part sources, both combined masters, PDFs and .md.
 
 **What:** Em dashes break the workbook's no-em-dash rule. First spotted in the portal, Part 6:
-- 3Ps intro: "Early on it's fine to train a bit of everyone — that's how you learn who you click with."
-- 3Ps labels: "Passion — who do you genuinely enjoy working with...", same for Problem and Price, and the three activity prompts below them.
-- "Building your client avatar": "one person you can picture — when you write a post or message..."
+- 3Ps intro: "Early on it's fine to train a bit of everyone [em dash] that's how you learn who you click with."
+- 3Ps labels: "Passion [em dash] who do you genuinely enjoy working with...", same for Problem and Price, and the three activity prompts below them.
+- "Building your client avatar": "one person you can picture [em dash] when you write a post or message..."
 - "The client journey map": "the spine of the whole workbook" sentence.
 - Part 7 "Phone approach: first contact" also has them in places.
 
 **Note:** On 1 Nov the master .md (10 Sept 2026) was clean on the 3Ps page, so some of this is portal drift. On 15 Nov Karl asked for all em dashes to be removed everywhere, so search every version, not just the portal.
 
-**Fix:** Search every version for "—" and rewrite each sentence with a comma, colon, full stop or brackets, whichever reads best. Don't just swap in a hyphen.
+**Fix:** Search every version for em dashes and rewrite each sentence with a comma, colon, full stop or brackets, whichever reads best. Don't just swap in a hyphen.
 
 ### 2. Avatar is a writing tool, not the whole business (logged 1 Nov 2026)
 
@@ -350,7 +352,7 @@ Once built, update item 7's rewrite and the Part 6 "Tracking marketing performan
 
 ### 15. "Explaining pricing with confidence" fixes (logged 15 Nov 2026)
 
-**Where:** Part 7 Making Sales, "Explaining pricing with confidence": Taylor's example line and the bullet list. PT portal and masters. (The em dash in "flinch — don't" is covered by item 1.)
+**Where:** Part 7 Making Sales, "Explaining pricing with confidence": Taylor's example line and the bullet list. PT portal and masters. (The em dash in "flinch [em dash] don't" is covered by item 1.)
 
 **Fix:**
 1. **"Lead with value, not cost. They're investing in the outcome, not buying a slot."** "Investing in the outcome" implies a promised result, which contradicts the sales mindset principle that you sell the coaching, not a guaranteed outcome. Reword, e.g. "They're investing in support, not buying a slot."
@@ -359,7 +361,7 @@ Once built, update item 7's rewrite and the Part 6 "Tracking marketing performan
 
 ### 16. "Body language in the sales chat": add voice and drop mirroring (logged 15 Nov 2026, updated same day)
 
-**Where:** Part 7 Making Sales, "Body language in the sales chat": the heading, intro and activity. PT portal and masters. (The em dash in "None of this is manipulation — it's..." is covered by item 1.)
+**Where:** Part 7 Making Sales, "Body language in the sales chat": the heading, intro and activity. PT portal and masters. (The em dash in "None of this is manipulation [em dash] it's..." is covered by item 1.)
 
 **What:** Voice carries as much as posture in a money conversation. Pace and tone are often the first things to change when a PT reaches the price (speeding up, or the voice lifting so the number sounds like a question), and clients pick up on it even when eye contact and the pause are fine. The section currently covers body language only. It also tells PTs to mirror deliberately, which then needs a defensive "none of this is manipulation" line.
 
@@ -374,7 +376,7 @@ Once built, update item 7's rewrite and the Part 6 "Tracking marketing performan
 
 ### 17. "Handling hesitations" fixes (logged 15 Nov 2026)
 
-**Where:** Part 7 Making Sales, "Handling hesitations": the heading and intro. PT portal and masters. (The em dash in "not a rule — consistency beats..." is covered by item 1.)
+**Where:** Part 7 Making Sales, "Handling hesitations": the heading and intro. PT portal and masters. (The em dash in "not a rule [em dash] consistency beats..." is covered by item 1.)
 
 **Fix:**
 1. **It only covers one hesitation.** The heading promises hesitations, plural, but the section only handles frequency ("Do I really need two sessions a week?"). "I need to think about it" and "I'll check with my partner" are just as common. If those aren't covered elsewhere in Part 7, add a line or two on each. Otherwise rename the section "Handling the frequency question".

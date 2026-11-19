@@ -24,7 +24,7 @@ const trainerSchema = z
     bio: z.string().trim().max(1000).optional().or(z.literal("")),
   });
 
-// Neither AM nor PM is allowed and means "not taking new leads" — the same
+// Neither AM nor PM is allowed and means "not taking new leads", the same
 // pause a trainer can set on their own profile, so a manager can park someone
 // who's away or full without deactivating them and losing their history.
 

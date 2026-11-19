@@ -11,7 +11,7 @@ import type { ActionResult, AddSweepLeadState } from "./state";
 // Allocation, deletion and manual lead entry are the manager's alone. RLS already
 // refuses them for a trainer; the explicit check means a future policy change
 // can't quietly open them up. updateLeadStatus and updateLeadNotes below stay
-// on RLS on purpose — trainers use both on their own leads.
+// on RLS on purpose: trainers use both on their own leads.
 
 export async function allocateLead(leadId: string, trainerId: string): Promise<ActionResult> {
   if (!(await callerIsManager())) {

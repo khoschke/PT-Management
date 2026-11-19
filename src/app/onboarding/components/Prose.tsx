@@ -15,7 +15,7 @@ function renderInline(text: string, key: number) {
   );
 }
 
-// `![alt](/src.png "caption")` — the caption is optional.
+// `![alt](/src.png "caption")`. The caption is optional.
 const IMAGE_LINE = /^!\[([^\]]*)\]\((\S+?)(?:\s+"([^"]*)")?\)$/;
 
 type Block =
@@ -66,7 +66,7 @@ function Script({ lines }: { lines: string[] }) {
 // sideways. In a labelled table the first column is a row label, so it carries
 // the same weight as the header.
 function Table({ head, rows }: { head: string[]; rows: string[][] }) {
-  // A table of choices rather than of data — the 64-value list in Part 2 — has
+  // A table of choices rather than of data (the 64-value list in Part 2) has
   // no column names, so an all-empty header row is written as `| | | | |` and
   // the header is dropped rather than rendered as an empty band.
   const labelled = head.some((cell) => cell.length > 0);

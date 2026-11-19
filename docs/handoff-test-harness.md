@@ -1,4 +1,4 @@
-# Test harness and CI — NOT BUILT, scoped 19 November 2026
+# Test harness and CI: NOT BUILT, scoped 19 November 2026
 
 > This is a to-do, not a record. Nothing below is built. It is the brief for a
 > session that sets up automated tests and CI for this repo.

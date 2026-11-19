@@ -30,11 +30,11 @@
 --
 -- Doing PART B first breaks the live public form for as long as the old code
 -- is still deployed: it would have neither the direct insert nor the new RPC.
--- PART A is safe to run against the currently deployed code — it only ADDS the
+-- PART A is safe to run against the currently deployed code: it only ADDS the
 -- function, and the old insert path keeps working until PART B removes it.
 
 -- ===========================================================================
--- PART A — safe to run before the code deploy
+-- PART A: safe to run before the code deploy
 -- ===========================================================================
 
 -- ---------------------------------------------------------------------------
@@ -114,9 +114,9 @@ create policy trainer_documents_insert on trainer_documents
 -- a row into `leads` once PART B has run.
 --
 -- It enforces two windows:
---   * per IP hash  — the same 8-in-10-minutes the app used, so a shared gym
+--   * per IP hash:   the same 8-in-10-minutes the app used, so a shared gym
 --                    foyer device is still fine.
---   * global       — a ceiling across every IP in the same window, so rotating
+--   * global:        a ceiling across every IP in the same window, so rotating
 --                    addresses can't turn the per-IP limit into "unlimited".
 --                    At ~30 leads a month, 30 in ten minutes is far above any
 --                    real burst and still stops a flood.
@@ -281,7 +281,7 @@ grant execute on function submit_form_lead(
 ) to anon, authenticated;
 
 -- ===========================================================================
--- PART B — run ONLY after the code calling submit_form_lead() is deployed
+-- PART B: run ONLY after the code calling submit_form_lead() is deployed
 -- ===========================================================================
 -- Everything below removes the old, bypassable path. Running it while the
 -- previous release is still live takes the public form down.

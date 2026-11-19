@@ -8,9 +8,9 @@ On the public "Your Complimentary PT Session" form (`/pt-session`), give people 
 way to see who the trainers are before/while they fill it in. Two options were
 considered:
 
-- **(A) Build a trainer-profile roster inside this app** — a new page rendering
+- **(A) Build a trainer-profile roster inside this app**: a new page rendering
   the roster from the `trainers` table (name, specialties, bio).
-- **(B) Link out to the gym's existing trainer page** —
+- **(B) Link out to the gym's existing trainer page**:
   https://fitazgym.com/pages/personal-trainers
 
 **Decision: go with (B).** The gym site already has polished PT profiles, so
@@ -33,13 +33,13 @@ linking avoids duplicating and maintaining that content in two places.
 ## Files
 
 - `src/app/pt-session/page.tsx` and its components under
-  `src/app/pt-session/components/` — this is where the public form lives.
+  `src/app/pt-session/components/`. This is where the public form lives.
 
 ## Watch-outs
 
-- `/pt-session` is deliberately monochrome, light-mode only — match it, don't
+- `/pt-session` is deliberately monochrome, light-mode only, so match it, don't
   introduce colour.
-- Don't hardcode this as an internal `next/link` route — it's an external URL, so
+- Don't hardcode this as an internal `next/link` route. It's an external URL, so
   a plain `<a>` with the new-tab attributes is correct.
 - Confirm the exact gym URL is current before shipping (the page slug could change
   on the Shopify site).

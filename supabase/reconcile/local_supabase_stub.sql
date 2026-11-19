@@ -1,7 +1,7 @@
 -- Minimal stand-ins for the Supabase-managed objects our migrations reference,
 -- so the migration chain can be run against a throwaway local Postgres.
 --
--- Used by `local_migration_check.sh`. This is a DEV TOOL — it is never run
+-- Used by `local_migration_check.sh`. This is a DEV TOOL. It is never run
 -- against the live project, which already has all of this for real.
 --
 -- It is deliberately just enough to make the migrations parse and execute:

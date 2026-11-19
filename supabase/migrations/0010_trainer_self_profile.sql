@@ -12,7 +12,7 @@
 --      profiles.trainer_id.
 --   3. A trigger pins WHICH columns that update may touch. RLS is row-level
 --      only, so policy (2) on its own would also let a trainer set their own
---      `active`, rename themselves, or repoint `email` — the address trainer
+--      `active`, rename themselves, or repoint `email`, the address trainer
 --      allocation notifications are sent to. The trigger is what makes this
 --      "bio and specialties", not "their whole row".
 --
@@ -94,7 +94,7 @@ comment on function guard_trainer_self_update() is
 --
 -- `public` has to be in the revoke list, not just the two API roles. Postgres
 -- grants EXECUTE on every new function to PUBLIC by default, and anon inherits
--- it from there — revoking from anon and authenticated alone leaves
+-- it from there; revoking from anon and authenticated alone leaves
 -- has_function_privilege('anon', ...) still true. The audit query in
 -- supabase/reconcile/ caught exactly that on the first attempt.
 revoke execute on function guard_trainer_self_update() from public, anon, authenticated;

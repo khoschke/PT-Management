@@ -1,4 +1,4 @@
-# Handoff (Scoping): PT Onboarding Checklist — tracked per trainer
+# Handoff (Scoping): PT Onboarding Checklist, tracked per trainer
 
 **Start a new session with this note.** Read `docs/PROJECT_STATUS.md` first, then this.
 
@@ -32,21 +32,21 @@
 
 In other words: take the operational new-trainer setup checklist that currently
 lives on paper / in a Word doc, and make it a live per-trainer checklist in the
-portal — the **manager** works through and ticks off each new trainer's setup
+portal: the **manager** works through and ticks off each new trainer's setup
 items, and each **trainer** can see their own checklist and its status. Source
 document: `PT_Onboarding_Checklist_.docx` (supplied 3 Sep 2026).
 
 ## ⚠️ This is NOT the existing onboarding workbook
 
-There are now two distinct "onboarding" things — keep them separate:
+There are now two distinct "onboarding" things. Keep them separate:
 
-1. **The educational workbook** at `/onboarding` (already built and live) — the
+1. **The educational workbook** at `/onboarding` (already built and live): the
    10-part, 12-week *learning* journey a trainer works through (content in
    `src/lib/onboarding/parts/part1.ts` to `part10.ts`, progress in
    `onboarding_responses` / `onboarding_part_status`). This is about developing
    the trainer. *(Corrected 15 Sep 2026: this said `content.ts`, which is now
    only an index over the part files.)*
-2. **This operational setup checklist** (new) — the *admin/compliance* steps to
+2. **This operational setup checklist** (new): the *admin/compliance* steps to
    get a new trainer set up in the business: contract, bond, uniform, systems
    access, profiles, certs, rent ramp. This is about onboarding them into the
    business, mostly manager-driven.
@@ -89,13 +89,13 @@ Tick-box items (in order):
 | 4 to 6 | 25% |
 | 7 to 9 | 50% |
 | 10 to 12 | 75% |
-| 13+ | (100% — full rent; confirm with Karl) |
+| 13+ | (100%, full rent; confirm with Karl) |
 
 Plus a free-text **Notes** / **Amendments** area.
 
 ## How it connects to things already in the system
 
-Several checklist items overlap existing or backlogged features — decide whether
+Several checklist items overlap existing or backlogged features. Decide whether
 this checklist *links to* them or just records a tick:
 - **"Received Certs"** → the compliance documents feature already exists
   (`trainer_documents`, migration `0006`, `/admin/compliance` + `/admin/documents`).
@@ -141,14 +141,14 @@ them without asking.
    progress, or can they action some items? (Ties to RLS.)
    **Settled:** nothing in v1. See "Decisions already settled" above.
 3. **Is the item list fixed or editable?** A fixed seeded list is simplest.
-   Editable-by-manager (add/remove/reorder) is more work — decide if v1 needs it.
+   Editable-by-manager (add/remove/reorder) is more work. Decide if v1 needs it.
    (The compliance `document_types` table is a precedent for an editable list.)
    **Settled: fixed, seeded in the migration.** `active` and `sort_order` are in
    the schema so a later migration or screen can change the list, and a
    per-item `not_applicable` state handles "does not apply to this person",
    which is what would otherwise drive someone to delete an item. No CRUD
    screen in v1.
-4. **Rent ramp — how much to model?** Options: (a) just store it as reference/notes
+4. **Rent ramp: how much to model?** Options: (a) just store it as reference/notes
    per trainer; (b) model week/date/percentage/amount rows with an editable
    "amendments" column. Confirm the week-13+ percentage (100%?) and whether amounts
    are entered manually or computed from a full-rent figure on the trainer.
@@ -184,7 +184,7 @@ them without asking.
 
 - A seeded `onboarding_checklist_items` template table (label + sort order +
   optional "who can tick" flag), and a `trainer_checklist_progress` table keyed on
-  `(trainer_id, item_id)` recording done/at/by — mirroring the existing
+  `(trainer_id, item_id)` recording done/at/by, mirroring the existing
   `onboarding_part_status` pattern.
 - Manager ticks items on a per-trainer checklist view; each item stores who ticked
   it and when.
@@ -208,7 +208,7 @@ tick but never tick themselves.
 - Next free migration number is **0016** (0007/0008 reserved for GymMaster,
   0010 to 0014 taken by the trainer self-profile and staff pathway work, 0015
   by the PT Contract document type). A migration in the folder is NOT
-  proof it ran on live — a human applies it in the Supabase SQL editor, and
+  proof it ran on live. A human applies it in the Supabase SQL editor, and
   `PROJECT_STATUS.md`'s audit query confirms. Check it first with
   `./supabase/reconcile/local_migration_check.sh`.
 - This checklist holds commercial terms (bond, Business Pack, rent ramp). That
@@ -220,8 +220,8 @@ tick but never tick themselves.
 - `"use server"` files export only async functions; form-state in sibling `state.ts`.
 - Australian English, no em dashes in user-facing copy.
 - Run `npx tsc --noEmit` + `npx eslint src` + `npm run build` before pushing, per `CLAUDE.md`.
-- Can't be tested against live from the build workspace (no Supabase network) —
-  verify on a deployment.
+- Can't be tested against live from the build workspace (no Supabase network).
+  Verify on a deployment.
 
 ## Definition of done (v1)
 

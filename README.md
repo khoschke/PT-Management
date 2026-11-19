@@ -202,7 +202,7 @@ than a staff operations tool.
   **Manager notes** (how to use each section in a 1:1) and green **Worked
   examples** (model answers in the voice of the example trainer, Taylor).
   The trainer material is identical in both views, so the two documents can
-  never say different things — the manager lens only adds, never rewrites. A
+  never say different things: the manager lens only adds, never rewrites. A
   trainer can flip to Manager view too; nothing in it is sensitive.
 - Content lives in code, not the database: `src/lib/onboarding/parts/*.ts`,
   one file per part, each section carrying its own `managerNote` and
@@ -337,5 +337,5 @@ private Supabase Storage bucket, served only through short-lived signed links.
   Every reminder is logged so a re-run never double-sends. Like the lead digest,
   it's a no-op when email isn't configured.
 - **Compliance dashboard.** The manager's Compliance tab shows every trainer's
-  status at a glance — expired, expiring soon, pending review or all current —
+  status at a glance (expired, expiring soon, pending review or all current)
   and links through to each trainer's documents.

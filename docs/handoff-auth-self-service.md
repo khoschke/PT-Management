@@ -1,4 +1,4 @@
-# Handoff: Self-Service Auth — Forgot Password + Change Email
+# Handoff: Self-Service Auth (Forgot Password + Change Email)
 
 **Start a new session with this note.** Read `docs/PROJECT_STATUS.md` first, then this.
 
@@ -11,7 +11,7 @@ together avoids repeating the config and the verification.
 
 Put first because it is the only part of this note anyone needs in a hurry. The
 self-service flows below are the *convenient* path. The manager override is the
-floor under them, and it depends on nothing — not email, not the trainer's
+floor under them, and it depends on nothing: not email, not the trainer's
 inbox, not the old address.
 
 **A trainer lost access to the email they sign in with.**
@@ -21,14 +21,14 @@ immediately: that path uses the service-role admin client with
 to be reachable**. It refuses if another login already uses the new address, so
 a collision can't be created by accident. Thirty seconds, no code, no Supabase.
 
-**A trainer is locked out entirely** — can't sign in *and* can't receive the
+**A trainer is locked out entirely**: can't sign in *and* can't receive the
 reset email. Same screen: a manager can set their password directly as well.
 Hand them the new one and have them change it on `/admin/account`.
 
 **A manager lost access to their own email.**
 Another manager fixes them on the same screen. There are three manager accounts
 (Karl, Daniel, Georgio), so this is real redundancy rather than a theoretical
-one — a manager can always fix a manager.
+one. A manager can always fix a manager.
 
 **Every manager is unreachable at once.**
 The last resort is the Supabase dashboard: Authentication → Users → edit the
@@ -69,7 +69,7 @@ A signed-in user changes their own **sign-in email** from `/admin/account`:
 
 - **Self-service password change** already exists at `/admin/account`
   (`components/ChangePasswordForm.tsx` → `supabase.auth.updateUser({ password })`).
-  The Account screen currently does password only — you are adding the email field
+  The Account screen currently does password only. You are adding the email field
   beside it, and adding the forgot-password flow as a separate route.
 - **Manager-assisted resets** already exist at `/admin/staff` (service-role admin
   client): a manager can change anyone's sign-in email or password immediately,
@@ -79,7 +79,7 @@ A signed-in user changes their own **sign-in email** from `/admin/account`:
 
 ## STATUS, 8 September 2026: email works. One dashboard item left before merge.
 
-### Supabase Auth email is now sending — verified end to end
+### Supabase Auth email is now sending, verified end to end
 
 The 7 Sep SMTP failure is fixed. Verified against the live project, not reported:
 
@@ -92,7 +92,7 @@ Gmail       →  in the INBOX, not spam, from noreply@mail.fitazgym.com
 
 What had been wrong: the password in Supabase's SMTP settings was not a valid
 Resend API key. A Resend key's value can't be read back after creation, so the
-only fix was a fresh key. Host, port and username had been right all along —
+only fix was a fresh key. Host, port and username had been right all along.
 `535` is authentication, and it fails before anything else is evaluated.
 
 ### The redirect allowlist: what it actually matches
@@ -110,7 +110,7 @@ Two recovery emails were sent a minute apart, differing only in `redirect_to`:
 query string included.** An allowlist entry of `.../admin/auth/callback` does
 not match a URL with `?next=...` appended. And a miss is not an error: Supabase
 discards the redirect, falls back to the project's Site URL, and sends the email
-anyway — with a link pointing somewhere else entirely. The email looks perfect.
+anyway, with a link pointing somewhere else entirely. The email looks perfect.
 The link is dead.
 
 The code originally appended `?next=`, so it was hitting exactly this. **Fixed**:
@@ -160,7 +160,7 @@ back to sign-in.
 
 Traced with the auth logs and the actual emails:
 
-- Karl's real request through the app was **correct** — the 05:02 email carried
+- Karl's real request through the app was **correct**: the 05:02 email carried
   `token=pkce_…&type=recovery&redirect_to=https://pt.fitazgym.com/admin/auth/callback`.
 - The link he clicked was an **earlier** email in the collapsed thread, one of
   the deliverability tests, sent deliberately with `redirect_to` = the bare Site
@@ -175,8 +175,8 @@ Traced with the auth logs and the actual emails:
   `redirect("/pt-session")` that dropped the query string while the browser
   carried the fragment along. Hence the reported URL.
 
-Every failure the logs show is `One-time token not found`, not a timeout —
-**requesting another recovery email invalidates the previous link immediately.**
+Every failure the logs show is `One-time token not found`, not a timeout.
+**Requesting another recovery email invalidates the previous link immediately.**
 Combined with Gmail collapsing the thread, clicking a dead link was the likely
 outcome rather than the unlucky one.
 
@@ -217,17 +217,17 @@ our callback    → https://pt.fitazgym.com/admin/login?authError=verify        
 ```
 
 So `/verify` was fine. The token was fine. The redirect was fine. What failed was
-**`exchangeCodeForSession`** — and the auth logs contain **no `POST /token`
+**`exchangeCodeForSession`**, and the auth logs contain **no `POST /token`
 request at all** for any of these attempts, which is the tell: supabase-js
 rejected the exchange locally, before making a network call. It does that in
-exactly one situation — **the PKCE code verifier is missing from this browser.**
+exactly one situation: **the PKCE code verifier is missing from this browser.**
 
 ### What was eating the verifier
 
 `src/proxy.ts` matched `/admin/:path*`, which includes `/admin/auth/callback`.
 On every request it built a second Supabase client over the same cookie jar and
-called `getUser()`. On the callback that call always fails — there is no session
-yet, that being the entire point of the route — and a failed `getUser()` can
+called `getUser()`. On the callback that call always fails (there is no session
+yet, that being the entire point of the route), and a failed `getUser()` can
 clear the auth storage keys, the PKCE code verifier among them. The route handler
 then ran a few milliseconds later and found nothing to exchange.
 
@@ -244,7 +244,7 @@ requesting a reset on the gym desktop and opening the email on their phone is
 not an edge case.
 
 `token_hash` has neither problem. It verifies straight against Supabase and needs
-nothing from the browser. Proven against the live project — the hashed token from
+nothing from the browser. Proven against the live project: the hashed token from
 `auth.users.recovery_token` posted to `/auth/v1/verify` returns a full session for
 the right user, with no cookies in the request at all:
 
@@ -256,7 +256,7 @@ POST /auth/v1/verify  {"type":"recovery","token_hash":"…"}
 The callback now tries `token_hash` **first** and falls back to `code`, so links
 already sitting in inboxes keep working through the transition.
 
-**This needs the two Supabase email templates changed** — the one remaining step,
+**This needs the two Supabase email templates changed**, the one remaining step,
 and the only one that actually cures it. Authentication → Emails:
 
 *Reset Password:*
@@ -277,7 +277,7 @@ and the only one that actually cures it. Authentication → Emails:
 
 A useful side effect: these links point straight at the app instead of hopping
 through Supabase's `/verify`, so the Redirect URLs allowlist stops being involved
-in this flow at all — one whole class of silent failure gone.
+in this flow at all. One whole class of silent failure gone.
 
 ### Also fixed: the message was lying
 
@@ -291,7 +291,7 @@ reports the truth: open the link in the browser you requested it from.
 
 `otp_expired` in the URL is **not** proof the link timed out. Every failure here
 logged as `One-time token not found`, which is what Supabase says for a token
-that was already spent — including one spent by a *previous* request, since each
+that was already spent, including one spent by a *previous* request, since each
 new recovery email cancels the last. Read the auth logs before believing the
 error text, and check whether a `POST /token` even happened: no `/token` means
 the failure was client-side, not a bad token.
@@ -309,7 +309,7 @@ admin involved. Confirmed from the auth logs, not from a screenshot:
 
 `recovery_token` spent, `recovery_sent_at` cleared, `updated_at` matching the 200.
 Definition-of-done item 1 is met. Item 2, self-service change-email, is still
-untested against a real inbox — the plumbing is identical and its template is
+untested against a real inbox. The plumbing is identical and its template is
 changed, so it is expected to work, but expected is not verified.
 
 Note the 422 in the middle: Supabase's own password-reuse guard, surfaced by the
@@ -325,10 +325,10 @@ worth reading before debugging auth in this project again.
 
 | Symptom | Actual cause |
 |---|---|
-| `500 Error sending recovery email` | Supabase's SMTP password was not a valid Resend key. Four days lost to a "Custom SMTP is set up" report that had never been tested. **A Resend key cannot be read back after creation** — never re-type a suspect one, mint a fresh one. |
-| Email arrived, link pointed at `localhost:3000` | Two faults at once: the code appended `?next=…` to `redirectTo`, which fails the Redirect URLs allowlist as a whole-string match; and the project's Site URL was still the Supabase default. A failed allowlist match is **silent** — the redirect is dropped, Site URL is used, the email sends anyway. |
+| `500 Error sending recovery email` | Supabase's SMTP password was not a valid Resend key. Four days lost to a "Custom SMTP is set up" report that had never been tested. **A Resend key cannot be read back after creation**: never re-type a suspect one, mint a fresh one. |
+| Email arrived, link pointed at `localhost:3000` | Two faults at once: the code appended `?next=…` to `redirectTo`, which fails the Redirect URLs allowlist as a whole-string match; and the project's Site URL was still the Supabase default. A failed allowlist match is **silent**: the redirect is dropped, Site URL is used, the email sends anyway. |
 | Expired link dumped the user on the public PT form | Auth errors landing on the Site URL root, where `/` was a bare `redirect("/pt-session")` that discarded the query string. |
-| Link verified, then "link expired" | The real one. `/verify` succeeded and returned a `?code=`, but `exchangeCodeForSession` failed **with no `POST /token` in the logs at all** — supabase-js refusing locally for want of a PKCE code verifier. `src/proxy.ts` matched `/admin/auth/callback` and called `getUser()` over the same cookie jar, clearing it. |
+| Link verified, then "link expired" | The real one. `/verify` succeeded and returned a `?code=`, but `exchangeCodeForSession` failed **with no `POST /token` in the logs at all**, supabase-js refusing locally for want of a PKCE code verifier. `src/proxy.ts` matched `/admin/auth/callback` and called `getUser()` over the same cookie jar, clearing it. |
 | Still failing after that | PKCE cannot work cross-device at all. Switched the templates to `{{ .TokenHash }}` and the callback to prefer `verifyOtp`, which needs nothing from the browser. |
 | Every failure said `otp_expired` | It never once meant "timed out". Supabase reports a **spent** token that way, and each new recovery email spends the previous one. |
 
@@ -361,7 +361,7 @@ First real change-email run. It half-worked, in the most confusing way available
 ### What happened
 
 ```
-07:59:01  change requested to karlandtay@outlook.com — TWO emails sent
+07:59:01  change requested to karlandtay@outlook.com, TWO emails sent
 08:00:21  POST /verify → 200   first confirmation succeeded (the new-address link)
 08:00:40  /logout               user dumped to sign-in with no explanation
 08:00:46  POST /verify → 403   same link clicked again
@@ -371,14 +371,14 @@ First real change-email run. It half-worked, in the most confusing way available
 Database state after: `email_change_token_new` empty, `email_change_token_current`
 still set, `email_change_confirm_status` **1** of 2.
 
-**"Secure email change" is on** for this project — it is Supabase's default —
+**"Secure email change" is on** for this project (it is Supabase's default),
 so an email change is confirmed from **both** the old and the new address. The
 first confirmation records one of two and returns **no session**.
 
 Nothing handled that. The callback treated a successful verify as "done",
 redirected to `/admin/account`, the proxy found no session and bounced to
 sign-in. No message, no hint that a second link existed. The user quite
-reasonably decided the link was broken and clicked it again — and *that* really
+reasonably decided the link was broken and clicked it again, and *that* really
 did fail, with the "expired" banner, which then said "reset link" about an
 email-change link.
 
@@ -404,7 +404,7 @@ time.
 ### Consequence worth knowing
 
 A half-finished change leaves the user signed out with `new_email` still set.
-They sign in with their **current** address — the change has not happened — and
+They sign in with their **current** address (the change has not happened), and
 the Account screen shows the pending badge. Nothing is broken and nothing is
 lost; the outstanding link just has to be clicked, or left to expire.
 
@@ -417,20 +417,20 @@ policy.
 
 ## What was built
 
-- `src/lib/site-url.ts` — absolute base URL for emailed links.
+- `src/lib/site-url.ts`: absolute base URL for emailed links.
   `NEXT_PUBLIC_SITE_URL` wins; otherwise the request's own host, so local and
   preview work with no setup.
-- `src/app/admin/forgot-password/` — the request-a-link screen.
-- `src/app/admin/auth/callback/route.ts` — the single landing point for every
+- `src/app/admin/forgot-password/`: the request-a-link screen.
+- `src/app/admin/auth/callback/route.ts`: the single landing point for every
   emailed auth link. Handles **both** the PKCE `code` shape (what the default
   email templates produce) and the `token_hash` + `type` shape (what templates
   rewritten to `{{ .TokenHash }}` produce, which also works cross-device).
-- `src/app/admin/reset-password/` — the set-a-new-password screen.
-- `src/lib/recovery-session.ts` — the two cookies: the flow marker that
+- `src/app/admin/reset-password/`: the set-a-new-password screen.
+- `src/lib/recovery-session.ts`: the two cookies: the flow marker that
   survives the round trip through the inbox, and the recovery marker below.
 - `src/app/admin/(dashboard)/account/components/ChangeEmailForm.tsx` and
-  `changeEmail` in that folder's `actions.ts` — the self-service email change.
-- `src/proxy.ts` — `/admin/forgot-password` and `/admin/auth/callback` are now
+  `changeEmail` in that folder's `actions.ts`: the self-service email change.
+- `src/proxy.ts`: `/admin/forgot-password` and `/admin/auth/callback` are now
   reachable signed out.
 
 ### Two decisions worth knowing about
@@ -438,14 +438,14 @@ policy.
 **The recovery marker cookie.** Exchanging a recovery link gives an ordinary
 session, indistinguishable from a normal sign-in. Without a marker,
 `/admin/reset-password` would let *anyone already signed in* set a new password
-without knowing the current one — which is the exact hole the Account screen's
+without knowing the current one, which is the exact hole the Account screen's
 current-password check exists to close. So the callback sets an httpOnly
 `pt-password-recovery` cookie (15 minutes, path `/admin`) only after verifying a
 real recovery code, `/admin/reset-password` requires it, and the reset action
 spends it on success. A signed-in user can't mint one for themselves.
 
 **Errors from the send are shown, not swallowed.** The "did that email exist?"
-answer is still generic — Supabase returns 200 and sends nothing for an unknown
+answer is still generic: Supabase returns 200 and sends nothing for an unknown
 address, so a success message reveals nothing. But when the send itself *fails*,
 the user is told. Claiming "we've sent you a link" while SMTP is down is the
 precise failure this handoff was written to prevent, and it would have hidden
@@ -455,19 +455,19 @@ design around.
 
 ## Build plan as originally scoped
 
-Kept as the record of what was asked for. All of it is implemented — see
+Kept as the record of what was asked for. All of it is implemented. See
 **What was built** above for where each piece actually landed.
 
 Stack notes: **@supabase/ssr** (cookie sessions, PKCE), Next.js 16 App Router,
 session middleware in **`src/proxy.ts`** (Next 16's renamed middleware). Mirror the
 existing `login/` and `account/` patterns: `useActionState` + a sibling `state.ts`;
 `"use server"` files export only async functions (a plain object export 500s on
-Vercel — this has bitten the project before).
+Vercel; this has bitten the project before).
 
 ### Forgot password
-1. **Login link** — in `src/app/admin/login/LoginForm.tsx`, add a small
+1. **Login link:** in `src/app/admin/login/LoginForm.tsx`, add a small
    "Forgot password?" link to a new route `/admin/forgot-password`.
-2. **`/admin/forgot-password`** — a form (email) whose server action calls, on the
+2. **`/admin/forgot-password`:** a form (email) whose server action calls, on the
    session-scoped server client (`@/lib/supabase/server`):
    ```ts
    await supabase.auth.resetPasswordForEmail(email, {
@@ -475,20 +475,20 @@ Vercel — this has bitten the project before).
    });
    ```
    Always show a **generic** confirmation ("If that email is registered, we've sent
-   a reset link") whether or not the email exists — don't reveal which emails have
+   a reset link") whether or not the email exists. Don't reveal which emails have
    accounts (enumeration safety).
-3. **Recovery callback** — the emailed link returns with a `code` (PKCE) to be
+3. **Recovery callback:** the emailed link returns with a `code` (PKCE) to be
    exchanged for a session. Add a route handler that calls
    `supabase.auth.exchangeCodeForSession(code)` and lands the user on the reset
    form. Verify the exact handling against the installed `@supabase/ssr` version
    and `src/proxy.ts` so the recovery session lands in cookies correctly.
-4. **`/admin/reset-password`** — with the recovery session active, show a
+4. **`/admin/reset-password`:** with the recovery session active, show a
    set-new-password form (reuse the `ChangePasswordForm` pattern: new + confirm,
    min 8, must match) → `supabase.auth.updateUser({ password })` → redirect to
    `/admin`.
 
 ### Change email
-5. **Account screen** — add an email-change form to
+5. **Account screen:** add an email-change form to
    `src/app/admin/(dashboard)/account/` (new component beside `ChangePasswordForm`,
    plus an action in `account/actions.ts`). Action calls
    `supabase.auth.updateUser({ email: newEmail })` on the session server client.
@@ -501,13 +501,13 @@ Vercel — this has bitten the project before).
      UI to match. The same `exchangeCodeForSession` / callback route can serve it.
 
 ### Shared config
-6. **`siteUrl`** — add `NEXT_PUBLIC_SITE_URL` (set it to `https://pt.fitazgym.com`
+6. **`siteUrl`:** add `NEXT_PUBLIC_SITE_URL` (set it to `https://pt.fitazgym.com`
    in Vercel) or derive from request headers; used for every `redirectTo`.
-7. **Supabase redirect allowlist** — in Authentication → URL Configuration →
+7. **Supabase redirect allowlist:** in Authentication → URL Configuration →
    Redirect URLs, add the callback/reset URLs for **`https://pt.fitazgym.com`**
-   (the live custom domain — not just the `*.vercel.app` host), plus a preview URL
+   (the live custom domain, not just the `*.vercel.app` host), plus a preview URL
    if you want to test on a deployment. An un-allowlisted `redirectTo` fails
-   **silently** — this is the #1 thing people miss.
+   **silently**. This is the #1 thing people miss.
 
 ## Gotchas
 
@@ -517,7 +517,7 @@ Vercel — this has bitten the project before).
 - Recovery / confirmation links are single-use and time-limited; test with a fresh
   one each time.
 - **Direct HTTPS to Supabase and to pt.fitazgym.com is still blocked** from a
-  Claude build workspace. But the **Supabase MCP server is not** — `execute_sql`
+  Claude build workspace. But the **Supabase MCP server is not**: `execute_sql`
   and `query_logs` reach the live project, and that is how the 535 above was
   found without deploying anything. Use it. The browser-level flow (clicking a
   real link in a real inbox) still needs a real deployment.
@@ -526,8 +526,8 @@ Vercel — this has bitten the project before).
 ## Definition of done
 
 1. A locked-out manager or trainer clicks "Forgot password?", enters their email,
-   receives a recovery email, sets a new password from the link, and signs in —
-   no admin involvement, and no leak of which emails have accounts.
+   receives a recovery email, sets a new password from the link, and signs in,
+   with no admin involvement, and no leak of which emails have accounts.
 2. A signed-in user changes their own sign-in email from `/admin/account`, receives
    the confirmation link, clicks it, and can then sign in with the new email.
 3. Both verified against a real inbox on the live site; neither link is a dead end.
@@ -541,11 +541,11 @@ Vercel — this has bitten the project before).
 | Route wiring smoke-tested against a local production build | **Done** |
 | Supabase SMTP sending | **WORKING.** 200 from `/recover`, `recovery_sent_at` set, Resend shows delivered |
 | Recovery email reaches a real inbox | **CONFIRMED.** Landed in the Gmail inbox, not spam, from `noreply@mail.fitazgym.com` |
-| Redirect allowlist entry for `https://pt.fitazgym.com/admin/auth/callback` | **CONFIRMED WORKING** — proven by the two-email comparison above |
+| Redirect allowlist entry for `https://pt.fitazgym.com/admin/auth/callback` | **CONFIRMED WORKING**, proven by the two-email comparison above |
 | Supabase **Site URL** | **STILL `http://localhost:3000`.** Set it to `https://pt.fitazgym.com` |
 | `NEXT_PUBLIC_SITE_URL` in Vercel | Reported set; not verifiable from a build workspace, and it only takes effect on the next deploy |
 | Clicking the link in a real browser → reset → signed in | **DONE, 10 Sep 2026.** Verified in the auth logs; see the section above |
-| Self-service change-email against a real inbox | **Not yet run.** Same callback, same template style, expected to work — but untested |
+| Self-service change-email against a real inbox | **Not yet run.** Same callback, same template style, expected to work, but untested |
 | Merge to production | **Merged** (PRs #31, #33, #34) |
 
 ### The last mile

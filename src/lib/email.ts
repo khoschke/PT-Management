@@ -35,7 +35,7 @@ function esc(value: string): string {
     .replace(/"/g, "&quot;");
 }
 
-// Wraps body content in the shared monochrome shell. Inline styles only —
+// Wraps body content in the shared monochrome shell. Inline styles only:
 // email clients strip <style> blocks and don't support external CSS.
 function layout(bodyHtml: string): string {
   return `<!doctype html>
@@ -337,7 +337,7 @@ export async function sendDocumentUploadedManagerNotification(
   await client.emails.send({
     from: FROM_ADDRESS,
     to: managerEmail,
-    subject: `Document to review: ${params.trainerName} — ${params.documentLabel}`,
+    subject: `Document to review: ${params.trainerName} (${params.documentLabel})`,
     text: [
       `${params.trainerName} has uploaded a new compliance document that needs your review.`,
       "",
@@ -376,8 +376,8 @@ export async function sendDocumentExpiryReminder(
     from: FROM_ADDRESS,
     to: recipients,
     subject: params.expired
-      ? `Expired: ${params.trainerName} — ${params.documentLabel}`
-      : `Renewal due: ${params.trainerName} — ${params.documentLabel}`,
+      ? `Expired: ${params.trainerName} (${params.documentLabel})`
+      : `Renewal due: ${params.trainerName} (${params.documentLabel})`,
     text: [
       params.expired
         ? `${params.trainerName}'s ${params.documentLabel} has ${when}.`

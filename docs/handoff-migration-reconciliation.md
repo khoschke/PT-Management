@@ -1,4 +1,4 @@
-# Reconciling the live database — CLOSED, 12 August 2026
+# Reconciling the live database: CLOSED, 12 August 2026
 
 **This is history, not a task.** Kept because the failure it describes is worth
 not repeating. Read `docs/PROJECT_STATUS.md` for current state.
@@ -20,13 +20,13 @@ live schema.
 Running PART A of the public-access hardening against the live Supabase failed
 with `42P01: relation "trainer_documents" does not exist`. That table is created
 by `0006_trainer_documents.sql`, which `PROJECT_STATUS.md` listed as **applied to
-live — but it is not.** So the "migrations applied to live" list was not
+live, but it is not.** So the "migrations applied to live" list was not
 trustworthy, and the real live schema has to be checked directly rather than read
 off the doc.
 
 ## Impact at the time (all since resolved)
 
-- **`/admin/compliance` and `/admin/documents` were broken on the live site** —
+- **`/admin/compliance` and `/admin/documents` were broken on the live site**:
   the deployed code queried `trainer_documents`, which didn't exist in the DB.
   Nobody had reported it, which says something about how much those screens were
   being used, but it had been true since the compliance feature shipped.
@@ -47,7 +47,7 @@ off the doc.
 3. **Fixed every stale number** in `PROJECT_STATUS.md` and
    `handoff-security-hardening.md` (both had `0005`; the latter also had leftover
    `0007` references from an earlier renumber).
-4. **Wrote `supabase/reconcile/`** — the audit query, an idempotent storage
+4. **Wrote `supabase/reconcile/`**: the audit query, an idempotent storage
    fallback for `0006`, and the step-by-step runbook with rollback SQL.
 5. **Made the status doc honest.** The Database section is now a table with an
    explicit "On live?" column, headed by a warning that the list is a claim and
@@ -59,17 +59,17 @@ off the doc.
 Each step was verified before the next one started, which is the only reason the
 ordering hazards never bit:
 
-1. Audited the live schema. `0001`–`0004` all present; `0006` uniformly absent —
+1. Audited the live schema. `0001` to `0004` all present; `0006` uniformly absent,
    not half-applied, which meant it could go in as one clean paste.
 2. Applied `0006` whole, storage block included. Re-audited: all nine rows
    present, bucket and all three storage policies included. Confirmed by
-   uploading, viewing and deleting a real document on the live site — the one
+   uploading, viewing and deleting a real document on the live site, the one
    thing no SQL query can prove.
 3. Ran PART A. Checked the public form's trainer picker still populated in an
    incognito window, since PART A narrows the exact grant it depends on.
 4. Merged to `claude/fitaz-gym-pt-leads-76ffhv` (fast-forward, no conflicts) and
    let Vercel deploy. Submitted a real lead through the live form and confirmed
-   it reached `/admin` — proving `submit_form_lead()` worked end to end **while
+   it reached `/admin`, proving `submit_form_lead()` worked end to end **while
    the old insert path was still there as a net**.
 5. Ran PART B, then immediately submitted a second lead. This is the moment the
    net is gone, so the test happens within the minute, not the next morning.
@@ -85,7 +85,7 @@ to follow the deploy. Get either backwards and the public form goes down.
 ## Note on the storage bucket
 
 `0006` creates the private `trainer-documents` bucket and its three
-`storage.objects` policies itself, at the bottom of the file — no separate manual
+`storage.objects` policies itself, at the bottom of the file, with no separate manual
 step in the normal case. Some Supabase projects block writes to the `storage`
 schema from the SQL editor; if that happens, make the bucket by hand (Public OFF)
 and run `supabase/reconcile/02_storage_bucket_fallback.sql`, which is idempotent.
@@ -99,5 +99,5 @@ what was deployed, and were deleted on 2 September 2026. The branch names above
 are kept because they are the record of where the work came from, not because
 the branches still exist.
 
-`claude/custom-domain-dns-setup-v45oc6` remains parked — its DB security findings
+`claude/custom-domain-dns-setup-v45oc6` remains parked. Its DB security findings
 were re-done fresh as `0009` rather than merged.

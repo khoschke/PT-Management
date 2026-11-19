@@ -15,7 +15,7 @@ const SIGNED_OUT_ONLY_ADMIN_ROUTES = new Set(["/admin/login", "/admin/forgot-pas
 // handler is about to turn the result into a session. Building a second
 // Supabase client here and calling getUser() reads and writes the same cookie
 // jar the handshake depends on, and a getUser() that fails (which it always
-// does here, since there is no session yet — that is the entire point) can
+// does here, since there is no session yet; that is the entire point) can
 // clear the auth storage keys, including the PKCE code verifier the handler
 // needs a few milliseconds later.
 //
@@ -77,11 +77,11 @@ export async function proxy(request: NextRequest) {
 
   // Signed-out staff have to be able to reach these: the sign-in screen and
   // the "email me a reset link" screen. The callback returned earlier, above.
-  // /admin/reset-password is deliberately NOT here — it needs the session the
+  // /admin/reset-password is deliberately NOT here: it needs the session the
   // callback creates, so a bounce to sign-in is the right answer.
   const isPublicRoute = PUBLIC_ADMIN_ROUTES.has(path);
 
-  // Already signed in? These two screens have nothing to offer — the Account
+  // Already signed in? These two screens have nothing to offer. The Account
   // screen is where a signed-in user changes their own password.
   const isSignedOutOnlyRoute = SIGNED_OUT_ONLY_ADMIN_ROUTES.has(path);
 

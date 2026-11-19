@@ -139,7 +139,7 @@ The three built emails live in `docs/emails/`:
 There are rendered previews of all three, and a packaged bundle was previously
 assembled with previews, templates and notes. Either attach the previews (easiest
 for the PTs to actually look at) or the full bundle. **Previews are the better
-choice for this audience** — the PTs want to see what the member receives, not
+choice for this audience**: the PTs want to see what the member receives, not
 read HTML.
 
 `docs/emails/README.md` has the reasoning behind each email if the new session
@@ -186,10 +186,10 @@ what is internal, because the PTs do not need the whole list.
 Neither is Karl's to fix, both are tracked in
 `docs/handoff-email-1-go-live.md`:
 
-- ~~**The SPF record is malformed**~~ — **fixed (11 Aug 2026).** The `send.mail`
+- ~~**The SPF record is malformed**~~: **fixed (11 Aug 2026).** The `send.mail`
   TXT record in the CrazyDomains zone now reads `v=spf1 include:amazonses.com ~all`
   and is Active; SPF and DKIM both pass.
-- ~~**GymMaster needs confirming**~~ — **settled, and the flow went live on
+- ~~**GymMaster needs confirming**~~: **settled, and the flow went live on
   1 September 2026.** The unsubscribe is GymMaster's and is in place, the merge
   tags are GymMaster's own syntax, and the day 37 expiry is worded relatively
   because GymMaster cannot do the date arithmetic. The follow-up email this note

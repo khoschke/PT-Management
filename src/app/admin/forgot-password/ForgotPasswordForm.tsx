@@ -45,7 +45,7 @@ export default function ForgotPasswordForm() {
           </div>
           <p className="mt-4 text-[15px] text-secondary-label">
             Open the link on this device, in this browser. If you request another
-            email, only the newest link will work &mdash; the earlier ones stop
+            email, only the newest link will work. The earlier ones stop
             working straight away.
           </p>
           <p className="mt-3 text-[15px] text-secondary-label">

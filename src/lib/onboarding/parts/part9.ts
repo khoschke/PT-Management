@@ -33,7 +33,7 @@ export const part9: OnboardingPart = {
         "**On the business** (growing it): marketing, lead generation, networking, your own education.",
         "**Time for you**: your own training, rest, family and friends, anything that recharges you.",
         "**Garbage tasks**: inefficient travel, busywork, anything you could delegate.",
-        "New PTs spend nearly all their time in the business and almost none on it — the on-the-business work is what stops you being fully booked one month and scrambling the next.",
+        "New PTs spend nearly all their time in the business and almost none on it. The on-the-business work is what stops you being fully booked one month and scrambling the next.",
       ],
       activities: [
         { key: "power-hours", prompt: "Work out your power hours. Are you a morning or evening person? Time-block or set-outcome worker? When are you sharpest?", multiline: true },
@@ -52,7 +52,7 @@ export const part9: OnboardingPart = {
       activities: [
         {
           key: "perfect-week-plan",
-          prompt: "Map out your own perfect week: client sessions, your own training, admin and programming, and personal time — Monday through Sunday.",
+          prompt: "Map out your own perfect week: client sessions, your own training, admin and programming, and personal time, Monday to Sunday.",
           multiline: true,
         },
       ],
@@ -93,7 +93,7 @@ export const part9: OnboardingPart = {
         "**Sales metrics (weekly):** leads contacted, booked consults, consults reaching a sales chat, sign-ons. Orientation while building your book: contact 5-10 leads/week, turn about half into booked consults, sign roughly 4-6 of every 10 you sit down with.",
         "**Business metrics (weekly):** paid sessions delivered, active paying clients, recurring revenue, sessions per client (two a week is the default for meaningful progress). A PT ramping up builds toward 15-20 active clients in six months; established sits around 25-35 active clients and 20-30 sessions/week.",
         "**Experience metrics (monthly):** churn, average length of stay, referrals. Healthy is roughly: monthly churn under 5%, average stay 9-12+ months, a referral or two a month. A churn spike with falling referrals is an experience problem, not a marketing one.",
-        "The Fitaz Business Health Tracker builds all three straight into a weekly log, monthly log, and a live dashboard against targets — use it rather than a spreadsheet from scratch.",
+        "The Fitaz Business Health Tracker builds all three straight into a weekly log, monthly log, and a live dashboard against targets. Use it rather than a spreadsheet from scratch.",
       ],
       activities: [
         { key: "business-health-tracking-plan", prompt: "Which numbers will you track each week and each month, and where will you keep them?", multiline: true },
@@ -105,12 +105,12 @@ export const part9: OnboardingPart = {
         },
       ],
       managerNote:
-        "Most new PTs obsess over the top of the funnel (chase more leads) when their real leak is the sales chat — use the weekly numbers to show them where they're actually losing people. The sessions-per-client number is the early-warning metric: a client quietly dropping from twice a week to once a fortnight rarely announces they're leaving, the frequency just fades. On churn, make sure they capture the why behind every cancellation, not just the number — a pattern of ‘too expensive’ is a value-framing problem, ‘got bored’ is a programming or community problem. Read churn alongside referrals before they conclude it's a marketing issue.",
+        "Most new PTs obsess over the top of the funnel (chase more leads) when their real leak is the sales chat. Use the weekly numbers to show them where they're actually losing people. The sessions-per-client number is the early-warning metric: a client quietly dropping from twice a week to once a fortnight rarely announces they're leaving, the frequency just fades. On churn, make sure they capture the why behind every cancellation, not just the number. A pattern of ‘too expensive’ is a value-framing problem, ‘got bored’ is a programming or community problem. Read churn alongside referrals before they conclude it's a marketing issue.",
     },
     {
       heading: "Reassessing your business model",
       body: [
-        "At some point your workload stops working for you: fully booked and turning people away, exhausted, or income still isn't there. Four levers: **raise your rates** (set it, notify by email with notice — you don't renegotiate client by client), **cut expenses**, **reduce your load**, **bring on help**.",
+        "At some point your workload stops working for you: fully booked and turning people away, exhausted, or income still isn't there. Four levers: **raise your rates** (set it, notify by email with notice; you don't renegotiate client by client), **cut expenses**, **reduce your load**, **bring on help**.",
       ],
       activities: [
         { key: "reassess-signal-and-lever", prompt: "What will be your signal that it's time to reassess, and which lever would you pull first?", multiline: true },
