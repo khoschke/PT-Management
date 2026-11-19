@@ -51,6 +51,10 @@ digest (Vercel cron) are confirmed sending from the branded
 
 ## Database
 
+`docs/DATA_MODEL.md` has the entity relationship diagram: every table, its
+columns and how they join, verified against the live database. Read that for
+the shape of the schema, and this section for what is applied where.
+
 > **This list drifted once. Do not trust it — verify it.**
 > On 12 Aug 2026 this section claimed `0006_trainer_documents.sql` was applied
 > to live. It was not, and `/admin/compliance` and `/admin/documents` were
@@ -1082,3 +1086,100 @@ Reminders only. Each gets scoped and built in its own session.
   suggested; approach to be agreed when it is scoped.
 - **Ezidebit connected to the PT Manager dashboard via an MCP, reading live.**
   Georgio's request, raised in the rents thread on 3 August 2026. Read only.
+- **Two sign-up capture questions — parked, not dropped** (Karl, 21 Sep 2026).
+  Both belong to one conversation with Danny and Georgio about what front of
+  house asks a new member at sign-up, and neither is worth building or
+  requesting before that conversation happens.
+  - **"How did you hear about us", captured at sign-up.** Raised in Karl's
+    9 September recap to Dylan. This is the member-level source tag the pipeline
+    design depends on: without it, conversion rate by source cannot be
+    calculated, which is the whole reason for tracking sources.
+  - **PT interest at sign-up, asked as a three-way question** — "yes I'd like to
+    get started" / "I'd like to know more first" / "not right now" — with a yes
+    or a maybe walked through the comp session request form at the desk rather
+    than sent a link. Designed in full in the 10 September pipeline draft to
+    Dylan, including why the link version fails.
+
+  **Why it was held at first:** the tick box sits inside Danny's sign-up
+  process, so it is a proposal to the owners rather than something Karl can
+  build. Karl held it on 21 September to clear higher-priority work first.
+
+  **DECIDED 26 Oct 2026: the tick box is parked indefinitely, and deliberately.**
+  Karl put it to Danny, who is also on the front desk, and Danny was not keen.
+  Karl's reasoning, and it is the right way round: front of house cannot see
+  what the question is worth, and he cannot show them, because the numbers that
+  would prove it do not exist yet. Introducing it now would be process for the
+  sake of process, and process nobody believes in quietly stops being used. The
+  PT nurture flow is already doing part of the job in the meantime.
+
+  **The trigger for picking it back up:** PT client tagging is live in GymMaster
+  and Karl can show front of house conversion by source. At that point he goes
+  back with evidence rather than a theory. Do not raise it before then, and do
+  not let it disappear: this is a sequencing decision, not a rejection.
+  **This makes the GymMaster tagging work a prerequisite, not a nice-to-have.**
+  Raise both questions together when the sign-up conversation is next on the
+  table.
+- **PT client tagging in GymMaster** — in flight, waiting on Danny (21 Sep 2026).
+  There is currently no reliable way to tell who is actually training with a PT,
+  which blocks every PT metric worth having, including PT clients as a
+  percentage of membership.
+  **Why membership type cannot answer it:** it fails in both directions. A PT
+  membership is for a client a trainer brings in to train under them, and some
+  of those members have since stopped training, so they look like PT clients and
+  are not. Meanwhile most clients who came through the gym are on Base or
+  Ultimate, so they are PT clients and do not look like it.
+  **Asked of Danny:** three member tags in GymMaster, which he has confirmed it
+  supports — currently training with a PT (yes/no), which trainer, and
+  previously trained but no longer does. The third is also the best
+  re-engagement list in the gym, so it is kept rather than cleared.
+  **Where the truth comes from:** the trainers, not the database. Karl confirms
+  the client list with each of the five, front of house enters it. Monthly is
+  the opening suggestion; the mechanism is deliberately unsettled until one the
+  trainers will actually sustain is found.
+  **Not Karl's call:** what happens to members whose membership type no longer
+  matches what they do, and what that means for their billing. Danny and
+  Georgio decide, and the member hears a decision rather than a question.
+  **Baseline:** the day tagging goes in is day zero. There is no history to
+  recover, and a retrospective PT-versus-non-PT tenure analysis was deliberately
+  dropped rather than built on the unreliable membership type.
+- **Development goals and notes for trainers, not only staff** (raised 21 Sep
+  2026). The fortnightly PT development session runs with Dylan, Shahd, Henry
+  and Michael and has no home in the portal, so every goal set and every
+  conversation had lives in Karl's head and in a calendar description.
+  **The schema already supports it.** `development_goals` and
+  `development_notes` key on `trainer_id`, not on the role, which is why they
+  survive a promotion untouched. It is the screens that are gated to staff, not
+  the data. So this is a UI and access question rather than a migration.
+  **The design rule carries over and matters more here:** a goal belongs to the
+  person who set it, and there is no manager write policy on the goal text. A
+  self-employed trainer being coached by the PT Manager is exactly the case
+  that rule was written for.
+  **What must stay out of it:** the portal's development notes are a shared
+  record the trainer can read. Karl's own observations about a trainer belong
+  in `docs/pt-development-coaching-notes.md`, which is private to him. Do not
+  merge the two.
+- **Karl's onboarding into Georgio's new gym system** — agreed in principle,
+  undated (9 Nov 2026). Georgio wants a long conversation with Karl about AI
+  and integrating the gym's systems so its processes run more smoothly. It is
+  happening after an operation Georgio is due to have, so there is no date and
+  **this is the item on this list most likely to quietly disappear.**
+  **How Karl frames it, and the framing matters:** not a negotiation between
+  two systems, but his onboarding as PT Manager into a new Fitaz Gym system
+  that Georgio is building. He is the stakeholder being brought in, not a rival
+  builder. Approach it that way.
+  **Context a future session will need:**
+  - Georgio is building software of his own. It already covers a group fitness
+    and front-of-house timetable, and on 27 Oct 2026 he wrote that "if I was to
+    go one stop further it will eventually replace GymMaster".
+  - He built Karl a GymMaster MCP in late October to give him better leverage
+    over GymMaster data.
+  - Karl asked him for three member tags (currently training with a PT, which
+    trainer, previously trained but no longer). That request is still open and
+    is the prerequisite for every PT metric, including the parked sign-up tick
+    box above.
+  - Karl's own asks for the timetable, sent 4 Nov: member engagement tracking
+    and automated lead follow-up metrics.
+  - The PT portal in this repository is the system of record for PT leads. How
+    the two fit together has never been discussed.
+  **Next step:** find out roughly when the operation is, so the follow-up has
+  something to anchor to rather than "down the track".
