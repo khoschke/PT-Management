@@ -18,7 +18,9 @@ padding on a `<td bgcolor>`, which is the exact thing that broke in August; the
 lines are the reconciled ones, typo included. Email 3's subject was changed to
 "Karl, Last Week to Claim Your Session" at the same time.
 
-**One thing the paste lost: the preheader.** See below. Everything else landed.
+**The preheader is not in the live emails**, removed by hand during the paste
+rather than lost by it. See below for why, and why the editor made it look like
+a fault. Everything else landed.
 
 **These files were reconciled to what GymMaster actually sends on 19 November
 2026.** Karl and Danny had rewritten copy inside GymMaster, so for a while the
@@ -614,31 +616,38 @@ carry no `<style>` block at all, so no dark mode rule of any kind, plate or imag
 swap, survives into a GymMaster send. Any dark mode fix for GymMaster has to work
 with no stylesheet.
 
-## The preheader does not survive a GymMaster paste
+## The preheader, and why it is not in the live emails
 
-**Found 19 November 2026.** Each template opens with a hidden `<div>` carrying
-the preview line that an inbox shows next to the subject. It is in the CMS-safe
-files, and it is **not** in the emails GymMaster delivered after the 19 November
-paste. The delivered HTML starts at `<div lang="en-AU">`, so the hidden div was
-stripped.
+**It was deleted deliberately on 19 November 2026, and the reason is worth
+knowing before anyone restores it.**
 
-**GymMaster can carry it, which is the useful part.** The copies that were in
-there before that paste delivered the preheader intact, confirmed in the raw
-source of a test send from earlier the same day. So this is not a platform
-limit, it is about how the HTML gets in: a visual editor drops a
-`display:none` block, a raw HTML or source view keeps it. If GymMaster offers a
-preview text or preheader field alongside the subject, that is the cleanest
-home for the line anyway.
+Each template opens with a hidden `<div>` carrying the preview line an inbox
+shows beside the subject. **GymMaster's visual editor does not honour
+`display:none`**, so with code view turned off the line appears as stray text at
+the top of the email, looking exactly like a paste gone wrong. Karl saw that and
+removed it, which is the sane reaction to what the editor was showing.
 
-**What it costs while it is missing.** The inbox falls back to the first text it
+**The editor was lying.** In the test sends from earlier the same day, the
+copies that still carried the block delivered it correctly: the line showed as
+the grey preview text beside the subject, and did not appear in the body. Raw
+source of those messages confirms it. So the only place that text was ever
+visible was inside GymMaster.
+
+**What it costs, now it is gone.** The inbox falls back to the first text it
 finds, which is the eyebrow and the headline, so email 3 previews as "Seven days
-left Your first session closes in seven days". That is repetition of the subject
-rather than the extra information the preheader slot exists for. Not a disaster,
-and not nothing: it is the second most read line in the email.
+left Your first session closes in seven days". That repeats the subject instead
+of adding to it, in the second most read line in the email. Worth fixing, not
+worth a special trip.
 
-**Check it after every paste**, by sending one to a real inbox and reading the
-grey preview text in the list view before opening the email. It is invisible
-from inside the template.
+**If you restore it**, paste in code view, save without switching to the visual
+editor, then send one to a real inbox and check both halves: the preview line
+beside the subject, and that the text is **not** visible at the top of the
+opened email. If it shows in the body, take it out again. A stray line there is
+worse than no preview line. A preview text or preheader field in GymMaster,
+beside the subject, would be a better home than the template if one exists.
+
+**The templates now carry this warning in a comment above the block**, since
+code view is exactly where the next person will meet it.
 
 ## Two things GymMaster adds on the way out
 
@@ -664,9 +673,9 @@ still unticked is a live risk, not a launch task.
 
 - [ ] Render test across Gmail web, Gmail app, Apple Mail, Outlook desktop and
       Outlook.com, in both light and dark mode.
-- [ ] **Read the preview text in the inbox list**, not just the open email. The
-      preheader was stripped by the 19 November 2026 paste and nobody would see
-      that from inside GymMaster. See the section above.
+- [ ] **Read the preview text in the inbox list**, not just the open email.
+      There is currently no preheader, deliberately, see the section above. If
+      one is ever restored, this is the only place it can be checked.
 - [ ] **Confirm an unsubscribe link exists at all.** Reopened 18 November 2026,
       see the merge tags section above. Open a delivered email 1, read the
       footer, and check the raw source for a `List-Unsubscribe` header. This was
