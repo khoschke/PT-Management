@@ -36,12 +36,10 @@ the CMS-safe variants exist.
 **New thread, so it signs off with the Gmail signature block** and does not type
 the name above it.
 
-**Check before sending:** open
-`https://pt.fitazgym.com/brand/fitaz-gym-logo-email.png` in a browser and
-confirm the logo appears. It should, because `public/brand/` deployed in August,
-but it could not be checked from the build workspace, which has no outbound
-access to that host. **If it 404s, do not send**: the attachments would point at
-a dead address, which is worse than the problem they fix.
+**The address is confirmed live.** Karl checked
+`https://pt.fitazgym.com/brand/fitaz-gym-logo-official.png` loads, 19 November
+2026. It could not be checked from the build workspace, which has no outbound
+access to that host.
 
 **Subject:** A small fix needed in the PT nurture emails
 
@@ -81,23 +79,26 @@ same as when we first loaded them in:
 - 02-plan-not-motivation, the day 10 email
 - 03-last-call, the day 30 email
 
-Nothing else about them has changed. Same copy, same buttons, same merge tag for
-the member's first name. If it is easier to make the change in place instead,
-it is one address in each template:
+The copy, the buttons and the merge tag for the member's first name are all
+untouched. The logo itself will look very slightly different, and that is
+deliberate: the one in there now is an older redrawn version of our logo, with
+the letters spaced a bit wide and the GYM tag sitting too far off the Z. These
+use the real artwork.
+
+If it is easier to make the change in place instead, it is one address in each
+template:
 
 From:
 https://s1.designmodo.com/postcards/image-1742259265784-61d271ee.png
 
 To:
-https://pt.fitazgym.com/brand/fitaz-gym-logo-email.png
+https://pt.fitazgym.com/brand/fitaz-gym-logo-official.png
 
-One thing to watch if you do go that way. Our logo file is not shaped the same
-as the one on Designmodo, so the width and height on the image have to change
-with it, from 240 by 60 to 230 by 34, or the logo comes out squashed. That is
-already done in the attachments.
-
-Worth opening that second address in a browser first either way. You should see
-the logo on a white background. If you do, we are good.
+One thing to watch if you do go that way. Our file is not shaped like the one on
+Designmodo, which has a lot of empty space built into it, so the width and
+height on the image have to change with it, from 240 by 60 to 230 by 30.
+Otherwise the logo comes out stretched. That is already done in the
+attachments.
 
 Give me a yell if anything looks off once they are in, or if you would rather we
 sat down for ten minutes and did it together.
@@ -115,9 +116,15 @@ Cheers,
   would have been promising something the format cannot do.
 - **The box resize is the part most likely to bite**, which is why it is called
   out for the edit-in-place path rather than left in the attachments silently.
-  The Designmodo file was padded, 2000x500 around a 1924x251 mark; ours is
-  1600x236 with no padding, so the old 240x60 box squashes it to 71% height.
-  Reasoning in `docs/emails/README.md` under "Where the images come from".
+  The Designmodo file is padded, 2000x500 around a 1924x251 mark; the official
+  raster is that mark cropped to the ink, so the old 240x60 box stretches it.
+  230x30 is its own ratio. Reasoning in `docs/emails/README.md` under "Where the
+  images come from".
+- **The templates carry the official mark, not the email lockup.** They briefly
+  pointed at `fitaz-gym-logo-email.png`, which Karl recognised as off on sight.
+  It was a Liberation Sans trace predating the real artwork, and it is now
+  deleted along with the other traces. The email names the visual difference in
+  plain words rather than hoping Danny does not notice it.
 - **It does not mention the unsubscribe.** Karl's call, 18 November 2026: he
   wants to establish for himself whether GymMaster supplies one before it goes
   on Danny's plate. Keeping the two apart also keeps this a ten minute ask

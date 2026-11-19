@@ -30,25 +30,28 @@
 
           <!-- ============================================================
                MASTHEAD
-               OUR OWN HOST, as of 19 November 2026. This used to point at
-               Designmodo's CDN, a stopgap from August while our copy was not
-               deployed. It is deployed, so the borrowed host is gone and
+               THE OFFICIAL MARK, on our own host, as of 19 November 2026.
+               Two changes landed together here, and both matter.
+
+               The host. This pointed at Designmodo's CDN from August, a
+               stopgap while our own copy was not deployed. It is deployed, so
                nothing here depends on a third party's project any more.
 
-               THE BOX CHANGED WITH THE FILE, and it had to. The CDN file was a
-               2000x500 canvas holding a 1924x251 mark, so half of it was empty
-               padding, which is why the box was 240x60 (4:1) to land the mark
-               at 30px tall. fitaz-gym-logo-email.png is 1600x236 with no
-               padding, so 240x60 would squash it. The box is now 230x34, which
-               is that file's own 6.8:1 ratio and keeps the rendered mark the
-               same width it was before.
+               The file. It briefly pointed at fitaz-gym-logo-email.png, a
+               looser-tracked lockup built for inbox legibility, which was a
+               Liberation Sans trace made before Karl supplied the real
+               artwork. It read as visibly off, most of all in the gap between
+               the wordmark and the chip, which the trace set about four times
+               too wide. Karl's call on 19 November 2026: use the real mark in
+               the emails and delete the traces, which are now gone from the
+               repo.
 
-               fitaz-gym-logo-email.png is the deliberate email lockup, looser
-               tracking and a bigger chip so it survives at inbox size. See
-               docs/brand-assets.md. It is still a Liberation Sans trace rather
-               than the faithful vector, which is a known imperfection, not an
-               accident: nothing has re-cut the email lockup from the official
-               artwork yet.
+               The box is 230x30. fitaz-gym-logo-official.png is 1924x251,
+               cropped to the ink with no padding, so 230x30 is its own ratio
+               to within a rounding error and lands the mark 30px tall, which
+               is the size this masthead has always rendered at. If the file
+               ever changes, measure it and resize the box with it: the old
+               240x60 existed only because the file behind it was half empty.
 
                Dark mode gets a white plate behind the logo rather than a
                swapped white image, because a black mark on the near black
@@ -59,7 +62,7 @@
           <tr>
             <td align="center" style="text-align:center; padding:36px 40px 0 40px;">
               <a href="https://fitazgym.com" target="_blank" rel="noopener" style="text-decoration:none;">
-                <img src="https://pt.fitazgym.com/brand/fitaz-gym-logo-email.png" width="230" height="34" alt="Fitaz Gym" style="display:block; width:230px; height:34px; border:0; margin:0 auto;" />
+                <img src="https://pt.fitazgym.com/brand/fitaz-gym-logo-official.png" width="230" height="30" alt="Fitaz Gym" style="display:block; width:230px; height:30px; border:0; margin:0 auto;" />
               </a>
             </td>
           </tr>

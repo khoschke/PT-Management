@@ -389,8 +389,15 @@ Brand assets live in `public/brand/`, documented in `docs/brand-assets.md`.
 **Use `fitaz-gym-logo.svg`**, a faithful vector traced from the official artwork
 Karl supplied on 18 August 2026. It has the sharp-apex A, the rounded GYM chip,
 and the correct wordmark-to-chip gap, and it renders under 1% off the official
-raster. The app now points at it. `fitaz-gym-logo-official.png` is kept as the
-raster master it was traced from.
+raster. The app points at it. `fitaz-gym-logo-official.png` is the raster master
+it was traced from, and is what the member emails use, since email clients do
+not render SVG reliably.
+
+**The Liberation Sans traces were deleted on 19 November 2026**, including the
+`-email` lockup variants and `public/logo-fitaz.svg`. There is now nothing in
+`public/` that is not the real mark, which is the point: the email trace got
+into the nurture masthead that same day purely because its filename read like
+the right answer. Four files remain, listed at the top of `docs/brand-assets.md`.
 
 **This is the primary mark in use.** The earlier Liberation Sans trace that once
 carried the `fitaz-gym-logo.svg` filename is gone, replaced by the faithful
