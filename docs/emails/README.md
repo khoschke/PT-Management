@@ -2,7 +2,17 @@
 
 **Status: live since 1 September 2026, with the unsubscribe unverified.** See
 the merge tags section below: the claim that GymMaster supplies one was
-withdrawn on 18 November 2026 and nobody has checked a delivered email yet.
+withdrawn on 18 November 2026, and on 19 November Karl confirmed from three
+delivered test sends that **there is no unsubscribe link in the footer of any
+of the three.**
+
+**These files were reconciled to what GymMaster actually sends on 19 November
+2026.** Karl and Danny had rewritten copy inside GymMaster, so for a while the
+live emails and these templates were different emails. The templates now carry
+the live wording, which matters more than it sounds: anyone who had pasted
+these in would have silently reverted their edits. **If the copy is edited in
+GymMaster again, reconcile it back here**, or this file goes back to describing
+an email nobody receives.
  All three are sending from GymMaster off
 the member's own join date, and the unsubscribe is handled by GymMaster rather
 than by anything in these templates. What follows is written as a build note in
@@ -237,32 +247,36 @@ and two templates means two things to keep in sync.
 
 ## Subject lines
 
-**Email 1**, using the gym's own words from `/pt-session`:
+**These live in GymMaster, not in these files.** What follows is the record of
+what is set there, rewritten by Karl and Danny in November 2026. All three now
+open on the member's first name and use title case, which is a change of voice
+from the originals and a deliberate one.
 
-> **{58:Member First Name}, your first session is on us**
+| | Live subject | Was |
+|---|---|---|
+| Email 1 | **{58:Member First Name}, Your First Session is on us!** | {58:Member First Name}, your first session is on us |
+| Email 2 | **{58:Member First Name}, Motivation is not the Problem** | Most people run out of plan, not motivation |
+| Email 3 | **{58:Member First Name}, Last Week to Claim Your Session** | Your complimentary session closes in seven days |
 
-Test against:
+**Email 3's subject needs changing in GymMaster.** It currently reads
+"Still Time to Grab Your Free Session". Karl's call on 19 November 2026 was to
+get the word "free" out of the emails and the subject lines, so the row above is
+what it should say, not what it says today. Anything that keeps the deadline and
+drops "free" works; this one keeps their new voice and says the same thing.
 
-- *Your first PT session is already included* — entitlement framing, no name.
-- *One thing to sort before your first workout* — curiosity plus urgency.
-- *We just need to know one thing* — shortest, highest curiosity, weakest clarity.
+**Why "free" is out**, since it will be tempting to put back: the body copy
+never says free either. The session is framed as something the member already
+owns, because a free fitness offer invites the question of what the catch is,
+and the answer a member assumes is a hard sell. "Included with your membership"
+does the same job without triggering it. This is the reasoning behind the
+entitlement framing described further up this file.
 
-**Email 2:**
+Do not use anything for email 2 that reads as a reminder about email 1. The
+whole point of that one is that it opens on a different subject.
 
-> **Most people run out of plan, not motivation**
-
-Test against *{58:Member First Name}, week two is the tricky one* and *The same three
-machines*. Do not use anything that reads as a reminder about email 1. The whole
-point of this one is that it opens on a different subject.
-
-**Email 3:**
-
-> **Your complimentary session closes in seven days**
-
-Test against *Seven days left* and *Last call on your first session*. A named
-date would be harder to defer than a relative one, but GymMaster cannot do the
-date arithmetic, so "seven days" is what we have. It is always true, because
-the email only ever fires on day 30.
+For email 3, a named date would be harder to defer than a relative one, but
+GymMaster cannot do the date arithmetic, so "seven days" in the body is what we
+have. It stays true because the email only ever fires on day 30.
 
 Send from a person, not a department: `Karl at Fitaz Gym`. Set `Reply-To` to a
 monitored inbox, because the email explicitly invites replies.
