@@ -39,7 +39,8 @@ export type GoalCode =
   | "physique_comp_prep"
   // How they work
   | "online_coaching"
-  | "nutrition_coaching";
+  | "nutrition_coaching"
+  | "small_group";
 
 export type GoalOption = {
   code: GoalCode;
@@ -74,6 +75,10 @@ export const GOAL_OPTIONS: GoalOption[] = [
 
   { code: "online_coaching", group: "how", label: "Online coaching", memberLabel: "Online coaching, with a program I follow on my own" },
   { code: "nutrition_coaching", group: "how", label: "Nutrition coaching", memberLabel: "Help with my nutrition" },
+  // Offered by some trainers and not others: up to 3 people at once is the
+  // gym's cap, and whether a trainer runs it is their business decision. A
+  // trainer ticks it only if they do.
+  { code: "small_group", group: "how", label: "Small group and partner training (up to 3)", memberLabel: "Training with a friend, partner or small group" },
 ];
 
 export const TAG_GROUPS: { group: TagGroup; title: string }[] = [
