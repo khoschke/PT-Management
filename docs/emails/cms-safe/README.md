@@ -8,6 +8,28 @@ python3 docs/emails/make-cms-safe.py docs/emails/01-welcome-nurture.html \
         docs/emails/cms-safe/01-welcome-nurture.html
 ```
 
+## Add `--body` when producing a file for somebody to paste
+
+```
+python3 docs/emails/make-cms-safe.py docs/emails/01-welcome-nurture.html \
+        /tmp/01-welcome-nurture-body.html --body
+```
+
+That drops the `<!DOCTYPE>`, `<html>`, `<head>` and `<body>` wrapper and leaves
+only what goes inside `<body>`, so the whole file can be selected and pasted
+into GymMaster's code view with nothing to trim by hand.
+
+**Why it matters**, from the 19 November 2026 paste: GymMaster keeps the
+`<head>` if you give it one, and its generated plain-text alternative then
+opens with our `<title>`, above the preheader. Nothing renders differently in
+the HTML email either way, because the canvas colour is painted by the outer
+table, which carries both a `background-color` and a `bgcolor`, and not by the
+`<body>` tag.
+
+**Keep the full-document versions in this folder** regardless. They are what
+gets render-tested and what `host-template-test.py` expects. `--body` is for
+producing a paste, not for storing a second copy.
+
 ## Why these exist
 
 GymMaster was corrupting the pasted HTML, with the buttons losing their
