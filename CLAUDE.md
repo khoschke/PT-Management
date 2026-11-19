@@ -161,8 +161,29 @@ audits the result. Add an assertion for your migration to
 
 ## Checks before you push
 
+Run `npm install` first. Cloud sessions clone without `node_modules`, and
+without it `tsc` fails on every file in a way that reads like a code problem.
+
 ```
 npx tsc --noEmit
 npx eslint src
+npm test
 npm run build
 ```
+
+`.github/workflows/ci.yml` runs the same four on every pull request and push.
+A green Vercel status still only proves the app built.
+
+## Tests
+
+Vitest unit tests sit next to the code they cover, as `src/lib/**/*.test.ts`.
+They cover pure logic only: no Supabase, no network, no DOM, so they run
+anywhere with no credentials. `npm test` runs once; `npm run test:watch` stays
+open. The suite runs in UTC, as Vercel does (set in `vitest.config.ts`).
+
+- **Make a new test fail first.** Break the source, watch it go red, put it
+  back. A test that has never failed is not known to test anything.
+- **Renaming or removing a workbook activity key fails the build** via
+  `src/lib/onboarding/content.test.ts`. That is deliberate: it orphans saved
+  answers. Add new keys to `src/lib/onboarding/activity-keys.json`; only take
+  one out after checking `onboarding_responses` for it.

@@ -64,7 +64,9 @@ export function leadsToCsv(leads: LeadRow[]): string {
     lead.first_contacted_at ?? "",
   ]);
 
-  const lines = [COLUMNS.join(","), ...rows.map((row) => row.map((cell) => escapeCell(String(cell))).join(","))];
+  // The header goes through escapeCell too: "Goal, other" has a comma in it,
+  // and unquoted it splits into two headings and shifts every one after it.
+  const lines = [COLUMNS.map(escapeCell).join(","), ...rows.map((row) => row.map((cell) => escapeCell(String(cell))).join(","))];
   return lines.join("\n");
 }
 
